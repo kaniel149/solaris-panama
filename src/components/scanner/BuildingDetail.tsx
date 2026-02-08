@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
-  Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin,
+  Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -28,6 +28,8 @@ interface BuildingDetailProps {
   isAnalyzing: boolean;
   onClose: () => void;
   onAnalyze: () => void;
+  onSaveAsLead?: () => void;
+  isLeadSaved?: boolean;
 }
 
 // ===== CONSTANTS =====
@@ -68,6 +70,8 @@ export default function BuildingDetail({
   isAnalyzing,
   onClose,
   onAnalyze,
+  onSaveAsLead,
+  isLeadSaved,
 }: BuildingDetailProps) {
   if (!building) return null;
 
@@ -320,26 +324,39 @@ export default function BuildingDetail({
         </div>
 
         {/* Action Buttons (fixed bottom) */}
-        {building.analyzed && (
-          <div className="px-5 py-4 border-t border-white/[0.06] space-y-2">
+        <div className="px-5 py-4 border-t border-white/[0.06] space-y-2">
+          {onSaveAsLead && (
             <Button
-              variant="primary"
+              variant={isLeadSaved ? 'secondary' : 'accent'}
               fullWidth
-              icon={<ArrowRight className="w-4 h-4" />}
-              onClick={() => { window.location.hash = '#/tools/proposal-generator'; }}
+              icon={<UserPlus className="w-4 h-4" />}
+              onClick={onSaveAsLead}
+              disabled={isLeadSaved}
             >
-              Generate Proposal
+              {isLeadSaved ? 'Saved as Lead' : 'Save as Lead'}
             </Button>
-            <Button
-              variant="accent"
-              fullWidth
-              icon={<ExternalLink className="w-4 h-4" />}
-              onClick={() => { window.location.hash = '#/projects'; }}
-            >
-              Save to Project
-            </Button>
-          </div>
-        )}
+          )}
+          {building.analyzed && (
+            <>
+              <Button
+                variant="primary"
+                fullWidth
+                icon={<ArrowRight className="w-4 h-4" />}
+                onClick={() => { window.location.hash = '#/tools/proposal-generator'; }}
+              >
+                Generate Proposal
+              </Button>
+              <Button
+                variant="secondary"
+                fullWidth
+                icon={<ExternalLink className="w-4 h-4" />}
+                onClick={() => { window.location.hash = '#/projects'; }}
+              >
+                Save to Project
+              </Button>
+            </>
+          )}
+        </div>
       </motion.div>
     </AnimatePresence>
   );

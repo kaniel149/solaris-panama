@@ -5,6 +5,9 @@ import {
   ArrowUpDown, Zap, Target, Map as MapIcon, Sun,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import ZoneSelector from '@/components/scanner/ZoneSelector';
+import BatchActions from '@/components/scanner/BatchActions';
+import type { LeadZone } from '@/types/lead';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
@@ -41,6 +44,17 @@ interface ScanPanelProps {
   onScanViewport: () => void;
   onBuildingSelect: (id: number) => void;
   onFilterChange: (filters: { minArea: number; minScore: number }) => void;
+  // Lead pipeline props
+  zones?: LeadZone[];
+  selectedZoneId?: string | null;
+  onSelectZone?: (zoneId: string) => void;
+  onClearZone?: () => void;
+  onSaveAllAsLeads?: () => void;
+  onEnrichAll?: () => void;
+  onAnalyzeTop?: (count: number) => void;
+  isSavingLeads?: boolean;
+  isEnriching?: boolean;
+  enrichProgress?: { completed: number; total: number } | null;
 }
 
 // ===== HELPERS =====
@@ -74,6 +88,16 @@ export default function ScanPanel({
   onScanViewport,
   onBuildingSelect,
   onFilterChange,
+  zones,
+  selectedZoneId,
+  onSelectZone,
+  onClearZone,
+  onSaveAllAsLeads,
+  onEnrichAll,
+  onAnalyzeTop,
+  isSavingLeads,
+  isEnriching,
+  enrichProgress,
 }: ScanPanelProps) {
   const [searchValue, setSearchValue] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -143,6 +167,18 @@ export default function ScanPanel({
         </div>
       </div>
 
+      {/* Zone Selector */}
+      {zones && zones.length > 0 && onSelectZone && onClearZone && (
+        <div className="px-4 pb-3">
+          <ZoneSelector
+            zones={zones}
+            selectedZoneId={selectedZoneId ?? null}
+            onSelectZone={onSelectZone}
+            onClearZone={onClearZone}
+          />
+        </div>
+      )}
+
       {/* Scan Controls */}
       <div className="px-4 pb-4">
         <Button
@@ -180,6 +216,21 @@ export default function ScanPanel({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Batch Actions */}
+      {buildings.length > 0 && onSaveAllAsLeads && onEnrichAll && onAnalyzeTop && (
+        <div className="px-4 pb-3">
+          <BatchActions
+            buildingCount={buildings.length}
+            onSaveAllAsLeads={onSaveAllAsLeads}
+            onEnrichAll={onEnrichAll}
+            onAnalyzeTop={onAnalyzeTop}
+            isSaving={isSavingLeads ?? false}
+            isEnriching={isEnriching ?? false}
+            enrichProgress={enrichProgress ?? null}
+          />
         </div>
       )}
 
