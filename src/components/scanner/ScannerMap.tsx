@@ -5,15 +5,15 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
-} from 'react-map-gl/mapbox';
-import type { MapRef } from 'react-map-gl/mapbox';
+} from 'react-map-gl/maplibre';
+import type { MapRef } from 'react-map-gl/maplibre';
 import { motion } from 'framer-motion';
 import { Satellite, Moon } from 'lucide-react';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
-const DARK_STYLE = 'mapbox://styles/mapbox/dark-v11';
-const SATELLITE_STYLE = 'mapbox://styles/mapbox/satellite-streets-v12';
+// Free tile styles (no token needed)
+const DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+const SATELLITE_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 interface MapBounds {
   north: number;
@@ -122,30 +122,6 @@ export default function ScannerMap({
 
   const interactiveLayerIds = ['buildings-fill'];
 
-  // Fallback when no Mapbox token
-  if (!MAPBOX_TOKEN) {
-    return (
-      <div className="relative w-full h-full flex items-center justify-center bg-[#0a0a0f]">
-        <div className="text-center px-8 max-w-md">
-          <div className="w-16 h-16 rounded-2xl bg-[#00ffcc]/10 flex items-center justify-center mx-auto mb-4">
-            <Satellite className="w-8 h-8 text-[#00ffcc]" />
-          </div>
-          <h3 className="text-lg font-bold text-[#f0f0f5] mb-2">Mapbox Token Required</h3>
-          <p className="text-sm text-[#8888a0] mb-4">
-            Add <code className="px-1.5 py-0.5 rounded bg-white/[0.06] text-[#00ffcc] text-xs">VITE_MAPBOX_TOKEN</code> to your <code className="px-1.5 py-0.5 rounded bg-white/[0.06] text-[#00ffcc] text-xs">.env.local</code> file.
-          </p>
-          <p className="text-xs text-[#555566]">
-            Get a free token at{' '}
-            <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-[#00ffcc] hover:underline">
-              mapbox.com
-            </a>
-            {' '}(50k free map loads/month)
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative w-full h-full">
       <Map
@@ -158,7 +134,6 @@ export default function ScannerMap({
         onMouseLeave={handleMouseLeave}
         interactiveLayerIds={interactiveLayerIds}
         mapStyle={mapStyle}
-        mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
         reuseMaps
@@ -237,7 +212,7 @@ export default function ScannerMap({
         whileTap={{ scale: 0.95 }}
         onClick={toggleStyle}
         className="absolute top-3 right-14 z-10 p-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06] hover:border-[#00ffcc]/20 transition-all"
-        title={mapStyle === DARK_STYLE ? 'Satellite view' : 'Dark view'}
+        title={mapStyle === DARK_STYLE ? 'Light view' : 'Dark view'}
       >
         {mapStyle === DARK_STYLE ? (
           <Satellite className="w-4 h-4 text-[#8888a0]" />

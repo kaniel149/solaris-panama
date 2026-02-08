@@ -2,7 +2,7 @@
 // The library ships its own types but uses subpath exports that TypeScript
 // module resolution may not resolve correctly with bundler mode.
 
-declare module 'react-map-gl/mapbox' {
+declare module 'react-map-gl/maplibre' {
   import type { CSSProperties, ReactNode, Ref } from 'react';
 
   export interface ViewState {
@@ -24,7 +24,6 @@ declare module 'react-map-gl/mapbox' {
 
   export interface MapProps {
     ref?: Ref<MapRef>;
-    mapboxAccessToken?: string;
     mapStyle?: string;
     style?: CSSProperties;
     longitude?: number;

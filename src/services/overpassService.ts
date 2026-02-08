@@ -145,17 +145,23 @@ out geom;`;
 
 /**
  * Fetch buildings within a bounding box from OpenStreetMap via Overpass API.
- * Routes through our Vercel proxy to avoid CORS issues.
+ * In dev mode, calls Overpass directly (no CORS issue with POST).
+ * In production, routes through Vercel proxy.
  */
 export async function fetchBuildingsInBounds(
   bounds: MapBounds
 ): Promise<OSMBuilding[]> {
   const query = buildOverpassQuery(bounds.south, bounds.west, bounds.north, bounds.east);
 
-  const response = await fetch('/api/roof-scan?action=overpass', {
+  const isDev = import.meta.env.DEV;
+  const url = isDev
+    ? 'https://overpass-api.de/api/interpreter'
+    : '/api/roof-scan?action=overpass';
+
+  const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: query,
+    headers: { 'Content-Type': isDev ? 'application/x-www-form-urlencoded' : 'text/plain' },
+    body: isDev ? `data=${encodeURIComponent(query)}` : query,
   });
 
   if (!response.ok) {
