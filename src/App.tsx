@@ -16,6 +16,8 @@ import SolarCalculatorPage from '@/pages/SolarCalculatorPage';
 import RoofScannerPage from '@/pages/RoofScannerPage';
 import ProposalGeneratorPage from '@/pages/ProposalGeneratorPage';
 import SettingsPage from '@/pages/SettingsPage';
+import LeadsPage from '@/pages/LeadsPage';
+import LeadDetailPage from '@/pages/LeadDetailPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export default function App() {
@@ -37,6 +39,8 @@ export default function App() {
               <Route path="/tools/calculator" element={<SolarCalculatorPage />} />
               <Route path="/tools/scanner" element={<RoofScannerPage />} />
               <Route path="/tools/proposal-generator" element={<ProposalGeneratorPage />} />
+              <Route path="/leads" element={<LeadsPage />} />
+              <Route path="/leads/:id" element={<LeadDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>

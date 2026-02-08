@@ -9,6 +9,7 @@ import {
   Calculator,
   ScanLine,
   Sparkles,
+  Target,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export const mainNavItems: NavItem[] = [
   { key: 'proposals', labelKey: 'nav.proposals', icon: FileText, path: '/proposals' },
   { key: 'calendar', labelKey: 'nav.calendar', icon: Calendar, path: '/calendar' },
   { key: 'monitoring', labelKey: 'nav.monitoring', icon: Activity, path: '/monitoring' },
+  { key: 'leads', labelKey: 'nav.leads', icon: Target, path: '/leads' },
 ];
 
 export const toolsNavItems: NavItem[] = [
