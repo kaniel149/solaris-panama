@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base */
+html {
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  @apply bg-space-950 text-text-primary;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 255, 204, 0.2);
+  color: #f0f0f5;
+}
+
+/* Glass utilities */
+@layer utilities {
+  .glass {
+    @apply bg-surface/80 backdrop-blur-xl border border-white/[0.06] rounded-xl;
+  }
+
+  .glass-hover {
+    @apply hover:bg-surface-hover/80 hover:border-white/[0.1] transition-all duration-200;
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-purple-400;
+  }
+}
+
+/* Focus visible */
+*:focus-visible {
+  @apply outline-none ring-2 ring-accent/50 ring-offset-2 ring-offset-space-950;
+}
