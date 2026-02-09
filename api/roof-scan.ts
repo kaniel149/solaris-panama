@@ -329,29 +329,55 @@ async function handlePlacesLookup(
     return;
   }
 
-  const url =
-    `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
-    `?location=${lat},${lng}` +
-    `&radius=${radius}` +
-    `&key=${GOOGLE_MAPS_API_KEY}`;
+  // Places API (New) — Nearby Search
+  const url = 'https://places.googleapis.com/v1/places:searchNearby';
+  const body = {
+    locationRestriction: {
+      circle: {
+        center: { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+        radius: parseFloat(radius),
+      },
+    },
+    maxResultCount: 5,
+  };
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.types,places.id',
+      },
+      body: JSON.stringify(body),
+    });
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('[roof-scan] Google Places API error:', {
+      console.error('[roof-scan] Google Places API (New) error:', {
         status: response.status,
         error: data,
       });
       res.status(response.status).json({
-        error: 'Google Places API error',
+        error: data.error?.message || 'Google Places API error',
         code: 'PLACES_ERROR',
       });
       return;
     }
 
-    res.status(200).json(data);
+    // Transform to legacy-compatible format for the frontend
+    const results = (data.places || []).map((p: any) => ({
+      name: p.displayName?.text || null,
+      formatted_phone_number: p.internationalPhoneNumber || null,
+      website: p.websiteUri || null,
+      vicinity: p.formattedAddress || null,
+      formatted_address: p.formattedAddress || null,
+      rating: p.rating || null,
+      types: p.types || [],
+      place_id: p.id || null,
+    }));
+
+    res.status(200).json({ results, status: 'OK' });
   } catch (error: unknown) {
     const message =
       error instanceof Error
@@ -445,38 +471,38 @@ async function handleOwnerResearch(
     sources: [],
   };
 
-  // 1. Google Places Detail (use existing proxy logic)
+  // 1. Google Places (New API) — Text Search for business name near coordinates
   if (GOOGLE_MAPS_API_KEY) {
     try {
-      const placesUrl =
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
-        `?location=${lat},${lng}` +
-        `&radius=50` +
-        `&keyword=${encodeURIComponent(decodedQuery)}` +
-        `&key=${GOOGLE_MAPS_API_KEY}`;
+      const textSearchUrl = 'https://places.googleapis.com/v1/places:searchText';
+      const textSearchBody = {
+        textQuery: decodedQuery,
+        locationBias: {
+          circle: {
+            center: { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+            radius: 100.0,
+          },
+        },
+        maxResultCount: 1,
+      };
 
-      const placesResponse = await fetch(placesUrl);
+      const placesResponse = await fetch(textSearchUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+          'X-Goog-FieldMask': 'places.displayName,places.internationalPhoneNumber,places.websiteUri,places.id',
+        },
+        body: JSON.stringify(textSearchBody),
+      });
       const placesData = await placesResponse.json();
-      const place = placesData.results?.[0];
+      const place = placesData.places?.[0];
 
-      if (place?.place_id) {
-        // Get detailed info
-        const detailUrl =
-          `https://maps.googleapis.com/maps/api/place/details/json` +
-          `?place_id=${place.place_id}` +
-          `&fields=name,formatted_phone_number,international_phone_number,website,url` +
-          `&key=${GOOGLE_MAPS_API_KEY}`;
-
-        const detailResponse = await fetch(detailUrl);
-        const detailData = await detailResponse.json();
-        const detail = detailData.result;
-
-        if (detail) {
-          result.ownerName = detail.name || null;
-          result.phone = detail.international_phone_number || detail.formatted_phone_number || null;
-          result.website = detail.website || null;
-          result.sources.push('Google Places');
-        }
+      if (place) {
+        result.ownerName = place.displayName?.text || null;
+        result.phone = place.internationalPhoneNumber || null;
+        result.website = place.websiteUri || null;
+        result.sources.push('Google Places');
       }
     } catch (err) {
       console.error('[owner-research] Google Places error:', err);
