@@ -1,7 +1,8 @@
-// Owner Research Service — Client-side approach using Nominatim + Overpass + optional API
-// Works fully without API keys by using free OpenStreetMap services
+// Owner Research Service — Client-side approach using Nominatim + Overpass
+// Accuracy-focused: only shows verified contact info, separates building occupant from nearby businesses
 
 export interface OwnerResearchResult {
+  // Building-specific info (only from POIs AT the building, <15m)
   ownerName: string | null;
   email: string | null;
   phone: string | null;
@@ -13,7 +14,11 @@ export interface OwnerResearchResult {
     linkedin?: string;
   } | null;
   sources: string[];
+  // Nearby businesses (separate from building owner)
   nearbyBusinesses: NearbyBusiness[];
+  // Quick research links
+  googleMapsUrl: string;
+  googleSearchUrl: string;
 }
 
 export interface NearbyBusiness {
@@ -24,6 +29,41 @@ export interface NearbyBusiness {
   email?: string;
   distance: number; // meters
   address?: string;
+  osmTags?: Record<string, string>;
+}
+
+// ===== Validation Helpers =====
+
+/** Check if a string looks like a real phone number (7-15 digits, optionally with + prefix) */
+function isValidPhone(phone: string): boolean {
+  const digits = phone.replace(/[^\d]/g, '');
+  return digits.length >= 7 && digits.length <= 15;
+}
+
+/** Check if email looks real (not generic/system/spam) */
+function isValidEmail(email: string): boolean {
+  if (!email || !email.includes('@')) return false;
+  const lower = email.toLowerCase();
+  // Filter out common fake/system emails
+  const blacklist = ['example.com', 'test.com', 'email.com', 'domain.com', 'sentry.io', 'noreply', 'no-reply', 'donotreply', 'localhost'];
+  return !blacklist.some(b => lower.includes(b));
+}
+
+/** Validate a social media URL actually looks like a real profile */
+function isValidSocialUrl(url: string, platform: 'facebook' | 'instagram' | 'linkedin'): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  // Must be an actual profile URL, not just the platform homepage
+  switch (platform) {
+    case 'facebook':
+      return /facebook\.com\/[a-zA-Z0-9._-]{2,}/.test(lower) && !lower.endsWith('facebook.com/');
+    case 'instagram':
+      return /instagram\.com\/[a-zA-Z0-9._]{2,}/.test(lower) && !lower.endsWith('instagram.com/');
+    case 'linkedin':
+      return /linkedin\.com\/(company|in)\/[a-zA-Z0-9._-]{2,}/.test(lower);
+    default:
+      return false;
+  }
 }
 
 // ===== Nominatim Reverse Geocoding (free, CORS-friendly) =====
@@ -46,6 +86,7 @@ interface NominatimReverseResult {
   };
   name?: string;
   type?: string;
+  extratags?: Record<string, string>;
 }
 
 async function reverseGeocodeBuilding(lat: number, lng: number): Promise<NominatimReverseResult | null> {
@@ -72,16 +113,18 @@ interface OverpassPOI {
   tags?: Record<string, string>;
 }
 
-async function searchNearbyPOIs(lat: number, lng: number, radiusM = 80): Promise<OverpassPOI[]> {
-  // Search for named businesses/shops/offices/amenities near the building
+async function searchNearbyPOIs(lat: number, lng: number, radiusM = 60): Promise<OverpassPOI[]> {
+  // Search for named businesses near the building
+  // Smaller radius (60m) to reduce noise, focus on actual building occupants
   const query = `[out:json][timeout:10];
 (
-  node["name"](around:${radiusM},${lat},${lng});
+  node["name"]["shop"](around:${radiusM},${lat},${lng});
+  node["name"]["office"](around:${radiusM},${lat},${lng});
+  node["name"]["amenity"](around:${radiusM},${lat},${lng});
+  node["name"]["company"](around:${radiusM},${lat},${lng});
   way["name"]["building"](around:${radiusM},${lat},${lng});
-  node["shop"](around:${radiusM},${lat},${lng});
-  node["office"](around:${radiusM},${lat},${lng});
-  node["amenity"](around:${radiusM},${lat},${lng});
-  node["company"](around:${radiusM},${lat},${lng});
+  way["name"]["shop"](around:${radiusM},${lat},${lng});
+  way["name"]["office"](around:${radiusM},${lat},${lng});
 );
 out center;`;
 
@@ -100,7 +143,7 @@ out center;`;
 }
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371000; // Earth radius in meters
+  const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -113,50 +156,72 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 function categorizePOI(tags: Record<string, string>): string {
-  if (tags.shop) return `Shop (${tags.shop})`;
-  if (tags.office) return `Office (${tags.office})`;
-  if (tags.amenity) return `Amenity (${tags.amenity})`;
+  if (tags.shop) return tags.shop.replace(/_/g, ' ');
+  if (tags.office) return `Office (${tags.office.replace(/_/g, ' ')})`;
+  if (tags.amenity) return tags.amenity.replace(/_/g, ' ');
   if (tags.company) return 'Company';
   if (tags.building === 'commercial') return 'Commercial';
   if (tags.building === 'industrial') return 'Industrial';
   if (tags.building === 'retail') return 'Retail';
-  return tags.building || 'Business';
+  return 'Business';
 }
 
-// ===== Server-side API attempt =====
+/** Extract validated contact info from OSM tags */
+function extractContactFromTags(tags: Record<string, string>): {
+  phone?: string;
+  email?: string;
+  website?: string;
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
+} {
+  const result: ReturnType<typeof extractContactFromTags> = {};
 
-async function tryServerResearch(
-  query: string,
-  lat: number,
-  lng: number
-): Promise<Partial<OwnerResearchResult> | null> {
-  try {
-    const params = new URLSearchParams({
-      action: 'owner-research',
-      query: encodeURIComponent(query),
-      lat: lat.toString(),
-      lng: lng.toString(),
-    });
-
-    const response = await fetch(`/api/roof-scan?${params}`);
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    // Only return if we got meaningful data
-    if (data.ownerName || data.phone || data.email || data.website) {
-      return data;
-    }
-    return null;
-  } catch {
-    return null;
+  // Phone — check multiple tag formats
+  const phone = tags.phone || tags['contact:phone'];
+  if (phone && isValidPhone(phone)) {
+    result.phone = phone;
   }
+
+  // Email
+  const email = tags.email || tags['contact:email'];
+  if (email && isValidEmail(email)) {
+    result.email = email;
+  }
+
+  // Website
+  const website = tags.website || tags['contact:website'];
+  if (website && website.includes('.')) {
+    result.website = website;
+  }
+
+  // Social — validate each one
+  const fb = tags['contact:facebook'] || tags.facebook;
+  if (fb && isValidSocialUrl(fb, 'facebook')) {
+    result.facebook = fb.startsWith('http') ? fb : `https://${fb}`;
+  }
+
+  const ig = tags['contact:instagram'] || tags.instagram;
+  if (ig && isValidSocialUrl(ig, 'instagram')) {
+    result.instagram = ig.startsWith('http') ? ig : `https://${ig}`;
+  }
+
+  const li = tags['contact:linkedin'] || tags.linkedin;
+  if (li && isValidSocialUrl(li, 'linkedin')) {
+    result.linkedin = li.startsWith('http') ? li : `https://${li}`;
+  }
+
+  return result;
 }
 
 // ===== Main Research Function =====
 
+/** Max distance to consider a POI as "at this building" (meters) */
+const BUILDING_PROXIMITY_M = 15;
+
 /**
- * Research building owner — uses free services (Nominatim + Overpass) + optional server API.
- * Always returns a result with at least an address.
+ * Research building owner — uses free services (Nominatim + Overpass).
+ * Accuracy-focused: separates "at building" from "nearby" info.
  */
 export async function researchOwner(
   buildingName: string,
@@ -172,16 +237,21 @@ export async function researchOwner(
     socialMedia: null,
     sources: [],
     nearbyBusinesses: [],
+    googleMapsUrl: `https://www.google.com/maps/@${lat},${lng},19z`,
+    googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(
+      buildingName !== `Building ${buildingName.split(' ').pop()}`
+        ? `${buildingName} Panama`
+        : `building ${lat.toFixed(4)} ${lng.toFixed(4)} Panama`
+    )}`,
   };
 
-  // Run all lookups in parallel
-  const [nominatimResult, overpassPOIs, serverResult] = await Promise.all([
+  // Run lookups in parallel
+  const [nominatimResult, overpassPOIs] = await Promise.all([
     reverseGeocodeBuilding(lat, lng),
-    searchNearbyPOIs(lat, lng, 80),
-    tryServerResearch(buildingName, lat, lng),
+    searchNearbyPOIs(lat, lng, 60),
   ]);
 
-  // 1. Nominatim reverse geocoding — always gives us an address
+  // 1. Nominatim reverse geocoding — gives us address + sometimes the building name
   if (nominatimResult) {
     const addr = nominatimResult.address;
     const parts: string[] = [];
@@ -194,15 +264,36 @@ export async function researchOwner(
 
     result.address = parts.join(', ') || nominatimResult.display_name;
 
-    // If Nominatim found a named entity at this location
+    // If Nominatim identified a named place at these coordinates
     if (nominatimResult.name && nominatimResult.name !== addr.road) {
       result.ownerName = nominatimResult.name;
+
+      // Update Google Search URL with the actual name
+      result.googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(
+        `${nominatimResult.name} Panama`
+      )}`;
+    }
+
+    // Check extratags for contact info on the building itself
+    if (nominatimResult.extratags) {
+      const contact = extractContactFromTags(nominatimResult.extratags);
+      if (contact.phone) result.phone = contact.phone;
+      if (contact.email) result.email = contact.email;
+      if (contact.website) result.website = contact.website;
+
+      const social: Record<string, string> = {};
+      if (contact.facebook) social.facebook = contact.facebook;
+      if (contact.instagram) social.instagram = contact.instagram;
+      if (contact.linkedin) social.linkedin = contact.linkedin;
+      if (Object.keys(social).length > 0) {
+        result.socialMedia = social as OwnerResearchResult['socialMedia'];
+      }
     }
 
     result.sources.push('OpenStreetMap');
   }
 
-  // 2. Overpass — nearby businesses with contact info
+  // 2. Overpass — nearby POIs categorized by distance
   if (overpassPOIs.length > 0) {
     const seen = new Set<string>();
 
@@ -217,70 +308,48 @@ export async function researchOwner(
       const poiLon = poi.lon ?? poi.center?.lon ?? lng;
       const distance = Math.round(haversineDistance(lat, lng, poiLat, poiLon));
 
+      const contact = extractContactFromTags(tags);
+
       const business: NearbyBusiness = {
         name,
         type: categorizePOI(tags),
         distance,
-        phone: tags.phone || tags['contact:phone'] || undefined,
-        website: tags.website || tags['contact:website'] || undefined,
-        email: tags.email || tags['contact:email'] || undefined,
+        phone: contact.phone,
+        website: contact.website,
+        email: contact.email,
         address: tags['addr:street']
           ? `${tags['addr:street']}${tags['addr:housenumber'] ? ' ' + tags['addr:housenumber'] : ''}`
           : undefined,
+        osmTags: tags,
       };
 
       result.nearbyBusinesses.push(business);
 
-      // Use the closest/first business as primary owner if we don't have one
-      if (!result.ownerName && distance < 30) {
-        result.ownerName = name;
-      }
-      if (!result.phone && business.phone) {
-        result.phone = business.phone;
-      }
-      if (!result.email && business.email) {
-        result.email = business.email;
-      }
-      if (!result.website && business.website) {
-        result.website = business.website;
+      // ONLY assign to main result if the POI is directly AT the building
+      if (distance <= BUILDING_PROXIMITY_M) {
+        if (!result.ownerName) {
+          result.ownerName = name;
+          result.googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(`${name} Panama`)}`;
+        }
+        if (!result.phone && contact.phone) result.phone = contact.phone;
+        if (!result.email && contact.email) result.email = contact.email;
+        if (!result.website && contact.website) result.website = contact.website;
+
+        // Social media — only from the building's own POI
+        if (!result.socialMedia) {
+          const social: Record<string, string> = {};
+          if (contact.facebook) social.facebook = contact.facebook;
+          if (contact.instagram) social.instagram = contact.instagram;
+          if (contact.linkedin) social.linkedin = contact.linkedin;
+          if (Object.keys(social).length > 0) {
+            result.socialMedia = social as OwnerResearchResult['socialMedia'];
+          }
+        }
       }
     }
 
     // Sort by distance
     result.nearbyBusinesses.sort((a, b) => a.distance - b.distance);
-
-    if (result.nearbyBusinesses.length > 0 && !result.sources.includes('OpenStreetMap')) {
-      result.sources.push('OpenStreetMap');
-    }
-  }
-
-  // 3. Server API — enriches with Google Places + directory scraping
-  if (serverResult) {
-    if (serverResult.ownerName && !result.ownerName) {
-      result.ownerName = serverResult.ownerName;
-    }
-    if (serverResult.phone && !result.phone) {
-      result.phone = serverResult.phone;
-    }
-    if (serverResult.email && !result.email) {
-      result.email = serverResult.email;
-    }
-    if (serverResult.website && !result.website) {
-      result.website = serverResult.website;
-    }
-    if (serverResult.socialMedia) {
-      result.socialMedia = {
-        ...(result.socialMedia || {}),
-        ...serverResult.socialMedia,
-      };
-    }
-    if (serverResult.sources) {
-      for (const src of serverResult.sources) {
-        if (!result.sources.includes(src)) {
-          result.sources.push(src);
-        }
-      }
-    }
   }
 
   return result;

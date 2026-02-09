@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
   Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
-  Search, Phone, Mail, Globe, MessageCircle, Loader2, Store, Navigation,
+  Search, Phone, Mail, Globe, MessageCircle, Loader2, Store, Navigation, MapPinned,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -281,27 +281,27 @@ export default function BuildingDetail({
                     <div className="w-7 h-7 rounded-lg bg-[#22c55e]/10 flex items-center justify-center shrink-0">
                       <Navigation className="w-3.5 h-3.5 text-[#22c55e]" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="text-[11px] text-[#555566]">Address</div>
                       <div className="text-sm text-[#f0f0f5] font-medium leading-tight">{ownerData.address}</div>
                     </div>
                   </div>
                 )}
 
-                {/* Owner / Business name */}
+                {/* Owner / Business name — only shown when verified at building */}
                 {ownerData.ownerName && (
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center shrink-0">
                       <Building2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
                     </div>
-                    <div>
-                      <div className="text-[11px] text-[#555566]">Owner / Business</div>
-                      <div className="text-sm text-[#f0f0f5] font-medium">{ownerData.ownerName}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-[#555566]">Building Occupant</div>
+                      <div className="text-sm text-[#f0f0f5] font-medium truncate">{ownerData.ownerName}</div>
                     </div>
                   </div>
                 )}
 
-                {/* Phone with WhatsApp + Call */}
+                {/* Phone — only from verified building occupant */}
                 {ownerData.phone && (
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded-lg bg-[#22c55e]/10 flex items-center justify-center shrink-0">
@@ -340,10 +340,7 @@ export default function BuildingDetail({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[11px] text-[#555566]">Email</div>
-                      <a
-                        href={`mailto:${ownerData.email}`}
-                        className="text-sm text-[#0ea5e9] hover:underline truncate block"
-                      >
+                      <a href={`mailto:${ownerData.email}`} className="text-sm text-[#0ea5e9] hover:underline truncate block">
                         {ownerData.email}
                       </a>
                     </div>
@@ -370,8 +367,8 @@ export default function BuildingDetail({
                   </div>
                 )}
 
-                {/* Social Media */}
-                {ownerData.socialMedia && (
+                {/* Social Media — only verified links */}
+                {ownerData.socialMedia && (ownerData.socialMedia.facebook || ownerData.socialMedia.instagram || ownerData.socialMedia.linkedin) && (
                   <div className="flex gap-2 pt-1">
                     {ownerData.socialMedia.facebook && (
                       <a href={ownerData.socialMedia.facebook} target="_blank" rel="noopener" className="px-2.5 py-1 text-[11px] rounded-lg bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors">Facebook</a>
@@ -385,12 +382,34 @@ export default function BuildingDetail({
                   </div>
                 )}
 
-                {/* Nearby Businesses */}
+                {/* Quick Research Links — Google Maps + Google Search */}
+                <div className="flex gap-2 pt-1">
+                  <a
+                    href={ownerData.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors text-xs text-[#8888a0] hover:text-[#f0f0f5]"
+                  >
+                    <MapPinned className="w-3.5 h-3.5" />
+                    Google Maps
+                  </a>
+                  <a
+                    href={ownerData.googleSearchUrl}
+                    target="_blank"
+                    rel="noopener"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors text-xs text-[#8888a0] hover:text-[#f0f0f5]"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    Google Search
+                  </a>
+                </div>
+
+                {/* Nearby Businesses — clearly separated */}
                 {ownerData.nearbyBusinesses && ownerData.nearbyBusinesses.length > 0 && (
-                  <div className="pt-1.5">
+                  <div className="pt-2 border-t border-white/[0.04]">
                     <div className="text-[11px] text-[#555566] uppercase tracking-wider mb-2 flex items-center gap-1">
                       <Store className="w-3 h-3" />
-                      Nearby ({ownerData.nearbyBusinesses.length})
+                      Businesses Nearby
                     </div>
                     <div className="space-y-1.5">
                       {ownerData.nearbyBusinesses.slice(0, 5).map((biz, i) => (
@@ -402,7 +421,7 @@ export default function BuildingDetail({
                             <div className="min-w-0">
                               <div className="text-xs font-medium text-[#f0f0f5] truncate">{biz.name}</div>
                               <div className="text-[10px] text-[#555566]">
-                                {biz.type} · {biz.distance}m away
+                                {biz.type} · {biz.distance}m
                               </div>
                             </div>
                             {biz.phone && (
@@ -442,30 +461,21 @@ export default function BuildingDetail({
                   </div>
                 )}
 
-                {/* No meaningful data found */}
-                {!ownerData.phone && !ownerData.email && !ownerData.ownerName && !ownerData.address && ownerData.nearbyBusinesses.length === 0 && (
-                  <div className="text-sm text-[#555566] text-center py-2">
-                    No info found for this location
-                  </div>
-                )}
-
-                {/* Sources */}
-                {ownerData.sources.length > 0 && (
-                  <div className="text-[10px] text-[#555566] pt-1">
-                    Sources: {ownerData.sources.join(', ')}
-                  </div>
-                )}
-
-                {/* Refresh button */}
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  size="sm"
-                  icon={<Search className="w-3.5 h-3.5" />}
-                  onClick={handleResearchOwner}
-                >
-                  Search Again
-                </Button>
+                {/* Sources + Refresh */}
+                <div className="flex items-center justify-between pt-1">
+                  {ownerData.sources.length > 0 && (
+                    <div className="text-[10px] text-[#555566]">
+                      via {ownerData.sources.join(', ')}
+                    </div>
+                  )}
+                  <button
+                    onClick={handleResearchOwner}
+                    className="text-[10px] text-[#8888a0] hover:text-[#00ffcc] transition-colors flex items-center gap-1"
+                  >
+                    <Search className="w-3 h-3" />
+                    Refresh
+                  </button>
+                </div>
               </div>
             )}
           </GlassCard>
