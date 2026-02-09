@@ -111,6 +111,7 @@ export function useRoofScanner() {
       const result = await scanRoof({
         latitude: building.center.lat,
         longitude: building.center.lng,
+        roofAreaM2: building.area,
       });
 
       setBuildings((prev) =>

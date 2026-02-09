@@ -13,7 +13,7 @@ export default function DrawToolbar({
   onClear,
 }: DrawToolbarProps) {
   return (
-    <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 p-1.5 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 p-1.5 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
       {/* Scan Viewport */}
       <motion.button
         whileHover={{ scale: 1.05 }}

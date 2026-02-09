@@ -1,12 +1,15 @@
-import { motion, AnimatePresence } from 'framer-motion';
+// framer-motion removed — parent handles animation
+import { useState, useCallback, useEffect } from 'react';
 import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
   Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
+  Search, Phone, Mail, Globe, MessageCircle, Loader2,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import { PANAMA_DEFAULTS } from '@/services/solarCalculator';
+import { researchOwner, buildWhatsAppUrl, buildCallUrl, type OwnerResearchResult } from '@/services/ownerResearchService';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { SuitabilityResult } from '@/services/roofClassifier';
 
@@ -73,6 +76,37 @@ export default function BuildingDetail({
   onSaveAsLead,
   isLeadSaved,
 }: BuildingDetailProps) {
+  const [ownerData, setOwnerData] = useState<OwnerResearchResult | null>(null);
+  const [isResearching, setIsResearching] = useState(false);
+  const [researchAttempted, setResearchAttempted] = useState(false);
+
+  // Reset owner research when building changes
+  useEffect(() => {
+    setOwnerData(null);
+    setResearchAttempted(false);
+  }, [building?.id]);
+
+  const handleResearchOwner = useCallback(async () => {
+    if (!building) return;
+    setIsResearching(true);
+    setResearchAttempted(false);
+    try {
+      const result = await researchOwner(
+        building.name || `Building ${building.id}`,
+        building.center.lat,
+        building.center.lng
+      );
+      if (result) {
+        setOwnerData(result);
+      }
+      setResearchAttempted(true);
+    } catch {
+      setResearchAttempted(true);
+    } finally {
+      setIsResearching(false);
+    }
+  }, [building]);
+
   if (!building) return null;
 
   const scoreColor = getScoreColor(building.suitability.score);
@@ -94,13 +128,8 @@ export default function BuildingDetail({
   }));
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ x: '100%', opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: '100%', opacity: 0 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="absolute right-0 top-0 bottom-0 w-[420px] z-20 bg-[#0a0a0f]/98 backdrop-blur-2xl border-l border-white/[0.06] flex flex-col overflow-hidden"
+      <div
+        className="w-[420px] h-full bg-[#0a0a0f]/98 backdrop-blur-2xl border-l border-white/[0.06] flex flex-col overflow-hidden"
       >
         {/* Header */}
         <div className="px-5 pt-5 pb-4 flex items-start gap-3">
@@ -202,6 +231,157 @@ export default function BuildingDetail({
                 </div>
               </div>
             </div>
+          </GlassCard>
+
+          {/* Owner Research */}
+          <GlassCard padding="md">
+            <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <Search className="w-3.5 h-3.5 text-[#8b5cf6]" />
+              Owner / Contact
+            </h3>
+
+            {!ownerData && !isResearching && !researchAttempted && (
+              <Button
+                variant="secondary"
+                fullWidth
+                icon={<Search className="w-4 h-4" />}
+                onClick={handleResearchOwner}
+              >
+                Find Owner Info
+              </Button>
+            )}
+
+            {!ownerData && !isResearching && researchAttempted && (
+              <div className="text-center py-3 space-y-2">
+                <p className="text-sm text-[#555566]">
+                  No contact info found in public directories
+                </p>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  size="sm"
+                  icon={<Search className="w-3.5 h-3.5" />}
+                  onClick={handleResearchOwner}
+                >
+                  Try Again
+                </Button>
+              </div>
+            )}
+
+            {isResearching && (
+              <div className="flex items-center gap-2 py-3 justify-center">
+                <Loader2 className="w-4 h-4 text-[#8b5cf6] animate-spin" />
+                <span className="text-sm text-[#8888a0]">Searching directories...</span>
+              </div>
+            )}
+
+            {ownerData && (
+              <div className="space-y-2.5">
+                {ownerData.ownerName && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center">
+                      <Building2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] text-[#555566]">Owner / Business</div>
+                      <div className="text-sm text-[#f0f0f5] font-medium">{ownerData.ownerName}</div>
+                    </div>
+                  </div>
+                )}
+
+                {ownerData.phone && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#22c55e]/10 flex items-center justify-center">
+                      <Phone className="w-3.5 h-3.5 text-[#22c55e]" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-[11px] text-[#555566]">Phone</div>
+                      <div className="text-sm text-[#f0f0f5] font-medium">{ownerData.phone}</div>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <a
+                        href={buildWhatsAppUrl(ownerData.phone, ownerData.ownerName || undefined)}
+                        target="_blank"
+                        rel="noopener"
+                        className="p-1.5 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors"
+                        title="WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                      </a>
+                      <a
+                        href={buildCallUrl(ownerData.phone)}
+                        className="p-1.5 rounded-lg bg-[#0ea5e9]/10 hover:bg-[#0ea5e9]/20 transition-colors"
+                        title="Call"
+                      >
+                        <Phone className="w-3.5 h-3.5 text-[#0ea5e9]" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {ownerData.email && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#f59e0b]/10 flex items-center justify-center">
+                      <Mail className="w-3.5 h-3.5 text-[#f59e0b]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-[#555566]">Email</div>
+                      <a
+                        href={`mailto:${ownerData.email}`}
+                        className="text-sm text-[#0ea5e9] hover:underline truncate block"
+                      >
+                        {ownerData.email}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {ownerData.website && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#0ea5e9]/10 flex items-center justify-center">
+                      <Globe className="w-3.5 h-3.5 text-[#0ea5e9]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-[#555566]">Website</div>
+                      <a
+                        href={ownerData.website.startsWith('http') ? ownerData.website : `https://${ownerData.website}`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-sm text-[#0ea5e9] hover:underline truncate block"
+                      >
+                        {ownerData.website.replace(/^https?:\/\//, '')}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {ownerData.socialMedia && (
+                  <div className="flex gap-2 pt-1">
+                    {ownerData.socialMedia.facebook && (
+                      <a href={ownerData.socialMedia.facebook} target="_blank" rel="noopener" className="px-2.5 py-1 text-[11px] rounded-lg bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors">Facebook</a>
+                    )}
+                    {ownerData.socialMedia.instagram && (
+                      <a href={ownerData.socialMedia.instagram} target="_blank" rel="noopener" className="px-2.5 py-1 text-[11px] rounded-lg bg-[#E4405F]/10 text-[#E4405F] hover:bg-[#E4405F]/20 transition-colors">Instagram</a>
+                    )}
+                    {ownerData.socialMedia.linkedin && (
+                      <a href={ownerData.socialMedia.linkedin} target="_blank" rel="noopener" className="px-2.5 py-1 text-[11px] rounded-lg bg-[#0A66C2]/10 text-[#0A66C2] hover:bg-[#0A66C2]/20 transition-colors">LinkedIn</a>
+                    )}
+                  </div>
+                )}
+
+                {ownerData.sources.length > 0 && (
+                  <div className="text-[10px] text-[#555566] pt-1">
+                    Sources: {ownerData.sources.join(', ')}
+                  </div>
+                )}
+
+                {!ownerData.phone && !ownerData.email && !ownerData.ownerName && (
+                  <div className="text-sm text-[#555566] text-center py-2">
+                    No contact info found in Panama directories
+                  </div>
+                )}
+              </div>
+            )}
           </GlassCard>
 
           {/* Solar Analysis */}
@@ -357,7 +537,6 @@ export default function BuildingDetail({
             </>
           )}
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
   );
 }

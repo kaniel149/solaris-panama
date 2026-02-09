@@ -36,6 +36,30 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult> 
 }
 
 /**
+ * Search places with multiple results for autocomplete.
+ * Returns up to 5 matches biased toward Panama.
+ */
+export async function searchPlaces(query: string): Promise<GeocodingResult[]> {
+  if (!query || query.trim().length < 2) return [];
+  const searchQuery = query.toLowerCase().includes('panama')
+    ? query
+    : `${query}, Panama`;
+  const encoded = encodeURIComponent(searchQuery);
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=5&countrycodes=pa&addressdetails=1`,
+    { headers: { 'User-Agent': 'SolarisPanama/1.0' } }
+  );
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.map((item: Record<string, unknown>) => ({
+    lat: parseFloat(item.lat as string),
+    lng: parseFloat(item.lon as string),
+    displayName: item.display_name as string,
+    type: (item.type as string) || 'unknown',
+  }));
+}
+
+/**
  * Reverse geocode coordinates to an address string.
  */
 export async function reverseGeocode(lat: number, lng: number): Promise<string> {

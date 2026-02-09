@@ -12,5 +12,9 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    watch: {
+      // Don't watch Vercel serverless functions
+      ignored: ['**/api/**'],
+    },
   },
 });

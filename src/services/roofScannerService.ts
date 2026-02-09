@@ -10,6 +10,7 @@ export interface RoofScanRequest {
   address?: string;
   latitude?: number;
   longitude?: number;
+  roofAreaM2?: number; // Pass actual building area for better estimates
 }
 
 export interface RoofSegment {
@@ -325,41 +326,76 @@ export async function scanRoof(
 
   // 3. Fallback: PVWatts estimate
   // Estimate a typical commercial flat roof
-  const estimatedRoofM2 = 500;
+  const estimatedRoofM2 = request.roofAreaM2 ?? 500;
   const usableArea = estimatedRoofM2 * USABLE_ROOF_RATIO;
   const maxPanels = Math.floor(usableArea / PANEL_AREA_M2);
   const estimatedSystemKwp = (maxPanels * PANEL_WATT) / 1000;
 
-  const pvwatts = await estimateWithPvWatts(lat, lng, estimatedSystemKwp);
+  try {
+    const pvwatts = await estimateWithPvWatts(lat, lng, estimatedSystemKwp);
 
-  // Build panel config options at 25%, 50%, 75%, 100%
-  const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => {
-    const panels = Math.round(maxPanels * ratio);
-    const energy = Math.round(pvwatts.yearlyEnergyKwh * ratio);
-    return { panelsCount: panels, yearlyEnergyDcKwh: energy };
-  });
+    const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => {
+      const panels = Math.round(maxPanels * ratio);
+      const energy = Math.round(pvwatts.yearlyEnergyKwh * ratio);
+      return { panelsCount: panels, yearlyEnergyDcKwh: energy };
+    });
 
-  return {
-    address,
-    latitude: lat,
-    longitude: lng,
-    source: 'pvwatts_estimate',
-    quality: 'ESTIMATED',
-    totalRoofAreaM2: estimatedRoofM2,
-    usableRoofAreaM2: usableArea,
-    roofSegments: [
-      {
-        areaM2: estimatedRoofM2,
-        pitchDegrees: 5,
-        azimuthDegrees: 180,
-        center: { lat, lng },
-      },
-    ],
-    maxPanelCount: maxPanels,
-    maxSystemSizeKwp: estimatedSystemKwp,
-    yearlyEnergyKwh: pvwatts.yearlyEnergyKwh,
-    peakSunHoursPerYear: pvwatts.solarRadiationAnnual * 365,
-    panelConfigs,
-    rawPvWattsData: pvwatts,
-  };
+    return {
+      address,
+      latitude: lat,
+      longitude: lng,
+      source: 'pvwatts_estimate',
+      quality: 'ESTIMATED',
+      totalRoofAreaM2: estimatedRoofM2,
+      usableRoofAreaM2: usableArea,
+      roofSegments: [
+        {
+          areaM2: estimatedRoofM2,
+          pitchDegrees: 5,
+          azimuthDegrees: 180,
+          center: { lat, lng },
+        },
+      ],
+      maxPanelCount: maxPanels,
+      maxSystemSizeKwp: estimatedSystemKwp,
+      yearlyEnergyKwh: pvwatts.yearlyEnergyKwh,
+      peakSunHoursPerYear: pvwatts.solarRadiationAnnual * 365,
+      panelConfigs,
+      rawPvWattsData: pvwatts,
+    };
+  } catch {
+    // 4. Final fallback: local estimate (no API keys needed)
+    // Panama average: ~4.5 peak sun hours/day → ~1,643 kWh/kWp/year
+    const PANAMA_PSH = 4.5;
+    const yearlyKwhPerKwp = PANAMA_PSH * 365 * (1 - SYSTEM_LOSSES / 100);
+    const yearlyEnergy = Math.round(estimatedSystemKwp * yearlyKwhPerKwp);
+
+    const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => ({
+      panelsCount: Math.round(maxPanels * ratio),
+      yearlyEnergyDcKwh: Math.round(yearlyEnergy * ratio),
+    }));
+
+    return {
+      address,
+      latitude: lat,
+      longitude: lng,
+      source: 'manual' as const,
+      quality: 'ESTIMATED' as const,
+      totalRoofAreaM2: estimatedRoofM2,
+      usableRoofAreaM2: usableArea,
+      roofSegments: [
+        {
+          areaM2: estimatedRoofM2,
+          pitchDegrees: 5,
+          azimuthDegrees: 180,
+          center: { lat, lng },
+        },
+      ],
+      maxPanelCount: maxPanels,
+      maxSystemSizeKwp: estimatedSystemKwp,
+      yearlyEnergyKwh: yearlyEnergy,
+      peakSunHoursPerYear: PANAMA_PSH * 365,
+      panelConfigs,
+    };
+  }
 }

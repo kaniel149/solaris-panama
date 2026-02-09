@@ -1,14 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createClient, type User, type Session, type SupabaseClient } from '@supabase/supabase-js';
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Auto-bypass auth when Supabase isn't configured (demo/dev mode)
+const HAS_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('localhost'));
+
 const supabase: SupabaseClient = createClient(
-  import.meta.env.VITE_SUPABASE_URL || 'http://localhost:54321',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
+  SUPABASE_URL || 'http://localhost:54321',
+  SUPABASE_KEY || 'placeholder-key'
 );
 
 export type UserRole = 'admin' | 'sales' | 'engineer' | 'installer';
 
-const DEV_BYPASS_AUTH = import.meta.env.DEV && import.meta.env.VITE_DEV_BYPASS_AUTH === 'true';
+const DEV_BYPASS_AUTH = !HAS_SUPABASE || (import.meta.env.DEV && import.meta.env.VITE_DEV_BYPASS_AUTH === 'true');
 
 const DEV_USER: User = {
   id: 'dev-user-001',
