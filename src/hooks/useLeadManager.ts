@@ -158,7 +158,13 @@ export function useLeadManager() {
       if (!lead) return;
 
       const queryName = lead.enrichment?.businessName || lead.buildingName;
-      const result = await researchOwner(queryName, lead.center.lat, lead.center.lng);
+      const result = await researchOwner({
+        buildingName: queryName,
+        lat: lead.center.lat,
+        lng: lead.center.lng,
+        osmId: lead.osmId || 0,
+        area: lead.area || 0,
+      });
 
       if (result) {
         const merged = mergeOwnerResearch(

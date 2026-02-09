@@ -17,6 +17,7 @@ import type { SuitabilityResult } from '@/services/roofClassifier';
 
 export interface DetailBuilding {
   id: number;
+  osmId: number;
   name: string;
   area: number;
   buildingType: string;
@@ -91,11 +92,13 @@ export default function BuildingDetail({
     setIsResearching(true);
     setResearchAttempted(false);
     try {
-      const result = await researchOwner(
-        building.name || `Building ${building.id}`,
-        building.center.lat,
-        building.center.lng
-      );
+      const result = await researchOwner({
+        buildingName: building.name || `Building ${building.id}`,
+        lat: building.center.lat,
+        lng: building.center.lng,
+        osmId: building.osmId,
+        area: building.area,
+      });
       setOwnerData(result);
       setResearchAttempted(true);
     } catch {
