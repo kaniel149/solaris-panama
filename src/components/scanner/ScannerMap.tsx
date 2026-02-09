@@ -18,6 +18,7 @@ const DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.
 const STREET_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 const SATELLITE_STYLE: Record<string, unknown> = {
   version: 8,
+  glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
   sources: {
     'esri-satellite': {
       type: 'raster',
@@ -26,7 +27,7 @@ const SATELLITE_STYLE: Record<string, unknown> = {
       ],
       tileSize: 256,
       attribution: '&copy; Esri',
-      maxzoom: 19,
+      maxzoom: 22,
     },
     'esri-labels': {
       type: 'raster',
@@ -34,7 +35,7 @@ const SATELLITE_STYLE: Record<string, unknown> = {
         'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
       ],
       tileSize: 256,
-      maxzoom: 19,
+      maxzoom: 22,
     },
     'esri-roads': {
       type: 'raster',
@@ -42,7 +43,7 @@ const SATELLITE_STYLE: Record<string, unknown> = {
         'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
       ],
       tileSize: 256,
-      maxzoom: 19,
+      maxzoom: 22,
     },
   },
   layers: [
@@ -102,6 +103,14 @@ interface ScannerMapProps {
   searchMarker?: { lng: number; lat: number } | null;
 }
 
+interface HoverInfo {
+  lng: number;
+  lat: number;
+  name: string;
+  score: number;
+  area: number;
+}
+
 const EMPTY_FILTER = ['==', ['get', 'id'], -1];
 
 // ===== COMPONENT =====
@@ -118,6 +127,8 @@ export default function ScannerMap({
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>('dark');
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  const isSatellite = styleMode === 'satellite';
   const [viewState, setViewState] = useState({
     longitude: center[0],
     latitude: center[1],
@@ -169,10 +180,17 @@ export default function ScannerMap({
   );
 
   const handleMouseEnter = useCallback(
-    (e: { features?: Array<{ properties?: Record<string, unknown> }> }) => {
+    (e: { features?: Array<{ properties?: Record<string, unknown>; geometry?: any }> ; lngLat?: { lng: number; lat: number } }) => {
       const feature = e.features?.[0];
       if (feature?.properties?.id != null) {
         setHoveredId(feature.properties.id as number);
+        setHoverInfo({
+          lng: e.lngLat?.lng ?? 0,
+          lat: e.lngLat?.lat ?? 0,
+          name: (feature.properties.name as string) || `Building`,
+          score: (feature.properties.score as number) || 0,
+          area: (feature.properties.area as number) || 0,
+        });
         const map = (mapRef.current as any)?.getMap?.();
         if (map) map.getCanvas().style.cursor = 'pointer';
       }
@@ -180,8 +198,19 @@ export default function ScannerMap({
     []
   );
 
+  const handleMouseMove = useCallback(
+    (e: { features?: Array<{ properties?: Record<string, unknown> }> ; lngLat?: { lng: number; lat: number } }) => {
+      const feature = e.features?.[0];
+      if (feature?.properties?.id != null && e.lngLat) {
+        setHoverInfo((prev) => prev ? { ...prev, lng: e.lngLat!.lng, lat: e.lngLat!.lat } : prev);
+      }
+    },
+    []
+  );
+
   const handleMouseLeave = useCallback(() => {
     setHoveredId(null);
+    setHoverInfo(null);
     const map = (mapRef.current as any)?.getMap?.();
     if (map) map.getCanvas().style.cursor = '';
   }, []);
@@ -217,11 +246,13 @@ export default function ScannerMap({
         onMoveEnd={handleMoveEnd}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         interactiveLayerIds={interactiveLayerIds}
         mapStyle={STYLE_MAP[styleMode] as any}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
+        maxZoom={21}
         reuseMaps
       >
         <NavigationControl position="top-right" showCompass={false} />
@@ -233,7 +264,7 @@ export default function ScannerMap({
 
         {/* Building polygons */}
         <Source id="buildings" type="geojson" data={buildings}>
-          {/* Fill layer - color by score */}
+          {/* Fill layer - color by score, brighter on satellite */}
           <Layer
             id="buildings-fill"
             type="fill"
@@ -252,19 +283,19 @@ export default function ScannerMap({
               'fill-opacity': [
                 'case',
                 ['==', ['get', 'id'], hoveredId ?? -1],
-                0.7,
-                0.5,
+                isSatellite ? 0.65 : 0.7,
+                isSatellite ? 0.45 : 0.5,
               ],
             }}
           />
 
-          {/* Outline layer */}
+          {/* Outline layer — much brighter on satellite for visibility */}
           <Layer
             id="buildings-outline"
             type="line"
             paint={{
-              'line-color': 'rgba(255,255,255,0.3)',
-              'line-width': 1,
+              'line-color': isSatellite ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.3)',
+              'line-width': isSatellite ? 2 : 1,
             }}
           />
 
@@ -274,8 +305,8 @@ export default function ScannerMap({
             type="line"
             filter={hoverFilter}
             paint={{
-              'line-color': 'rgba(255,255,255,0.6)',
-              'line-width': 2,
+              'line-color': isSatellite ? '#00ffcc' : 'rgba(255,255,255,0.6)',
+              'line-width': isSatellite ? 3 : 2,
             }}
           />
 
@@ -319,6 +350,36 @@ export default function ScannerMap({
             }}
           />
         </Source>
+
+        {/* Building hover tooltip — rendered as a Marker to follow mouse position on map */}
+        {hoverInfo && hoveredId != null && (
+          <Marker
+            longitude={hoverInfo.lng}
+            latitude={hoverInfo.lat}
+            anchor="bottom"
+            offset={[0, -10] as [number, number]}
+          >
+            <div
+              className="pointer-events-none px-2.5 py-1.5 text-xs space-y-0.5 shadow-lg"
+              style={{
+                background: '#12121aee',
+                borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <div className="font-semibold text-[#f0f0f5] truncate max-w-[180px]">{hoverInfo.name}</div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span style={{ color: hoverInfo.score >= 80 ? '#00ffcc' : hoverInfo.score >= 60 ? '#22c55e' : hoverInfo.score >= 40 ? '#f59e0b' : '#ef4444' }}>
+                  Score: {hoverInfo.score}/100
+                </span>
+                <span className="text-[#555566]">{Math.round(hoverInfo.area)} m²</span>
+              </div>
+              <div className="text-[10px] text-[#555566]">Click to select</div>
+            </div>
+          </Marker>
+        )}
 
         {/* Pin marker with pulsing ring */}
         {searchMarker && (
