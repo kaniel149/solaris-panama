@@ -13,6 +13,7 @@ import {
   Download,
   Clock,
   ChevronDown,
+  Send,
 } from 'lucide-react';
 import type { LeadActivity, LeadActivityType } from '@/types/leadActivity';
 import { ACTIVITY_COLOR_MAP } from '@/types/leadActivity';
@@ -32,6 +33,8 @@ const ICON_COMPONENTS: Record<LeadActivityType, React.ComponentType<{ className?
   call_made: Phone,
   whatsapp_sent: MessageCircle,
   exported: Download,
+  proposal_generated: FileText,
+  proposal_sent: Send,
 };
 
 // Relative time formatter

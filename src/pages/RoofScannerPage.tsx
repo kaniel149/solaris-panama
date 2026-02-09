@@ -177,9 +177,9 @@ export default function RoofScannerPage() {
     [selectZone, zones]
   );
 
-  const handleSaveAsLead = useCallback(() => {
+  const handleSaveAsLead = useCallback((enrichedData?: import('@/types/enrichment').EnrichedOwnerResult) => {
     if (!selectedBuilding) return;
-    createLeadFromBuilding(selectedBuilding, selectedZoneNameRef.current);
+    createLeadFromBuilding(selectedBuilding, selectedZoneNameRef.current, enrichedData);
   }, [selectedBuilding, createLeadFromBuilding]);
 
   const handleSaveAllAsLeads = useCallback(() => {

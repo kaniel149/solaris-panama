@@ -41,7 +41,7 @@ interface BuildingDetailProps {
   isAnalyzing: boolean;
   onClose: () => void;
   onAnalyze: () => void;
-  onSaveAsLead?: () => void;
+  onSaveAsLead?: (enrichedData?: EnrichedOwnerResult) => void;
   isLeadSaved?: boolean;
 }
 
@@ -960,7 +960,7 @@ export default function BuildingDetail({
               variant={isLeadSaved ? 'secondary' : 'accent'}
               fullWidth
               icon={<UserPlus className="w-4 h-4" />}
-              onClick={onSaveAsLead}
+              onClick={() => onSaveAsLead(enrichedData ?? undefined)}
               disabled={isLeadSaved}
             >
               {isLeadSaved ? 'Saved as Lead' : 'Save as Lead'}

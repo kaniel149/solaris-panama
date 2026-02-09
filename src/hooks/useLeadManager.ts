@@ -13,9 +13,10 @@ import {
   calculateLeadScore,
 } from '@/services/leadEnrichmentService';
 import { addActivity, getActivities } from '@/services/leadActivityService';
-import { researchOwner, mergeOwnerResearch } from '@/services/ownerResearchService';
+import { researchBuildingOwner } from '@/services/ownerResearchService';
 import type { LeadActivity } from '@/types/leadActivity';
 import type { DiscoveredBuilding } from '@/hooks/useRoofScanner';
+import type { EnrichedOwnerResult } from '@/types/enrichment';
 
 // ===== Hook =====
 
@@ -48,14 +49,18 @@ export function useLeadManager() {
   // ===== Actions =====
 
   const createLeadFromBuilding = useCallback(
-    (building: DiscoveredBuilding, zone?: string): Lead => {
-      const lead = buildingToLead(building, null, zone || null);
+    (building: DiscoveredBuilding, zone?: string, enrichedData?: EnrichedOwnerResult): Lead => {
+      const lead = buildingToLead(building, null, zone || null, enrichedData);
       setLeads((prev) => {
         // Deduplicate by osmId
         if (prev.some((l) => l.osmId === building.osmId)) return prev;
         return [...prev, lead];
       });
-      addActivity(lead.id, 'created', `Lead created from ${building.buildingType} building`);
+
+      const sourcesCount = enrichedData
+        ? ` with ${enrichedData.totalSourcesWithData}/${enrichedData.totalSourcesQueried} sources`
+        : '';
+      addActivity(lead.id, 'created', `Lead created from ${building.buildingType} building${sourcesCount}`);
       return lead;
     },
     []
@@ -86,7 +91,8 @@ export function useLeadManager() {
         if (!lead) return;
 
         const enrichment = await enrichBuilding(lead.center);
-        const updatedScore = calculateLeadScore(lead.suitabilityScore, enrichment);
+        const financials = { paybackYears: lead.estimatedPaybackYears, systemKwp: lead.estimatedSystemKwp };
+        const updatedScore = calculateLeadScore(lead.suitabilityScore, enrichment, financials);
 
         setLeads((prev) =>
           prev.map((l) =>
@@ -129,7 +135,8 @@ export function useLeadManager() {
         prev.map((lead) => {
           if (!results.has(lead.id)) return lead;
           const enrichment = results.get(lead.id) || null;
-          const updatedScore = calculateLeadScore(lead.suitabilityScore, enrichment);
+          const financials = { paybackYears: lead.estimatedPaybackYears, systemKwp: lead.estimatedSystemKwp };
+          const updatedScore = calculateLeadScore(lead.suitabilityScore, enrichment, financials);
           return {
             ...lead,
             enrichment,
@@ -158,66 +165,77 @@ export function useLeadManager() {
       if (!lead) return;
 
       const queryName = lead.enrichment?.businessName || lead.buildingName;
-      const result = await researchOwner({
-        buildingName: queryName,
+
+      // Use FULL enrichment pipeline (not legacy wrapper)
+      const enriched = await researchBuildingOwner({
         lat: lead.center.lat,
         lng: lead.center.lng,
         osmId: lead.osmId || 0,
-        area: lead.area || 0,
+        buildingName: queryName,
       });
 
-      if (result) {
-        const merged = mergeOwnerResearch(
-          lead.enrichment ? {
-            ownerName: lead.enrichment.ownerName,
-            email: lead.enrichment.email,
-            phone: lead.enrichment.phone,
-            socialMedia: lead.enrichment.socialMedia,
-          } : null,
-          result
-        );
+      setLeads((prev) =>
+        prev.map((l) => {
+          if (l.id !== id) return l;
 
-        setLeads((prev) =>
-          prev.map((l) => {
-            if (l.id !== id) return l;
-            const updatedEnrichment = {
-              ...(l.enrichment || {
-                businessName: null,
-                phone: null,
-                website: null,
-                address: null,
-                rating: null,
-                types: [],
-                placeId: null,
-                ownerName: null,
-                email: null,
-                socialMedia: null,
-              }),
-              ownerName: merged.ownerName,
-              email: merged.email,
-              phone: merged.phone || l.enrichment?.phone || null,
-              website: result.website || l.enrichment?.website || null,
-              socialMedia: merged.socialMedia,
-            };
-            const updatedScore = calculateLeadScore(l.suitabilityScore, updatedEnrichment);
-            return {
-              ...l,
-              enrichment: updatedEnrichment,
-              leadScore: updatedScore,
-              updatedAt: new Date().toISOString(),
-            };
-          })
-        );
+          // Merge enriched data into existing enrichment, keeping Google Places data
+          const updatedEnrichment = {
+            // Base fields (keep existing if enriched doesn't have them)
+            businessName: l.enrichment?.businessName || enriched.ownerName,
+            phone: enriched.phone || l.enrichment?.phone || null,
+            website: enriched.website || l.enrichment?.website || null,
+            address: enriched.address || l.enrichment?.address || null,
+            rating: l.enrichment?.rating ?? null,
+            types: l.enrichment?.types || [],
+            placeId: l.enrichment?.placeId || null,
+            // Owner research fields
+            ownerName: enriched.ownerName || l.enrichment?.ownerName || null,
+            email: enriched.email || l.enrichment?.email || null,
+            socialMedia: (enriched.socialMedia.facebook || enriched.socialMedia.instagram || enriched.socialMedia.linkedin)
+              ? {
+                  facebook: enriched.socialMedia.facebook || l.enrichment?.socialMedia?.facebook,
+                  instagram: enriched.socialMedia.instagram || l.enrichment?.socialMedia?.instagram,
+                  linkedin: enriched.socialMedia.linkedin || l.enrichment?.socialMedia?.linkedin,
+                }
+              : l.enrichment?.socialMedia || null,
+            // Multi-source enrichment fields (NEW — previously never set!)
+            cadastre: enriched.cadastre || l.enrichment?.cadastre,
+            businessLicense: enriched.businessLicense || l.enrichment?.businessLicense,
+            corporateInfo: enriched.corporateInfo || l.enrichment?.corporateInfo,
+            confidenceScore: enriched.confidenceScore,
+            enrichmentSources: enriched.enrichmentSources,
+            nearbyBusinesses: enriched.nearbyBusinesses.length > 0
+              ? enriched.nearbyBusinesses
+              : l.enrichment?.nearbyBusinesses,
+            // Quick links
+            registroPublicoUrl: enriched.registroPublicoUrl || l.enrichment?.registroPublicoUrl,
+            googleMapsUrl: enriched.googleMapsUrl,
+            googleSearchUrl: enriched.googleSearchUrl,
+            whatsappUrl: enriched.whatsappUrl || l.enrichment?.whatsappUrl,
+            callUrl: enriched.callUrl || l.enrichment?.callUrl,
+          };
 
-        const sources = result.sources.join(', ') || 'no sources';
-        addActivity(id, 'owner_researched',
-          result.ownerName
-            ? `Owner found: ${result.ownerName} (${sources})`
-            : `Owner research completed (${sources})`
-        );
-      } else {
-        addActivity(id, 'owner_researched', 'Owner research: no results found');
-      }
+          const financials = { paybackYears: l.estimatedPaybackYears, systemKwp: l.estimatedSystemKwp };
+          const updatedScore = calculateLeadScore(l.suitabilityScore, updatedEnrichment, financials);
+
+          return {
+            ...l,
+            enrichment: updatedEnrichment,
+            leadScore: updatedScore,
+            researchConfidence: enriched.confidenceScore,
+            lastResearchedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+        })
+      );
+
+      const sourcesFound = enriched.enrichmentSources.filter(s => s.found).map(s => s.source);
+      const sourcesStr = sourcesFound.length > 0 ? sourcesFound.join(', ') : 'no sources';
+      addActivity(id, 'owner_researched',
+        enriched.ownerName
+          ? `Owner found: ${enriched.ownerName} (${sourcesStr}, confidence: ${enriched.confidenceScore}%)`
+          : `Research completed (${enriched.totalSourcesWithData}/${enriched.totalSourcesQueried} sources, confidence: ${enriched.confidenceScore}%)`
+      );
     } finally {
       setIsResearching(false);
     }

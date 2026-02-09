@@ -1,7 +1,17 @@
 import type { RoofScanResult } from '@/services/roofScannerService';
-import type { CadastreInfo, BusinessLicense, CorporateInfo, EnrichmentSourceSummary } from '@/types/enrichment';
+import type { CadastreInfo, BusinessLicense, CorporateInfo, EnrichmentSourceSummary, NearbyBusinessResult } from '@/types/enrichment';
 
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
+
+export interface ProposalSummary {
+  id: string;
+  version: number;
+  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'rejected';
+  createdAt: string;
+  systemKwp: number;
+  totalInvestment: number;
+  language: 'en' | 'es';
+}
 
 export interface LeadEnrichment {
   businessName: string | null;
@@ -26,6 +36,13 @@ export interface LeadEnrichment {
   confidenceScore?: number;
   enrichmentSources?: EnrichmentSourceSummary[];
   registroPublicoUrl?: string;
+  // Nearby businesses from research
+  nearbyBusinesses?: NearbyBusinessResult[];
+  // Quick links
+  googleMapsUrl?: string;
+  googleSearchUrl?: string;
+  whatsappUrl?: string;
+  callUrl?: string;
 }
 
 export interface Lead {
@@ -58,6 +75,10 @@ export interface Lead {
   tags: string[];
   notes: string;
   zone: string | null;
+  // Proposals & research tracking
+  proposals?: ProposalSummary[];
+  lastResearchedAt?: string;
+  researchConfidence?: number;
 }
 
 export interface LeadZone {

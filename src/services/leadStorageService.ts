@@ -1,8 +1,8 @@
-import type { Lead, LeadStats, LeadStatus } from '@/types/lead';
+import type { Lead, LeadStats, LeadStatus, LeadEnrichment } from '@/types/lead';
 import type { DiscoveredBuilding } from '@/hooks/useRoofScanner';
+import type { EnrichedOwnerResult } from '@/types/enrichment';
 import { PANAMA_DEFAULTS } from '@/services/solarCalculator';
 import { calculateLeadScore } from '@/services/leadEnrichmentService';
-import type { LeadEnrichment } from '@/types/lead';
 
 const STORAGE_KEY = 'solaris-leads';
 
@@ -93,7 +93,8 @@ const USABLE_ROOF_RATIO = 0.6;
 export function buildingToLead(
   building: DiscoveredBuilding,
   enrichment: LeadEnrichment | null,
-  zone: string | null
+  zone: string | null,
+  enrichedData?: EnrichedOwnerResult
 ): Lead {
   const usableArea = building.area * USABLE_ROOF_RATIO;
   const panelCount = Math.floor(usableArea / PANAMA_DEFAULTS.panelAreaM2);
@@ -106,12 +107,45 @@ export function buildingToLead(
 
   const now = new Date().toISOString();
 
+  // If enrichedData provided, merge into enrichment with all deep research fields
+  let finalEnrichment: LeadEnrichment | null = enrichment;
+  if (enrichedData) {
+    finalEnrichment = {
+      businessName: enrichedData.ownerName || enrichment?.businessName || null,
+      phone: enrichedData.phone || enrichment?.phone || null,
+      website: enrichedData.website || enrichment?.website || null,
+      address: enrichedData.address || enrichment?.address || null,
+      rating: enrichment?.rating ?? null,
+      types: enrichment?.types ?? [],
+      placeId: enrichment?.placeId ?? null,
+      ownerName: enrichedData.ownerName || enrichment?.ownerName || null,
+      email: enrichedData.email || enrichment?.email || null,
+      socialMedia: enrichedData.socialMedia.facebook || enrichedData.socialMedia.instagram || enrichedData.socialMedia.linkedin
+        ? {
+            facebook: enrichedData.socialMedia.facebook || undefined,
+            instagram: enrichedData.socialMedia.instagram || undefined,
+            linkedin: enrichedData.socialMedia.linkedin || undefined,
+          }
+        : enrichment?.socialMedia ?? null,
+      cadastre: enrichedData.cadastre ?? enrichment?.cadastre,
+      businessLicense: enrichedData.businessLicense ?? enrichment?.businessLicense,
+      corporateInfo: enrichedData.corporateInfo ?? enrichment?.corporateInfo,
+      confidenceScore: enrichedData.confidenceScore ?? enrichment?.confidenceScore,
+      enrichmentSources: enrichedData.enrichmentSources ?? enrichment?.enrichmentSources,
+      registroPublicoUrl: enrichedData.registroPublicoUrl ?? enrichment?.registroPublicoUrl,
+    };
+  }
+
+  const roundedSystemKwp = Math.round(systemKwp * 10) / 10;
+  const roundedPayback = Math.round(paybackYears * 10) / 10;
+  const financials = { paybackYears: roundedPayback, systemKwp: roundedSystemKwp };
+
   return {
     id: `lead-${building.osmId}-${Date.now()}`,
     createdAt: now,
     updatedAt: now,
     osmId: building.osmId,
-    buildingName: building.name || enrichment?.businessName || 'Unknown Building',
+    buildingName: building.name || finalEnrichment?.businessName || 'Unknown Building',
     buildingType: building.buildingType,
     center: building.center,
     coordinates: building.coordinates,
@@ -120,18 +154,20 @@ export function buildingToLead(
     suitabilityGrade: building.suitability.grade,
     suitabilityFactors: building.suitability.factors,
     solarAnalysis: building.solarAnalysis || null,
-    enrichment,
-    estimatedSystemKwp: Math.round(systemKwp * 10) / 10,
+    enrichment: finalEnrichment,
+    estimatedSystemKwp: roundedSystemKwp,
     estimatedInvestment: Math.round(investment),
     estimatedAnnualSavings: Math.round(annualSavings),
-    estimatedPaybackYears: Math.round(paybackYears * 10) / 10,
+    estimatedPaybackYears: roundedPayback,
     estimatedAnnualKwh: Math.round(annualKwh),
     estimatedCO2OffsetTons: Math.round(co2Tons * 10) / 10,
     status: 'new',
-    leadScore: calculateLeadScore(building.suitability.score, enrichment),
+    leadScore: calculateLeadScore(building.suitability.score, finalEnrichment, financials),
     tags: [],
     notes: '',
     zone,
+    lastResearchedAt: enrichedData?.researchedAt,
+    researchConfidence: enrichedData?.confidenceScore,
   };
 }
 
@@ -139,9 +175,12 @@ export function buildingToLead(
 
 export function exportLeadsCSV(leads: Lead[]): string {
   const headers = [
-    'Name', 'Type', 'Zone', 'Area (m2)', 'Score', 'Grade',
+    'Name', 'Type', 'Zone', 'Area (m2)', 'Lead Score', 'Grade',
     'System (kWp)', 'Investment ($)', 'Annual Savings ($)', 'Payback (yrs)',
-    'Status', 'Business Name', 'Phone', 'Website', 'Address',
+    'Annual kWh', 'CO2 Offset (tons)', 'Status',
+    'Owner Name', 'Business Name', 'Phone', 'Email', 'Website', 'Address',
+    'Finca Number', 'Land Use', 'Business License', 'License Status',
+    'Corporate Name', 'Officers', 'Confidence Score', 'Research Date',
     'Latitude', 'Longitude', 'Created Date',
   ];
 
@@ -154,26 +193,42 @@ export function exportLeadsCSV(leads: Lead[]): string {
     return str;
   };
 
-  const rows = leads.map(lead => [
-    escapeCSV(lead.buildingName),
-    escapeCSV(lead.buildingType),
-    escapeCSV(lead.zone),
-    escapeCSV(Math.round(lead.area)),
-    escapeCSV(lead.leadScore),
-    escapeCSV(lead.suitabilityGrade),
-    escapeCSV(lead.estimatedSystemKwp),
-    escapeCSV(lead.estimatedInvestment),
-    escapeCSV(lead.estimatedAnnualSavings),
-    escapeCSV(lead.estimatedPaybackYears),
-    escapeCSV(lead.status),
-    escapeCSV(lead.enrichment?.businessName),
-    escapeCSV(lead.enrichment?.phone),
-    escapeCSV(lead.enrichment?.website),
-    escapeCSV(lead.enrichment?.address),
-    escapeCSV(lead.center.lat),
-    escapeCSV(lead.center.lng),
-    escapeCSV(lead.createdAt.split('T')[0]),
-  ].join(','));
+  const rows = leads.map(lead => {
+    const e = lead.enrichment;
+    const officers = e?.corporateInfo?.officers?.map(o => `${o.name} (${o.role})`).join('; ');
+    return [
+      escapeCSV(lead.buildingName),
+      escapeCSV(lead.buildingType),
+      escapeCSV(lead.zone),
+      escapeCSV(Math.round(lead.area)),
+      escapeCSV(lead.leadScore),
+      escapeCSV(lead.suitabilityGrade),
+      escapeCSV(lead.estimatedSystemKwp),
+      escapeCSV(lead.estimatedInvestment),
+      escapeCSV(lead.estimatedAnnualSavings),
+      escapeCSV(lead.estimatedPaybackYears),
+      escapeCSV(lead.estimatedAnnualKwh),
+      escapeCSV(lead.estimatedCO2OffsetTons),
+      escapeCSV(lead.status),
+      escapeCSV(e?.ownerName),
+      escapeCSV(e?.businessName),
+      escapeCSV(e?.phone),
+      escapeCSV(e?.email),
+      escapeCSV(e?.website),
+      escapeCSV(e?.address),
+      escapeCSV(e?.cadastre?.fincaNumber),
+      escapeCSV(e?.cadastre?.landUse),
+      escapeCSV(e?.businessLicense?.commercialName),
+      escapeCSV(e?.businessLicense?.status),
+      escapeCSV(e?.corporateInfo?.companyName),
+      escapeCSV(officers),
+      escapeCSV(lead.researchConfidence),
+      escapeCSV(lead.lastResearchedAt?.split('T')[0]),
+      escapeCSV(lead.center.lat),
+      escapeCSV(lead.center.lng),
+      escapeCSV(lead.createdAt.split('T')[0]),
+    ].join(',');
+  });
 
   return [headers.join(','), ...rows].join('\n');
 }

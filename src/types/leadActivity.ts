@@ -10,7 +10,9 @@ export type LeadActivityType =
   | 'tag_removed'
   | 'call_made'
   | 'whatsapp_sent'
-  | 'exported';
+  | 'exported'
+  | 'proposal_generated'
+  | 'proposal_sent';
 
 export interface LeadActivity {
   id: string;
@@ -32,6 +34,8 @@ export const ACTIVITY_ICON_MAP: Record<LeadActivityType, string> = {
   call_made: 'Phone',
   whatsapp_sent: 'MessageCircle',
   exported: 'Download',
+  proposal_generated: 'FileText',
+  proposal_sent: 'Send',
 };
 
 export const ACTIVITY_COLOR_MAP: Record<LeadActivityType, string> = {
@@ -45,4 +49,6 @@ export const ACTIVITY_COLOR_MAP: Record<LeadActivityType, string> = {
   call_made: '#22c55e',
   whatsapp_sent: '#25d366',
   exported: '#8888a0',
+  proposal_generated: '#8b5cf6',
+  proposal_sent: '#00ffcc',
 };
