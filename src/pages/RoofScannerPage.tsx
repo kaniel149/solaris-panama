@@ -8,6 +8,7 @@ import { geocodeAddress, type GeocodingResult } from '@/services/geocodingServic
 import ScannerMap from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
+import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
 import DrawToolbar from '@/components/scanner/DrawToolbar';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
 
@@ -78,6 +79,7 @@ export default function RoofScannerPage() {
   });
   const [isSavingLeads, setIsSavingLeads] = useState(false);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
+  const [measureMode, setMeasureMode] = useState(false);
 
   // Panel hover state with delayed close
   const [leftOpen, setLeftOpen] = useState(true);
@@ -223,6 +225,9 @@ export default function RoofScannerPage() {
           onBuildingSelect={handleBuildingSelect}
           onBoundsChange={handleBoundsChange}
           searchMarker={searchMarker}
+          measureMode={measureMode}
+          onMeasureModeChange={setMeasureMode}
+          selectedBuildingCoordinates={selectedBuilding?.coordinates}
         />
       </div>
 
@@ -281,6 +286,19 @@ export default function RoofScannerPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* ===== MEASUREMENT PANEL — floating left of right panel ===== */}
+      <AnimatePresence>
+        {measureMode && selectedBuilding && (
+          <div className="absolute right-[440px] top-3 z-30">
+            <BuildingMeasurements
+              building={selectedBuilding}
+              onFullAnalysis={!selectedBuilding.analyzed ? handleAnalyze : undefined}
+              onSave={handleSaveAsLead}
+            />
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* ===== RIGHT PANEL — hover-activated overlay ===== */}
       <AnimatePresence>

@@ -7,7 +7,11 @@
 //   POST /api/roof-scan?action=overpass  (body: Overpass QL query)
 //   GET /api/roof-scan?action=satellite-image&lat=8.98&lng=-79.52&zoom=18&size=400x250
 //   GET /api/roof-scan?action=places-lookup&lat=8.98&lng=-79.52&radius=50
+//   GET /api/roof-scan?action=places-detail&placeId=ChIJ...
 //   GET /api/roof-scan?action=owner-research&query=BusinessName&lat=8.98&lng=-79.52
+//   GET /api/roof-scan?action=cadastre-lookup&lat=8.98&lng=-79.52
+//   GET /api/roof-scan?action=panama-emprende&businessName=SolarTech
+//   GET /api/roof-scan?action=opencorporates&companyName=SolarTech
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
@@ -67,40 +71,54 @@ async function handleGoogleSolar(
     return;
   }
 
-  const url =
-    `https://solar.googleapis.com/v1/buildingInsights:findClosest` +
+  const baseParams =
     `?location.latitude=${lat}` +
     `&location.longitude=${lng}` +
-    `&requiredQuality=LOW` +
     `&key=${GOOGLE_SOLAR_API_KEY}` +
     `&experimentalFeatures=EXPANDED_COVERAGE`;
 
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'X-Goog-FieldMask': '*',
-      },
-    });
+  const baseEndpoint = 'https://solar.googleapis.com/v1/buildingInsights:findClosest';
+  const headers = { 'X-Goog-FieldMask': '*' };
 
+  try {
+    // First try with LOW quality (higher coverage)
+    const urlLow = `${baseEndpoint}${baseParams}&requiredQuality=LOW`;
+    const response = await fetch(urlLow, { method: 'GET', headers });
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error('[roof-scan] Google Solar API error:', {
-        status: response.status,
-        error: data.error?.message,
-        lat,
-        lng,
-      });
-
-      res.status(response.status).json({
-        error: data.error?.message || 'Google Solar API error',
-        code: data.error?.status || 'API_ERROR',
-      });
+    if (response.ok) {
+      res.status(200).json(data);
       return;
     }
 
-    res.status(200).json(data);
+    // Fallback: retry with BASE quality if LOW failed
+    console.warn('[roof-scan] Google Solar LOW quality failed, trying BASE fallback:', {
+      status: response.status,
+      lat,
+      lng,
+    });
+
+    const urlBase = `${baseEndpoint}${baseParams}&requiredQuality=BASE`;
+    const fallbackResponse = await fetch(urlBase, { method: 'GET', headers });
+    const fallbackData = await fallbackResponse.json();
+
+    if (fallbackResponse.ok) {
+      res.status(200).json(fallbackData);
+      return;
+    }
+
+    // Both attempts failed
+    console.error('[roof-scan] Google Solar API error (both qualities):', {
+      status: fallbackResponse.status,
+      error: fallbackData.error?.message,
+      lat,
+      lng,
+    });
+
+    res.status(fallbackResponse.status).json({
+      error: fallbackData.error?.message || 'Google Solar API error',
+      code: fallbackData.error?.status || 'API_ERROR',
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to reach Google Solar API';
     console.error('[roof-scan] Google Solar fetch error:', message);
@@ -567,6 +585,445 @@ async function handleOwnerResearch(
   res.status(200).json(result);
 }
 
+// ===== CADASTRE LOOKUP (ANATI Geoportal — ArcGIS REST) =====
+
+interface CadastreResult {
+  finca: string | null;
+  parcelArea: number | null;
+  landUse: string | null;
+  province: string | null;
+  district: string | null;
+  corregimiento: string | null;
+  geometry: {
+    rings: number[][][];
+  } | null;
+  rawAttributes: Record<string, unknown>;
+}
+
+async function handleCadastreLookup(
+  lat: string,
+  lng: string,
+  res: VercelResponse
+): Promise<void> {
+  // ANATI Geoportal ArcGIS REST endpoint for cadastral parcels
+  const baseUrl =
+    'https://services.arcgis.com/LBbVDC0hKPAnLRpO5se6HQ/arcgis/rest/services';
+  const servicePaths = [
+    'Catastro_Nacional/FeatureServer/0',
+    'CATASTRO/FeatureServer/0',
+    'Parcelas_Catastro/FeatureServer/0',
+  ];
+
+  const queryParams = new URLSearchParams({
+    geometry: `${lng},${lat}`,
+    geometryType: 'esriGeometryPoint',
+    spatialRel: 'esriSpatialRelIntersects',
+    outFields: '*',
+    returnGeometry: 'true',
+    f: 'json',
+    inSR: '4326',
+    outSR: '4326',
+  });
+
+  let data: any = null;
+
+  // Try multiple possible service paths (ArcGIS service names can vary)
+  for (const servicePath of servicePaths) {
+    const url = `${baseUrl}/${servicePath}/query?${queryParams.toString()}`;
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const parsed = await response.json();
+        if (parsed.features && parsed.features.length > 0) {
+          data = parsed;
+          break;
+        }
+        // If response was OK but no features, try next service path
+        if (!data) data = parsed;
+      }
+    } catch {
+      // Try next service path
+    }
+  }
+
+  if (!data) {
+    res.status(502).json({
+      error: 'Failed to connect to ANATI Geoportal',
+      code: 'CADASTRE_UNAVAILABLE',
+      hint: 'The ANATI ArcGIS service may be temporarily unavailable.',
+    });
+    return;
+  }
+
+  if (!data.features || data.features.length === 0) {
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h for empty results
+    res.status(200).json({
+      finca: null,
+      parcelArea: null,
+      landUse: null,
+      province: null,
+      district: null,
+      corregimiento: null,
+      geometry: null,
+      rawAttributes: {},
+      message: 'No cadastral parcel found at this location',
+    });
+    return;
+  }
+
+  const feature = data.features[0];
+  const attrs = feature.attributes || {};
+
+  const result: CadastreResult = {
+    finca: attrs.FINCA || attrs.Finca || attrs.finca || attrs.NUM_FINCA || null,
+    parcelArea:
+      attrs.AREA || attrs.Area || attrs.area || attrs.SHAPE_Area || null,
+    landUse:
+      attrs.USO_SUELO || attrs.Uso_Suelo || attrs.uso_suelo || attrs.LAND_USE || null,
+    province:
+      attrs.PROVINCIA || attrs.Provincia || attrs.provincia || null,
+    district:
+      attrs.DISTRITO || attrs.Distrito || attrs.distrito || null,
+    corregimiento:
+      attrs.CORREGIMIENTO || attrs.Corregimiento || attrs.corregimiento || null,
+    geometry: feature.geometry || null,
+    rawAttributes: attrs,
+  };
+
+  res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
+  res.status(200).json(result);
+}
+
+// ===== PANAMA EMPRENDE (Business Registry) =====
+
+interface PanamaEmprendeResult {
+  legalName: string | null;
+  avisoDeOperacion: string | null;
+  status: string | null;
+  activityDescription: string | null;
+  registrationDate: string | null;
+  address: string | null;
+  sources: string[];
+}
+
+async function handlePanamaEmprende(
+  businessName: string,
+  res: VercelResponse
+): Promise<void> {
+  const decodedName = decodeURIComponent(businessName);
+  const result: PanamaEmprendeResult = {
+    legalName: null,
+    avisoDeOperacion: null,
+    status: null,
+    activityDescription: null,
+    registrationDate: null,
+    address: null,
+    sources: [],
+  };
+
+  // Panama Emprende public consultation endpoint
+  const searchUrl = `https://www.panamaemprende.gob.pa/consultas`;
+
+  try {
+    // Try the public consultation search page
+    const searchPageHtml = await fetchWithTimeout(
+      `${searchUrl}?nombre=${encodeURIComponent(decodedName)}`,
+      8000
+    );
+
+    if (searchPageHtml) {
+      // Extract business info from the consultation results page
+      // Look for common patterns in the HTML response
+      const avisoMatch = searchPageHtml.match(
+        /aviso\s*(?:de\s*)?operaci[oó]n[^:]*:\s*([A-Z0-9-]+)/i
+      );
+      const statusMatch = searchPageHtml.match(
+        /estado[^:]*:\s*(vigente|activo|inactivo|suspendido|cancelado)/i
+      );
+      const activityMatch = searchPageHtml.match(
+        /actividad[^:]*:\s*([^<\n]{3,100})/i
+      );
+      const nameMatch = searchPageHtml.match(
+        /raz[oó]n\s*social[^:]*:\s*([^<\n]{3,200})/i
+      );
+      const addressMatch = searchPageHtml.match(
+        /direcci[oó]n[^:]*:\s*([^<\n]{3,200})/i
+      );
+
+      if (avisoMatch) result.avisoDeOperacion = avisoMatch[1].trim();
+      if (statusMatch) result.status = statusMatch[1].trim();
+      if (activityMatch) result.activityDescription = activityMatch[1].trim();
+      if (nameMatch) result.legalName = nameMatch[1].trim();
+      if (addressMatch) result.address = addressMatch[1].trim();
+
+      if (result.avisoDeOperacion || result.legalName) {
+        result.sources.push('Panama Emprende');
+      }
+    }
+  } catch (err) {
+    console.error('[panama-emprende] Search error:', err);
+  }
+
+  // Fallback: try Registro Publico Panama search
+  if (!result.legalName) {
+    try {
+      const rpSearchUrl = `https://www.registro-publico.gob.pa/scripts/nwwisapi.dll/conweb/MESAMENU?TODO=CONSULTAR&ESSION=&NAME=${encodeURIComponent(decodedName)}`;
+      const rpHtml = await fetchWithTimeout(rpSearchUrl, 5000);
+
+      if (rpHtml) {
+        const rpNameMatch = rpHtml.match(
+          /nombre[^:]*:\s*([^<\n]{3,200})/i
+        );
+        const rpStatusMatch = rpHtml.match(
+          /estado[^:]*:\s*(vigente|activo|inscrita)/i
+        );
+
+        if (rpNameMatch) {
+          result.legalName = rpNameMatch[1].trim();
+          result.sources.push('Registro Publico');
+        }
+        if (rpStatusMatch && !result.status) {
+          result.status = rpStatusMatch[1].trim();
+        }
+      }
+    } catch {
+      // Fallback source not available
+    }
+  }
+
+  // If still no name, set to search term
+  if (!result.legalName && (result.avisoDeOperacion || result.status)) {
+    result.legalName = decodedName;
+  }
+
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h cache
+  res.status(200).json(result);
+}
+
+// ===== OPENCORPORATES (Panama Company Search) =====
+
+interface OpenCorporatesCompany {
+  companyNumber: string;
+  name: string;
+  status: string | null;
+  incorporationDate: string | null;
+  companyType: string | null;
+  registeredAddress: string | null;
+  officers: Array<{
+    name: string;
+    position: string;
+    startDate: string | null;
+  }>;
+  opencorporatesUrl: string;
+}
+
+interface OpenCorporatesResult {
+  companies: OpenCorporatesCompany[];
+  totalResults: number;
+}
+
+async function handleOpenCorporates(
+  companyName: string,
+  res: VercelResponse
+): Promise<void> {
+  const decodedName = decodeURIComponent(companyName);
+
+  const url =
+    `https://api.opencorporates.com/v0.4/companies/search` +
+    `?q=${encodeURIComponent(decodedName)}` +
+    `&jurisdiction_code=pa` +
+    `&per_page=5`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'SolarisBot/1.0 (solar-crm)',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        res.status(429).json({
+          error: 'OpenCorporates rate limit exceeded. Try again in a few minutes.',
+          code: 'RATE_LIMITED',
+        });
+        return;
+      }
+      console.error('[opencorporates] API error:', {
+        status: response.status,
+      });
+      res.status(response.status).json({
+        error: `OpenCorporates API error: ${response.status}`,
+        code: 'OPENCORPORATES_ERROR',
+      });
+      return;
+    }
+
+    const data = await response.json();
+    const apiResults = data.results?.companies || [];
+    const totalCount = data.results?.total_count || 0;
+
+    const companies: OpenCorporatesCompany[] = apiResults.map(
+      (item: any) => {
+        const company = item.company;
+        return {
+          companyNumber: company.company_number || '',
+          name: company.name || '',
+          status: company.current_status || null,
+          incorporationDate: company.incorporation_date || null,
+          companyType: company.company_type || null,
+          registeredAddress:
+            company.registered_address_in_full ||
+            company.registered_address?.street_address ||
+            null,
+          officers: (company.officers || []).map((o: any) => ({
+            name: o.officer?.name || '',
+            position: o.officer?.position || '',
+            startDate: o.officer?.start_date || null,
+          })),
+          opencorporatesUrl: company.opencorporates_url || '',
+        };
+      }
+    );
+
+    const result: OpenCorporatesResult = {
+      companies,
+      totalResults: totalCount,
+    };
+
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h cache
+    res.status(200).json(result);
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Failed to reach OpenCorporates API';
+    console.error('[opencorporates] fetch error:', message);
+    res.status(500).json({
+      error: message,
+      code: 'FETCH_ERROR',
+    });
+  }
+}
+
+// ===== GOOGLE PLACES DETAIL (Enhanced) =====
+
+interface PlacesDetailResult {
+  displayName: string | null;
+  formattedAddress: string | null;
+  nationalPhoneNumber: string | null;
+  internationalPhoneNumber: string | null;
+  websiteUri: string | null;
+  googleMapsUri: string | null;
+  regularOpeningHours: {
+    openNow: boolean;
+    weekdayDescriptions: string[];
+  } | null;
+  rating: number | null;
+  userRatingCount: number | null;
+  businessStatus: string | null;
+  types: string[];
+  editorialSummary: string | null;
+}
+
+async function handlePlacesDetail(
+  placeId: string,
+  res: VercelResponse
+): Promise<void> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    res.status(503).json({
+      error: 'Google Maps API key not configured.',
+      code: 'NO_API_KEY',
+      hint: 'Add GOOGLE_MAPS_API_KEY to your Vercel project environment variables.',
+    });
+    return;
+  }
+
+  if (!placeId || placeId.length < 10) {
+    res.status(400).json({
+      error: 'Invalid placeId. Must be a valid Google Places ID.',
+      code: 'INVALID_PLACE_ID',
+    });
+    return;
+  }
+
+  const fieldMask = [
+    'displayName',
+    'formattedAddress',
+    'nationalPhoneNumber',
+    'internationalPhoneNumber',
+    'websiteUri',
+    'googleMapsUri',
+    'regularOpeningHours',
+    'rating',
+    'userRatingCount',
+    'businessStatus',
+    'types',
+    'editorialSummary',
+  ].join(',');
+
+  const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+        'X-Goog-FieldMask': fieldMask,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[places-detail] Google Places API error:', {
+        status: response.status,
+        error: data.error?.message,
+        placeId,
+      });
+      res.status(response.status).json({
+        error: data.error?.message || 'Google Places API error',
+        code: 'PLACES_DETAIL_ERROR',
+      });
+      return;
+    }
+
+    const result: PlacesDetailResult = {
+      displayName: data.displayName?.text || null,
+      formattedAddress: data.formattedAddress || null,
+      nationalPhoneNumber: data.nationalPhoneNumber || null,
+      internationalPhoneNumber: data.internationalPhoneNumber || null,
+      websiteUri: data.websiteUri || null,
+      googleMapsUri: data.googleMapsUri || null,
+      regularOpeningHours: data.regularOpeningHours
+        ? {
+            openNow: data.regularOpeningHours.openNow ?? false,
+            weekdayDescriptions:
+              data.regularOpeningHours.weekdayDescriptions || [],
+          }
+        : null,
+      rating: data.rating || null,
+      userRatingCount: data.userRatingCount || null,
+      businessStatus: data.businessStatus || null,
+      types: data.types || [],
+      editorialSummary: data.editorialSummary?.text || null,
+    };
+
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h cache
+    res.status(200).json(result);
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Failed to reach Google Places API';
+    console.error('[places-detail] fetch error:', message);
+    res.status(500).json({
+      error: message,
+      code: 'FETCH_ERROR',
+    });
+  }
+}
+
 // ===== MAIN HANDLER =====
 
 export default async function handler(
@@ -603,15 +1060,58 @@ export default async function handler(
         overpass: 'POST /api/roof-scan?action=overpass (body: Overpass QL query)',
         'satellite-image': 'GET /api/roof-scan?action=satellite-image&lat=8.98&lng=-79.52&zoom=18&size=400x250',
         'places-lookup': 'GET /api/roof-scan?action=places-lookup&lat=8.98&lng=-79.52&radius=50',
+        'places-detail': 'GET /api/roof-scan?action=places-detail&placeId=ChIJ...',
         'owner-research': 'GET /api/roof-scan?action=owner-research&query=BusinessName&lat=8.98&lng=-79.52',
+        'cadastre-lookup': 'GET /api/roof-scan?action=cadastre-lookup&lat=8.98&lng=-79.52',
+        'panama-emprende': 'GET /api/roof-scan?action=panama-emprende&businessName=SolarTech',
+        'opencorporates': 'GET /api/roof-scan?action=opencorporates&companyName=SolarTech',
       },
     });
     return;
   }
 
-  // Overpass action uses POST body, no coordinates needed
+  // Actions that don't require coordinates
   if (action === 'overpass') {
     await handleOverpass(req, res);
+    return;
+  }
+
+  if (action === 'panama-emprende') {
+    const businessName = getParam(req.query, 'businessName') || '';
+    if (!businessName) {
+      res.status(400).json({
+        error: 'Missing required query parameter: businessName',
+        code: 'MISSING_BUSINESS_NAME',
+      });
+      return;
+    }
+    await handlePanamaEmprende(businessName, res);
+    return;
+  }
+
+  if (action === 'opencorporates') {
+    const companyName = getParam(req.query, 'companyName') || '';
+    if (!companyName) {
+      res.status(400).json({
+        error: 'Missing required query parameter: companyName',
+        code: 'MISSING_COMPANY_NAME',
+      });
+      return;
+    }
+    await handleOpenCorporates(companyName, res);
+    return;
+  }
+
+  if (action === 'places-detail') {
+    const placeId = getParam(req.query, 'placeId') || '';
+    if (!placeId) {
+      res.status(400).json({
+        error: 'Missing required query parameter: placeId',
+        code: 'MISSING_PLACE_ID',
+      });
+      return;
+    }
+    await handlePlacesDetail(placeId, res);
     return;
   }
 
@@ -672,9 +1172,14 @@ export default async function handler(
       return;
     }
 
+    case 'cadastre-lookup': {
+      await handleCadastreLookup(lat, lng, res);
+      return;
+    }
+
     default: {
       res.status(400).json({
-        error: `Invalid action: "${action}". Valid actions: google-solar, pvwatts, overpass, satellite-image, places-lookup, owner-research`,
+        error: `Invalid action: "${action}". Valid actions: google-solar, pvwatts, overpass, satellite-image, places-lookup, places-detail, owner-research, cadastre-lookup, panama-emprende, opencorporates`,
         code: 'INVALID_ACTION',
       });
       return;

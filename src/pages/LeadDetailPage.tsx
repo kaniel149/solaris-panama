@@ -20,11 +20,18 @@ import {
   Mail,
   User,
   ExternalLink,
+  Shield,
+  Briefcase,
+  Building2,
+  Users,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useLeadManager } from '@/hooks/useLeadManager';
 import { LeadReportPreview } from '@/components/leads/LeadReportPreview';
 import { LeadInteractiveMap } from '@/components/leads/LeadInteractiveMap';
 import { LeadActivityLog } from '@/components/leads/LeadActivityLog';
+import { ConfidenceScore } from '@/components/scanner/ConfidenceScore';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { LEAD_STATUS_CONFIG, LEAD_KANBAN_COLUMNS } from '@/types/lead';
@@ -71,6 +78,7 @@ export default function LeadDetailPage() {
   const [notesValue, setNotesValue] = useState(lead?.notes ?? '');
   const [notesSaved, setNotesSaved] = useState(false);
   const [activities, setActivities] = useState<LeadActivity[]>([]);
+  const [showOfficers, setShowOfficers] = useState(false);
 
   // Load activities
   useEffect(() => {
@@ -261,6 +269,39 @@ export default function LeadDetailPage() {
             </div>
           </GlassCard>
 
+          {/* Confidence Score (from enrichment) */}
+          {lead.enrichment?.confidenceScore != null && lead.enrichment.confidenceScore > 0 && (
+            <GlassCard padding="md">
+              <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
+                Research Confidence
+              </h3>
+              <ConfidenceScore
+                score={lead.enrichment.confidenceScore}
+                sourcesWithData={lead.enrichment.enrichmentSources?.filter(s => s.found).length ?? 0}
+                totalSources={lead.enrichment.enrichmentSources?.length ?? 0}
+                size="sm"
+              />
+              {/* Source icons row */}
+              {lead.enrichment.enrichmentSources && lead.enrichment.enrichmentSources.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2.5">
+                  {lead.enrichment.enrichmentSources.map((src) => (
+                    <span
+                      key={src.source}
+                      className={`text-[9px] px-1.5 py-0.5 rounded ${
+                        src.found
+                          ? 'bg-[#10b981]/10 text-[#10b981]'
+                          : 'bg-white/[0.03] text-[#555566]'
+                      }`}
+                    >
+                      {src.source.replace(/_/g, ' ')}
+                      {src.found ? ' \u2713' : ' \u2717'}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </GlassCard>
+          )}
+
           {/* Quick Actions */}
           <GlassCard padding="md">
             <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
@@ -411,6 +452,132 @@ export default function LeadDetailPage() {
                         <ExternalLink className="w-2.5 h-2.5" />
                         LinkedIn
                       </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </GlassCard>
+          )}
+
+          {/* Cadastre (from enrichment) */}
+          {lead.enrichment?.cadastre && (
+            <GlassCard padding="md">
+              <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Shield className="w-3 h-3 text-[#f59e0b]" />
+                Cadastre
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-[11px] text-[#555570] w-20 shrink-0">Finca #</span>
+                  <span className="text-xs text-[#f0f0f5] font-medium">{lead.enrichment.cadastre.fincaNumber}</span>
+                </div>
+                {lead.enrichment.cadastre.parcelArea > 0 && (
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[11px] text-[#555570] w-20 shrink-0">Area</span>
+                    <span className="text-xs text-[#c0c0d0]">{new Intl.NumberFormat('en-US').format(lead.enrichment.cadastre.parcelArea)} m²</span>
+                  </div>
+                )}
+                {lead.enrichment.cadastre.landUse && lead.enrichment.cadastre.landUse !== 'unknown' && (
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[11px] text-[#555570] w-20 shrink-0">Land Use</span>
+                    <span className="text-xs text-[#c0c0d0] capitalize">{lead.enrichment.cadastre.landUse}</span>
+                  </div>
+                )}
+                {lead.enrichment.cadastre.assessedValue != null && lead.enrichment.cadastre.assessedValue > 0 && (
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[11px] text-[#555570] w-20 shrink-0">Value</span>
+                    <span className="text-xs text-[#c0c0d0]">${new Intl.NumberFormat('en-US').format(lead.enrichment.cadastre.assessedValue)}</span>
+                  </div>
+                )}
+                {(lead.enrichment.registroPublicoUrl || lead.enrichment.cadastre.registroPublicoUrl) && (
+                  <a
+                    href={lead.enrichment.registroPublicoUrl || lead.enrichment.cadastre.registroPublicoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[11px] text-[#0ea5e9] hover:underline mt-1"
+                  >
+                    <ExternalLink className="w-2.5 h-2.5" />
+                    Registro Publico
+                  </a>
+                )}
+              </div>
+            </GlassCard>
+          )}
+
+          {/* Business License (from enrichment) */}
+          {lead.enrichment?.businessLicense && (
+            <GlassCard padding="md">
+              <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Briefcase className="w-3 h-3 text-[#0ea5e9]" />
+                Business License
+              </h3>
+              <div className="space-y-2">
+                {lead.enrichment.businessLicense.commercialName && (
+                  <div className="text-xs text-[#f0f0f5] font-medium">{lead.enrichment.businessLicense.commercialName}</div>
+                )}
+                {lead.enrichment.businessLicense.legalName && (
+                  <div className="text-[11px] text-[#c0c0d0]">{lead.enrichment.businessLicense.legalName}</div>
+                )}
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      'text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize',
+                      lead.enrichment.businessLicense.status === 'active'
+                        ? 'bg-[#10b981]/10 text-[#10b981]'
+                        : lead.enrichment.businessLicense.status === 'inactive'
+                        ? 'bg-[#ef4444]/10 text-[#ef4444]'
+                        : lead.enrichment.businessLicense.status === 'suspended'
+                        ? 'bg-[#f59e0b]/10 text-[#f59e0b]'
+                        : 'bg-[#555566]/10 text-[#555566]'
+                    )}
+                  >
+                    {lead.enrichment.businessLicense.status}
+                  </span>
+                  {lead.enrichment.businessLicense.avisoNumber && (
+                    <span className="text-[10px] text-[#555570]">
+                      {lead.enrichment.businessLicense.avisoNumber}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </GlassCard>
+          )}
+
+          {/* Corporate Info (from enrichment) */}
+          {lead.enrichment?.corporateInfo && (
+            <GlassCard padding="md">
+              <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Building2 className="w-3 h-3 text-[#00ffcc]" />
+                Corporate Registry
+              </h3>
+              <div className="space-y-2">
+                <div className="text-xs text-[#f0f0f5] font-medium">{lead.enrichment.corporateInfo.companyName}</div>
+                {lead.enrichment.corporateInfo.companyNumber && (
+                  <div className="text-[11px] text-[#c0c0d0]">Reg # {lead.enrichment.corporateInfo.companyNumber}</div>
+                )}
+                {lead.enrichment.corporateInfo.status && (
+                  <div className="text-[11px] text-[#c0c0d0] capitalize">{lead.enrichment.corporateInfo.status}</div>
+                )}
+                {lead.enrichment.corporateInfo.officers.length > 0 && (
+                  <div className="pt-1 border-t border-white/[0.04]">
+                    <button
+                      onClick={() => setShowOfficers(!showOfficers)}
+                      className="flex items-center gap-1.5 text-[11px] text-[#8888a0] hover:text-[#f0f0f5] transition-colors w-full"
+                    >
+                      <Users className="w-3 h-3" />
+                      Officers ({lead.enrichment.corporateInfo.officers.length})
+                      {showOfficers ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+                    </button>
+                    {showOfficers && (
+                      <div className="mt-1.5 space-y-1">
+                        {lead.enrichment.corporateInfo.officers.map((officer, i) => (
+                          <div key={i} className="flex items-center gap-2 py-1">
+                            <Users className="w-2.5 h-2.5 text-[#8b5cf6] shrink-0" />
+                            <span className="text-[11px] text-[#f0f0f5]">{officer.name}</span>
+                            <span className="text-[10px] text-[#555570] capitalize ml-auto">{officer.role}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 )}

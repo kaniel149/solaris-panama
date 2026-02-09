@@ -1,4 +1,5 @@
 import type { RoofScanResult } from '@/services/roofScannerService';
+import type { CadastreInfo, BusinessLicense, CorporateInfo, EnrichmentSourceSummary } from '@/types/enrichment';
 
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
 
@@ -18,6 +19,13 @@ export interface LeadEnrichment {
     instagram?: string;
     linkedin?: string;
   } | null;
+  // Multi-source enrichment fields
+  cadastre?: CadastreInfo;
+  businessLicense?: BusinessLicense;
+  corporateInfo?: CorporateInfo;
+  confidenceScore?: number;
+  enrichmentSources?: EnrichmentSourceSummary[];
+  registroPublicoUrl?: string;
 }
 
 export interface Lead {

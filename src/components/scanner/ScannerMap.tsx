@@ -8,8 +8,10 @@ import Map, {
 } from 'react-map-gl/maplibre';
 import { Marker } from '@vis.gl/react-maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
-import { motion } from 'framer-motion';
-import { Satellite, Moon, MapIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Satellite, Moon, MapIcon, Ruler, Building2 } from 'lucide-react';
+import { getGradeFromScore, GRADE_COLORS } from '@/utils/geoCalculations';
+import BuildingDimensions from './BuildingDimensions';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 // ===== MAP STYLES =====
@@ -101,6 +103,11 @@ interface ScannerMapProps {
   onBuildingSelect: (id: number) => void;
   onBoundsChange: (bounds: MapBounds) => void;
   searchMarker?: { lng: number; lat: number } | null;
+  /** When true, measurement overlay is shown on selected building */
+  measureMode?: boolean;
+  onMeasureModeChange?: (enabled: boolean) => void;
+  /** Coordinates of the selected building polygon (for dimension overlay) */
+  selectedBuildingCoordinates?: Array<{ lat: number; lon: number }>;
 }
 
 interface HoverInfo {
@@ -109,9 +116,19 @@ interface HoverInfo {
   name: string;
   score: number;
   area: number;
+  type: string;
 }
 
 const EMPTY_FILTER = ['==', ['get', 'id'], -1];
+
+// ===== GRADE LEGEND DATA =====
+
+const GRADE_LEGEND = [
+  { grade: 'A', range: '80-100', color: GRADE_COLORS.A },
+  { grade: 'B', range: '60-79', color: GRADE_COLORS.B },
+  { grade: 'C', range: '40-59', color: GRADE_COLORS.C },
+  { grade: 'D', range: '0-39', color: GRADE_COLORS.D },
+];
 
 // ===== COMPONENT =====
 
@@ -123,6 +140,9 @@ export default function ScannerMap({
   onBuildingSelect,
   onBoundsChange,
   searchMarker,
+  measureMode = false,
+  onMeasureModeChange,
+  selectedBuildingCoordinates,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>('dark');
@@ -169,10 +189,24 @@ export default function ScannerMap({
     ? ['==', ['get', 'id'], hoveredId]
     : EMPTY_FILTER;
 
+  // Selected building outline width — thicker in measure mode
+  const selectedLineWidth = measureMode ? 4 : 3;
+
   const handleClick = useCallback(
     (e: { features?: Array<{ properties?: Record<string, unknown> }> }) => {
       const feature = e.features?.[0];
       if (feature?.properties?.id != null) {
+        onBuildingSelect(feature.properties.id as number);
+      }
+    },
+    [onBuildingSelect]
+  );
+
+  const handleDblClick = useCallback(
+    (e: { features?: Array<{ properties?: Record<string, unknown> }>; preventDefault?: () => void }) => {
+      const feature = e.features?.[0];
+      if (feature?.properties?.id != null) {
+        e.preventDefault?.();
         onBuildingSelect(feature.properties.id as number);
       }
     },
@@ -190,6 +224,7 @@ export default function ScannerMap({
           name: (feature.properties.name as string) || `Building`,
           score: (feature.properties.score as number) || 0,
           area: (feature.properties.area as number) || 0,
+          type: (feature.properties.type as string) || 'building',
         });
         const map = (mapRef.current as any)?.getMap?.();
         if (map) map.getCanvas().style.cursor = 'pointer';
@@ -235,7 +270,12 @@ export default function ScannerMap({
     });
   }, []);
 
+  const toggleMeasure = useCallback(() => {
+    onMeasureModeChange?.(!measureMode);
+  }, [measureMode, onMeasureModeChange]);
+
   const interactiveLayerIds = ['buildings-fill'];
+  const buildingCount = buildings.features.length;
 
   return (
     <div className="relative w-full h-full">
@@ -245,6 +285,7 @@ export default function ScannerMap({
         onMove={(evt: { viewState: typeof viewState }) => setViewState(evt.viewState)}
         onMoveEnd={handleMoveEnd}
         onClick={handleClick}
+        onDblClick={handleDblClick}
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -264,7 +305,7 @@ export default function ScannerMap({
 
         {/* Building polygons */}
         <Source id="buildings" type="geojson" data={buildings}>
-          {/* Fill layer - color by score, brighter on satellite */}
+          {/* Fill layer - color by score with grade-based stops */}
           <Layer
             id="buildings-fill"
             type="fill"
@@ -274,11 +315,21 @@ export default function ScannerMap({
                 ['linear'],
                 ['get', 'score'],
                 0,
-                '#ef4444',
-                50,
-                '#f59e0b',
+                GRADE_COLORS.D,
+                39,
+                GRADE_COLORS.D,
+                40,
+                GRADE_COLORS.C,
+                59,
+                GRADE_COLORS.C,
+                60,
+                GRADE_COLORS.B,
+                79,
+                GRADE_COLORS.B,
+                80,
+                GRADE_COLORS.A,
                 100,
-                '#22c55e',
+                GRADE_COLORS.A,
               ],
               'fill-opacity': [
                 'case',
@@ -289,7 +340,7 @@ export default function ScannerMap({
             }}
           />
 
-          {/* Outline layer — much brighter on satellite for visibility */}
+          {/* Outline layer */}
           <Layer
             id="buildings-outline"
             type="line"
@@ -317,7 +368,7 @@ export default function ScannerMap({
             filter={selectedFilter}
             paint={{
               'line-color': '#00ffcc',
-              'line-width': 3,
+              'line-width': selectedLineWidth,
             }}
           />
 
@@ -338,7 +389,7 @@ export default function ScannerMap({
             type="symbol"
             filter={selectedFilter}
             layout={{
-              'text-field': ['concat', ['to-string', ['get', 'area']], ' m²'],
+              'text-field': ['concat', ['to-string', ['get', 'area']], ' m\u00B2'],
               'text-size': 13,
               'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
               'text-allow-overlap': true,
@@ -351,7 +402,12 @@ export default function ScannerMap({
           />
         </Source>
 
-        {/* Building hover tooltip — rendered as a Marker to follow mouse position on map */}
+        {/* Building dimensions overlay — shown when measure mode ON and building selected */}
+        {measureMode && selectedBuildingId != null && selectedBuildingCoordinates && selectedBuildingCoordinates.length > 2 && (
+          <BuildingDimensions coordinates={selectedBuildingCoordinates} />
+        )}
+
+        {/* Building hover tooltip */}
         {hoverInfo && hoveredId != null && (
           <Marker
             longitude={hoverInfo.lng}
@@ -360,7 +416,7 @@ export default function ScannerMap({
             offset={[0, -10] as [number, number]}
           >
             <div
-              className="pointer-events-none px-2.5 py-1.5 text-xs space-y-0.5 shadow-lg"
+              className="pointer-events-none px-3 py-2 text-xs space-y-0.5 shadow-lg"
               style={{
                 background: '#12121aee',
                 borderRadius: 8,
@@ -369,14 +425,30 @@ export default function ScannerMap({
                 whiteSpace: 'nowrap',
               }}
             >
-              <div className="font-semibold text-[#f0f0f5] truncate max-w-[180px]">{hoverInfo.name}</div>
+              <div className="font-semibold text-[#f0f0f5] truncate max-w-[200px]">
+                {hoverInfo.name}
+              </div>
               <div className="flex items-center gap-2 text-[10px]">
-                <span style={{ color: hoverInfo.score >= 80 ? '#00ffcc' : hoverInfo.score >= 60 ? '#22c55e' : hoverInfo.score >= 40 ? '#f59e0b' : '#ef4444' }}>
-                  Score: {hoverInfo.score}/100
-                </span>
+                <span className="capitalize text-[#8888a0]">{hoverInfo.type}</span>
                 <span className="text-[#555566]">{Math.round(hoverInfo.area)} m²</span>
               </div>
-              <div className="text-[10px] text-[#555566]">Click to select</div>
+              <div className="flex items-center gap-2 text-[10px]">
+                {(() => {
+                  const g = getGradeFromScore(hoverInfo.score);
+                  return (
+                    <span className="flex items-center gap-1">
+                      <span
+                        className="inline-block w-2 h-2 rounded-full"
+                        style={{ background: g.color }}
+                      />
+                      <span style={{ color: g.color }}>
+                        Grade {g.grade} ({hoverInfo.score})
+                      </span>
+                    </span>
+                  );
+                })()}
+              </div>
+              <div className="text-[10px] text-[#555566] pt-0.5">Click to select</div>
             </div>
           </Marker>
         )}
@@ -405,6 +477,8 @@ export default function ScannerMap({
         )}
       </Map>
 
+      {/* ===== TOP-RIGHT CONTROLS ===== */}
+
       {/* Style toggle button — 3-way cycle */}
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -415,6 +489,70 @@ export default function ScannerMap({
       >
         <StyleToggleIcon mode={styleMode} />
       </motion.button>
+
+      {/* Measure toggle button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleMeasure}
+        className={`absolute top-3 right-[6.5rem] z-10 p-2.5 rounded-xl backdrop-blur-xl border transition-all ${
+          measureMode
+            ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 shadow-[0_0_12px_rgba(139,92,246,0.15)]'
+            : 'bg-[#12121a]/80 border-white/[0.06] hover:border-[#8b5cf6]/20'
+        }`}
+        title={measureMode ? 'Disable measurements' : 'Enable measurements'}
+      >
+        <Ruler className={`w-4 h-4 ${measureMode ? 'text-[#8b5cf6]' : 'text-[#8888a0]'}`} />
+      </motion.button>
+
+      {/* ===== TOP-LEFT: Buildings found counter ===== */}
+      <AnimatePresence>
+        {buildingCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-3 py-2 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]"
+          >
+            <Building2 className="w-3.5 h-3.5 text-[#8888a0]" />
+            <span className="text-xs font-medium text-[#f0f0f5]">
+              {buildingCount} building{buildingCount !== 1 ? 's' : ''} found
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== BOTTOM-RIGHT: Grade legend ===== */}
+      <AnimatePresence>
+        {buildingCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute bottom-4 right-3 z-10 px-3 py-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]"
+          >
+            <div className="text-[10px] text-[#555566] uppercase tracking-wider mb-2 font-semibold">
+              Suitability
+            </div>
+            <div className="space-y-1.5">
+              {GRADE_LEGEND.map((item) => (
+                <div key={item.grade} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-sm"
+                    style={{ background: item.color }}
+                  />
+                  <span className="text-[10px] text-[#8888a0] font-medium">
+                    {item.grade}
+                  </span>
+                  <span className="text-[10px] text-[#555566]">
+                    {item.range}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
