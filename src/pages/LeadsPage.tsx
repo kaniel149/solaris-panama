@@ -23,8 +23,9 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { StatsCard } from '@/components/ui/StatsCard';
-import type { LeadStatus } from '@/types/lead';
+import type { Lead, LeadStatus } from '@/types/lead';
 import { LEAD_STATUS_CONFIG, LEAD_KANBAN_COLUMNS } from '@/types/lead';
+import { buildWhatsAppUrl, buildCallUrl } from '@/services/ownerResearchService';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
@@ -73,7 +74,36 @@ export default function LeadsPage() {
     setStatusFilter,
     sortBy,
     setSortBy,
+    updateLeadStatus,
+    enrichLead,
+    logCallMade,
+    logWhatsAppSent,
   } = useLeadManager();
+
+  // Quick action handlers for LeadCard
+  const handleCall = (lead: Lead) => {
+    if (!lead.enrichment?.phone) return;
+    window.open(buildCallUrl(lead.enrichment.phone), '_self');
+    logCallMade(lead.id, lead.enrichment.phone);
+  };
+
+  const handleWhatsApp = (lead: Lead) => {
+    if (!lead.enrichment?.phone) return;
+    const url = buildWhatsAppUrl(
+      lead.enrichment.phone,
+      lead.enrichment?.businessName || undefined
+    );
+    window.open(url, '_blank');
+    logWhatsAppSent(lead.id, lead.enrichment.phone);
+  };
+
+  const handleStatusChange = (lead: Lead, status: LeadStatus) => {
+    updateLeadStatus(lead.id, status);
+  };
+
+  const handleEnrich = (lead: Lead) => {
+    enrichLead(lead.id);
+  };
 
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
   const [exportOpen, setExportOpen] = useState(false);
@@ -358,7 +388,12 @@ export default function LeadsPage() {
                     <motion.div key={lead.id} variants={itemVariants}>
                       <LeadCard
                         lead={lead}
+                        compact
                         onClick={() => navigate(`/leads/${lead.id}`)}
+                        onCall={handleCall}
+                        onWhatsApp={handleWhatsApp}
+                        onStatusChange={handleStatusChange}
+                        onEnrich={handleEnrich}
                       />
                     </motion.div>
                   ))}

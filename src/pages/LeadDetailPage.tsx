@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -15,13 +15,26 @@ import {
   Globe,
   MapPin,
   Calendar,
+  MessageCircle,
+  Search,
+  Mail,
+  User,
+  ExternalLink,
 } from 'lucide-react';
 import { useLeadManager } from '@/hooks/useLeadManager';
 import { LeadReportPreview } from '@/components/leads/LeadReportPreview';
+import { LeadInteractiveMap } from '@/components/leads/LeadInteractiveMap';
+import { LeadActivityLog } from '@/components/leads/LeadActivityLog';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { LEAD_STATUS_CONFIG, LEAD_KANBAN_COLUMNS } from '@/types/lead';
 import { exportLeadsCSV, downloadCSV } from '@/services/leadStorageService';
+import {
+  buildWhatsAppUrl,
+  buildCallUrl,
+  formatPanamaPhone,
+} from '@/services/ownerResearchService';
+import type { LeadActivity } from '@/types/leadActivity';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
@@ -39,11 +52,17 @@ export default function LeadDetailPage() {
   const {
     allLeads,
     isEnriching,
+    isResearching,
     enrichLead,
+    researchLeadOwner,
     updateLeadStatus,
     updateLeadNotes,
     addLeadTag,
     removeLeadTag,
+    logCallMade,
+    logWhatsAppSent,
+    logExported,
+    getLeadActivities,
   } = useLeadManager();
 
   const lead = allLeads.find((l) => l.id === id) ?? null;
@@ -51,25 +70,75 @@ export default function LeadDetailPage() {
   const [tagInput, setTagInput] = useState('');
   const [notesValue, setNotesValue] = useState(lead?.notes ?? '');
   const [notesSaved, setNotesSaved] = useState(false);
+  const [activities, setActivities] = useState<LeadActivity[]>([]);
+
+  // Load activities
+  useEffect(() => {
+    if (lead) {
+      setActivities(getLeadActivities(lead.id));
+    }
+  }, [lead, getLeadActivities]);
+
+  // Refresh activities after any action
+  const refreshActivities = useCallback(() => {
+    if (lead) {
+      // Small delay to allow localStorage write
+      setTimeout(() => setActivities(getLeadActivities(lead.id)), 50);
+    }
+  }, [lead, getLeadActivities]);
 
   const handleSaveNotes = useCallback(() => {
     if (!lead) return;
     updateLeadNotes(lead.id, notesValue);
     setNotesSaved(true);
     setTimeout(() => setNotesSaved(false), 1500);
-  }, [lead, notesValue, updateLeadNotes]);
+    refreshActivities();
+  }, [lead, notesValue, updateLeadNotes, refreshActivities]);
 
   const handleAddTag = useCallback(() => {
     if (!lead || !tagInput.trim()) return;
     addLeadTag(lead.id, tagInput.trim());
     setTagInput('');
-  }, [lead, tagInput, addLeadTag]);
+    refreshActivities();
+  }, [lead, tagInput, addLeadTag, refreshActivities]);
 
   const handleExportSingle = useCallback(() => {
     if (!lead) return;
     const csv = exportLeadsCSV([lead]);
     downloadCSV(csv, `lead-${lead.buildingName.replace(/\s+/g, '-').toLowerCase()}.csv`);
-  }, [lead]);
+    logExported(lead.id);
+    refreshActivities();
+  }, [lead, logExported, refreshActivities]);
+
+  const handleCall = useCallback(() => {
+    if (!lead?.enrichment?.phone) return;
+    window.open(buildCallUrl(lead.enrichment.phone), '_self');
+    logCallMade(lead.id, lead.enrichment.phone);
+    refreshActivities();
+  }, [lead, logCallMade, refreshActivities]);
+
+  const handleWhatsApp = useCallback(() => {
+    if (!lead?.enrichment?.phone) return;
+    const url = buildWhatsAppUrl(
+      lead.enrichment.phone,
+      lead.enrichment?.businessName || undefined
+    );
+    window.open(url, '_blank');
+    logWhatsAppSent(lead.id, lead.enrichment.phone);
+    refreshActivities();
+  }, [lead, logWhatsAppSent, refreshActivities]);
+
+  const handleResearchOwner = useCallback(async () => {
+    if (!lead) return;
+    await researchLeadOwner(lead.id);
+    refreshActivities();
+  }, [lead, researchLeadOwner, refreshActivities]);
+
+  const handleStatusChange = useCallback((status: typeof LEAD_KANBAN_COLUMNS[number]) => {
+    if (!lead) return;
+    updateLeadStatus(lead.id, status);
+    refreshActivities();
+  }, [lead, updateLeadStatus, refreshActivities]);
 
   if (!lead) {
     return (
@@ -85,6 +154,7 @@ export default function LeadDetailPage() {
   }
 
   const scoreColor = getScoreColor(lead.leadScore);
+  const phone = lead.enrichment?.phone;
 
   return (
     <div className="min-h-screen p-6">
@@ -98,8 +168,17 @@ export default function LeadDetailPage() {
       </button>
 
       <div className="flex gap-6">
-        {/* Left: Report Preview */}
-        <div className="flex-1 min-w-0">
+        {/* Left column: Map + Report */}
+        <div className="flex-1 min-w-0 space-y-5">
+          {/* Interactive Map */}
+          <LeadInteractiveMap
+            center={lead.center}
+            coordinates={lead.coordinates}
+            zoom={18}
+            height={400}
+          />
+
+          {/* Report Preview */}
           <LeadReportPreview lead={lead} />
         </div>
 
@@ -122,7 +201,7 @@ export default function LeadDetailPage() {
                 return (
                   <button
                     key={status}
-                    onClick={() => updateLeadStatus(lead.id, status)}
+                    onClick={() => handleStatusChange(status)}
                     className={cn(
                       'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
                       isActive
@@ -188,6 +267,42 @@ export default function LeadDetailPage() {
               Actions
             </h3>
             <div className="space-y-2">
+              {/* Call & WhatsApp buttons */}
+              {phone && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<Phone className="w-4 h-4" />}
+                    onClick={handleCall}
+                    className="flex-1"
+                  >
+                    Call
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<MessageCircle className="w-4 h-4" />}
+                    onClick={handleWhatsApp}
+                    className="flex-1"
+                  >
+                    WhatsApp
+                  </Button>
+                </div>
+              )}
+
+              {/* Research Owner */}
+              <Button
+                variant="secondary"
+                fullWidth
+                size="sm"
+                icon={<Search className="w-4 h-4" />}
+                loading={isResearching}
+                onClick={handleResearchOwner}
+              >
+                Research Owner
+              </Button>
+
               {!lead.enrichment && (
                 <Button
                   variant="secondary"
@@ -195,7 +310,9 @@ export default function LeadDetailPage() {
                   size="sm"
                   icon={<Sparkles className="w-4 h-4" />}
                   loading={isEnriching}
-                  onClick={() => enrichLead(lead.id)}
+                  onClick={() => {
+                    enrichLead(lead.id).then(refreshActivities);
+                  }}
                 >
                   Enrich Lead
                 </Button>
@@ -230,6 +347,77 @@ export default function LeadDetailPage() {
             </div>
           </GlassCard>
 
+          {/* Owner Info (from research) */}
+          {lead.enrichment && (lead.enrichment.ownerName || lead.enrichment.email || lead.enrichment.socialMedia) && (
+            <GlassCard padding="md">
+              <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
+                Owner Info
+              </h3>
+              <div className="space-y-2.5">
+                {lead.enrichment.ownerName && (
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-6 h-6 rounded-md bg-[#00ffcc]/10 flex items-center justify-center">
+                      <User className="w-3 h-3 text-[#00ffcc]" />
+                    </div>
+                    <span className="text-sm text-[#f0f0f5]">
+                      {lead.enrichment.ownerName}
+                    </span>
+                  </div>
+                )}
+                {lead.enrichment.email && (
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-6 h-6 rounded-md bg-[#0ea5e9]/10 flex items-center justify-center">
+                      <Mail className="w-3 h-3 text-[#0ea5e9]" />
+                    </div>
+                    <a
+                      href={`mailto:${lead.enrichment.email}`}
+                      className="text-sm text-[#00ffcc] hover:underline truncate"
+                    >
+                      {lead.enrichment.email}
+                    </a>
+                  </div>
+                )}
+                {lead.enrichment.socialMedia && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {lead.enrichment.socialMedia.facebook && (
+                      <a
+                        href={lead.enrichment.socialMedia.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-2 py-1 text-[10px] rounded-full bg-[#1877f2]/10 text-[#1877f2] hover:bg-[#1877f2]/20 transition-colors"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        Facebook
+                      </a>
+                    )}
+                    {lead.enrichment.socialMedia.instagram && (
+                      <a
+                        href={lead.enrichment.socialMedia.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-2 py-1 text-[10px] rounded-full bg-[#e4405f]/10 text-[#e4405f] hover:bg-[#e4405f]/20 transition-colors"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        Instagram
+                      </a>
+                    )}
+                    {lead.enrichment.socialMedia.linkedin && (
+                      <a
+                        href={lead.enrichment.socialMedia.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-2 py-1 text-[10px] rounded-full bg-[#0a66c2]/10 text-[#0a66c2] hover:bg-[#0a66c2]/20 transition-colors"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </GlassCard>
+          )}
+
           {/* Tags */}
           <GlassCard padding="md">
             <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
@@ -244,7 +432,10 @@ export default function LeadDetailPage() {
                   <Tag className="w-2.5 h-2.5" />
                   {tag}
                   <button
-                    onClick={() => removeLeadTag(lead.id, tag)}
+                    onClick={() => {
+                      removeLeadTag(lead.id, tag);
+                      refreshActivities();
+                    }}
                     className="ml-0.5 hover:text-[#f0f0f5] transition-colors"
                   >
                     <X className="w-2.5 h-2.5" />
@@ -317,7 +508,7 @@ export default function LeadDetailPage() {
                       <Phone className="w-3 h-3 text-[#22c55e]" />
                     </div>
                     <span className="text-sm text-[#c0c0d0]">
-                      {lead.enrichment.phone}
+                      {formatPanamaPhone(lead.enrichment.phone)}
                     </span>
                   </div>
                 )}
@@ -336,7 +527,7 @@ export default function LeadDetailPage() {
                     </a>
                   </div>
                 )}
-                {lead.enrichment.rating && (
+                {lead.enrichment.rating != null && lead.enrichment.rating > 0 && (
                   <div className="flex items-center gap-2.5">
                     <div className="w-6 h-6 rounded-md bg-[#f59e0b]/10 flex items-center justify-center">
                       <Star className="w-3 h-3 text-[#f59e0b]" />
@@ -372,6 +563,14 @@ export default function LeadDetailPage() {
               </div>
             </GlassCard>
           )}
+
+          {/* Activity Log */}
+          <GlassCard padding="md">
+            <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
+              Activity Log
+            </h3>
+            <LeadActivityLog activities={activities} maxVisible={8} />
+          </GlassCard>
 
           {/* Timeline */}
           <GlassCard padding="md">

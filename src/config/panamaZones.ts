@@ -83,6 +83,38 @@ export const PANAMA_ZONES: LeadZone[] = [
     color: '#6366f1',
   },
 
+  // === Playa Bonita / Panama Pacifico / Amador ===
+  {
+    id: 'panama-pacifico',
+    name: 'Panama Pacifico',
+    nameEs: 'Panama Pacífico',
+    center: { lat: 8.910, lng: -79.597 },
+    bounds: { north: 8.925, south: 8.895, east: -79.575, west: -79.620 },
+    description: 'Special Economic Zone — 27 warehouses, 345+ companies (3M, Dell, BASF)',
+    descriptionEs: 'Zona Económica Especial — 27 almacenes, 345+ empresas (3M, Dell, BASF)',
+    color: '#ff6b35',
+  },
+  {
+    id: 'playa-bonita',
+    name: 'Playa Bonita / Veracruz',
+    nameEs: 'Playa Bonita / Veracruz',
+    center: { lat: 8.890, lng: -79.607 },
+    bounds: { north: 8.905, south: 8.875, east: -79.575, west: -79.640 },
+    description: 'Resort hotels (Westin, Dreams), residential towers, Veracruz village',
+    descriptionEs: 'Hoteles resort (Westin, Dreams), torres residenciales, pueblo de Veracruz',
+    color: '#06d6a0',
+  },
+  {
+    id: 'amador-naos',
+    name: 'Amador / Naos',
+    nameEs: 'Amador / Naos',
+    center: { lat: 8.922, lng: -79.552 },
+    bounds: { north: 8.935, south: 8.910, east: -79.530, west: -79.575 },
+    description: 'Amador Causeway — cruise terminal, marina, hotels, restaurants',
+    descriptionEs: 'Calzada de Amador — terminal de cruceros, marina, hoteles, restaurantes',
+    color: '#118ab2',
+  },
+
   // === Beach & Tourism Zones ===
   {
     id: 'playa-venao',

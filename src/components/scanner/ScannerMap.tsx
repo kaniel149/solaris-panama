@@ -29,7 +29,6 @@ interface ScannerMapProps {
   zoom: number;
   onBuildingSelect: (id: number) => void;
   onBoundsChange: (bounds: MapBounds) => void;
-  onCenterChange?: (center: [number, number], zoom: number) => void;
 }
 
 const EMPTY_FILTER = ['==', ['get', 'id'], -1];
@@ -41,7 +40,6 @@ export default function ScannerMap({
   zoom,
   onBuildingSelect,
   onBoundsChange,
-  onCenterChange,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [mapStyle, setMapStyle] = useState(DARK_STYLE);
@@ -52,8 +50,22 @@ export default function ScannerMap({
     zoom,
   });
 
-  // Sync center/zoom from parent
+  // Track last center/zoom values to avoid redundant flyTo calls
+  const prevCenter = useRef(center);
+  const prevZoom = useRef(zoom);
+
+  // Sync center/zoom from parent (only when values actually change)
   useEffect(() => {
+    // Compare by value, not reference — prevents loop from new array refs
+    if (
+      prevCenter.current[0] === center[0] &&
+      prevCenter.current[1] === center[1] &&
+      prevZoom.current === zoom
+    ) return;
+
+    prevCenter.current = center;
+    prevZoom.current = zoom;
+
     const map = (mapRef.current as any)?.getMap?.();
     if (!map) return;
     map.flyTo({
@@ -106,15 +118,15 @@ export default function ScannerMap({
     if (!map) return;
     const bounds = map.getBounds();
     if (!bounds) return;
+    // Only update bounds (used for scan area) — don't send center/zoom back
+    // to parent to avoid infinite loop: parent→flyTo→moveend→setState→parent
     onBoundsChange({
       north: bounds.getNorth(),
       south: bounds.getSouth(),
       east: bounds.getEast(),
       west: bounds.getWest(),
     });
-    const c = map.getCenter();
-    onCenterChange?.([c.lng, c.lat], map.getZoom());
-  }, [onBoundsChange, onCenterChange]);
+  }, [onBoundsChange]);
 
   const toggleStyle = useCallback(() => {
     setMapStyle((s) => (s === DARK_STYLE ? SATELLITE_STYLE : DARK_STYLE));

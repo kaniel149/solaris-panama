@@ -7,6 +7,7 @@
 //   POST /api/roof-scan?action=overpass  (body: Overpass QL query)
 //   GET /api/roof-scan?action=satellite-image&lat=8.98&lng=-79.52&zoom=18&size=400x250
 //   GET /api/roof-scan?action=places-lookup&lat=8.98&lng=-79.52&radius=50
+//   GET /api/roof-scan?action=owner-research&query=BusinessName&lat=8.98&lng=-79.52
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
@@ -364,6 +365,182 @@ async function handlePlacesLookup(
   }
 }
 
+// ===== OWNER RESEARCH (Panama Directories) =====
+
+interface OwnerResearchResult {
+  ownerName: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  socialMedia: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  } | null;
+  sources: string[];
+}
+
+// Regex patterns for Panama contact info extraction
+const PHONE_REGEX = /(?:\+507[\s-]?)?\d{3,4}[\s-]?\d{4}/g;
+const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const FACEBOOK_REGEX = /(?:https?:\/\/)?(?:www\.)?facebook\.com\/[a-zA-Z0-9._-]+/gi;
+const INSTAGRAM_REGEX = /(?:https?:\/\/)?(?:www\.)?instagram\.com\/[a-zA-Z0-9._-]+/gi;
+const LINKEDIN_REGEX = /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:company|in)\/[a-zA-Z0-9._-]+/gi;
+
+async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<string | null> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; SolarisBot/1.0)',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Accept-Language': 'es-PA,es;q=0.9,en;q=0.8',
+      },
+    });
+    clearTimeout(timer);
+    if (!response.ok) return null;
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
+
+function extractContactInfo(html: string): {
+  phones: string[];
+  emails: string[];
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
+} {
+  const phones = [...new Set((html.match(PHONE_REGEX) || []).map(p => p.trim()))];
+  const emails = [...new Set((html.match(EMAIL_REGEX) || []).filter(e => !e.includes('example.')))];
+  const facebookMatches = html.match(FACEBOOK_REGEX);
+  const instagramMatches = html.match(INSTAGRAM_REGEX);
+  const linkedinMatches = html.match(LINKEDIN_REGEX);
+
+  return {
+    phones,
+    emails,
+    facebook: facebookMatches?.[0],
+    instagram: instagramMatches?.[0],
+    linkedin: linkedinMatches?.[0],
+  };
+}
+
+async function handleOwnerResearch(
+  query: string,
+  lat: string,
+  lng: string,
+  res: VercelResponse
+): Promise<void> {
+  const decodedQuery = decodeURIComponent(query);
+  const result: OwnerResearchResult = {
+    ownerName: null,
+    email: null,
+    phone: null,
+    website: null,
+    socialMedia: null,
+    sources: [],
+  };
+
+  // 1. Google Places Detail (use existing proxy logic)
+  if (GOOGLE_MAPS_API_KEY) {
+    try {
+      const placesUrl =
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
+        `?location=${lat},${lng}` +
+        `&radius=50` +
+        `&keyword=${encodeURIComponent(decodedQuery)}` +
+        `&key=${GOOGLE_MAPS_API_KEY}`;
+
+      const placesResponse = await fetch(placesUrl);
+      const placesData = await placesResponse.json();
+      const place = placesData.results?.[0];
+
+      if (place?.place_id) {
+        // Get detailed info
+        const detailUrl =
+          `https://maps.googleapis.com/maps/api/place/details/json` +
+          `?place_id=${place.place_id}` +
+          `&fields=name,formatted_phone_number,international_phone_number,website,url` +
+          `&key=${GOOGLE_MAPS_API_KEY}`;
+
+        const detailResponse = await fetch(detailUrl);
+        const detailData = await detailResponse.json();
+        const detail = detailData.result;
+
+        if (detail) {
+          result.ownerName = detail.name || null;
+          result.phone = detail.international_phone_number || detail.formatted_phone_number || null;
+          result.website = detail.website || null;
+          result.sources.push('Google Places');
+        }
+      }
+    } catch (err) {
+      console.error('[owner-research] Google Places error:', err);
+    }
+  }
+
+  // 2. Paginas Amarillas Panama
+  const paSearchUrl = `https://www.paginasamarillas.com.pa/buscar/${encodeURIComponent(decodedQuery)}`;
+  const paHtml = await fetchWithTimeout(paSearchUrl);
+  if (paHtml) {
+    const paInfo = extractContactInfo(paHtml);
+    if (paInfo.phones.length > 0 && !result.phone) {
+      result.phone = paInfo.phones[0];
+    }
+    if (paInfo.emails.length > 0 && !result.email) {
+      result.email = paInfo.emails[0];
+    }
+    if (paInfo.phones.length > 0 || paInfo.emails.length > 0) {
+      result.sources.push('Paginas Amarillas');
+    }
+  }
+
+  // 3. Find Us Here Panama
+  const fuhSearchUrl = `https://www.find-us-here.com/panama/search?q=${encodeURIComponent(decodedQuery)}`;
+  const fuhHtml = await fetchWithTimeout(fuhSearchUrl);
+  if (fuhHtml) {
+    const fuhInfo = extractContactInfo(fuhHtml);
+    if (fuhInfo.phones.length > 0 && !result.phone) {
+      result.phone = fuhInfo.phones[0];
+    }
+    if (fuhInfo.emails.length > 0 && !result.email) {
+      result.email = fuhInfo.emails[0];
+    }
+    // Social media from any directory
+    if (!result.socialMedia) {
+      const social: Record<string, string> = {};
+      if (fuhInfo.facebook) social.facebook = fuhInfo.facebook;
+      if (fuhInfo.instagram) social.instagram = fuhInfo.instagram;
+      if (fuhInfo.linkedin) social.linkedin = fuhInfo.linkedin;
+      if (Object.keys(social).length > 0) {
+        result.socialMedia = social as OwnerResearchResult['socialMedia'];
+      }
+    }
+    if (fuhInfo.phones.length > 0 || fuhInfo.emails.length > 0) {
+      result.sources.push('Find Us Here');
+    }
+  }
+
+  // Merge social from PA html too
+  if (paHtml && !result.socialMedia) {
+    const paInfo = extractContactInfo(paHtml);
+    const social: Record<string, string> = {};
+    if (paInfo.facebook) social.facebook = paInfo.facebook;
+    if (paInfo.instagram) social.instagram = paInfo.instagram;
+    if (paInfo.linkedin) social.linkedin = paInfo.linkedin;
+    if (Object.keys(social).length > 0) {
+      result.socialMedia = social as OwnerResearchResult['socialMedia'];
+    }
+  }
+
+  res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
+  res.status(200).json(result);
+}
+
 // ===== MAIN HANDLER =====
 
 export default async function handler(
@@ -400,6 +577,7 @@ export default async function handler(
         overpass: 'POST /api/roof-scan?action=overpass (body: Overpass QL query)',
         'satellite-image': 'GET /api/roof-scan?action=satellite-image&lat=8.98&lng=-79.52&zoom=18&size=400x250',
         'places-lookup': 'GET /api/roof-scan?action=places-lookup&lat=8.98&lng=-79.52&radius=50',
+        'owner-research': 'GET /api/roof-scan?action=owner-research&query=BusinessName&lat=8.98&lng=-79.52',
       },
     });
     return;
@@ -455,9 +633,22 @@ export default async function handler(
       return;
     }
 
+    case 'owner-research': {
+      const query = getParam(req.query, 'query') || '';
+      if (!query) {
+        res.status(400).json({
+          error: 'Missing required query parameter: query',
+          code: 'MISSING_QUERY',
+        });
+        return;
+      }
+      await handleOwnerResearch(query, lat, lng, res);
+      return;
+    }
+
     default: {
       res.status(400).json({
-        error: `Invalid action: "${action}". Valid actions: google-solar, pvwatts, overpass, satellite-image, places-lookup`,
+        error: `Invalid action: "${action}". Valid actions: google-solar, pvwatts, overpass, satellite-image, places-lookup, owner-research`,
         code: 'INVALID_ACTION',
       });
       return;

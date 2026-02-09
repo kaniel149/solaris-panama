@@ -26,6 +26,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { Lead } from '@/types/lead';
+import { LeadSatelliteImage } from '@/components/leads/LeadSatelliteImage';
 
 // ===== HELPERS =====
 
@@ -299,6 +300,16 @@ export function LeadReportPreview({ lead, className }: LeadReportPreviewProps) {
         )}
       >
         <div className="h-1 w-full bg-gradient-to-r from-[#00ffcc] via-[#00d4aa] to-[#8b5cf6]" />
+
+        {/* Satellite image banner */}
+        <LeadSatelliteImage
+          lat={lead.center.lat}
+          lng={lead.center.lng}
+          zoom={18}
+          size="900x300"
+          aspectRatio="3/1"
+          className="rounded-none"
+        />
 
         <div className="absolute -top-32 -right-32 w-64 h-64 rounded-full bg-[#00ffcc]/[0.04] blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full bg-[#8b5cf6]/[0.04] blur-3xl pointer-events-none" />

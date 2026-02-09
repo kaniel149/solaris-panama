@@ -10,6 +10,14 @@ export interface LeadEnrichment {
   rating: number | null;
   types: string[];
   placeId: string | null;
+  // Owner research fields
+  ownerName: string | null;
+  email: string | null;
+  socialMedia: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  } | null;
 }
 
 export interface Lead {

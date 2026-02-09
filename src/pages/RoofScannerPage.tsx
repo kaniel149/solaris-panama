@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useRoofScanner } from '@/hooks/useRoofScanner';
 import { useLeadManager } from '@/hooks/useLeadManager';
@@ -27,8 +27,6 @@ const EMPTY_GEOJSON: GeoJSON.FeatureCollection = {
 
 export default function RoofScannerPage() {
   const scanner = useRoofScanner();
-  const leadManager = useLeadManager();
-  const areaSelection = useAreaSelection();
 
   const {
     buildings,
@@ -45,6 +43,29 @@ export default function RoofScannerPage() {
     setFilters,
   } = scanner;
 
+  // Destructure stable functions/values from hooks individually
+  // (avoids using entire hook return objects as useCallback deps, which are new every render)
+  const {
+    selectZone,
+    clearZone,
+    getActiveBounds,
+    zones,
+    selectedZone: areaSelectedZone,
+  } = useAreaSelection();
+
+  const {
+    createLeadFromBuilding,
+    saveAllAsLeads,
+    enrichAllLeads,
+    leads: allLeads,
+    isEnriching,
+    enrichProgress,
+  } = useLeadManager();
+
+  // Ref for selected zone name — avoids adding areaSelectedZone as callback dep
+  const selectedZoneNameRef = useRef<string | undefined>(undefined);
+  selectedZoneNameRef.current = areaSelectedZone?.name;
+
   // Local state
   const [mapCenter, setMapCenter] = useState<[number, number]>([-79.52, 9.0]);
   const [mapZoom, setMapZoom] = useState(14);
@@ -59,8 +80,8 @@ export default function RoofScannerPage() {
   // Check if selected building is already saved as lead
   const isSelectedLeadSaved = useMemo(() => {
     if (!selectedBuilding) return false;
-    return leadManager.leads.some((l) => l.osmId === selectedBuilding.osmId);
-  }, [selectedBuilding, leadManager.leads]);
+    return allLeads.some((l) => l.osmId === selectedBuilding.osmId);
+  }, [selectedBuilding, allLeads]);
 
   // Handlers
   const handleSearch = useCallback(async (address: string) => {
@@ -74,9 +95,9 @@ export default function RoofScannerPage() {
   }, []);
 
   const handleScanViewport = useCallback(() => {
-    const bounds = areaSelection.getActiveBounds() ?? mapBounds;
+    const bounds = getActiveBounds() ?? mapBounds;
     scanViewport(bounds);
-  }, [scanViewport, mapBounds, areaSelection]);
+  }, [scanViewport, mapBounds, getActiveBounds]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
@@ -105,53 +126,45 @@ export default function RoofScannerPage() {
     setMapBounds(bounds);
   }, []);
 
-  const handleCenterChange = useCallback(
-    (center: [number, number], zoom: number) => {
-      setMapCenter(center);
-      setMapZoom(zoom);
-    },
-    []
-  );
-
   // Zone selection handler - fly map to zone
   const handleSelectZone = useCallback(
     (zoneId: string) => {
-      areaSelection.selectZone(zoneId);
-      const zone = areaSelection.zones.find((z) => z.id === zoneId);
+      selectZone(zoneId);
+      const zone = zones.find((z) => z.id === zoneId);
       if (zone) {
         setMapCenter([zone.center.lng, zone.center.lat]);
         setMapZoom(15);
       }
     },
-    [areaSelection]
+    [selectZone, zones]
   );
 
   // Save selected building as lead
   const handleSaveAsLead = useCallback(() => {
     if (!selectedBuilding) return;
-    leadManager.createLeadFromBuilding(
+    createLeadFromBuilding(
       selectedBuilding,
-      areaSelection.selectedZone?.name ?? undefined
+      selectedZoneNameRef.current
     );
-  }, [selectedBuilding, leadManager, areaSelection.selectedZone]);
+  }, [selectedBuilding, createLeadFromBuilding]);
 
   // Save all buildings as leads
   const handleSaveAllAsLeads = useCallback(() => {
     setIsSavingLeads(true);
     try {
-      leadManager.saveAllAsLeads(
+      saveAllAsLeads(
         buildings,
-        areaSelection.selectedZone?.name ?? undefined
+        selectedZoneNameRef.current
       );
     } finally {
       setIsSavingLeads(false);
     }
-  }, [buildings, leadManager, areaSelection.selectedZone]);
+  }, [buildings, saveAllAsLeads]);
 
   // Enrich all leads
   const handleEnrichAll = useCallback(async () => {
-    await leadManager.enrichAllLeads();
-  }, [leadManager]);
+    await enrichAllLeads();
+  }, [enrichAllLeads]);
 
   // Analyze top N buildings
   const handleAnalyzeTop = useCallback(
@@ -180,16 +193,16 @@ export default function RoofScannerPage() {
         onBuildingSelect={handleBuildingSelect}
         onFilterChange={handleFilterChange}
         // Lead pipeline props
-        zones={areaSelection.zones}
-        selectedZoneId={areaSelection.selectedZone?.id ?? null}
+        zones={zones}
+        selectedZoneId={areaSelectedZone?.id ?? null}
         onSelectZone={handleSelectZone}
-        onClearZone={areaSelection.clearZone}
+        onClearZone={clearZone}
         onSaveAllAsLeads={handleSaveAllAsLeads}
         onEnrichAll={handleEnrichAll}
         onAnalyzeTop={handleAnalyzeTop}
         isSavingLeads={isSavingLeads}
-        isEnriching={leadManager.isEnriching}
-        enrichProgress={leadManager.enrichProgress}
+        isEnriching={isEnriching}
+        enrichProgress={enrichProgress}
       />
 
       {/* Map Area */}
@@ -201,7 +214,6 @@ export default function RoofScannerPage() {
           selectedBuildingId={selectedBuildingId}
           onBuildingSelect={handleBuildingSelect}
           onBoundsChange={handleBoundsChange}
-          onCenterChange={handleCenterChange}
         />
 
         <DrawToolbar

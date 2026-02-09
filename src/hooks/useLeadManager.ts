@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Lead, LeadStatus, LeadStats } from '@/types/lead';
 import {
   getLeads,
@@ -12,6 +12,9 @@ import {
   batchEnrich,
   calculateLeadScore,
 } from '@/services/leadEnrichmentService';
+import { addActivity, getActivities } from '@/services/leadActivityService';
+import { researchOwner, mergeOwnerResearch } from '@/services/ownerResearchService';
+import type { LeadActivity } from '@/types/leadActivity';
 import type { DiscoveredBuilding } from '@/hooks/useRoofScanner';
 
 // ===== Hook =====
@@ -20,10 +23,15 @@ export function useLeadManager() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [isEnriching, setIsEnriching] = useState(false);
+  const [isResearching, setIsResearching] = useState(false);
   const [enrichProgress, setEnrichProgress] = useState<{ completed: number; total: number }>({ completed: 0, total: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [sortBy, setSortBy] = useState<'score' | 'date' | 'area' | 'name'>('score');
+
+  // Ref to access current leads in stable callbacks without adding `leads` as dependency
+  const leadsRef = useRef(leads);
+  useEffect(() => { leadsRef.current = leads; }, [leads]);
 
   // Load leads from localStorage on mount
   useEffect(() => {
@@ -47,6 +55,7 @@ export function useLeadManager() {
         if (prev.some((l) => l.osmId === building.osmId)) return prev;
         return [...prev, lead];
       });
+      addActivity(lead.id, 'created', `Lead created from ${building.buildingType} building`);
       return lead;
     },
     []
@@ -54,24 +63,26 @@ export function useLeadManager() {
 
   const saveAllAsLeads = useCallback(
     (buildings: DiscoveredBuilding[], zone?: string): Lead[] => {
-      const existingOsmIds = new Set(leads.map((l) => l.osmId));
-      const newBuildings = buildings.filter((b) => !existingOsmIds.has(b.osmId));
-      const newLeads = newBuildings.map((b) => buildingToLead(b, null, zone || null));
-
-      if (newLeads.length > 0) {
-        setLeads((prev) => [...prev, ...newLeads]);
+      let newLeads: Lead[] = [];
+      setLeads((prev) => {
+        const existingOsmIds = new Set(prev.map((l) => l.osmId));
+        const newBuildings = buildings.filter((b) => !existingOsmIds.has(b.osmId));
+        newLeads = newBuildings.map((b) => buildingToLead(b, null, zone || null));
+        return newLeads.length > 0 ? [...prev, ...newLeads] : prev;
+      });
+      for (const lead of newLeads) {
+        addActivity(lead.id, 'created', 'Lead created from batch scan');
       }
-
       return newLeads;
     },
-    [leads]
+    []
   );
 
   const enrichLead = useCallback(
     async (id: string): Promise<void> => {
       setIsEnriching(true);
       try {
-        const lead = leads.find((l) => l.id === id);
+        const lead = leadsRef.current.find((l) => l.id === id);
         if (!lead) return;
 
         const enrichment = await enrichBuilding(lead.center);
@@ -84,15 +95,19 @@ export function useLeadManager() {
               : l
           )
         );
+
+        addActivity(id, 'enriched', enrichment?.businessName
+          ? `Enriched with Google Places: ${enrichment.businessName}`
+          : 'Enrichment attempted (no results)');
       } finally {
         setIsEnriching(false);
       }
     },
-    [leads]
+    []
   );
 
   const enrichAllLeads = useCallback(async (): Promise<void> => {
-    const unenrichedLeads = leads.filter((l) => !l.enrichment);
+    const unenrichedLeads = leadsRef.current.filter((l) => !l.enrichment);
     if (unenrichedLeads.length === 0) return;
 
     setIsEnriching(true);
@@ -123,19 +138,97 @@ export function useLeadManager() {
           };
         })
       );
+
+      // Log activities for each enriched lead
+      for (const [id, enrichment] of results) {
+        addActivity(id, 'enriched', enrichment?.businessName
+          ? `Batch enriched: ${enrichment.businessName}`
+          : 'Batch enrichment (no results)');
+      }
     } finally {
       setIsEnriching(false);
       setEnrichProgress({ completed: 0, total: 0 });
     }
-  }, [leads]);
+  }, []);
+
+  const researchLeadOwner = useCallback(async (id: string): Promise<void> => {
+    setIsResearching(true);
+    try {
+      const lead = leadsRef.current.find((l) => l.id === id);
+      if (!lead) return;
+
+      const queryName = lead.enrichment?.businessName || lead.buildingName;
+      const result = await researchOwner(queryName, lead.center.lat, lead.center.lng);
+
+      if (result) {
+        const merged = mergeOwnerResearch(
+          lead.enrichment ? {
+            ownerName: lead.enrichment.ownerName,
+            email: lead.enrichment.email,
+            phone: lead.enrichment.phone,
+            socialMedia: lead.enrichment.socialMedia,
+          } : null,
+          result
+        );
+
+        setLeads((prev) =>
+          prev.map((l) => {
+            if (l.id !== id) return l;
+            const updatedEnrichment = {
+              ...(l.enrichment || {
+                businessName: null,
+                phone: null,
+                website: null,
+                address: null,
+                rating: null,
+                types: [],
+                placeId: null,
+                ownerName: null,
+                email: null,
+                socialMedia: null,
+              }),
+              ownerName: merged.ownerName,
+              email: merged.email,
+              phone: merged.phone || l.enrichment?.phone || null,
+              website: result.website || l.enrichment?.website || null,
+              socialMedia: merged.socialMedia,
+            };
+            const updatedScore = calculateLeadScore(l.suitabilityScore, updatedEnrichment);
+            return {
+              ...l,
+              enrichment: updatedEnrichment,
+              leadScore: updatedScore,
+              updatedAt: new Date().toISOString(),
+            };
+          })
+        );
+
+        const sources = result.sources.join(', ') || 'no sources';
+        addActivity(id, 'owner_researched',
+          result.ownerName
+            ? `Owner found: ${result.ownerName} (${sources})`
+            : `Owner research completed (${sources})`
+        );
+      } else {
+        addActivity(id, 'owner_researched', 'Owner research: no results found');
+      }
+    } finally {
+      setIsResearching(false);
+    }
+  }, []);
 
   const updateLeadStatus = useCallback((id: string, status: LeadStatus): void => {
+    const lead = leadsRef.current.find((l) => l.id === id);
+    const oldStatus = lead?.status || 'unknown';
+
     setLeads((prev) =>
       prev.map((l) =>
         l.id === id ? { ...l, status, updatedAt: new Date().toISOString() } : l
       )
     );
     updateLead(id, { status });
+
+    addActivity(id, 'status_changed', `Status: ${oldStatus} \u2192 ${status}`);
   }, []);
 
   const updateLeadNotes = useCallback((id: string, notes: string): void => {
@@ -145,6 +238,8 @@ export function useLeadManager() {
       )
     );
     updateLead(id, { notes });
+
+    addActivity(id, 'note_added', 'Notes updated');
   }, []);
 
   const addLeadTag = useCallback((id: string, tag: string): void => {
@@ -154,6 +249,8 @@ export function useLeadManager() {
         return { ...l, tags: [...l.tags, tag], updatedAt: new Date().toISOString() };
       })
     );
+
+    addActivity(id, 'tag_added', `Tag added: ${tag}`);
   }, []);
 
   const removeLeadTag = useCallback((id: string, tag: string): void => {
@@ -167,6 +264,24 @@ export function useLeadManager() {
         };
       })
     );
+
+    addActivity(id, 'tag_removed', `Tag removed: ${tag}`);
+  }, []);
+
+  const logCallMade = useCallback((id: string, phone: string): void => {
+    addActivity(id, 'call_made', `Called ${phone}`);
+  }, []);
+
+  const logWhatsAppSent = useCallback((id: string, phone: string): void => {
+    addActivity(id, 'whatsapp_sent', `WhatsApp message to ${phone}`);
+  }, []);
+
+  const logExported = useCallback((id: string): void => {
+    addActivity(id, 'exported', 'Lead data exported');
+  }, []);
+
+  const getLeadActivities = useCallback((leadId: string): LeadActivity[] => {
+    return getActivities(leadId);
   }, []);
 
   const deleteLead = useCallback((id: string): void => {
@@ -199,6 +314,7 @@ export function useLeadManager() {
           l.buildingType.toLowerCase().includes(q) ||
           l.enrichment?.businessName?.toLowerCase().includes(q) ||
           l.enrichment?.address?.toLowerCase().includes(q) ||
+          l.enrichment?.ownerName?.toLowerCase().includes(q) ||
           l.zone?.toLowerCase().includes(q) ||
           l.tags.some((t) => t.toLowerCase().includes(q))
       );
@@ -261,6 +377,7 @@ export function useLeadManager() {
     selectedLead,
     selectedLeadId,
     isEnriching,
+    isResearching,
     enrichProgress,
     searchQuery,
     statusFilter,
@@ -278,10 +395,15 @@ export function useLeadManager() {
     saveAllAsLeads,
     enrichLead,
     enrichAllLeads,
+    researchLeadOwner,
     updateLeadStatus,
     updateLeadNotes,
     addLeadTag,
     removeLeadTag,
+    logCallMade,
+    logWhatsAppSent,
+    logExported,
+    getLeadActivities,
     deleteLead,
   };
 }

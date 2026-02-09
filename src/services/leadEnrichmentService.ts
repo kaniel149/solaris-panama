@@ -24,6 +24,9 @@ export async function enrichBuilding(
       rating: place.rating || null,
       types: place.types || [],
       placeId: place.place_id || null,
+      ownerName: null,
+      email: null,
+      socialMedia: null,
     };
   } catch (err) {
     console.error('Enrichment failed:', err);
