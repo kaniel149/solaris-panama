@@ -53,7 +53,7 @@ export interface ProposalInput {
   monthlyLoanPayment?: number;
 
   // Optional context from roof scanner
-  roofScanSource?: 'google_solar' | 'pvwatts_estimate' | 'manual';
+  roofScanSource?: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'manual';
   imageryDate?: string;
 }
 
@@ -153,7 +153,7 @@ Financing:
     : '';
 
   const roofScanNote = input.roofScanSource
-    ? `\nRoof data source: ${input.roofScanSource === 'google_solar' ? 'Google Solar API satellite analysis' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts simulation' : 'Manual assessment'}${input.imageryDate ? ` (imagery date: ${input.imageryDate})` : ''}`
+    ? `\nRoof data source: ${input.roofScanSource === 'google_solar' ? 'Google Solar API satellite analysis' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts simulation' : input.roofScanSource === 'local_panama' ? 'Panama-calibrated local estimate' : 'Manual assessment'}${input.imageryDate ? ` (imagery date: ${input.imageryDate})` : ''}`
     : '';
 
   const userPrompt = `Generate a professional solar energy proposal with the following project data:
@@ -365,7 +365,7 @@ The total investment of **$${fmt(input.totalInvestment)}** is recovered in appro
 | Area total del techo | ${input.roofAreaM2.toLocaleString()} m2 |
 | Area utilizable | ${usableArea.toLocaleString()} m2 |
 | Tipo de techo | ${input.roofType ?? 'Concreto plano'} |
-${input.roofScanSource ? `| Fuente de datos | ${input.roofScanSource === 'google_solar' ? 'Google Solar API' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts' : 'Evaluacion manual'} |` : ''}
+${input.roofScanSource ? `| Fuente de datos | ${input.roofScanSource === 'google_solar' ? 'Google Solar API' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts' : input.roofScanSource === 'local_panama' ? 'Estimacion local calibrada' : 'Evaluacion manual'} |` : ''}
 
 ### Evaluacion de Idoneidad
 
@@ -384,7 +384,7 @@ El techo de su edificio presenta condiciones favorables para la instalacion sola
 | Total roof area | ${input.roofAreaM2.toLocaleString()} m2 |
 | Usable area | ${usableArea.toLocaleString()} m2 |
 | Roof type | ${input.roofType ?? 'Flat concrete'} |
-${input.roofScanSource ? `| Data source | ${input.roofScanSource === 'google_solar' ? 'Google Solar API' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts' : 'Manual assessment'} |` : ''}
+${input.roofScanSource ? `| Data source | ${input.roofScanSource === 'google_solar' ? 'Google Solar API' : input.roofScanSource === 'pvwatts_estimate' ? 'NREL PVWatts' : input.roofScanSource === 'local_panama' ? 'Panama-calibrated estimate' : 'Manual assessment'} |` : ''}
 
 ### Suitability Assessment
 

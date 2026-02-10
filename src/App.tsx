@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import Layout from '@/components/layout/Layout';
 import LoginPage from '@/pages/LoginPage';
+import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import ProjectDetailPage from '@/pages/ProjectDetailPage';
@@ -27,6 +28,8 @@ export default function App() {
         <ToastProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
+            <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
             <Route element={<Layout />}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/projects" element={<ProjectsPage />} />

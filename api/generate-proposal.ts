@@ -1,5 +1,5 @@
 // Vercel Serverless API Proxy for AI Proposal Generation
-// Proxies requests to Anthropic Claude API, keeping API key server-side
+// Proxies requests to Groq API (OpenAI-compatible), keeping API key server-side
 //
 // Usage:
 //   POST /api/generate-proposal
@@ -9,10 +9,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // ===== CONFIG =====
 
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_API_VERSION = '2023-06-01';
-const MODEL = 'claude-sonnet-4-20250514';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL = 'llama-3.3-70b-versatile';
 const MAX_TOKENS = 8000;
+const TEMPERATURE = 0.7;
 
 // ===== HELPERS =====
 
@@ -71,13 +71,13 @@ export default async function handler(
   }
 
   // Validate API key
-  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-  if (!ANTHROPIC_API_KEY) {
-    console.error('[generate-proposal] ANTHROPIC_API_KEY not configured');
+  const GROQ_API_KEY = process.env.GROQ_API_KEY;
+  if (!GROQ_API_KEY) {
+    console.error('[generate-proposal] GROQ_API_KEY not configured');
     res.status(503).json({
-      error: 'ANTHROPIC_API_KEY not configured',
+      error: 'GROQ_API_KEY not configured',
       code: 'NO_API_KEY',
-      hint: 'Add ANTHROPIC_API_KEY to your Vercel project environment variables.',
+      hint: 'Add GROQ_API_KEY to your Vercel project environment variables.',
     });
     return;
   }
@@ -95,30 +95,33 @@ export default async function handler(
   const { systemPrompt, userPrompt } = validation.data;
 
   try {
-    const response = await fetch(ANTHROPIC_API_URL, {
+    const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': ANTHROPIC_API_VERSION,
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
         model: MODEL,
         max_tokens: MAX_TOKENS,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }],
+        temperature: TEMPERATURE,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[generate-proposal] Anthropic API error:', {
+      console.error('[generate-proposal] Groq API error:', {
         status: response.status,
         error: errorText,
       });
 
       res.status(response.status).json({
-        error: `Anthropic API error: ${response.status}`,
+        error: `Groq API error: ${response.status}`,
         code: 'API_ERROR',
         details: errorText,
       });
@@ -126,7 +129,7 @@ export default async function handler(
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text || '';
+    const content = data.choices?.[0]?.message?.content || '';
 
     res.status(200).json({
       content,
@@ -134,7 +137,7 @@ export default async function handler(
       model: data.model,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Failed to reach Anthropic API';
+    const message = error instanceof Error ? error.message : 'Failed to reach Groq API';
     console.error('[generate-proposal] Fetch error:', message);
     res.status(500).json({
       error: message,

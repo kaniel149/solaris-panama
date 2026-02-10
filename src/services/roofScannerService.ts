@@ -1,8 +1,12 @@
 // Roof Scanner Service
-// Google Solar API + PVWatts fallback + Geocoding integration
+// Google Solar API + Local Panama Estimator (primary) + PVWatts (optional enrichment)
 // Scans any building's roof and assesses solar potential
 
 import { geocodeAddress } from './geocodingService';
+import {
+  PANAMA_DEFAULTS,
+  calculateMonthlyProduction,
+} from './solarCalculator';
 
 // ===== INTERFACES =====
 
@@ -32,7 +36,7 @@ export interface RoofScanResult {
   longitude: number;
 
   // Scan status
-  source: 'google_solar' | 'pvwatts_estimate' | 'manual';
+  source: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'manual';
   quality: 'HIGH' | 'MEDIUM' | 'BASE' | 'ESTIMATED';
 
   // Roof data
@@ -71,6 +75,98 @@ const PANEL_WATT = 580;
 const PANEL_AREA_M2 = 2.58;
 const USABLE_ROOF_RATIO = 0.6; // 60% of roof usable for panels (setbacks, obstructions, HVAC)
 const SYSTEM_LOSSES = 14; // % losses (wiring, inverter, soiling, shading)
+
+// ===== PANAMA CITY-LEVEL SOLAR DATA =====
+// Used for latitude/longitude-based PSH interpolation
+
+interface CityReference {
+  name: string;
+  lat: number;
+  lng: number;
+  psh: number; // Peak sun hours/day
+}
+
+const PANAMA_CITIES: CityReference[] = [
+  { name: 'Panama City', lat: 8.9824, lng: -79.5199, psh: 4.5 },
+  { name: 'Colón',       lat: 9.3547, lng: -79.9016, psh: 4.2 },
+  { name: 'David',       lat: 8.4333, lng: -82.4333, psh: 4.8 },
+  { name: 'Santiago',    lat: 8.1000, lng: -80.9833, psh: 4.6 },
+  { name: 'Chitré',      lat: 7.9667, lng: -80.4333, psh: 4.7 },
+];
+
+/**
+ * Get peak sun hours for a location using inverse-distance-weighted interpolation
+ * from known Panama city data points.
+ */
+function getPeakSunHoursForLocation(lat: number, lng: number): number {
+  // Calculate distance to each reference city (Haversine simplified for short distances)
+  const distances = PANAMA_CITIES.map(city => {
+    const dLat = (lat - city.lat) * 111; // ~111 km per degree latitude
+    const dLng = (lng - city.lng) * 111 * Math.cos((lat * Math.PI) / 180);
+    const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+    return { city, dist: Math.max(dist, 0.1) }; // Avoid division by zero
+  });
+
+  // Check if we're very close to a known city (within ~5 km)
+  const closest = distances.reduce((a, b) => (a.dist < b.dist ? a : b));
+  if (closest.dist < 5) {
+    return closest.city.psh;
+  }
+
+  // Inverse-distance weighting (IDW) with power=2
+  let weightedSum = 0;
+  let weightTotal = 0;
+  for (const { city, dist } of distances) {
+    const weight = 1 / (dist * dist);
+    weightedSum += city.psh * weight;
+    weightTotal += weight;
+  }
+
+  const interpolated = weightedSum / weightTotal;
+
+  // Clamp to reasonable Panama range (4.0 - 5.0 PSH)
+  return Math.max(4.0, Math.min(5.0, interpolated));
+}
+
+// ===== LOCAL PANAMA SOLAR ESTIMATOR =====
+
+/**
+ * Estimate solar production using built-in Panama-calibrated data.
+ * No external API calls needed — uses solarCalculator constants.
+ *
+ * Returns PvWattsResult-compatible output so it can replace PVWatts seamlessly.
+ */
+export function estimateLocalSolar(
+  lat: number,
+  lng: number,
+  systemSizeKwp: number,
+  _roofAreaM2?: number
+): PvWattsResult {
+  // Get location-specific peak sun hours
+  const psh = getPeakSunHoursForLocation(lat, lng);
+  const performanceRatio = PANAMA_DEFAULTS.performanceRatio; // 0.80
+
+  // Annual energy: system size * PSH * 365 * performance ratio
+  const yearlyEnergyKwh = Math.round(
+    systemSizeKwp * psh * 365 * performanceRatio
+  );
+
+  // Monthly breakdown using Panama seasonal profile
+  const monthlyEnergyKwh = calculateMonthlyProduction(yearlyEnergyKwh).map(Math.round);
+
+  // Solar radiation (kWh/m2/day annual average)
+  const solarRadiationAnnual = psh;
+
+  // Capacity factor: actual output / theoretical max
+  const capacityFactor = yearlyEnergyKwh / (systemSizeKwp * 8760);
+
+  return {
+    yearlyEnergyKwh,
+    monthlyEnergyKwh,
+    solarRadiationAnnual,
+    capacityFactor,
+  };
+}
 
 // ===== GOOGLE SOLAR API =====
 
@@ -247,7 +343,7 @@ export async function scanWithGoogleSolar(
   }
 }
 
-// ===== PVWATTS FALLBACK =====
+// ===== PVWATTS (OPTIONAL ENRICHMENT) =====
 
 interface PvWattsApiResponse {
   outputs?: {
@@ -261,7 +357,8 @@ interface PvWattsApiResponse {
 
 /**
  * Estimate solar potential using NREL PVWatts v8 API.
- * Works globally - used as fallback when Google Solar isn't available.
+ * Now used as OPTIONAL enrichment — not on the critical path.
+ * The local Panama estimator is the primary fallback after Google Solar.
  */
 export async function estimateWithPvWatts(
   lat: number,
@@ -297,7 +394,11 @@ export async function estimateWithPvWatts(
 // ===== MAIN SCAN FUNCTION =====
 
 /**
- * Scan a roof - tries Google Solar first, falls back to PVWatts estimate.
+ * Scan a roof — pipeline:
+ *   1. Google Solar API (highest quality, pixel-level data)
+ *   2. Local Panama Estimator (always available, Panama-calibrated)
+ *   3. PVWatts enrichment (optional cross-validation, not critical)
+ *
  * Accepts either an address (geocoded automatically) or coordinates.
  */
 export async function scanRoof(
@@ -318,84 +419,57 @@ export async function scanRoof(
     address = geo.displayName;
   }
 
-  // 2. Try Google Solar API first (higher quality data)
+  // 2. Try Google Solar API first (highest quality data)
   const googleResult = await scanWithGoogleSolar(lat, lng);
   if (googleResult) {
     return { ...googleResult, address };
   }
 
-  // 3. Fallback: PVWatts estimate
-  // Estimate a typical commercial flat roof
+  // 3. Local Panama Estimator (primary fallback — no API keys needed)
   const estimatedRoofM2 = request.roofAreaM2 ?? 500;
   const usableArea = estimatedRoofM2 * USABLE_ROOF_RATIO;
   const maxPanels = Math.floor(usableArea / PANEL_AREA_M2);
   const estimatedSystemKwp = (maxPanels * PANEL_WATT) / 1000;
 
+  const localEstimate = estimateLocalSolar(lat, lng, estimatedSystemKwp, estimatedRoofM2);
+
+  const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => ({
+    panelsCount: Math.round(maxPanels * ratio),
+    yearlyEnergyDcKwh: Math.round(localEstimate.yearlyEnergyKwh * ratio),
+  }));
+
+  const result: RoofScanResult = {
+    address,
+    latitude: lat,
+    longitude: lng,
+    source: 'local_panama',
+    quality: 'ESTIMATED',
+    totalRoofAreaM2: estimatedRoofM2,
+    usableRoofAreaM2: usableArea,
+    roofSegments: [
+      {
+        areaM2: estimatedRoofM2,
+        pitchDegrees: 5,
+        azimuthDegrees: 180,
+        center: { lat, lng },
+      },
+    ],
+    maxPanelCount: maxPanels,
+    maxSystemSizeKwp: estimatedSystemKwp,
+    yearlyEnergyKwh: localEstimate.yearlyEnergyKwh,
+    peakSunHoursPerYear: localEstimate.solarRadiationAnnual * 365,
+    panelConfigs,
+  };
+
+  // 4. Optional PVWatts enrichment (cross-validate, non-blocking)
   try {
     const pvwatts = await estimateWithPvWatts(lat, lng, estimatedSystemKwp);
-
-    const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => {
-      const panels = Math.round(maxPanels * ratio);
-      const energy = Math.round(pvwatts.yearlyEnergyKwh * ratio);
-      return { panelsCount: panels, yearlyEnergyDcKwh: energy };
-    });
-
-    return {
-      address,
-      latitude: lat,
-      longitude: lng,
-      source: 'pvwatts_estimate',
-      quality: 'ESTIMATED',
-      totalRoofAreaM2: estimatedRoofM2,
-      usableRoofAreaM2: usableArea,
-      roofSegments: [
-        {
-          areaM2: estimatedRoofM2,
-          pitchDegrees: 5,
-          azimuthDegrees: 180,
-          center: { lat, lng },
-        },
-      ],
-      maxPanelCount: maxPanels,
-      maxSystemSizeKwp: estimatedSystemKwp,
-      yearlyEnergyKwh: pvwatts.yearlyEnergyKwh,
-      peakSunHoursPerYear: pvwatts.solarRadiationAnnual * 365,
-      panelConfigs,
-      rawPvWattsData: pvwatts,
-    };
+    // If PVWatts succeeds, attach as raw data for comparison but keep local estimate as primary
+    result.rawPvWattsData = pvwatts;
   } catch {
-    // 4. Final fallback: local estimate (no API keys needed)
-    // Panama average: ~4.5 peak sun hours/day → ~1,643 kWh/kWp/year
-    const PANAMA_PSH = 4.5;
-    const yearlyKwhPerKwp = PANAMA_PSH * 365 * (1 - SYSTEM_LOSSES / 100);
-    const yearlyEnergy = Math.round(estimatedSystemKwp * yearlyKwhPerKwp);
-
-    const panelConfigs: PanelConfig[] = [0.25, 0.5, 0.75, 1.0].map((ratio) => ({
-      panelsCount: Math.round(maxPanels * ratio),
-      yearlyEnergyDcKwh: Math.round(yearlyEnergy * ratio),
-    }));
-
-    return {
-      address,
-      latitude: lat,
-      longitude: lng,
-      source: 'manual' as const,
-      quality: 'ESTIMATED' as const,
-      totalRoofAreaM2: estimatedRoofM2,
-      usableRoofAreaM2: usableArea,
-      roofSegments: [
-        {
-          areaM2: estimatedRoofM2,
-          pitchDegrees: 5,
-          azimuthDegrees: 180,
-          center: { lat, lng },
-        },
-      ],
-      maxPanelCount: maxPanels,
-      maxSystemSizeKwp: estimatedSystemKwp,
-      yearlyEnergyKwh: yearlyEnergy,
-      peakSunHoursPerYear: PANAMA_PSH * 365,
-      panelConfigs,
-    };
+    // PVWatts failed — no problem, local estimate is sufficient
+    console.log('[roofScanner] PVWatts enrichment unavailable, using local Panama estimate');
   }
+
+  return result;
 }
