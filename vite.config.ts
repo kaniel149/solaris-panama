@@ -44,4 +44,52 @@ export default defineConfig({
       ignored: ['**/api/**'],
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Core React libraries
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/react-router-dom/')) {
+            return 'vendor-router';
+          }
+          // UI libraries
+          if (id.includes('node_modules/framer-motion/')) {
+            return 'vendor-ui';
+          }
+          if (id.includes('node_modules/lucide-react/') || id.includes('node_modules/cmdk/')) {
+            return 'vendor-icons';
+          }
+          // Map libraries (the biggest chunk)
+          if (
+            id.includes('node_modules/maplibre-gl/') ||
+            id.includes('node_modules/react-map-gl/') ||
+            id.includes('node_modules/@vis.gl/')
+          ) {
+            return 'vendor-map';
+          }
+          // Charts
+          if (id.includes('node_modules/recharts/')) {
+            return 'vendor-charts';
+          }
+          // Utils
+          if (
+            id.includes('node_modules/date-fns/') ||
+            id.includes('node_modules/i18next/') ||
+            id.includes('node_modules/react-i18next/') ||
+            id.includes('node_modules/dompurify/')
+          ) {
+            return 'vendor-utils';
+          }
+          // Supabase
+          if (id.includes('node_modules/@supabase/')) {
+            return 'vendor-supabase';
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 });
