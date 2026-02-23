@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@page { size: A4; margin: 0; }
+body { font-family: 'Inter', sans-serif; background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.page { width: 210mm; min-height: 297mm; background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%); color: #fff; padding: 20mm 18mm; position: relative; overflow: hidden; }
+@media print {
+  body { background: none; }
+  .page { width: 210mm; height: 297mm; padding: 15mm; margin: 0; box-shadow: none; }
+}
+.page::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: #F5C518; }
+
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8mm; padding-bottom: 6mm; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.brand .logo { font-size: 26px; font-weight: 900; color: #F5C518; letter-spacing: 3px; }
+.brand .sub { font-size: 12px; color: #888; margin-top: 4px; letter-spacing: 1px; }
+.brand .sub-en { font-size: 11px; color: #555; font-style: italic; }
+.contact-top { text-align: right; font-size: 12px; color: #aaa; line-height: 1.8; }
+.contact-top strong { color: #F5C518; }
+
+/* Intro */
+.intro { font-size: 13px; color: #bbb; line-height: 1.7; margin-bottom: 8mm; max-width: 90%; }
+
+/* Section */
+.section { margin-bottom: 7mm; }
+.section-title { font-size: 15px; font-weight: 700; color: #F5C518; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4mm; padding-bottom: 2mm; border-bottom: 1px solid rgba(245,197,24,0.2); }
+
+/* Services grid */
+.services { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.service { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 4mm; }
+.service .name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.service .desc { font-size: 11px; color: #999; }
+
+/* Ley 417 */
+.ley-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+.ley-item { background: rgba(245,197,24,0.06); border: 1px solid rgba(245,197,24,0.15); border-radius: 8px; padding: 4mm; text-align: center; }
+.ley-item .icon { font-size: 24px; margin-bottom: 2mm; }
+.ley-item .title { font-size: 12px; font-weight: 700; color: #F5C518; }
+.ley-item .detail { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* Pricing */
+.pricing { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+.price-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4mm; text-align: center; }
+.price-card .type { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+.price-card .range { font-size: 18px; font-weight: 900; color: #F5C518; margin: 2mm 0; }
+.price-card .kwp { font-size: 11px; color: #666; }
+
+/* Process */
+.steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+.step { text-align: center; padding: 4mm; }
+.step .num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #F5C518; color: #000; font-size: 18px; font-weight: 900; border-radius: 50%; margin-bottom: 3mm; }
+.step .stitle { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.step .sdesc { font-size: 11px; color: #999; }
+
+/* Footer */
+.footer { margin-top: 6mm; padding-top: 5mm; border-top: 1px solid rgba(245,197,24,0.2); display: flex; justify-content: space-between; align-items: center; }
+.footer-left { font-size: 11px; color: #666; }
+.footer-cta { background: #F5C518; color: #000; font-size: 13px; font-weight: 700; padding: 3mm 6mm; border-radius: 30px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo">☀ SOLARIS ENERGY</div>
+      <div class="sub">Soluciones en Energía Solar</div>
+      <div class="sub-en">Solar Energy Solutions · Península de Azuero, Panamá</div>
+    </div>
+    <div class="contact-top">
+      <strong>+507 6583-1822</strong><br>
+      solaris-panama.com<br>
+      Península de Azuero
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <p class="intro">
+    Solaris Energy es líder en instalación de paneles solares en la Península de Azuero. Ayudamos a hogares y empresas a reducir hasta un 95% de su factura eléctrica con sistemas solares de alta calidad, respaldados por la Ley 417 de incentivos a la energía renovable.
+  </p>
+
+  <!-- Services -->
+  <div class="section">
+    <div class="section-title">Nuestros Servicios</div>
+    <div class="services">
+      <div class="service"><div class="name">🏠 Residencial</div><div class="desc">Sistemas de 3-15 kWp para hogares</div></div>
+      <div class="service"><div class="name">🏢 Comercial</div><div class="desc">Sistemas de 15-500 kWp para empresas</div></div>
+      <div class="service"><div class="name">🔋 Almacenamiento</div><div class="desc">Baterías para respaldo e independencia</div></div>
+      <div class="service"><div class="name">🔧 Mantenimiento</div><div class="desc">Limpieza, monitoreo y soporte técnico</div></div>
+    </div>
+  </div>
+
+  <!-- Ley 417 -->
+  <div class="section">
+    <div class="section-title">Beneficios Ley 417</div>
+    <div class="ley-grid">
+      <div class="ley-item"><div class="icon">📋</div><div class="title">100% Deducción</div><div class="detail">Deduce toda tu inversión solar del ISR</div></div>
+      <div class="ley-item"><div class="icon">🚢</div><div class="title">0% Importación</div><div class="detail">Exoneración total de aranceles</div></div>
+      <div class="ley-item"><div class="icon">⚡</div><div class="title">Net Metering</div><div class="detail">Vende tu excedente a la red</div></div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <div class="section-title">Rangos de Inversión</div>
+    <div class="pricing">
+      <div class="price-card"><div class="type">Residencial</div><div class="range">$4,500 – $12,000</div><div class="kwp">3 – 8 kWp</div></div>
+      <div class="price-card"><div class="type">Comercial</div><div class="range">$12,000 – $45,000</div><div class="kwp">8 – 30 kWp</div></div>
+      <div class="price-card"><div class="type">Industrial</div><div class="range">$45,000+</div><div class="kwp">30+ kWp</div></div>
+    </div>
+  </div>
+
+  <!-- Process -->
+  <div class="section">
+    <div class="section-title">Proceso Simple en 3 Pasos</div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="stitle">Evaluación</div><div class="sdesc">Analizamos tu consumo y diseñamos la solución ideal</div></div>
+      <div class="step"><div class="num">2</div><div class="stitle">Instalación</div><div class="sdesc">Instalamos en 3-5 días con mínima interrupción</div></div>
+      <div class="step"><div class="num">3</div><div class="stitle">Ahorro</div><div class="sdesc">Empiezas a ahorrar desde el primer mes</div></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">© 2026 Solaris Energy Panamá · Todos los derechos reservados</div>
+    <a href="https://wa.me/50765831822" class="footer-cta">📲 Cotización Gratis</a>
+  </div>
+</div>
+</body>
+</html>
