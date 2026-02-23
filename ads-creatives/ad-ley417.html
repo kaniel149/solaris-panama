@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #111; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { width: 1080px; height: 1080px; background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%); color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 80px 90px; position: relative; overflow: hidden; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: #F5C518; }
+.badge { display: inline-block; background: rgba(245,197,24,0.15); color: #F5C518; font-size: 16px; font-weight: 700; padding: 10px 24px; border-radius: 30px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; align-self: flex-start; border: 1px solid rgba(245,197,24,0.3); }
+.headline { font-size: 50px; font-weight: 900; line-height: 1.15; margin-bottom: 50px; }
+.headline .accent { color: #F5C518; }
+.benefits { list-style: none; margin-bottom: 50px; }
+.benefits li { font-size: 24px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 16px; }
+.benefits li .icon { color: #F5C518; font-size: 28px; flex-shrink: 0; }
+.benefits li strong { color: #F5C518; }
+.cta { display: inline-block; background: #F5C518; color: #000; font-size: 22px; font-weight: 700; padding: 22px 55px; border-radius: 50px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; align-self: flex-start; }
+.logo { position: absolute; bottom: 40px; right: 60px; font-size: 18px; font-weight: 700; color: #F5C518; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">Ley 417 de Energía Solar</div>
+  <h1 class="headline">¿Sabías que el gobierno <span class="accent">paga tu inversión</span> solar?</h1>
+  <ul class="benefits">
+    <li><span class="icon">✓</span> <strong>100%</strong> deducción fiscal de tu inversión</li>
+    <li><span class="icon">✓</span> <strong>Exoneración</strong> total de impuestos de importación</li>
+    <li><span class="icon">✓</span> Vende tu <strong>excedente</strong> a la red eléctrica</li>
+    <li><span class="icon">✓</span> Retorno de inversión en <strong>2.5 años</strong></li>
+  </ul>
+  <a href="https://wa.me/50765831822" class="cta">Cotización Gratis →</a>
+  <div class="logo">☀ SOLARIS ENERGY</div>
+</div>
+</body>
+</html>

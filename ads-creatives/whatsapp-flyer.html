@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #111; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.flyer { width: 1080px; height: 1920px; background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%); color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 80px 70px; position: relative; overflow: hidden; }
+.flyer::before { content: ''; position: absolute; top: -150px; right: -150px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(245,197,24,0.12) 0%, transparent 70%); }
+.flyer::after { content: ''; position: absolute; bottom: 200px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(245,197,24,0.06) 0%, transparent 70%); }
+.top { position: relative; z-index: 1; }
+.logo { font-size: 28px; font-weight: 900; color: #F5C518; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 8px; }
+.tagline { font-size: 18px; color: #666; letter-spacing: 2px; text-transform: uppercase; }
+.middle { position: relative; z-index: 1; }
+.headline { font-size: 62px; font-weight: 900; line-height: 1.1; margin-bottom: 50px; }
+.headline .accent { color: #F5C518; }
+.features { list-style: none; margin-bottom: 50px; }
+.features li { font-size: 26px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-start; gap: 18px; }
+.features li .icon { color: #F5C518; font-size: 30px; flex-shrink: 0; margin-top: 2px; }
+.features li strong { color: #F5C518; }
+.big-stat { text-align: center; background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.2); border-radius: 24px; padding: 40px; margin-bottom: 50px; }
+.big-stat .num { font-size: 90px; font-weight: 900; color: #F5C518; line-height: 1; }
+.big-stat .label { font-size: 22px; color: #aaa; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; }
+.cta { display: block; background: #F5C518; color: #000; font-size: 28px; font-weight: 700; padding: 28px; border-radius: 50px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+.bottom { position: relative; z-index: 1; text-align: center; }
+.contact { font-size: 22px; color: #aaa; margin-top: 30px; line-height: 1.8; }
+.contact strong { color: #fff; }
+.divider { width: 60px; height: 3px; background: #F5C518; margin: 0 auto 20px; }
+</style>
+</head>
+<body>
+<div class="flyer">
+  <div class="top">
+    <div class="logo">☀ Solaris Energy</div>
+    <div class="tagline">Energía Solar · Panamá</div>
+  </div>
+  <div class="middle">
+    <h1 class="headline">Ahorra hasta <span class="accent">95%</span> en tu factura eléctrica</h1>
+    <div class="big-stat">
+      <div class="num">$0</div>
+      <div class="label">Tu nueva factura</div>
+    </div>
+    <ul class="features">
+      <li><span class="icon">⚡</span> Paneles solares <strong>premium</strong> con garantía 25 años</li>
+      <li><span class="icon">📋</span> <strong>Ley 417:</strong> 100% deducción fiscal</li>
+      <li><span class="icon">💰</span> Retorno de inversión en <strong>2.5 años</strong></li>
+      <li><span class="icon">🔧</span> Instalación profesional en <strong>3-5 días</strong></li>
+    </ul>
+    <a href="https://wa.me/50765831822" class="cta">📲 Cotización Gratis</a>
+  </div>
+  <div class="bottom">
+    <div class="divider"></div>
+    <div class="contact">
+      <strong>+507 6583-1822</strong><br>
+      solaris-panama.com<br>
+      Península de Azuero
+    </div>
+  </div>
+</div>
+</body>
+</html>
