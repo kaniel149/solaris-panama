@@ -3,22 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #111; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-.card { width: 1080px; height: 1080px; background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
-.card::before { content: ''; position: absolute; top: -200px; right: -200px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(245,197,24,0.15) 0%, transparent 70%); }
-.card::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(245,197,24,0.08) 0%, transparent 70%); }
-.logo { font-size: 22px; font-weight: 700; letter-spacing: 3px; color: #F5C518; margin-bottom: 50px; text-transform: uppercase; position: relative; z-index: 1; }
-.headline { font-size: 54px; font-weight: 900; line-height: 1.15; margin-bottom: 50px; position: relative; z-index: 1; }
-.headline .accent { color: #F5C518; }
-.stats { display: flex; gap: 50px; margin-bottom: 55px; position: relative; z-index: 1; }
-.stat { text-align: center; }
-.stat .num { font-size: 56px; font-weight: 900; color: #F5C518; line-height: 1; }
-.stat .label { font-size: 16px; color: #aaa; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
-.cta { display: inline-block; background: #F5C518; color: #000; font-size: 24px; font-weight: 700; padding: 22px 60px; border-radius: 50px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; }
-.bottom-bar { position: absolute; bottom: 40px; font-size: 14px; color: #666; z-index: 1; }
+body { background: #FEFDFB; font-family: 'DM Sans', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { width: 1080px; height: 1080px; background: #FEFDFB; color: #1A1A1A; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
+.logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; letter-spacing: 3px; color: #0B3D2E; margin-bottom: 50px; text-transform: uppercase; }
+.headline { font-family: 'Playfair Display', serif; font-size: 54px; font-weight: 700; line-height: 1.2; margin-bottom: 50px; color: #0B3D2E; }
+.headline .accent { color: #D4A843; }
+.stats { display: flex; gap: 50px; margin-bottom: 55px; }
+.stat { text-align: center; background: #F5EFE0; border-radius: 12px; padding: 28px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.stat .num { font-size: 56px; font-weight: 700; color: #D4A843; line-height: 1; }
+.stat .label { font-size: 16px; color: #4A4A4A; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+.cta { display: inline-block; background: #0B3D2E; color: #FEFDFB; font-size: 24px; font-weight: 700; padding: 22px 60px; border-radius: 6px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+.bottom-bar { position: absolute; bottom: 40px; font-size: 14px; color: #8A8A8A; }
 </style>
 </head>
 <body>

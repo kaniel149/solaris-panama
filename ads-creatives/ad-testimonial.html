@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #111; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-.card { width: 1080px; height: 1080px; background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
-.card::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(245,197,24,0.08) 0%, transparent 70%); }
+body { background: #FEFDFB; font-family: 'DM Sans', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { width: 1080px; height: 1080px; background: #FEFDFB; color: #1A1A1A; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
+.quote-mark { font-family: 'Playfair Display', serif; font-size: 120px; color: rgba(212,168,67,0.2); position: absolute; top: 60px; left: 50px; line-height: 1; }
 .stars { font-size: 44px; margin-bottom: 40px; position: relative; z-index: 1; }
-.quote { font-size: 48px; font-weight: 900; line-height: 1.2; margin-bottom: 20px; position: relative; z-index: 1; max-width: 850px; }
-.quote .accent { color: #F5C518; }
-.quote-mark { font-size: 120px; color: rgba(245,197,24,0.2); position: absolute; top: 60px; left: 50px; font-family: Georgia, serif; line-height: 1; }
-.savings-box { display: inline-flex; align-items: center; gap: 15px; background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.25); border-radius: 16px; padding: 18px 35px; margin: 30px 0 15px; position: relative; z-index: 1; }
-.savings-box .arrow { font-size: 36px; color: #F5C518; }
-.savings-box .old { font-size: 32px; color: #666; text-decoration: line-through; }
-.savings-box .new { font-size: 42px; font-weight: 900; color: #F5C518; }
-.author { font-size: 18px; color: #888; margin-bottom: 45px; position: relative; z-index: 1; }
-.author strong { color: #ccc; }
-.cta { display: inline-block; background: #F5C518; color: #000; font-size: 22px; font-weight: 700; padding: 22px 55px; border-radius: 50px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; }
-.logo { position: absolute; bottom: 40px; font-size: 18px; font-weight: 700; color: #F5C518; letter-spacing: 2px; z-index: 1; }
+.quote { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; position: relative; z-index: 1; max-width: 850px; color: #0B3D2E; }
+.quote .accent { color: #D4A843; }
+.savings-box { display: inline-flex; align-items: center; gap: 15px; background: #F5EFE0; border: 1px solid #E8E4DC; border-radius: 12px; padding: 18px 35px; margin: 30px 0 15px; position: relative; z-index: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.savings-box .arrow { font-size: 36px; color: #D4A843; }
+.savings-box .old { font-size: 32px; color: #8A8A8A; text-decoration: line-through; }
+.savings-box .new { font-size: 42px; font-weight: 700; color: #0B3D2E; }
+.author { font-size: 18px; color: #4A4A4A; margin-bottom: 45px; position: relative; z-index: 1; }
+.author strong { color: #1A1A1A; }
+.cta { display: inline-block; background: #0B3D2E; color: #FEFDFB; font-size: 22px; font-weight: 700; padding: 22px 55px; border-radius: 6px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; position: relative; z-index: 1; }
+.logo { position: absolute; bottom: 40px; font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #0B3D2E; letter-spacing: 2px; z-index: 1; }
 </style>
 </head>
 <body>
