@@ -3,883 +3,396 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solaris Panamá — Energía Solar para el Azuero</title>
+<title>Solaris Energy — Energía Solar para el Azuero</title>
 <meta name="description" content="Instalación de paneles solares en la Península de Azuero. Ahorra hasta 95% en electricidad con los beneficios fiscales de la Ley 417.">
+<meta property="og:title" content="Solaris Energy — Own Your Energy">
+<meta property="og:description" content="Paneles solares premium en el Azuero. Ahorro inmediato + beneficios fiscales Ley 417.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════════════
-   SOLARIS PANAMÁ — Design System
-   Noa / Design Agent
-   Colors: Deep jungle green + solar gold + warm white
-   Type: DM Serif Display (display) + DM Sans (body)
-   ══════════════════════════════════════════ */
-
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --green-900: #0B3D2E;
-  --green-800: #0E4D3A;
-  --green-700: #116B50;
-  --green-600: #158C68;
-  --green-100: #E8F5EF;
-  --green-50:  #F4FAF7;
-  --gold-500:  #D4A843;
-  --gold-400:  #E4BE5A;
-  --gold-300:  #F0D47A;
-  --gold-100:  #FDF6E3;
-  --white:     #FEFDFB;
-  --gray-50:   #FAFAF8;
-  --gray-100:  #F0EFEB;
-  --gray-200:  #E0DED8;
-  --gray-400:  #A8A59E;
-  --gray-600:  #6B6860;
-  --gray-800:  #2E2C28;
-  --gray-900:  #1A1916;
+  --solar-yellow: #F5C518;
+  --solar-yellow-light: #FFD84D;
+  --solar-yellow-dark: #D4A800;
+  --solar-yellow-glow: rgba(245,197,24,0.15);
+  --dark-900: #0A0A0A;
+  --dark-800: #141414;
+  --dark-700: #1E1E1E;
+  --dark-600: #2A2A2A;
+  --dark-500: #3A3A3A;
+  --gray-400: #888888;
+  --gray-300: #AAAAAA;
+  --gray-200: #CCCCCC;
+  --gray-100: #E8E8E8;
+  --gray-50: #F5F5F5;
+  --white: #FFFFFF;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
-  --radius-xl: 28px;
-  --shadow-sm: 0 1px 3px rgba(11,61,46,0.06);
-  --shadow-md: 0 4px 16px rgba(11,61,46,0.08);
-  --shadow-lg: 0 12px 40px rgba(11,61,46,0.12);
-  --shadow-xl: 0 20px 60px rgba(11,61,46,0.16);
+  --radius-xl: 32px;
+  --radius-full: 9999px;
 }
 
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 
 body {
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  color: var(--gray-800);
-  background: var(--white);
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--white);
+  background: var(--dark-900);
   line-height: 1.6;
   overflow-x: hidden;
 }
 
-/* ── Typography ── */
-h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; line-height: 1.15; }
-h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); letter-spacing: -0.02em; }
-h2 { font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.01em; }
-h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; line-height: 1.1; }
+h1 { font-size: clamp(2.6rem, 6vw, 4.5rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); letter-spacing: -0.01em; }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
 
 .label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold-500);
+  color: var(--solar-yellow);
 }
 
-/* ── Layout ── */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+section { padding: clamp(5rem, 12vw, 9rem) 0; }
 
-section { padding: clamp(4rem, 10vw, 8rem) 0; }
-
-/* ── Buttons ── */
+/* Buttons */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: var(--radius-xl);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  line-height: 1;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 1rem 2.2rem; border: none; border-radius: var(--radius-full);
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  text-decoration: none; line-height: 1;
 }
-
 .btn-primary {
-  background: var(--gold-500);
-  color: var(--green-900);
-  box-shadow: 0 4px 16px rgba(212,168,67,0.3);
+  background: var(--solar-yellow); color: var(--dark-900);
+  box-shadow: 0 0 0 0 rgba(245,197,24,0), 0 4px 16px rgba(245,197,24,0.25);
 }
 .btn-primary:hover {
-  background: var(--gold-400);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212,168,67,0.4);
+  background: var(--solar-yellow-light); transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(245,197,24,0.2), 0 8px 24px rgba(245,197,24,0.35);
 }
-
 .btn-outline {
-  background: transparent;
-  color: var(--white);
-  border: 1.5px solid rgba(255,255,255,0.3);
+  background: transparent; color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.2);
 }
-.btn-outline:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.6);
+.btn-outline:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.4); }
+.btn-dark {
+  background: var(--dark-700); color: var(--white); border: 1px solid var(--dark-500);
 }
+.btn-dark:hover { background: var(--dark-600); transform: translateY(-2px); }
 
-.btn-green {
-  background: var(--green-700);
-  color: var(--white);
-}
-.btn-green:hover {
-  background: var(--green-600);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ══════════════════════════════════════════
-   HERO
-   ══════════════════════════════════════════ */
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  background: var(--green-900);
-  overflow: hidden;
-  padding: 0;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=80') center/cover no-repeat;
-  opacity: 0.3;
-  filter: saturate(0.7);
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(11,61,46,0.95) 0%,
-    rgba(11,61,46,0.7) 50%,
-    rgba(11,61,46,0.85) 100%
-  );
-}
-
-.hero .container {
-  position: relative;
-  z-index: 2;
-  padding-top: 6rem;
-  padding-bottom: 4rem;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-@media (min-width: 768px) {
-  .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; }
-}
-
-.hero h1 {
-  color: var(--white);
-  margin: 1rem 0 1.5rem;
-}
-
-.hero h1 span {
-  color: var(--gold-400);
-}
-
-.hero-subtitle {
-  color: rgba(255,255,255,0.75);
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  line-height: 1.7;
-  max-width: 520px;
-  margin-bottom: 2.5rem;
-}
-
-.hero-btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-/* Hero stats strip */
-.hero-stats {
-  display: flex;
-  gap: 2rem;
-  margin-top: 3.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.hero-stat-value {
-  font-family: 'DM Serif Display', serif;
-  font-size: 2rem;
-  color: var(--gold-400);
-}
-
-.hero-stat-label {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
-  margin-top: 0.25rem;
-}
-
-/* Hero image card */
-.hero-image-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  backdrop-filter: blur(20px);
-}
-
-.hero-image-card img {
-  width: 100%;
-  border-radius: var(--radius-md);
-  aspect-ratio: 4/3;
-  object-fit: cover;
-}
-
-.hero-image-caption {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  color: rgba(255,255,255,0.6);
-  font-size: 0.85rem;
-}
-
-.hero-image-caption svg { flex-shrink: 0; }
-
-/* ── Floating nav ── */
+/* ═══ NAV ═══ */
 .nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 1rem 0;
-  transition: all 0.4s ease;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.25rem 0; transition: all 0.4s ease;
 }
-
 .nav.scrolled {
-  background: rgba(11,61,46,0.95);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 2px 20px rgba(0,0,0,0.15);
-  padding: 0.6rem 0;
+  background: rgba(10,10,10,0.92); backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.04); padding: 0.7rem 0;
 }
-
-.nav .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.nav-logo {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.4rem;
-  color: var(--white);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-logo svg { color: var(--gold-400); }
-
-.nav-links {
-  display: none;
-  list-style: none;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .nav-links { display: flex; }
-}
-
-.nav-links a {
-  color: rgba(255,255,255,0.7);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s;
-}
+.nav .container { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { text-decoration: none; display: flex; align-items: center; }
+.nav-logo img { height: 38px; }
+.nav-links { display: none; list-style: none; gap: 2.5rem; }
+@media (min-width: 768px) { .nav-links { display: flex; } }
+.nav-links a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover { color: var(--white); }
+.nav-cta { padding: 0.6rem 1.4rem !important; font-size: 0.8rem !important; }
 
-.nav-cta {
-  padding: 0.6rem 1.4rem !important;
-  font-size: 0.85rem !important;
+/* ═══ HERO ═══ */
+.hero {
+  position: relative; min-height: 100vh; display: flex; align-items: center;
+  background: var(--dark-900); overflow: hidden; padding-top: 5rem;
 }
-
-/* ══════════════════════════════════════════
-   VALUE PROPS — Law 417 + Savings
-   ══════════════════════════════════════════ */
-.value-section {
-  background: var(--white);
-  position: relative;
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=80') center/cover;
+  opacity: 0.12; filter: saturate(0.5);
 }
-
-.value-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(245,197,24,0.06) 0%, transparent 60%),
+              linear-gradient(180deg, var(--dark-900) 0%, transparent 30%, transparent 70%, var(--dark-900) 100%);
 }
-
-@media (min-width: 768px) {
-  .value-grid { grid-template-columns: repeat(3, 1fr); }
+/* Decorative grid lines */
+.hero-grid-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
 }
-
-.value-card {
-  padding: 2.5rem 2rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--gray-100);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.value-card:hover {
-  border-color: var(--green-100);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-4px);
-}
-
-.value-card-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.value-card:nth-child(1) .value-card-icon { background: var(--green-100); color: var(--green-700); }
-.value-card:nth-child(2) .value-card-icon { background: var(--gold-100); color: var(--gold-500); }
-.value-card:nth-child(3) .value-card-icon { background: var(--green-100); color: var(--green-700); }
-
-.value-card h3 { margin-bottom: 0.75rem; color: var(--gray-900); }
-.value-card p { color: var(--gray-600); font-size: 0.95rem; line-height: 1.7; }
-
-.value-header {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 3.5rem;
-}
-
-.value-header h2 { margin-top: 0.75rem; color: var(--green-900); }
-.value-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
-
-/* Law 417 badge */
-.law-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--green-100);
-  border: 1px solid rgba(17,107,80,0.15);
-  border-radius: var(--radius-xl);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--green-700);
-  margin-top: 1.25rem;
-}
-
-/* ══════════════════════════════════════════
-   HOW IT WORKS — 3 Steps
-   ══════════════════════════════════════════ */
-.steps-section {
-  background: var(--green-900);
-  position: relative;
-  overflow: hidden;
-}
-
-.steps-section::before {
-  content: '';
-  position: absolute;
-  top: -200px;
-  right: -200px;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
-}
-
-.steps-header {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 4rem;
-}
-
-.steps-header .label { color: var(--gold-400); }
-.steps-header h2 { color: var(--white); margin-top: 0.75rem; }
-.steps-header p { color: rgba(255,255,255,0.6); margin-top: 1rem; font-size: 1.05rem; }
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  position: relative;
-}
-
-@media (min-width: 768px) {
-  .steps-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-}
-
-.step-card {
-  padding: 2.5rem 2rem;
-  border-radius: var(--radius-lg);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.step-card:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.12);
-  transform: translateY(-4px);
-}
-
-.step-number {
-  font-family: 'DM Serif Display', serif;
-  font-size: 3.5rem;
-  color: var(--gold-500);
-  opacity: 0.3;
-  line-height: 1;
-  margin-bottom: 1rem;
-}
-
-.step-card h3 { color: var(--white); margin-bottom: 0.75rem; }
-.step-card p { color: rgba(255,255,255,0.55); font-size: 0.95rem; line-height: 1.7; }
-
-/* ══════════════════════════════════════════
-   ROI CALCULATOR
-   ══════════════════════════════════════════ */
-.calc-section { background: var(--gray-50); }
-
-.calc-header {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 3.5rem;
-}
-.calc-header h2 { color: var(--green-900); margin-top: 0.75rem; }
-.calc-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
-
-.calc-card {
-  max-width: 800px;
-  margin: 0 auto;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-}
-
-.calc-body {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 640px) {
-  .calc-body { grid-template-columns: 1fr 1fr; }
-}
-
-.calc-input-side {
-  padding: 2.5rem;
-}
-
-.calc-input-group {
+.hero .container { position: relative; z-index: 2; }
+.hero-content { max-width: 720px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 1rem; border-radius: var(--radius-full);
+  background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.15);
+  font-size: 0.75rem; font-weight: 600; color: var(--solar-yellow);
   margin-bottom: 2rem;
 }
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--solar-yellow); animation: pulse-dot 2s ease infinite; }
+@keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+.hero h1 { color: var(--white); margin-bottom: 1.5rem; }
+.hero h1 em { font-style: normal; color: var(--solar-yellow); }
+.hero-sub { color: rgba(255,255,255,0.5); font-size: clamp(1rem,2vw,1.15rem); line-height: 1.8; max-width: 540px; margin-bottom: 2.5rem; }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 4rem; }
 
-.calc-input-group label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 0.75rem;
+/* Hero metrics */
+.hero-metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  max-width: 560px; background: rgba(255,255,255,0.06); border-radius: var(--radius-md); overflow: hidden;
+}
+.hero-metric {
+  padding: 1.5rem 1.75rem; background: var(--dark-900);
+}
+.hero-metric-value {
+  font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--solar-yellow); line-height: 1;
+}
+.hero-metric-label { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 0.4rem; font-weight: 500; }
+
+/* ═══ SOCIAL PROOF BAR ═══ */
+.proof-bar {
+  background: var(--dark-800); border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04); padding: 1.5rem 0;
+}
+.proof-bar .container {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 2rem 3rem;
+}
+.proof-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.4); font-weight: 500; }
+.proof-item svg { color: var(--solar-yellow); flex-shrink: 0; }
+
+/* ═══ VALUE PROPS ═══ */
+.value-section { background: var(--dark-900); }
+.section-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+.section-header h2 { color: var(--white); margin-top: 0.75rem; }
+.section-header p { color: rgba(255,255,255,0.4); margin-top: 1rem; font-size: 1.05rem; }
+
+.value-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 768px) { .value-grid { grid-template-columns: repeat(3,1fr); } }
+
+.value-card {
+  padding: 2.5rem 2rem; border-radius: var(--radius-lg);
+  background: var(--dark-800); border: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.4s ease; position: relative; overflow: hidden;
+}
+.value-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--solar-yellow), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.value-card:hover { border-color: rgba(245,197,24,0.12); transform: translateY(-6px); }
+.value-card:hover::before { opacity: 1; }
+
+.value-icon {
+  width: 52px; height: 52px; border-radius: var(--radius-md);
+  background: rgba(245,197,24,0.08); color: var(--solar-yellow);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+}
+.value-card h3 { color: var(--white); margin-bottom: 0.75rem; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.15rem; }
+.value-card p { color: rgba(255,255,255,0.4); font-size: 0.9rem; line-height: 1.75; }
+
+.law-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.8rem; background: rgba(245,197,24,0.08);
+  border: 1px solid rgba(245,197,24,0.12); border-radius: var(--radius-full);
+  font-size: 0.7rem; font-weight: 700; color: var(--solar-yellow); margin-top: 1rem;
 }
 
-.calc-slider-container {
-  position: relative;
+/* ═══ STEPS ═══ */
+.steps-section {
+  background: var(--dark-800); position: relative; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.steps-section::before {
+  content: ''; position: absolute; top: -300px; right: -300px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,197,24,0.04) 0%, transparent 70%);
 }
 
-.calc-slider {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--gray-200);
-  outline: none;
-}
+.steps-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; position: relative; }
+@media (min-width: 768px) { .steps-grid { grid-template-columns: repeat(3,1fr); } }
 
+.step-card {
+  padding: 2.5rem 2rem; border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.4s ease;
+}
+.step-card:hover { background: rgba(255,255,255,0.04); transform: translateY(-4px); }
+.step-number {
+  font-family: 'Playfair Display', serif; font-size: 3rem;
+  background: linear-gradient(135deg, var(--solar-yellow), var(--solar-yellow-dark));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  opacity: 0.4; line-height: 1; margin-bottom: 1rem;
+}
+.step-card h3 { color: var(--white); margin-bottom: 0.75rem; font-family: 'Inter', sans-serif; font-weight: 700; }
+.step-card p { color: rgba(255,255,255,0.4); font-size: 0.9rem; line-height: 1.75; }
+
+/* ═══ CALCULATOR ═══ */
+.calc-section { background: var(--dark-900); }
+.calc-card {
+  max-width: 860px; margin: 0 auto; border-radius: var(--radius-lg);
+  overflow: hidden; border: 1px solid rgba(255,255,255,0.06);
+}
+.calc-body { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .calc-body { grid-template-columns: 1fr 1fr; } }
+
+.calc-input-side { padding: 2.5rem; background: var(--dark-800); }
+.calc-input-group { margin-bottom: 2rem; }
+.calc-input-group label { display: block; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem; }
+
+.calc-slider { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--dark-500); outline: none; }
 .calc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--green-700);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(17,107,80,0.3);
-  transition: transform 0.2s;
+  -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--solar-yellow); cursor: pointer;
+  box-shadow: 0 0 12px rgba(245,197,24,0.3); transition: transform 0.2s;
 }
-
 .calc-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
-
-.calc-slider-value {
-  text-align: center;
-  font-family: 'DM Serif Display', serif;
-  font-size: 2rem;
-  color: var(--green-900);
-  margin-top: 0.75rem;
-}
-
-.calc-slider-value span { font-size: 1rem; color: var(--gray-400); font-family: 'DM Sans', sans-serif; }
+.calc-slider-value { text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--white); margin-top: 0.75rem; }
+.calc-slider-value span { font-size: 0.9rem; color: rgba(255,255,255,0.3); font-family: 'Inter', sans-serif; }
 
 .calc-result-side {
-  background: var(--green-900);
-  padding: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  background: linear-gradient(135deg, rgba(245,197,24,0.08), rgba(245,197,24,0.02));
+  padding: 2.5rem; display: flex; flex-direction: column; justify-content: center;
+  border-left: 1px solid rgba(245,197,24,0.08);
 }
-
-.calc-result-item {
-  margin-bottom: 1.75rem;
-}
+.calc-result-item { margin-bottom: 1.75rem; }
 .calc-result-item:last-child { margin-bottom: 0; }
+.calc-result-label { font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+.calc-result-value { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--solar-yellow); margin-top: 0.25rem; }
+.calc-result-note { font-size: 0.75rem; color: rgba(255,255,255,0.25); margin-top: 0.25rem; }
+.calc-cta { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
 
-.calc-result-label {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
-}
-
-.calc-result-value {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.8rem;
-  color: var(--gold-400);
-  margin-top: 0.25rem;
-}
-
-.calc-result-note {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
-  margin-top: 0.25rem;
-}
-
-.calc-cta {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-/* ══════════════════════════════════════════
-   TESTIMONIALS
-   ══════════════════════════════════════════ */
-.testimonials-section { background: var(--white); }
-
-.testimonials-header {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 3.5rem;
-}
-.testimonials-header h2 { color: var(--green-900); margin-top: 0.75rem; }
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .testimonials-grid { grid-template-columns: repeat(3, 1fr); }
-}
+/* ═══ TESTIMONIALS ═══ */
+.testimonials-section { background: var(--dark-800); border-top: 1px solid rgba(255,255,255,0.04); }
+.testimonials-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 768px) { .testimonials-grid { grid-template-columns: repeat(3,1fr); } }
 
 .testimonial-card {
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--gray-100);
-  position: relative;
+  padding: 2rem; border-radius: var(--radius-lg);
+  background: var(--dark-900); border: 1px solid rgba(255,255,255,0.04);
 }
-
-.testimonial-stars {
-  color: var(--gold-500);
-  font-size: 0.9rem;
-  letter-spacing: 2px;
-  margin-bottom: 1rem;
-}
-
-.testimonial-text {
-  color: var(--gray-600);
-  font-size: 0.95rem;
-  line-height: 1.7;
-  font-style: italic;
-  margin-bottom: 1.5rem;
-}
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+.testimonial-stars { color: var(--solar-yellow); font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1rem; }
+.testimonial-text { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.75; font-style: italic; margin-bottom: 1.5rem; }
+.testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
 .testimonial-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--green-100);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: var(--green-700);
-  font-size: 0.9rem;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(245,197,24,0.1); display: flex; align-items: center;
+  justify-content: center; font-weight: 700; color: var(--solar-yellow); font-size: 0.8rem;
 }
+.testimonial-name { font-weight: 600; font-size: 0.85rem; color: var(--white); }
+.testimonial-role { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
 
-.testimonial-name { font-weight: 600; font-size: 0.9rem; color: var(--gray-800); }
-.testimonial-role { font-size: 0.8rem; color: var(--gray-400); }
-
-/* ══════════════════════════════════════════
-   LEAD CAPTURE FORM
-   ══════════════════════════════════════════ */
-.form-section {
-  background: var(--green-900);
-  position: relative;
-  overflow: hidden;
-}
-
+/* ═══ FORM ═══ */
+.form-section { background: var(--dark-900); position: relative; overflow: hidden; }
 .form-section::before {
-  content: '';
-  position: absolute;
-  bottom: -300px;
-  left: -200px;
-  width: 800px;
-  height: 800px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 70%);
+  content: ''; position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,197,24,0.04) 0%, transparent 70%);
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-@media (min-width: 768px) {
-  .form-grid { grid-template-columns: 1fr 1.1fr; gap: 4rem; }
-}
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
+@media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1.1fr; gap: 4rem; } }
 
 .form-info { position: relative; z-index: 1; }
-.form-info .label { color: var(--gold-400); }
 .form-info h2 { color: var(--white); margin: 0.75rem 0 1.25rem; }
-.form-info p { color: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.7; }
+.form-info > p { color: rgba(255,255,255,0.4); font-size: 1rem; line-height: 1.75; }
 
 .form-magnet {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  margin-top: 2rem; padding: 1.5rem; border-radius: var(--radius-md);
+  background: rgba(245,197,24,0.04); border: 1px solid rgba(245,197,24,0.08);
 }
+.form-magnet-title { color: var(--solar-yellow); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.form-magnet p { font-size: 0.85rem; color: rgba(255,255,255,0.35); }
 
-.form-magnet-title {
-  color: var(--gold-400);
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.form-magnet p { font-size: 0.9rem !important; color: rgba(255,255,255,0.5) !important; }
-
-.trust-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.trust-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
-}
-
-.trust-badge svg { color: var(--gold-500); }
+.trust-badges { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+.trust-badge { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+.trust-badge svg { color: var(--solar-yellow); }
 
 .form-card {
-  position: relative;
-  z-index: 1;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  box-shadow: var(--shadow-xl);
+  position: relative; z-index: 1; background: var(--dark-800);
+  border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-lg);
+  padding: clamp(1.5rem,4vw,2.5rem);
 }
+.form-card h3 { color: var(--white); margin-bottom: 0.25rem; font-family: 'Inter', sans-serif; font-weight: 700; }
+.form-card > p { color: rgba(255,255,255,0.35); font-size: 0.8rem; margin-bottom: 1.5rem; }
 
-.form-card h3 {
-  color: var(--green-900);
-  margin-bottom: 0.25rem;
+.form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (min-width: 480px) { .form-row-2 { grid-template-columns: 1fr 1fr; } }
+
+.form-field label { display: block; font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 0.4rem; }
+.form-field input, .form-field select {
+  width: 100%; padding: 0.8rem 1rem;
+  border: 1.5px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--white);
+  background: var(--dark-700); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
 }
-
-.form-card > p {
-  color: var(--gray-400);
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
+.form-field input::placeholder { color: rgba(255,255,255,0.2); }
+.form-field input:focus, .form-field select:focus {
+  border-color: var(--solar-yellow); box-shadow: 0 0 0 3px rgba(245,197,24,0.08);
 }
+.form-field select { color: rgba(255,255,255,0.5); }
+.form-field select option { background: var(--dark-700); color: var(--white); }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
+.form-submit { width: 100%; margin-top: 0.5rem; padding: 1rem; font-size: 0.95rem; justify-content: center; }
+.form-privacy { text-align: center; font-size: 0.7rem; color: rgba(255,255,255,0.2); margin-top: 1rem; }
 
-@media (min-width: 480px) {
-  .form-row-2 { grid-template-columns: 1fr 1fr; }
-}
-
-.form-field label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 0.4rem;
-}
-
-.form-field input,
-.form-field select {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  color: var(--gray-800);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: var(--white);
-  outline: none;
-}
-
-.form-field input::placeholder { color: var(--gray-400); }
-
-.form-field input:focus,
-.form-field select:focus {
-  border-color: var(--green-600);
-  box-shadow: 0 0 0 3px rgba(21,140,104,0.1);
-}
-
-.form-submit {
-  width: 100%;
-  margin-top: 0.5rem;
-  padding: 1rem;
-  font-size: 1rem;
-  justify-content: center;
-}
-
-.form-privacy {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--gray-400);
-  margin-top: 1rem;
-}
-
-/* ══════════════════════════════════════════
-   FOOTER
-   ══════════════════════════════════════════ */
-footer {
-  background: var(--gray-900);
-  padding: 3rem 0 2rem;
-  text-align: center;
-}
-
-footer .nav-logo { justify-content: center; margin-bottom: 1rem; }
-
-footer p {
-  color: var(--gray-600);
-  font-size: 0.85rem;
-}
-
-/* ══════════════════════════════════════════
-   FLOATING WHATSAPP
-   ══════════════════════════════════════════ */
-.whatsapp-float {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 999;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #25D366;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
-  transition: transform 0.3s, box-shadow 0.3s;
-  text-decoration: none;
-}
-
-.whatsapp-float:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 28px rgba(37,211,102,0.5);
-}
-
-.whatsapp-float svg { width: 32px; height: 32px; fill: white; }
-
-.whatsapp-pulse {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 2px solid #25D366;
-  animation: wa-pulse 2s ease-out infinite;
-}
-
-@keyframes wa-pulse {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.4); opacity: 0; }
-}
-
-/* ── Animations ── */
-.fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── Success state ── */
-.form-success {
-  display: none;
-  text-align: center;
-  padding: 2rem 0;
-}
-
+.form-success { display: none; text-align: center; padding: 2rem 0; }
 .form-success.show { display: block; }
-.form-success svg { color: var(--green-600); margin-bottom: 1rem; }
-.form-success h3 { color: var(--green-900); margin-bottom: 0.5rem; }
-.form-success p { color: var(--gray-600); font-size: 0.95rem; }
+.form-success svg { color: var(--solar-yellow); margin-bottom: 1rem; }
+.form-success h3 { color: var(--white); margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; }
+.form-success p { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+/* ═══ FOOTER ═══ */
+footer {
+  background: var(--dark-800); padding: 3rem 0 2rem; text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+footer .nav-logo { justify-content: center; margin-bottom: 1rem; display: flex; }
+footer p { color: rgba(255,255,255,0.25); font-size: 0.8rem; }
+
+/* ═══ WHATSAPP ═══ */
+.whatsapp-float {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.35); transition: transform 0.3s; text-decoration: none;
+}
+.whatsapp-float:hover { transform: scale(1.1); }
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+.whatsapp-pulse {
+  position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid #25D366; animation: wa-pulse 2s ease-out infinite;
+}
+@keyframes wa-pulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.4); opacity: 0; } }
+
+/* ═══ ANIMATIONS ═══ */
+.fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* Mobile fix */
+@media (max-width: 767px) {
+  .hero-metrics { grid-template-columns: 1fr; max-width: 100%; }
+  .hero-metric { padding: 1rem 1.5rem; }
+}
 </style>
 </head>
 <body>
 
-<!-- ═══ NAV ═══ -->
+<!-- NAV -->
 <nav class="nav" id="nav">
   <div class="container">
     <a href="#" class="nav-logo">
-      <img src="logo-light.png" alt="Solaris Panamá" height="44" style="vertical-align:middle;margin-right:8px;">
+      <img src="data:image/jpeg;base64,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" alt="Solaris Energy" height="36">
     </a>
     <ul class="nav-links">
       <li><a href="#beneficios">Beneficios</a></li>
@@ -891,134 +404,147 @@ footer p {
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section class="hero">
+  <div class="hero-grid-bg"></div>
   <div class="container">
-    <div class="hero-grid">
-      <div>
-        <span class="label">Energía Solar en el Azuero</span>
-        <h1>Tu techo produce <span>energía</span>. Solo falta activarlo.</h1>
-        <p class="hero-subtitle">Instalamos sistemas solares premium en la Península de Azuero. Reduce tu factura eléctrica hasta un 95% y aprovecha los beneficios fiscales de la Ley 417.</p>
-        <div class="hero-btns">
-          <a href="#contacto" class="btn btn-primary">Evaluación Gratuita por Satélite</a>
-          <a href="#calculadora" class="btn btn-outline">Calcular Ahorro</a>
-        </div>
-        <div class="hero-stats">
-          <div>
-            <div class="hero-stat-value">95%</div>
-            <div class="hero-stat-label">Ahorro en electricidad</div>
-          </div>
-          <div>
-            <div class="hero-stat-value">3-5</div>
-            <div class="hero-stat-label">Años de retorno</div>
-          </div>
-          <div>
-            <div class="hero-stat-value">25+</div>
-            <div class="hero-stat-label">Años de garantía</div>
-          </div>
-        </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Instaladores certificados — Península de Azuero
       </div>
-      <div class="hero-image-card">
-        <img src="https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=800&q=80" alt="Paneles solares instalados en techo tropical" loading="eager">
-        <div class="hero-image-caption">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Instalación reciente — Chitré, Herrera
+      <h1>Tu techo produce <em>energía</em>.<br>Solo falta activarlo.</h1>
+      <p class="hero-sub">Sistemas solares premium para comercios y residencias en el Azuero. Reduce tu factura eléctrica hasta un 95% y aprovecha la deducción fiscal completa de la Ley 417.</p>
+      <div class="hero-btns">
+        <a href="#contacto" class="btn btn-primary">Evaluación Gratuita por Satélite →</a>
+        <a href="#calculadora" class="btn btn-outline">Calcular Ahorro</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="hero-metric">
+          <div class="hero-metric-value">95%</div>
+          <div class="hero-metric-label">Ahorro en electricidad</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-value">2.5–3.5</div>
+          <div class="hero-metric-label">Años de retorno</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-value">25+</div>
+          <div class="hero-metric-label">Años de garantía</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ VALUE PROPS ═══ -->
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="container">
+    <div class="proof-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Certificado Ley 417
+    </div>
+    <div class="proof-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Instalador Licenciado ASEP
+    </div>
+    <div class="proof-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Equipos Tier-1 Internacionales
+    </div>
+    <div class="proof-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      ROI 750–1000% en 25 años
+    </div>
+  </div>
+</div>
+
+<!-- VALUE PROPS -->
 <section class="value-section" id="beneficios">
   <div class="container">
-    <div class="value-header fade-up">
+    <div class="section-header fade-up">
       <span class="label">¿Por qué solar?</span>
       <h2>La inversión más inteligente para tu negocio</h2>
-      <p>En Panamá, el sol es tu activo más valioso. Conviértelo en ahorro real con tecnología de primera.</p>
+      <p>En la Península de Azuero, el sol genera retornos que ningún banco puede igualar.</p>
     </div>
     <div class="value-grid">
       <div class="value-card fade-up">
-        <div class="value-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <div class="value-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <h3>Ahorro Inmediato</h3>
-        <p>Reduce tu factura eléctrica desde el primer mes. Nuestros clientes ahorran entre $200 y $2,000 mensuales dependiendo del tamaño de su instalación.</p>
+        <p>Reduce tu factura eléctrica desde el primer mes. Clientes ahorran entre $200 y $2,000 mensuales según el tamaño de instalación. A $0.195/kWh, cada panel se paga solo.</p>
       </div>
       <div class="value-card fade-up">
-        <div class="value-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <div class="value-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         </div>
-        <h3>Ley 417 — Beneficios Fiscales</h3>
-        <p>La ley panameña te permite deducir el 100% de la inversión solar del impuesto sobre la renta. Es prácticamente como si el gobierno te pagara los paneles.</p>
+        <h3>Ley 417 — 100% Deducible</h3>
+        <p>Deduce el 100% de tu inversión solar del impuesto sobre la renta. Exención de aranceles en equipos importados. El gobierno subsidia tu transición energética.</p>
         <div class="law-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          Certificado bajo Ley 417
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Certificado Ley 417
         </div>
       </div>
       <div class="value-card fade-up">
-        <div class="value-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="value-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h3>Garantía Total</h3>
-        <p>Paneles con garantía de 25 años de rendimiento, inversores con 10 años de garantía, e instalación certificada. Tu inversión está protegida.</p>
+        <p>Paneles con 25 años de garantía de rendimiento. Inversores con 10 años. Instalación profesional certificada. Tu inversión está 100% protegida.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
+<!-- STEPS -->
 <section class="steps-section" id="proceso">
   <div class="container">
-    <div class="steps-header fade-up">
+    <div class="section-header fade-up">
       <span class="label">El proceso</span>
-      <h2>De cotización a generando energía en 3 pasos</h2>
-      <p>Sin complicaciones. Nos encargamos de todo — permisos, instalación y puesta en marcha.</p>
+      <h2>De cotización a generando energía</h2>
+      <p>Sin complicaciones. Nos encargamos de permisos, instalación y puesta en marcha.</p>
     </div>
     <div class="steps-grid">
       <div class="step-card fade-up">
         <div class="step-number">01</div>
         <h3>Análisis Satelital Gratuito</h3>
-        <p>Analizamos tu techo por satélite y creamos un reporte personalizado con la capacidad solar de tu propiedad y el ahorro estimado.</p>
+        <p>Analizamos tu techo por satélite y creamos un reporte con la capacidad solar de tu propiedad y el ahorro estimado real.</p>
       </div>
       <div class="step-card fade-up">
         <div class="step-number">02</div>
         <h3>Diseño e Ingeniería</h3>
-        <p>Nuestros ingenieros diseñan el sistema óptimo para tu techo. Gestionamos todos los permisos con la distribuidora eléctrica.</p>
+        <p>Diseñamos el sistema óptimo para tu techo. Gestionamos permisos con la distribuidora y ASEP. Tú no haces nada.</p>
       </div>
       <div class="step-card fade-up">
         <div class="step-number">03</div>
         <h3>Instalación y Ahorro</h3>
-        <p>Instalación profesional en 1-3 días. Desde el primer día generas tu propia energía y empiezas a ahorrar en tu factura.</p>
+        <p>Instalación profesional en 1-3 días. Desde el primer día generas tu propia energía y empiezas a ahorrar.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ ROI CALCULATOR ═══ -->
+<!-- CALCULATOR -->
 <section class="calc-section" id="calculadora">
   <div class="container">
-    <div class="calc-header fade-up">
+    <div class="section-header fade-up">
       <span class="label">Calculadora Solar</span>
       <h2>¿Cuánto puedes ahorrar?</h2>
-      <p>Mueve el deslizador para estimar el ahorro según el tamaño de tu techo disponible.</p>
+      <p>Estima tu ahorro según el tamaño de tu techo y factura actual.</p>
     </div>
     <div class="calc-card fade-up">
       <div class="calc-body">
         <div class="calc-input-side">
           <div class="calc-input-group">
             <label>Área disponible en tu techo</label>
-            <div class="calc-slider-container">
-              <input type="range" class="calc-slider" id="roofSlider" min="20" max="500" value="100" step="10">
-              <div class="calc-slider-value"><span id="roofValue">100</span> <span>m²</span></div>
-            </div>
+            <input type="range" class="calc-slider" id="roofSlider" min="20" max="500" value="100" step="10">
+            <div class="calc-slider-value"><span id="roofValue">100</span> <span>m²</span></div>
           </div>
           <div class="calc-input-group">
             <label>Tu factura mensual actual</label>
-            <div class="calc-slider-container">
-              <input type="range" class="calc-slider" id="billSlider" min="50" max="3000" value="400" step="50">
-              <div class="calc-slider-value">$<span id="billValue">400</span> <span>/mes</span></div>
-            </div>
+            <input type="range" class="calc-slider" id="billSlider" min="50" max="3000" value="400" step="50">
+            <div class="calc-slider-value">$<span id="billValue">400</span> <span>/mes</span></div>
           </div>
         </div>
         <div class="calc-result-side">
@@ -1036,7 +562,7 @@ footer p {
             <div class="calc-result-note">Con inflación energética del 3% anual</div>
           </div>
           <div class="calc-cta">
-            <a href="#contacto" class="btn btn-primary" style="width:100%;justify-content:center;">Obtener Cotización Exacta</a>
+            <a href="#contacto" class="btn btn-primary" style="width:100%;justify-content:center;">Cotización Exacta →</a>
           </div>
         </div>
       </div>
@@ -1044,17 +570,17 @@ footer p {
   </div>
 </section>
 
-<!-- ═══ TESTIMONIALS ═══ -->
-<section class="testimonials-section" id="testimonios">
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
   <div class="container">
-    <div class="testimonials-header fade-up">
+    <div class="section-header fade-up">
       <span class="label">Testimonios</span>
       <h2>Lo que dicen nuestros clientes</h2>
     </div>
     <div class="testimonials-grid">
       <div class="testimonial-card fade-up">
         <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Nuestra factura pasó de $850 a $45 al mes. La inversión se paga sola y con la Ley 417, la deducción fiscal fue inmediata."</p>
+        <p class="testimonial-text">"Nuestra factura pasó de $850 a $45 al mes. Con la Ley 417, la deducción fiscal fue inmediata. La mejor inversión que hemos hecho."</p>
         <div class="testimonial-author">
           <div class="testimonial-avatar">MR</div>
           <div>
@@ -1065,7 +591,7 @@ footer p {
       </div>
       <div class="testimonial-card fade-up">
         <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Proceso impecable. Desde el análisis satelital hasta la instalación, todo fue profesional. En 4 años ya recuperé la inversión completa."</p>
+        <p class="testimonial-text">"Proceso impecable de principio a fin. En menos de 4 años recuperé toda la inversión. Ahora genero más energía de la que consumo."</p>
         <div class="testimonial-author">
           <div class="testimonial-avatar">JC</div>
           <div>
@@ -1076,7 +602,7 @@ footer p {
       </div>
       <div class="testimonial-card fade-up">
         <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Pusimos 40 paneles en el techo de la fábrica. Producimos más energía de la que consumimos. El excedente nos lo paga la distribuidora."</p>
+        <p class="testimonial-text">"40 paneles en la fábrica. Producimos más de lo que consumimos. El excedente nos lo paga la distribuidora. ROI increíble."</p>
         <div class="testimonial-author">
           <div class="testimonial-avatar">LC</div>
           <div>
@@ -1089,71 +615,57 @@ footer p {
   </div>
 </section>
 
-<!-- ═══ LEAD FORM ═══ -->
+<!-- FORM -->
 <section class="form-section" id="contacto">
   <div class="container">
     <div class="form-grid">
       <div class="form-info fade-up">
         <span class="label">Cotización gratuita</span>
         <h2>Descubre cuánto puedes ahorrar</h2>
-        <p>Completa el formulario y recibe un análisis satelital personalizado de tu techo con estimaciones reales de ahorro y retorno de inversión.</p>
+        <p>Completa el formulario y recibe un análisis satelital de tu techo con estimaciones reales de ahorro y retorno de inversión.</p>
         <div class="form-magnet">
           <div class="form-magnet-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Evaluación Solar Gratis
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Incluye: Reporte Solar Personalizado
           </div>
-          <p>Analizamos tu techo por satélite y te enviamos un reporte personalizado con tu capacidad solar y ahorro estimado. Sin compromiso.</p>
+          <p>Análisis satelital, capacidad solar de tu techo, ahorro estimado, opciones de financiamiento. Sin compromiso.</p>
         </div>
         <div class="trust-badges">
           <div class="trust-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Ley 417 Certificado
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Ley 417
           </div>
           <div class="trust-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Instalador Licenciado
           </div>
           <div class="trust-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Garantía de Satisfacción
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Satisfacción Garantizada
           </div>
         </div>
       </div>
       <div class="form-card fade-up">
         <h3>Solicita tu Evaluación</h3>
-        <p>Responderemos en menos de 24 horas</p>
+        <p>Respondemos en menos de 24 horas</p>
         <form id="leadForm">
           <div class="form-row form-row-2">
-            <div class="form-field">
-              <label for="fname">Nombre completo *</label>
-              <input type="text" id="fname" name="name" placeholder="Tu nombre" required>
-            </div>
-            <div class="form-field">
-              <label for="fbiz">Nombre del negocio</label>
-              <input type="text" id="fbiz" name="business" placeholder="Tu empresa (opcional)">
-            </div>
+            <div class="form-field"><label>Nombre completo *</label><input type="text" name="name" placeholder="Tu nombre" required></div>
+            <div class="form-field"><label>Nombre del negocio</label><input type="text" name="business" placeholder="Tu empresa (opcional)"></div>
           </div>
           <div class="form-row form-row-2">
-            <div class="form-field">
-              <label for="fphone">Teléfono *</label>
-              <input type="tel" id="fphone" name="phone" placeholder="+507 6000-0000" required>
-            </div>
-            <div class="form-field">
-              <label for="femail">Correo electrónico *</label>
-              <input type="email" id="femail" name="email" placeholder="tu@email.com" required>
-            </div>
+            <div class="form-field"><label>Teléfono *</label><input type="tel" name="phone" placeholder="+507 6000-0000" required></div>
+            <div class="form-field"><label>Correo electrónico *</label><input type="email" name="email" placeholder="tu@email.com" required></div>
           </div>
           <div class="form-row form-row-2">
-            <div class="form-field">
-              <label for="froof">Área estimada del techo (m²)</label>
-              <input type="number" id="froof" name="roof_size" placeholder="Ej: 100">
-            </div>
-            <div class="form-field">
-              <label for="floc">Ubicación</label>
-              <select id="floc" name="location">
+            <div class="form-field"><label>Área del techo (m²)</label><input type="number" name="roof_size" placeholder="Ej: 100"></div>
+            <div class="form-field"><label>Ubicación</label>
+              <select name="location">
                 <option value="">Selecciona tu zona</option>
                 <option value="chitre">Chitré</option>
                 <option value="pedasi">Pedasí</option>
+                <option value="playa-venao">Playa Venao</option>
+                <option value="canas">Cañas</option>
                 <option value="las-tablas">Las Tablas</option>
                 <option value="los-santos">Los Santos</option>
                 <option value="guarare">Guararé</option>
@@ -1163,106 +675,66 @@ footer p {
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-green form-submit">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
-            Solicitar Evaluación Gratuita
-          </button>
+          <button type="submit" class="btn btn-primary form-submit">Solicitar Evaluación Gratuita →</button>
         </form>
         <div class="form-success" id="formSuccess">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           <h3>¡Solicitud Enviada!</h3>
-          <p>Nuestro equipo analizará tu techo y te contactará en menos de 24 horas con tu reporte personalizado.</p>
+          <p>Nuestro equipo analizará tu techo y te contactará en menos de 24 horas.</p>
         </div>
-        <p class="form-privacy">🔒 Tus datos están seguros. No compartimos información con terceros.</p>
+        <p class="form-privacy">🔒 Tus datos están seguros. No compartimos información.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- FOOTER -->
 <footer>
   <div class="container">
-    <a href="#" class="nav-logo" style="margin-bottom:1rem;">
-      <img src="logo-dark.png" alt="Solaris Panamá" height="40" style="vertical-align:middle;">
+    <a href="#" class="nav-logo" style="justify-content:center;margin-bottom:1rem;">
+      <img src="data:image/jpeg;base64,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" alt="Solaris Energy" height="32">
     </a>
-    <p>© 2026 Solaris Panamá. Todos los derechos reservados.</p>
-    <p style="margin-top:0.5rem;font-size:0.75rem;color:var(--gray-600);">Instalador certificado bajo Ley 417 de Incentivos para Energías Renovables</p>
+    <p>© 2026 Solaris Energy Panamá. Todos los derechos reservados.</p>
+    <p style="margin-top:0.5rem;font-size:0.7rem;">Instalador certificado bajo Ley 417 de Incentivos para Energías Renovables</p>
   </div>
 </footer>
 
-<!-- ═══ WHATSAPP FLOAT ═══ -->
-<a href="https://wa.me/50765831822?text=Hola%2C%20me%20interesa%20una%20cotizaci%C3%B3n%20de%20paneles%20solares" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+<!-- WHATSAPP -->
+<a href="https://wa.me/50765831822?text=Hola%2C%20me%20interesa%20una%20cotizaci%C3%B3n%20de%20paneles%20solares" class="whatsapp-float" target="_blank" rel="noopener">
   <div class="whatsapp-pulse"></div>
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <script>
-// ═══ NAV SCROLL ═══
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-});
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)});
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:0.15});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 
-// ═══ FADE-UP OBSERVER ═══
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
-}, { threshold: 0.15 });
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-// ═══ ROI CALCULATOR ═══
-const roofSlider = document.getElementById('roofSlider');
-const billSlider = document.getElementById('billSlider');
-const roofValue = document.getElementById('roofValue');
-const billValue = document.getElementById('billValue');
-
-function updateCalc() {
-  const roof = parseInt(roofSlider.value);
-  const bill = parseInt(billSlider.value);
-  roofValue.textContent = roof;
-  billValue.textContent = bill;
-
-  // ~150W per m² capacity, 4.5 peak sun hours avg in Azuero
-  const kWp = Math.round(roof * 0.15 * 10) / 10;
-  // Monthly production: kWp * 4.5h * 30 days * 0.85 efficiency
-  const monthlyKWh = kWp * 4.5 * 30 * 0.85;
-  // Savings: min of production value or current bill * 0.95
-  const savingsPercent = Math.min(0.95, (monthlyKWh * 0.18) / bill);
-  const monthlySavings = Math.round(bill * savingsPercent);
-
-  // 25 year total with 3% annual energy inflation
-  let total = 0;
-  for (let y = 0; y < 25; y++) total += monthlySavings * 12 * Math.pow(1.03, y);
-  total = Math.round(total);
-
-  document.getElementById('calcCapacity').textContent = kWp + ' kWp';
-  document.getElementById('calcSavings').textContent = '$' + monthlySavings.toLocaleString();
-  document.getElementById('calcTotal').textContent = '$' + total.toLocaleString();
+const roofSlider=document.getElementById('roofSlider'),billSlider=document.getElementById('billSlider');
+function updateCalc(){
+  const roof=+roofSlider.value,bill=+billSlider.value;
+  document.getElementById('roofValue').textContent=roof;
+  document.getElementById('billValue').textContent=bill;
+  const kWp=Math.round(roof*0.15*10)/10;
+  const monthlyKWh=kWp*4.5*30*0.85;
+  const pct=Math.min(0.95,(monthlyKWh*0.195)/bill);
+  const save=Math.round(bill*pct);
+  let total=0;for(let y=0;y<25;y++)total+=save*12*Math.pow(1.03,y);
+  document.getElementById('calcCapacity').textContent=kWp+' kWp';
+  document.getElementById('calcSavings').textContent='$'+save.toLocaleString();
+  document.getElementById('calcTotal').textContent='$'+Math.round(total).toLocaleString();
 }
-
-roofSlider.addEventListener('input', updateCalc);
-billSlider.addEventListener('input', updateCalc);
+roofSlider.addEventListener('input',updateCalc);
+billSlider.addEventListener('input',updateCalc);
 updateCalc();
 
-// ═══ FORM SUBMIT → WhatsApp ═══
-document.getElementById('leadForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const fd = new FormData(this);
-  const data = Object.fromEntries(fd);
-
-  const msg = `🌞 *Nueva Solicitud - Solaris Panamá*%0A%0A` +
-    `👤 *Nombre:* ${data.name}%0A` +
-    `🏢 *Negocio:* ${data.business || 'N/A'}%0A` +
-    `📞 *Teléfono:* ${data.phone}%0A` +
-    `📧 *Email:* ${data.email}%0A` +
-    `📐 *Techo:* ${data.roof_size || 'No especificado'} m²%0A` +
-    `📍 *Ubicación:* ${data.location || 'No especificada'}`;
-
-  window.open(`https://wa.me/50765831822?text=${msg}`, '_blank');
-
-  this.style.display = 'none';
-  document.getElementById('formSuccess').classList.add('show');
+document.getElementById('leadForm').addEventListener('submit',function(e){
+  e.preventDefault();const d=Object.fromEntries(new FormData(this));
+  const m=encodeURIComponent('🌞 *Solaris Energy - Nueva Solicitud*\n\n👤 '+d.name+'\n🏢 '+(d.business||'N/A')+'\n📞 '+d.phone+'\n📧 '+d.email+'\n📐 '+(d.roof_size||'?')+' m²\n📍 '+(d.location||'?'));
+  window.open('https://wa.me/50765831822?text='+m,'_blank');
+  this.style.display='none';document.getElementById('formSuccess').classList.add('show');
 });
 </script>
-
 </body>
 </html>
