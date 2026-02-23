@@ -871,6 +871,107 @@ footer p {
 .form-success svg { color: var(--green-600); margin-bottom: 1rem; }
 .form-success h3 { color: var(--green-900); margin-bottom: 0.5rem; }
 .form-success p { color: var(--gray-600); font-size: 0.95rem; }
+
+/* ══════════════════════════════════════════
+   TOWNS / SERVIMOS EN
+   ══════════════════════════════════════════ */
+.towns-section { background: var(--gray-50); }
+.towns-header { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+.towns-header h2 { color: var(--green-900); margin-top: 0.75rem; }
+.towns-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
+
+.towns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.town-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.town-card:hover {
+  border-color: var(--green-100);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.town-icon { font-size: 2rem; margin-bottom: 1rem; }
+.town-card h3 { color: var(--green-900); margin-bottom: 0.5rem; }
+.town-card p { color: var(--gray-600); font-size: 0.85rem; line-height: 1.6; }
+.town-arrow { color: var(--gold-500); font-weight: 600; margin-top: 1rem; font-size: 1.1rem; }
+
+/* ══════════════════════════════════════════
+   RECURSOS / BLOG
+   ══════════════════════════════════════════ */
+.recursos-section { background: var(--white); }
+.recursos-header { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+.recursos-header h2 { color: var(--green-900); margin-top: 0.75rem; }
+.recursos-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
+
+.recursos-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .recursos-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.recurso-card {
+  display: block;
+  padding: 2rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.recurso-card:hover {
+  border-color: var(--gold-300);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.recurso-icon { font-size: 2rem; margin-bottom: 1rem; }
+.recurso-card h3 { color: var(--green-900); margin-bottom: 0.5rem; font-size: 1.15rem; }
+.recurso-card p { color: var(--gray-600); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem; }
+.recurso-link { color: var(--gold-500); font-weight: 600; font-size: 0.9rem; }
+
+/* ══════════════════════════════════════════
+   LANGUAGE TOGGLE
+   ══════════════════════════════════════════ */
+.lang-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background: var(--green-900);
+  color: var(--white);
+  border: none;
+  border-radius: 9999px;
+  padding: 0.4rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+.lang-toggle:hover { background: var(--green-700); }
 </style>
 </head>
 <body>
@@ -1179,25 +1280,78 @@ footer p {
   </div>
 </section>
 
-<!-- ═══ TOWNS & BLOG LINKS ═══ -->
-<section style="padding:clamp(3rem,8vw,5rem) 0">
-<div class="container">
-<h2 style="text-align:center">Energía Solar en la Península de Azuero</h2>
-<p style="text-align:center;color:var(--gray-400);margin-bottom:2rem">Servimos a todas las comunidades del Azuero. Conoce cómo la energía solar puede transformar tu ciudad.</p>
-<div style="display:flex;flex-wrap:wrap;gap:0.8rem;justify-content:center;margin-bottom:2.5rem">
-<a href="/towns/solar-pedasi.html" style="color:var(--solar-yellow);text-decoration:none;padding:0.6rem 1.2rem;border:1px solid var(--solar-yellow);border-radius:9999px;font-size:0.95rem;transition:all 0.3s">☀️ Paneles Solares en Pedasí</a>
-<a href="/towns/solar-chitre.html" style="color:var(--solar-yellow);text-decoration:none;padding:0.6rem 1.2rem;border:1px solid var(--solar-yellow);border-radius:9999px;font-size:0.95rem;transition:all 0.3s">☀️ Paneles Solares en Chitré</a>
-<a href="/towns/solar-las-tablas.html" style="color:var(--solar-yellow);text-decoration:none;padding:0.6rem 1.2rem;border:1px solid var(--solar-yellow);border-radius:9999px;font-size:0.95rem;transition:all 0.3s">☀️ Paneles Solares en Las Tablas</a>
-<a href="/towns/solar-playa-venao.html" style="color:var(--solar-yellow);text-decoration:none;padding:0.6rem 1.2rem;border:1px solid var(--solar-yellow);border-radius:9999px;font-size:0.95rem;transition:all 0.3s">☀️ Paneles Solares en Playa Venao</a>
-<a href="/towns/solar-canas.html" style="color:var(--solar-yellow);text-decoration:none;padding:0.6rem 1.2rem;border:1px solid var(--solar-yellow);border-radius:9999px;font-size:0.95rem;transition:all 0.3s">☀️ Paneles Solares en Cañas</a>
-</div>
-<h3 style="text-align:center;color:var(--solar-yellow);margin-bottom:1rem">📚 Blog: Guías de Energía Solar</h3>
-<div style="display:flex;flex-wrap:wrap;gap:0.8rem;justify-content:center">
-<a href="/blog/ley-417-panama.html" style="color:var(--white);text-decoration:none;padding:0.6rem 1.2rem;background:var(--dark-700);border-radius:12px;font-size:0.95rem;transition:all 0.3s">📋 Ley 417: Incentivos Fiscales</a>
-<a href="/blog/cuanto-cuestan-paneles-solares-panama.html" style="color:var(--white);text-decoration:none;padding:0.6rem 1.2rem;background:var(--dark-700);border-radius:12px;font-size:0.95rem;transition:all 0.3s">💰 Precios Paneles Solares 2026</a>
-<a href="/blog/energia-solar-comercial-azuero.html" style="color:var(--white);text-decoration:none;padding:0.6rem 1.2rem;background:var(--dark-700);border-radius:12px;font-size:0.95rem;transition:all 0.3s">🏢 Solar Comercial en Azuero</a>
-</div>
-</div>
+<!-- ═══ SERVIMOS EN ═══ -->
+<section class="towns-section" id="zonas">
+  <div class="container">
+    <div class="towns-header fade-up">
+      <span class="label">Cobertura</span>
+      <h2>Servimos en:</h2>
+      <p>Instalamos paneles solares en toda la Península de Azuero. Encuentra tu zona.</p>
+    </div>
+    <div class="towns-grid">
+      <a href="/towns/solar-pedasi.html" class="town-card fade-up">
+        <div class="town-icon">☀️</div>
+        <h3>Pedasí</h3>
+        <p>Energía solar para hoteles, residencias y negocios en Pedasí.</p>
+        <span class="town-arrow">→</span>
+      </a>
+      <a href="/towns/solar-chitre.html" class="town-card fade-up">
+        <div class="town-icon">☀️</div>
+        <h3>Chitré</h3>
+        <p>Soluciones solares comerciales y residenciales en Chitré.</p>
+        <span class="town-arrow">→</span>
+      </a>
+      <a href="/towns/solar-las-tablas.html" class="town-card fade-up">
+        <div class="town-icon">☀️</div>
+        <h3>Las Tablas</h3>
+        <p>Paneles solares de alta eficiencia para Las Tablas.</p>
+        <span class="town-arrow">→</span>
+      </a>
+      <a href="/towns/solar-playa-venao.html" class="town-card fade-up">
+        <div class="town-icon">☀️</div>
+        <h3>Playa Venao</h3>
+        <p>Energía limpia para surf lodges y eco-resorts en Venao.</p>
+        <span class="town-arrow">→</span>
+      </a>
+      <a href="/towns/solar-canas.html" class="town-card fade-up">
+        <div class="town-icon">☀️</div>
+        <h3>Cañas</h3>
+        <p>Instalaciones solares para fincas y comunidades en Cañas.</p>
+        <span class="town-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RECURSOS ═══ -->
+<section class="recursos-section" id="recursos">
+  <div class="container">
+    <div class="recursos-header fade-up">
+      <span class="label">Blog</span>
+      <h2>Recursos</h2>
+      <p>Guías y artículos para tomar la mejor decisión sobre energía solar en Panamá.</p>
+    </div>
+    <div class="recursos-grid">
+      <a href="/blog/ley-417-panama.html" class="recurso-card fade-up">
+        <div class="recurso-icon">📋</div>
+        <h3>Ley 417: Beneficios Fiscales</h3>
+        <p>Todo lo que necesitas saber sobre los incentivos fiscales para energía solar en Panamá.</p>
+        <span class="recurso-link">Leer más →</span>
+      </a>
+      <a href="/blog/cuanto-cuestan-paneles-solares-panama.html" class="recurso-card fade-up">
+        <div class="recurso-icon">💰</div>
+        <h3>Precios Paneles Solares 2026</h3>
+        <p>Guía actualizada de costos de instalación solar en Panamá para este año.</p>
+        <span class="recurso-link">Leer más →</span>
+      </a>
+      <a href="/blog/energia-solar-comercial-azuero.html" class="recurso-card fade-up">
+        <div class="recurso-icon">🏢</div>
+        <h3>Solar Comercial Azuero</h3>
+        <p>Cómo las empresas del Azuero están reduciendo costos con energía solar.</p>
+        <span class="recurso-link">Leer más →</span>
+      </a>
+    </div>
+  </div>
 </section>
 
 <!-- ═══ FOOTER ═══ -->
@@ -1217,6 +1371,7 @@ footer p {
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
+<script src="lang-toggle.js"></script>
 <script>
 // ═══ NAV SCROLL ═══
 const nav = document.getElementById('nav');

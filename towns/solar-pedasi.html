@@ -128,6 +128,7 @@ footer a{color:var(--gold);text-decoration:none}
 .wa-float{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,0.4);text-decoration:none}
 .wa-float svg{width:28px;height:28px;fill:white}
 </style>
+<style>.lang-toggle{position:fixed;top:16px;right:16px;z-index:1000;background:#0B3D2E;color:#FEFDFB;border:none;border-radius:9999px;padding:0.4rem 1rem;font-family:"DM Sans",sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.05em;transition:all 0.3s;box-shadow:0 4px 16px rgba(11,61,46,0.08)}.lang-toggle:hover{background:#116B50}</style>
 </head>
 <body>
 
@@ -297,5 +298,6 @@ const rs=document.getElementById('roofSlider'),bs=document.getElementById('billS
 function calc(){const r=+rs.value,b=+bs.value;document.getElementById('roofVal').textContent=r;document.getElementById('billVal').textContent=b;const kWp=Math.round(r*0.15*10)/10,mKWh=kWp*4.5*30*0.85,sp=Math.min(0.95,(mKWh*0.18)/b),ms=Math.round(b*sp);let t=0;for(let y=0;y<25;y++)t+=ms*12*Math.pow(1.03,y);document.getElementById('rCap').textContent=kWp+' kWp';document.getElementById('rSav').textContent='$'+ms.toLocaleString();document.getElementById('rTot').textContent='$'+Math.round(t).toLocaleString()}
 rs.addEventListener('input',calc);bs.addEventListener('input',calc);calc();
 </script>
+<script src="../lang-toggle.js"></script>
 </body>
 </html>
