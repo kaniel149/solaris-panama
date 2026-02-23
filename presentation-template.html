@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Energy — Sales Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#1A1A1A;color:#FEFDFB}
+.slide{width:960px;height:540px;margin:40px auto;border-radius:12px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.3);position:relative;display:flex;flex-direction:column}
+.slide-num{position:absolute;bottom:16px;right:24px;font-size:11px;color:rgba(255,255,255,0.2);font-weight:500}
+
+/* Slide 1: Title */
+.s1{background:#0B3D2E}
+.s1 .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px}
+.s1 .logo-circle{width:72px;height:72px;background:rgba(254,253,251,0.1);border:2px solid rgba(212,168,67,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.s1 .logo-circle span{font-family:'Playfair Display',serif;font-size:32px;color:#D4A843;font-weight:700}
+.s1 h1{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:#FEFDFB;margin-bottom:8px;letter-spacing:-0.01em}
+.s1 .tagline{font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#D4A843;margin-bottom:32px}
+.s1 .meta{font-size:14px;color:rgba(254,253,251,0.5)}
+.s1 .gold-line{width:48px;height:2px;background:#D4A843;margin:16px auto}
+
+/* Slide 2: Problem */
+.s2{background:#FEFDFB;color:#1A1A1A}
+.s2 .top-bar{background:#0B3D2E;padding:16px 48px;display:flex;align-items:center;justify-content:space-between}
+.s2 .top-bar .logo{font-family:'Playfair Display',serif;font-size:14px;color:#FEFDFB;font-weight:700}
+.s2 .top-bar .tag{font-size:8px;color:#D4A843;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
+.s2 .body{flex:1;padding:48px;display:flex;gap:48px;align-items:center}
+.s2 .body-left{flex:1}
+.s2 .body-left .section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:12px}
+.s2 .body-left h2{font-family:'Playfair Display',serif;font-size:32px;color:#0B3D2E;margin-bottom:20px;line-height:1.2}
+.s2 .body-left p{font-size:15px;color:#4A4A4A;line-height:1.7}
+.s2 .body-right{flex:1;display:flex;flex-direction:column;gap:16px}
+.stat-card{background:#F9F7F3;border-radius:8px;padding:20px 24px;border-left:3px solid #D4A843}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#0B3D2E}
+.stat-card .label{font-size:12px;color:#8A8A8A;margin-top:4px}
+
+/* Slide 3: Solution */
+.s3{background:#0B3D2E}
+.s3 .top-bar{padding:16px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(212,168,67,0.15)}
+.s3 .top-bar .logo{font-family:'Playfair Display',serif;font-size:14px;color:#FEFDFB;font-weight:700}
+.s3 .top-bar .tag{font-size:8px;color:#D4A843;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
+.s3 .body{flex:1;padding:48px;display:flex;flex-direction:column;justify-content:center}
+.s3 .section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:12px}
+.s3 h2{font-family:'Playfair Display',serif;font-size:32px;color:#FEFDFB;margin-bottom:32px}
+.s3 .features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.feature{background:rgba(254,253,251,0.05);border-radius:8px;padding:24px;border:1px solid rgba(212,168,67,0.1)}
+.feature .icon{font-size:24px;margin-bottom:12px;color:#D4A843}
+.feature h4{font-size:14px;font-weight:700;margin-bottom:6px;color:#FEFDFB}
+.feature p{font-size:12px;color:rgba(254,253,251,0.6);line-height:1.5}
+
+/* Slide 4: ROI */
+.s4{background:#FEFDFB;color:#1A1A1A}
+.s4 .top-bar{background:#0B3D2E;padding:16px 48px;display:flex;align-items:center;justify-content:space-between}
+.s4 .top-bar .logo{font-family:'Playfair Display',serif;font-size:14px;color:#FEFDFB;font-weight:700}
+.s4 .top-bar .tag{font-size:8px;color:#D4A843;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
+.s4 .body{flex:1;padding:48px;display:flex;flex-direction:column;justify-content:center}
+.s4 .section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:12px}
+.s4 h2{font-family:'Playfair Display',serif;font-size:32px;color:#0B3D2E;margin-bottom:32px}
+.roi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.roi-card{background:#F9F7F3;border-radius:8px;padding:24px;text-align:center}
+.roi-card .num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#0B3D2E}
+.roi-card .unit{font-size:14px;color:#D4A843;font-weight:700}
+.roi-card .desc{font-size:11px;color:#8A8A8A;margin-top:8px;line-height:1.4}
+.roi-note{margin-top:24px;padding:16px 24px;background:#F5EFE0;border-radius:8px;font-size:13px;color:#4A4A4A;border-left:3px solid #D4A843}
+.roi-note strong{color:#0B3D2E}
+
+/* Slide 5: CTA */
+.s5{background:#0B3D2E}
+.s5 .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px}
+.s5 .section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:16px}
+.s5 h2{font-family:'Playfair Display',serif;font-size:40px;color:#FEFDFB;margin-bottom:16px}
+.s5 p{font-size:16px;color:rgba(254,253,251,0.6);margin-bottom:32px;max-width:500px}
+.s5 .cta-btn{display:inline-block;background:#D4A843;color:#0B3D2E;font-size:14px;font-weight:700;padding:14px 40px;border-radius:6px;text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:background 0.2s}
+.s5 .cta-btn:hover{background:#B8912E}
+.s5 .contact-row{margin-top:32px;display:flex;gap:32px;font-size:13px;color:rgba(254,253,251,0.4)}
+.s5 .contact-row a{color:#D4A843;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide s1">
+  <div class="content">
+    <div class="logo-circle"><span>S</span></div>
+    <h1>SOLARIS ENERGY</h1>
+    <div class="tagline">Own Your Energy</div>
+    <div class="gold-line"></div>
+    <div class="meta">Premium Solar Solutions · Azuero Peninsula, Panamá</div>
+  </div>
+  <span class="slide-num">01</span>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide s2">
+  <div class="top-bar">
+    <span class="logo">SOLARIS</span>
+    <span class="tag">Own Your Energy</span>
+  </div>
+  <div class="body">
+    <div class="body-left">
+      <div class="section-label">The Challenge</div>
+      <h2>Rising Energy Costs in Paradise</h2>
+      <p>Panama's electricity rates have increased 35% in the last 5 years. Property owners and businesses face unpredictable bills while sitting under 300+ days of sunshine annually.</p>
+    </div>
+    <div class="body-right">
+      <div class="stat-card">
+        <div class="num">$0.19/kWh</div>
+        <div class="label">Average electricity rate in Panama</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">35%</div>
+        <div class="label">Rate increase in last 5 years</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">300+</div>
+        <div class="label">Days of sunshine per year</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num" style="color:rgba(0,0,0,0.15)">02</span>
+</div>
+
+<!-- SLIDE 3: Solution -->
+<div class="slide s3">
+  <div class="top-bar">
+    <span class="logo">SOLARIS</span>
+    <span class="tag">Own Your Energy</span>
+  </div>
+  <div class="body">
+    <div class="section-label">Our Solution</div>
+    <h2>Turnkey Solar, Premium Results</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">◎</div>
+        <h4>Custom Design</h4>
+        <p>Every system engineered for your specific property, usage patterns, and goals.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⚡</div>
+        <h4>Expert Installation</h4>
+        <p>Certified installers using tier-1 panels and inverters. Law 417 compliant.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">◈</div>
+        <h4>Net Metering</h4>
+        <p>Sell excess energy back to the grid. Your meter runs backwards.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">◉</div>
+        <h4>Monitoring</h4>
+        <p>Real-time system monitoring. Know exactly what you're producing.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">◇</div>
+        <h4>Maintenance</h4>
+        <p>Ongoing care and support to maximize system lifespan and output.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">◆</div>
+        <h4>Battery Ready</h4>
+        <p>Future-proof designs with battery storage integration options.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">03</span>
+</div>
+
+<!-- SLIDE 4: ROI -->
+<div class="slide s4">
+  <div class="top-bar">
+    <span class="logo">SOLARIS</span>
+    <span class="tag">Own Your Energy</span>
+  </div>
+  <div class="body">
+    <div class="section-label">Return on Investment</div>
+    <h2>The Numbers Speak</h2>
+    <div class="roi-grid">
+      <div class="roi-card">
+        <div class="num">40</div>
+        <div class="unit">%</div>
+        <div class="desc">Average electricity bill reduction</div>
+      </div>
+      <div class="roi-card">
+        <div class="num">4-6</div>
+        <div class="unit">Years</div>
+        <div class="desc">Typical payback period</div>
+      </div>
+      <div class="roi-card">
+        <div class="num">25</div>
+        <div class="unit">Years</div>
+        <div class="desc">Panel warranty &amp; lifespan</div>
+      </div>
+      <div class="roi-card">
+        <div class="num">15</div>
+        <div class="unit">%</div>
+        <div class="desc">Property value increase</div>
+      </div>
+    </div>
+    <div class="roi-note"><strong>Law 417 Benefits:</strong> Tax incentives, net metering, and accelerated depreciation for commercial installations in Panama.</div>
+  </div>
+  <span class="slide-num" style="color:rgba(0,0,0,0.15)">04</span>
+</div>
+
+<!-- SLIDE 5: CTA -->
+<div class="slide s5">
+  <div class="content">
+    <div class="section-label">Next Steps</div>
+    <h2>Ready to Own<br>Your Energy?</h2>
+    <p>Schedule a free consultation and site assessment. We'll design the perfect system for your property.</p>
+    <a class="cta-btn" href="#">Schedule Consultation</a>
+    <div class="contact-row">
+      <span><a href="mailto:info@solarispanama.com">info@solarispanama.com</a></span>
+      <span>+507 6XXX-XXXX</span>
+      <span><a href="https://solarispanama.com">solarispanama.com</a></span>
+    </div>
+  </div>
+  <span class="slide-num">05</span>
+</div>
+
+</body>
+</html>
