@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #111; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { width: 1080px; height: 1080px; background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
+.card::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(245,197,24,0.08) 0%, transparent 70%); }
+.stars { font-size: 44px; margin-bottom: 40px; position: relative; z-index: 1; }
+.quote { font-size: 48px; font-weight: 900; line-height: 1.2; margin-bottom: 20px; position: relative; z-index: 1; max-width: 850px; }
+.quote .accent { color: #F5C518; }
+.quote-mark { font-size: 120px; color: rgba(245,197,24,0.2); position: absolute; top: 60px; left: 50px; font-family: Georgia, serif; line-height: 1; }
+.savings-box { display: inline-flex; align-items: center; gap: 15px; background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.25); border-radius: 16px; padding: 18px 35px; margin: 30px 0 15px; position: relative; z-index: 1; }
+.savings-box .arrow { font-size: 36px; color: #F5C518; }
+.savings-box .old { font-size: 32px; color: #666; text-decoration: line-through; }
+.savings-box .new { font-size: 42px; font-weight: 900; color: #F5C518; }
+.author { font-size: 18px; color: #888; margin-bottom: 45px; position: relative; z-index: 1; }
+.author strong { color: #ccc; }
+.cta { display: inline-block; background: #F5C518; color: #000; font-size: 22px; font-weight: 700; padding: 22px 55px; border-radius: 50px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; }
+.logo { position: absolute; bottom: 40px; font-size: 18px; font-weight: 700; color: #F5C518; letter-spacing: 2px; z-index: 1; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="quote-mark">"</div>
+  <div class="stars">⭐⭐⭐⭐⭐</div>
+  <div class="quote">"Nuestra factura pasó de <span class="accent">$850</span> a <span class="accent">$45</span> al mes"</div>
+  <div class="savings-box">
+    <span class="old">$850</span>
+    <span class="arrow">→</span>
+    <span class="new">$45/mes</span>
+  </div>
+  <div class="author"><strong>Comercial Los Azueros</strong> · Chitré, Panamá</div>
+  <a href="https://wa.me/50765831822" class="cta">Quiero Ahorrar Así →</a>
+  <div class="logo">☀ SOLARIS ENERGY</div>
+</div>
+</body>
+</html>
