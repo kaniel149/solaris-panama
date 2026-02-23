@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panama — Solar Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   SOLARIS PANAMA — PROPOSAL DESIGN SYSTEM
+   ═══════════════════════════════════════════ */
+:root {
+  --deep-green: #0B3D2E;
+  --green-light: #145A43;
+  --green-dark: #072A1F;
+  --solar-gold: #D4A843;
+  --gold-light: #E8C76B;
+  --gold-dim: #B8913A;
+  --warm-white: #FEFDFB;
+  --warm-100: #FAF7F2;
+  --warm-200: #F0EBE2;
+  --warm-300: #E0D9CC;
+  --text-primary: #1A1A18;
+  --text-secondary: #5A5A52;
+  --text-muted: #8A8A7E;
+  --shadow-sm: 0 1px 3px rgba(11,61,46,0.06);
+  --shadow-md: 0 4px 16px rgba(11,61,46,0.08);
+  --shadow-lg: 0 12px 40px rgba(11,61,46,0.12);
+  --shadow-xl: 0 24px 64px rgba(11,61,46,0.16);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--warm-white);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; line-height: 1.2; }
+
+/* Section base */
+.section {
+  padding: 100px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.section.visible { opacity: 1; transform: translateY(0); }
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--solar-gold);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--deep-green);
+  margin-bottom: 24px;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(165deg, var(--deep-green) 0%, var(--green-dark) 60%, #051A14 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(212,168,67,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(212,168,67,0.12);
+  border: 1px solid rgba(212,168,67,0.25);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--solar-gold);
+  margin-bottom: 40px;
+  animation: fadeDown 1s ease 0.2s both;
+}
+
+.hero-badge svg { width: 16px; height: 16px; fill: var(--solar-gold); }
+
+.hero-prepared {
+  font-size: 0.95rem;
+  color: rgba(254,253,251,0.5);
+  font-weight: 400;
+  margin-bottom: 12px;
+  animation: fadeDown 1s ease 0.4s both;
+}
+
+.hero-client {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 700;
+  color: var(--warm-white);
+  margin-bottom: 8px;
+  animation: fadeDown 1s ease 0.5s both;
+}
+
+.hero-location {
+  font-size: 1.1rem;
+  color: rgba(254,253,251,0.6);
+  margin-bottom: 56px;
+  animation: fadeDown 1s ease 0.6s both;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: rgba(254,253,251,0.08);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 800px;
+  width: 100%;
+  animation: fadeUp 1s ease 0.8s both;
+}
+
+.hero-stat {
+  background: rgba(254,253,251,0.04);
+  padding: 32px 24px;
+  backdrop-filter: blur(10px);
+  transition: background 0.3s;
+}
+.hero-stat:hover { background: rgba(254,253,251,0.08); }
+
+.hero-stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--solar-gold);
+  margin-bottom: 4px;
+}
+
+.hero-stat-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(254,253,251,0.5);
+}
+
+.hero-valid {
+  margin-top: 48px;
+  font-size: 0.85rem;
+  color: rgba(254,253,251,0.35);
+  animation: fadeUp 1s ease 1s both;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(254,253,251,0.3);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: fadeUp 1s ease 1.2s both;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(212,168,67,0.5), transparent);
+  animation: scrollPulse 2s ease infinite;
+}
+
+/* ── PROBLEM ── */
+.problem-section {
+  background: var(--warm-100);
+  padding: 100px 24px;
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.problem-chart-container {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+}
+
+.cost-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 200px;
+  margin-top: 24px;
+}
+
+.cost-bar {
+  flex: 1;
+  background: linear-gradient(to top, var(--deep-green), var(--green-light));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 1s ease;
+  min-width: 0;
+}
+
+.cost-bar-label {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.cost-bar-value {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  white-space: nowrap;
+}
+
+/* ── SOLUTION / SPECS ── */
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.spec-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 36px 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(11,61,46,0.06);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.spec-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+.spec-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--deep-green), var(--green-light));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.spec-icon svg { width: 24px; height: 24px; fill: var(--solar-gold); }
+
+.spec-card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  margin-bottom: 8px;
+}
+
+.spec-card p { font-size: 0.95rem; color: var(--text-secondary); }
+.spec-card .spec-detail { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ── FINANCIAL ANALYSIS ── */
+.finance-section {
+  background: var(--deep-green);
+  padding: 100px 24px;
+  color: var(--warm-white);
+}
+
+.finance-inner { max-width: 1200px; margin: 0 auto; }
+
+.finance-section .section-label { color: var(--solar-gold); }
+.finance-section .section-title { color: var(--warm-white); }
+.finance-section .section-subtitle { color: rgba(254,253,251,0.6); }
+
+/* Toggle */
+.pricing-toggle {
+  display: inline-flex;
+  background: rgba(254,253,251,0.08);
+  border-radius: 100px;
+  padding: 4px;
+  margin: 40px 0;
+  border: 1px solid rgba(254,253,251,0.1);
+}
+
+.toggle-btn {
+  padding: 12px 32px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  color: rgba(254,253,251,0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.toggle-btn.active {
+  background: var(--solar-gold);
+  color: var(--deep-green);
+}
+
+.pricing-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 64px;
+}
+
+.pricing-card {
+  background: rgba(254,253,251,0.05);
+  border: 1px solid rgba(254,253,251,0.1);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  backdrop-filter: blur(10px);
+}
+.pricing-card.featured {
+  border-color: var(--solar-gold);
+  background: rgba(212,168,67,0.08);
+}
+
+.pricing-card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--solar-gold);
+  margin-bottom: 8px;
+}
+
+.pricing-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--warm-white);
+  margin-bottom: 4px;
+}
+
+.pricing-period {
+  font-size: 0.85rem;
+  color: rgba(254,253,251,0.4);
+  margin-bottom: 24px;
+}
+
+.pricing-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: rgba(254,253,251,0.7);
+}
+
+.pricing-features li::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(212,168,67,0.2);
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23D4A843'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+  background-size: 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.chart-container {
+  background: rgba(254,253,251,0.04);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  border: 1px solid rgba(254,253,251,0.08);
+}
+
+.chart-container h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  color: rgba(254,253,251,0.8);
+}
+
+.chart-wrap { position: relative; height: 320px; }
+
+/* ── CALCULATOR ── */
+.calc-section { background: var(--warm-100); }
+
+.calculator {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  box-shadow: var(--shadow-lg);
+  max-width: 900px;
+  margin: 48px auto 0;
+}
+
+.calc-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.calc-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.calc-field input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--warm-200);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  background: var(--warm-100);
+  transition: border-color 0.3s;
+}
+.calc-field input:focus { outline: none; border-color: var(--solar-gold); }
+
+.calc-results {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.calc-result {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--warm-100);
+  border-radius: var(--radius-md);
+}
+
+.calc-result-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--deep-green);
+  margin-bottom: 4px;
+}
+
+.calc-result-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── LAW 417 ── */
+.law-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.law-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 36px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--solar-gold);
+}
+
+.law-card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--deep-green);
+  margin-bottom: 8px;
+}
+
+.law-card p { font-size: 0.95rem; color: var(--text-secondary); }
+
+/* ── TIMELINE ── */
+.timeline-section { background: var(--warm-100); }
+
+.timeline {
+  position: relative;
+  max-width: 700px;
+  margin: 48px auto 0;
+  padding-left: 40px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--solar-gold), var(--deep-green));
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 48px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -33px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--solar-gold);
+  border: 4px solid var(--warm-100);
+  box-shadow: 0 0 0 2px var(--solar-gold);
+}
+
+.timeline-week {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--solar-gold);
+  margin-bottom: 4px;
+}
+
+.timeline-item h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  margin-bottom: 6px;
+}
+
+.timeline-item p { font-size: 0.9rem; color: var(--text-secondary); }
+
+/* ── WARRANTY ── */
+.warranty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.warranty-card {
+  text-align: center;
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(11,61,46,0.06);
+}
+
+.warranty-years {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--deep-green);
+  line-height: 1;
+}
+
+.warranty-unit {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--solar-gold);
+  margin-bottom: 16px;
+}
+
+.warranty-card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  margin-bottom: 8px;
+}
+
+.warranty-card p { font-size: 0.9rem; color: var(--text-secondary); }
+
+/* ── ABOUT ── */
+.about-section {
+  background: var(--deep-green);
+  color: var(--warm-white);
+  padding: 100px 24px;
+}
+
+.about-inner { max-width: 1200px; margin: 0 auto; }
+.about-section .section-title { color: var(--warm-white); }
+.about-section .section-subtitle { color: rgba(254,253,251,0.6); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+}
+
+.about-card {
+  background: rgba(254,253,251,0.05);
+  border: 1px solid rgba(254,253,251,0.1);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+
+.about-card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--solar-gold);
+  margin-bottom: 12px;
+}
+
+.about-card p {
+  font-size: 0.95rem;
+  color: rgba(254,253,251,0.65);
+  line-height: 1.7;
+}
+
+.about-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.about-stat {
+  text-align: center;
+  padding: 32px;
+  background: rgba(254,253,251,0.04);
+  border-radius: var(--radius-md);
+}
+
+.about-stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--solar-gold);
+}
+
+.about-stat-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(254,253,251,0.45);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── AGREEMENT ── */
+.agreement-section { background: var(--warm-100); }
+
+.agreement-box {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 56px;
+  box-shadow: var(--shadow-lg);
+  max-width: 800px;
+  margin: 48px auto 0;
+  border: 1px solid rgba(11,61,46,0.06);
+}
+
+.agreement-terms {
+  background: var(--warm-100);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  margin-bottom: 32px;
+  max-height: 240px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.agreement-terms h4 {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  color: var(--deep-green);
+  margin: 16px 0 8px;
+}
+.agreement-terms h4:first-child { margin-top: 0; }
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--deep-green);
+  cursor: pointer;
+}
+
+.checkbox-row label {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.sig-area {
+  margin-bottom: 32px;
+}
+
+.sig-area label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.sig-pad {
+  width: 100%;
+  height: 120px;
+  border: 2px dashed var(--warm-300);
+  border-radius: var(--radius-md);
+  background: var(--warm-100);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.sig-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-clear {
+  padding: 8px 16px;
+  border: 1px solid var(--warm-300);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.btn-submit {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--deep-green), var(--green-light));
+  color: var(--warm-white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.btn-submit.enabled {
+  opacity: 1;
+  pointer-events: auto;
+}
+.btn-submit.enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11,61,46,0.3);
+}
+
+/* ── CONTACT / FOOTER ── */
+.contact-section {
+  background: var(--green-dark);
+  padding: 80px 24px;
+  text-align: center;
+  color: var(--warm-white);
+}
+
+.contact-inner { max-width: 600px; margin: 0 auto; }
+.contact-section .section-title { color: var(--warm-white); font-size: 2rem; }
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.contact-link:hover { transform: translateY(-2px); }
+
+.contact-link.whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.contact-link.email {
+  background: rgba(254,253,251,0.1);
+  border: 1px solid rgba(254,253,251,0.2);
+  color: var(--warm-white);
+}
+
+.footer {
+  background: var(--green-dark);
+  border-top: 1px solid rgba(254,253,251,0.06);
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(254,253,251,0.3);
+}
+
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--solar-gold);
+  margin-bottom: 8px;
+}
+
+/* ── ROI TIMELINE ── */
+.roi-timeline {
+  position: relative;
+  margin-top: 48px;
+  padding: 32px 0;
+}
+
+.roi-track {
+  height: 8px;
+  background: rgba(254,253,251,0.1);
+  border-radius: 4px;
+  position: relative;
+  overflow: visible;
+}
+
+.roi-fill {
+  height: 100%;
+  background: linear-gradient(to right, #D4A843, #25D366);
+  border-radius: 4px;
+  transition: width 1.5s ease;
+}
+
+.roi-marker {
+  position: absolute;
+  top: -12px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.roi-marker-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--solar-gold);
+  border: 4px solid var(--deep-green);
+  box-shadow: 0 0 20px rgba(212,168,67,0.4);
+}
+
+.roi-marker-label {
+  margin-top: 16px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.roi-marker-label strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--solar-gold);
+}
+
+.roi-marker-label span {
+  font-size: 0.75rem;
+  color: rgba(254,253,251,0.5);
+}
+
+.roi-years {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 48px;
+  font-size: 0.75rem;
+  color: rgba(254,253,251,0.3);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.3); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .section { padding: 64px 20px; }
+  .hero { padding: 60px 20px 80px; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+  .pricing-panels { grid-template-columns: 1fr; }
+  .calc-inputs { grid-template-columns: 1fr; }
+  .calc-results { grid-template-columns: 1fr 1fr; }
+  .warranty-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-stat-row { grid-template-columns: 1fr; }
+  .agreement-box { padding: 32px 24px; }
+  .calculator { padding: 32px 24px; }
+}
+
+/* ── PRINT ── */
+@media print {
+  body { font-size: 11pt; }
+  .hero { min-height: auto; padding: 40px; page-break-after: always; }
+  .section { opacity: 1 !important; transform: none !important; padding: 40px 0; }
+  .hero-scroll, .pricing-toggle, .sig-pad, .sig-actions, .btn-submit, .btn-clear { display: none !important; }
+  .finance-section, .about-section, .contact-section { background: white !important; color: black !important; }
+  .finance-section .section-title, .about-section .section-title { color: var(--deep-green) !important; }
+  .finance-section *, .about-section * { color: black !important; }
+  .pricing-card, .chart-container, .about-card {
+    background: white !important;
+    border: 1px solid #ddd !important;
+  }
+  .contact-section { page-break-before: always; }
+  * { box-shadow: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero" id="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    SOLARIS PANAMA
+  </div>
+  <div class="hero-prepared">Propuesta preparada para / Proposal prepared for</div>
+  <h1 class="hero-client" id="heroClient"></h1>
+  <div class="hero-location" id="heroLocation"></div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="heroSize"></div>
+      <div class="hero-stat-label">System Size</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="heroSavings"></div>
+      <div class="hero-stat-label">Monthly Savings</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="heroPayback"></div>
+      <div class="hero-stat-label">Payback Period</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="heroTotal25"></div>
+      <div class="hero-stat-label">25-Year Savings</div>
+    </div>
+  </div>
+  <div class="hero-valid">Válido hasta / Valid until: <span id="heroValid"></span></div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════ THE PROBLEM ═══════ -->
+<section class="problem-section">
+  <div class="section problem-grid" id="sectionProblem">
+    <div>
+      <div class="section-label">El Problema / The Problem</div>
+      <h2 class="section-title">Electricity Costs Are Rising. Every Year.</h2>
+      <p class="section-subtitle">Panama's electricity rate is <strong>$0.195/kWh</strong> — and increasing at <strong>3% annually</strong>. In 10 years, you'll be paying <strong>$0.262/kWh</strong>. In 25 years, <strong>$0.408/kWh</strong>.</p>
+      <p class="section-subtitle" style="margin-top:16px; color: var(--text-muted); font-size: 0.95rem;">
+        Los costos de electricidad en Panamá suben cada año. Sin acción, su factura mensual de <strong id="problemBill"></strong> podría duplicarse en la próxima década.
+      </p>
+    </div>
+    <div class="problem-chart-container">
+      <h3 style="font-family:'DM Sans',sans-serif; font-weight:600; color:var(--deep-green); margin-bottom:4px;">Projected Cost per kWh</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">At 3% annual increase</p>
+      <div class="cost-bar-chart" id="costBars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ OUR SOLUTION ═══════ -->
+<div class="section" id="sectionSolution">
+  <div class="section-label">Nuestra Solución / Our Solution</div>
+  <h2 class="section-title">A <span id="solSize"></span> kWp Solar Power System</h2>
+  <p class="section-subtitle">Custom-designed for your property. Premium components. Maximum energy production. Full monitoring.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <div class="spec-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="0"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></div>
+      <h3>Solar Panels</h3>
+      <p id="specPanels"></p>
+      <div class="spec-detail">Tier-1 Monocrystalline PERC · 25-year warranty</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <h3>Inverter</h3>
+      <p>Hybrid string inverter with MPPT tracking</p>
+      <div class="spec-detail">97.5% efficiency · WiFi monitoring · 10-year warranty</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 21V8l9-5 9 5v13"/></svg></div>
+      <h3>Mounting System</h3>
+      <p id="specRoof"></p>
+      <div class="spec-detail">Marine-grade aluminum · Wind rated 160 km/h</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+      <h3>Monitoring</h3>
+      <p>Real-time production tracking via mobile app</p>
+      <div class="spec-detail">24/7 system monitoring · Performance alerts</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FINANCIAL ANALYSIS ═══════ -->
+<section class="finance-section" id="sectionFinance">
+  <div class="finance-inner section visible">
+    <div class="section-label">Análisis Financiero / Financial Analysis</div>
+    <h2 class="section-title">Your Investment, Visualized</h2>
+    <p class="section-subtitle">Two ways to go solar. Both save you money from month one.</p>
+
+    <div class="pricing-toggle">
+      <button class="toggle-btn active" onclick="togglePricing('purchase')">Direct Purchase</button>
+      <button class="toggle-btn" onclick="togglePricing('ppa')">PPA Agreement</button>
+    </div>
+
+    <div class="pricing-panels" id="pricingPanels">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- ROI Timeline -->
+    <div style="margin-bottom:64px">
+      <h3 style="font-family:'DM Sans',sans-serif; font-weight:600; font-size:1.1rem; color:rgba(254,253,251,0.8); margin-bottom:8px;">Break-Even Timeline</h3>
+      <p style="font-size:0.85rem; color:rgba(254,253,251,0.4); margin-bottom:24px;">When your savings exceed your investment</p>
+      <div class="roi-timeline">
+        <div class="roi-track">
+          <div class="roi-fill" id="roiFill" style="width:0%"></div>
+          <div class="roi-marker" id="roiMarker" style="left:0%">
+            <div class="roi-marker-dot"></div>
+            <div class="roi-marker-label">
+              <strong id="roiLabel"></strong>
+              <span>Break-even</span>
+            </div>
+          </div>
+        </div>
+        <div class="roi-years">
+          <span>Year 0</span><span>Year 5</span><span>Year 10</span><span>Year 15</span><span>Year 20</span><span>Year 25</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 25-year Chart -->
+    <div class="chart-container">
+      <h3>25-Year Cumulative Savings vs Investment</h3>
+      <div class="chart-wrap"><canvas id="savingsChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CALCULATOR ═══════ -->
+<div class="section calc-section" id="sectionCalc">
+  <div class="section-label">Calculadora / Calculator</div>
+  <h2 class="section-title">Customize Your System</h2>
+  <p class="section-subtitle">Adjust the values below to see how different system sizes affect your savings and ROI.</p>
+  <div class="calculator">
+    <div class="calc-inputs">
+      <div class="calc-field">
+        <label>System Size (kWp)</label>
+        <input type="number" id="calcSize" value="70" min="5" max="500" oninput="runCalc()">
+      </div>
+      <div class="calc-field">
+        <label>Current Monthly Bill ($)</label>
+        <input type="number" id="calcBill" value="3500" min="100" max="50000" oninput="runCalc()">
+      </div>
+    </div>
+    <div class="calc-results">
+      <div class="calc-result">
+        <div class="calc-result-value" id="calcSavings">$0</div>
+        <div class="calc-result-label">Monthly Savings</div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-value" id="calcPayback">0</div>
+        <div class="calc-result-label">Payback (Years)</div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-value" id="calcROI">0%</div>
+        <div class="calc-result-label">25-Year ROI</div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-value" id="calcTotal">$0</div>
+        <div class="calc-result-label">25-Year Savings</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ LAW 417 ═══════ -->
+<div class="section" id="sectionLaw">
+  <div class="section-label">Ley 417 / Law 417 Benefits</div>
+  <h2 class="section-title">Government Incentives for Solar</h2>
+  <p class="section-subtitle">Panama's Law 417 provides significant tax incentives for solar energy adoption, making your investment even more attractive.</p>
+  <div class="law-grid">
+    <div class="law-card">
+      <h3>🏢 Property Tax Exemption</h3>
+      <p>Solar installations are exempt from property tax increases for the useful life of the system (25+ years).</p>
+    </div>
+    <div class="law-card">
+      <h3>📦 Import Tax Exemption</h3>
+      <p>Zero import duties on solar panels, inverters, and all system components. Significant savings on equipment costs.</p>
+    </div>
+    <div class="law-card">
+      <h3>⚡ Net Metering</h3>
+      <p>Excess energy sent to the grid earns credits on your bill. Your meter runs backwards when you produce more than you use.</p>
+    </div>
+    <div class="law-card">
+      <h3>💰 ISR Tax Deduction</h3>
+      <p>Deduct up to 100% of the solar investment from your income tax (ISR) over 5 years. Accelerated depreciation available.</p>
+    </div>
+    <div class="law-card">
+      <h3>🌱 Green Certification</h3>
+      <p>Qualify for LEED and green building certifications, increasing your property value and market appeal.</p>
+    </div>
+    <div class="law-card">
+      <h3>📋 Simplified Permits</h3>
+      <p>Streamlined permitting process for solar installations under 500kWp. Solaris handles all paperwork for you.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TIMELINE ═══════ -->
+<div class="section timeline-section" id="sectionTimeline">
+  <div class="section-label" style="padding:0 24px;">Proceso / How It Works</div>
+  <h2 class="section-title" style="padding:0 24px;">From Proposal to Power in 4-6 Weeks</h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-week">Week 1</div>
+      <h3>Site Assessment & Design</h3>
+      <p>Engineering team visits your property. Structural analysis, shading study, and custom system design using satellite imagery and drone mapping.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-week">Week 1-2</div>
+      <h3>Permits & Approvals</h3>
+      <p>We handle all ASEP and municipal permits, interconnection agreements, and net metering applications. Zero hassle for you.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-week">Week 2-3</div>
+      <h3>Equipment Procurement</h3>
+      <p>Premium Tier-1 components sourced and delivered. All equipment arrives with full manufacturer warranties and certifications.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-week">Week 3-5</div>
+      <h3>Installation</h3>
+      <p>Certified installers mount panels, wire inverters, and connect your system. Minimal disruption to your daily operations.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-week">Week 5-6</div>
+      <h3>Inspection & Activation</h3>
+      <p>Final inspection, grid connection approval, monitoring setup, and system handover. You start saving from day one.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ WARRANTY ═══════ -->
+<div class="section" id="sectionWarranty">
+  <div class="section-label">Garantías / Warranty & Guarantee</div>
+  <h2 class="section-title">Protected for Decades</h2>
+  <p class="section-subtitle">Industry-leading warranties backed by Solaris Panama and our manufacturer partners.</p>
+  <div class="warranty-grid">
+    <div class="warranty-card">
+      <div class="warranty-years">25</div>
+      <div class="warranty-unit">Years</div>
+      <h3>Panel Performance</h3>
+      <p>Guaranteed minimum 80% output at year 25. Linear degradation warranty from manufacturer.</p>
+    </div>
+    <div class="warranty-card">
+      <div class="warranty-years">10</div>
+      <div class="warranty-unit">Years</div>
+      <h3>Inverter Warranty</h3>
+      <p>Full replacement coverage. Extended to 15 or 25 years available. Remote diagnostics included.</p>
+    </div>
+    <div class="warranty-card">
+      <div class="warranty-years">30</div>
+      <div class="warranty-unit">Days</div>
+      <h3>Satisfaction Guarantee</h3>
+      <p>Not satisfied with your system's performance? Full review and remediation at no additional cost.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ABOUT SOLARIS ═══════ -->
+<section class="about-section" id="sectionAbout">
+  <div class="about-inner">
+    <div class="section-label">Sobre Nosotros / About Solaris</div>
+    <h2 class="section-title">Panama's Premier Solar Installer</h2>
+    <p class="section-subtitle">Founded by energy professionals with a mission: make solar the obvious choice for every business and home in Panama.</p>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Our First Project</h3>
+        <p>Tipi Restaurant — a landmark 300kW commercial installation in Pedasí that proved solar works brilliantly in Panama's climate. Fully operational, delivering consistent ROI every month.</p>
+      </div>
+      <div class="about-card">
+        <h3>Why Solaris?</h3>
+        <p>We're not a sales company that subcontracts installations. We design, engineer, install, and monitor every system ourselves. One team, one point of contact, one standard of excellence.</p>
+      </div>
+    </div>
+    <div class="about-stat-row">
+      <div class="about-stat">
+        <div class="about-stat-value">300kW</div>
+        <div class="about-stat-label">Largest Install</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-value">100%</div>
+        <div class="about-stat-label">Customer Satisfaction</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-value">24/7</div>
+        <div class="about-stat-label">System Monitoring</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ DIGITAL AGREEMENT ═══════ -->
+<div class="section agreement-section" id="sectionAgreement">
+  <div class="section-label">Acuerdo Digital / Digital Agreement</div>
+  <h2 class="section-title">Ready to Go Solar?</h2>
+  <p class="section-subtitle">Review the terms below and sign to proceed with your solar installation.</p>
+  <div class="agreement-box">
+    <div class="agreement-terms">
+      <h4>1. Scope of Work</h4>
+      <p>Solaris Panama agrees to design, procure, install, and commission a <span class="js-size"></span> kWp grid-tied solar photovoltaic system at <span class="js-address"></span>, consisting of <span class="js-panels"></span> solar panels, hybrid inverter(s), mounting hardware, and monitoring equipment.</p>
+
+      <h4>2. Investment / Inversión</h4>
+      <p>Total system price: <strong>$<span class="js-price"></span> USD</strong>. Payment terms: 50% upon contract signing, 30% upon equipment delivery, 20% upon system commissioning and grid connection.</p>
+
+      <h4>3. Timeline</h4>
+      <p>Estimated project completion: 4-6 weeks from contract signing, subject to permit approval timelines and weather conditions.</p>
+
+      <h4>4. Warranties</h4>
+      <p>Panel manufacturer warranty: 25 years performance. Inverter warranty: 10 years. Solaris workmanship warranty: 5 years. 30-day satisfaction guarantee.</p>
+
+      <h4>5. Net Metering</h4>
+      <p>Solaris will handle all ASEP interconnection paperwork. Net metering activation subject to utility company approval and timeline.</p>
+
+      <h4>6. Governing Law</h4>
+      <p>This agreement is governed by the laws of the Republic of Panama, in accordance with Law 417 of 2013 (Incentivos para el Fomento de Fuentes Renovables de Energía).</p>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="agreeCheck" onchange="updateSubmit()">
+      <label for="agreeCheck">I have read and agree to the terms above / He leído y acepto los términos anteriores</label>
+    </div>
+
+    <div class="sig-area">
+      <label>Client Signature / Firma del Cliente</label>
+      <canvas class="sig-pad" id="sigCanvas"></canvas>
+      <div class="sig-actions">
+        <button class="btn-clear" onclick="clearSignature()">Clear / Limpiar</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitProposal()">
+      Accept Proposal / Aceptar Propuesta
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ CONTACT ═══════ -->
+<section class="contact-section" id="sectionContact">
+  <div class="contact-inner">
+    <div class="section-label" style="color: var(--solar-gold);">Contacto / Contact</div>
+    <h2 class="section-title">Questions? Let's Talk.</h2>
+    <p style="color:rgba(254,253,251,0.5); margin-top:12px;" id="contactRep"></p>
+    <div class="contact-links">
+      <a class="contact-link whatsapp" id="contactWA" href="#" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+      <a class="contact-link email" href="mailto:info@solarispanama.com">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+        info@solarispanama.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+  <div class="footer-brand">SOLARIS</div>
+  <p>© 2026 Solaris Panama. All rights reserved. Energía limpia para Panamá.</p>
+  <p style="margin-top:8px;">This proposal is confidential and intended solely for the named recipient.</p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   PROPOSAL CONFIGURATION
+   Edit these values for each client
+   ═══════════════════════════════════════════ */
+const PROPOSAL = {
+  clientName: "Villa Camilla",
+  clientAddress: "Los Destiladeros, Pedasí",
+  systemSize: 70,        // kWp
+  roofArea: 400,         // m²
+  panelCount: 140,
+  panelWatts: 500,       // per panel
+  monthlyBill: 3500,     // current $ bill
+  purchasePrice: 56000,
+  ppaRate: 0.14,         // $/kWh PPA rate
+  ppaTerm: 25,           // years
+  estimatedMonthlySavings: 2100,
+  paybackYears: 2.7,
+  electricityRate: 0.195, // $/kWh
+  rateIncrease: 0.03,    // 3% annual
+  solarDegradation: 0.005, // 0.5% per year
+  validUntil: "2026-04-01",
+  salesRep: "Kaniel Tordjman",
+  salesPhone: "+507 6583-1822",
+  salesEmail: "info@solarispanama.com"
+};
+
+/* ── DERIVED CALCULATIONS ── */
+const P = PROPOSAL;
+const annualProduction = P.systemSize * 1500; // ~1500 kWh/kWp/year in Panama
+const annualSavings = P.estimatedMonthlySavings * 12;
+
+function fmt(n) { return n.toLocaleString('en-US', {maximumFractionDigits:0}); }
+function fmtK(n) { return n >= 1000 ? '$' + (n/1000).toFixed(0) + 'K' : '$' + fmt(n); }
+
+/* ── POPULATE HERO ── */
+document.getElementById('heroClient').textContent = P.clientName;
+document.getElementById('heroLocation').textContent = P.clientAddress;
+document.getElementById('heroSize').textContent = P.systemSize + ' kWp';
+document.getElementById('heroSavings').textContent = '$' + fmt(P.estimatedMonthlySavings);
+document.getElementById('heroPayback').textContent = P.paybackYears + ' yrs';
+
+// 25-year total savings (with rate increase, with panel degradation)
+let total25 = 0;
+for (let y = 0; y < 25; y++) {
+  const rate = P.electricityRate * Math.pow(1 + P.rateIncrease, y);
+  const production = annualProduction * Math.pow(1 - P.solarDegradation, y);
+  total25 += production * rate;
+}
+document.getElementById('heroTotal25').textContent = '$' + fmt(total25);
+document.getElementById('heroValid').textContent = P.validUntil;
+
+/* ── PROBLEM SECTION ── */
+document.getElementById('problemBill').textContent = '$' + fmt(P.monthlyBill);
+
+// Cost bar chart
+const costBars = document.getElementById('costBars');
+const years = [2024,2027,2030,2033,2036,2039,2042,2045,2048];
+const maxRate = P.electricityRate * Math.pow(1.03, 24);
+years.forEach(yr => {
+  const y = yr - 2024;
+  const rate = P.electricityRate * Math.pow(1.03, y);
+  const pct = (rate / maxRate) * 100;
+  const bar = document.createElement('div');
+  bar.className = 'cost-bar';
+  bar.style.height = '0%';
+  bar.innerHTML = `<span class="cost-bar-value">$${rate.toFixed(3)}</span><span class="cost-bar-label">${yr}</span>`;
+  costBars.appendChild(bar);
+  setTimeout(() => { bar.style.height = pct + '%'; }, 500);
+});
+
+/* ── SOLUTION ── */
+document.getElementById('solSize').textContent = P.systemSize;
+document.getElementById('specPanels').textContent = P.panelCount + ' × ' + P.panelWatts + 'W panels (' + P.systemSize + ' kWp total)';
+document.getElementById('specRoof').textContent = P.roofArea + ' m² roof-mounted system';
+
+/* ── PRICING ── */
+function togglePricing(mode) {
+  document.querySelectorAll('.toggle-btn').forEach((b,i) => {
+    b.classList.toggle('active', (mode === 'purchase' && i === 0) || (mode === 'ppa' && i === 1));
+  });
+  renderPricing(mode);
+}
+
+function renderPricing(mode) {
+  const panel = document.getElementById('pricingPanels');
+  if (mode === 'purchase') {
+    panel.innerHTML = `
+      <div class="pricing-card featured">
+        <h3>Direct Purchase / Compra Directa</h3>
+        <div class="pricing-amount">$${fmt(P.purchasePrice)}</div>
+        <div class="pricing-period">One-time investment</div>
+        <ul class="pricing-features">
+          <li>Own your system from day one</li>
+          <li>$${fmt(P.estimatedMonthlySavings)}/mo savings immediately</li>
+          <li>Payback in ${P.paybackYears} years</li>
+          <li>$${fmt(total25)} total 25-year savings</li>
+          <li>${Math.round((total25 / P.purchasePrice) * 100)}% return on investment</li>
+          <li>Law 417 tax benefits apply</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <h3>Financing Available / Financiamiento</h3>
+        <div class="pricing-amount">$${fmt(Math.round(P.purchasePrice / 60))}</div>
+        <div class="pricing-period">per month / 60 months</div>
+        <ul class="pricing-features">
+          <li>$0 down payment options available</li>
+          <li>Net positive cash flow from month 1</li>
+          <li>Own the system after 5 years</li>
+          <li>Same warranties and guarantees</li>
+          <li>Pre-approval in 48 hours</li>
+        </ul>
+      </div>`;
+  } else {
+    const ppaMonthlyCost = (annualProduction * P.ppaRate / 12);
+    const ppaSavings = P.monthlyBill - ppaMonthlyCost;
+    panel.innerHTML = `
+      <div class="pricing-card featured">
+        <h3>PPA / Power Purchase Agreement</h3>
+        <div class="pricing-amount">$${P.ppaRate.toFixed(3)}/kWh</div>
+        <div class="pricing-period">Fixed rate for ${P.ppaTerm} years</div>
+        <ul class="pricing-features">
+          <li>$0 upfront investment</li>
+          <li>Save $${fmt(ppaSavings)}/mo vs current bill</li>
+          <li>Rate locked — immune to utility increases</li>
+          <li>Solaris owns & maintains the system</li>
+          <li>Option to buy after year 7</li>
+          <li>No risk, immediate savings</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <h3>PPA vs Grid Comparison</h3>
+        <div class="pricing-amount" style="font-size:1.8rem;">Save ${Math.round((1 - P.ppaRate / P.electricityRate) * 100)}%</div>
+        <div class="pricing-period">on your electricity from day one</div>
+        <ul class="pricing-features">
+          <li>Current rate: $${P.electricityRate}/kWh (rising 3%/yr)</li>
+          <li>Your PPA rate: $${P.ppaRate}/kWh (fixed)</li>
+          <li>Year 10 grid rate: $${(P.electricityRate * Math.pow(1.03, 10)).toFixed(3)}/kWh</li>
+          <li>Year 25 grid rate: $${(P.electricityRate * Math.pow(1.03, 25)).toFixed(3)}/kWh</li>
+          <li>Your rate stays: $${P.ppaRate}/kWh</li>
+        </ul>
+      </div>`;
+  }
+}
+renderPricing('purchase');
+
+/* ── ROI TIMELINE ── */
+setTimeout(() => {
+  const pct = (P.paybackYears / 25) * 100;
+  document.getElementById('roiFill').style.width = pct + '%';
+  document.getElementById('roiMarker').style.left = pct + '%';
+  document.getElementById('roiLabel').textContent = 'Year ' + P.paybackYears;
+}, 1000);
+
+/* ── 25-YEAR CHART ── */
+function buildChart() {
+  const ctx = document.getElementById('savingsChart').getContext('2d');
+  const labels = [];
+  const cumSavings = [];
+  const investmentLine = [];
+  let cumulative = 0;
+
+  for (let y = 0; y <= 25; y++) {
+    labels.push('Year ' + y);
+    if (y > 0) {
+      const rate = P.electricityRate * Math.pow(1 + P.rateIncrease, y - 1);
+      const production = annualProduction * Math.pow(1 - P.solarDegradation, y - 1);
+      cumulative += production * rate;
+    }
+    cumSavings.push(Math.round(cumulative));
+    investmentLine.push(P.purchasePrice);
+  }
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Cumulative Savings',
+          data: cumSavings,
+          borderColor: '#D4A843',
+          backgroundColor: 'rgba(212,168,67,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          borderWidth: 3,
+        },
+        {
+          label: 'Investment',
+          data: investmentLine,
+          borderColor: 'rgba(254,253,251,0.3)',
+          borderDash: [8, 4],
+          pointRadius: 0,
+          borderWidth: 2,
+          fill: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { labels: { color: 'rgba(254,253,251,0.6)', font: { family: 'DM Sans' } } },
+        tooltip: {
+          backgroundColor: '#0B3D2E',
+          titleColor: '#D4A843',
+          bodyColor: '#FEFDFB',
+          callbacks: { label: ctx => ctx.dataset.label + ': $' + fmt(ctx.parsed.y) }
+        }
+      },
+      scales: {
+        x: { ticks: { color: 'rgba(254,253,251,0.3)', font: { family: 'DM Sans', size: 10 }, maxTicksLimit: 6 }, grid: { color: 'rgba(254,253,251,0.05)' } },
+        y: { ticks: { color: 'rgba(254,253,251,0.3)', font: { family: 'DM Sans' }, callback: v => '$' + (v/1000).toFixed(0) + 'K' }, grid: { color: 'rgba(254,253,251,0.05)' } }
+      }
+    }
+  });
+}
+buildChart();
+
+/* ── CALCULATOR ── */
+function runCalc() {
+  const size = parseFloat(document.getElementById('calcSize').value) || 0;
+  const bill = parseFloat(document.getElementById('calcBill').value) || 0;
+  const pricePerKw = P.purchasePrice / P.systemSize;
+  const price = size * pricePerKw;
+  const production = size * 1500;
+  const monthlySavings = Math.min(bill, (production * P.electricityRate) / 12);
+  const annualSav = monthlySavings * 12;
+  const payback = annualSav > 0 ? price / annualSav : 99;
+  let t25 = 0;
+  for (let y = 0; y < 25; y++) {
+    const r = P.electricityRate * Math.pow(1.03, y);
+    const p = production * Math.pow(0.995, y);
+    t25 += p * r;
+  }
+  t25 = Math.min(t25, bill * 12 * 25 * 1.5); // cap
+  const roi = price > 0 ? ((t25 - price) / price * 100) : 0;
+
+  document.getElementById('calcSavings').textContent = '$' + fmt(monthlySavings);
+  document.getElementById('calcPayback').textContent = payback.toFixed(1) + ' yrs';
+  document.getElementById('calcROI').textContent = Math.round(roi) + '%';
+  document.getElementById('calcTotal').textContent = '$' + fmt(t25);
+}
+runCalc();
+
+/* ── AGREEMENT ── */
+// Fill dynamic spans
+document.querySelectorAll('.js-size').forEach(el => el.textContent = P.systemSize);
+document.querySelectorAll('.js-address').forEach(el => el.textContent = P.clientAddress);
+document.querySelectorAll('.js-panels').forEach(el => el.textContent = P.panelCount);
+document.querySelectorAll('.js-price').forEach(el => el.textContent = fmt(P.purchasePrice));
+
+// Contact
+document.getElementById('contactRep').textContent = P.salesRep + ' · ' + P.salesPhone;
+document.getElementById('contactWA').href = 'https://wa.me/' + P.salesPhone.replace(/[^0-9]/g, '');
+
+/* ── SIGNATURE PAD ── */
+const canvas = document.getElementById('sigCanvas');
+const sigCtx = canvas.getContext('2d');
+let drawing = false;
+let hasSig = false;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * 2;
+  canvas.height = rect.height * 2;
+  sigCtx.scale(2, 2);
+  sigCtx.strokeStyle = '#0B3D2E';
+  sigCtx.lineWidth = 2;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - r.left, y: t.clientY - r.top };
+}
+
+canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); });
+canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); hasSig = true; updateSubmit(); });
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseleave', () => drawing = false);
+
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); hasSig = true; updateSubmit(); }, {passive:false});
+canvas.addEventListener('touchend', () => drawing = false);
+
+function clearSignature() {
+  sigCtx.clearRect(0, 0, canvas.width, canvas.height);
+  hasSig = false;
+  updateSubmit();
+}
+
+function updateSubmit() {
+  const agreed = document.getElementById('agreeCheck').checked;
+  document.getElementById('submitBtn').classList.toggle('enabled', agreed && hasSig);
+}
+
+function submitProposal() {
+  if (!document.getElementById('agreeCheck').checked || !hasSig) return;
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '✓ Proposal Accepted / Propuesta Aceptada';
+  btn.style.background = '#25D366';
+  btn.style.pointerEvents = 'none';
+}
+
+/* ── SCROLL ANIMATIONS ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+// Animate cost bars when visible
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.cost-bar').forEach((bar, i) => {
+        const pct = (P.electricityRate * Math.pow(1.03, (years[i] - 2024)) / maxRate) * 100;
+        setTimeout(() => { bar.style.height = pct + '%'; }, i * 100);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+barObserver.observe(document.getElementById('costBars'));
+</script>
+
+</body>
+</html>

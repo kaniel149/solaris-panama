@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Energy — Social Media Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#E8E4DC;color:#1A1A1A;padding:40px 20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:36px;color:#0B3D2E;text-align:center;margin-bottom:8px}
+.subtitle{text-align:center;color:#8A8A8A;font-size:14px;margin-bottom:48px}
+h2{font-family:'Playfair Display',serif;font-size:22px;color:#0B3D2E;margin-bottom:4px}
+.dim{font-size:12px;color:#8A8A8A;margin-bottom:20px}
+.grid{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;margin-bottom:64px}
+
+/* Instagram Post 1080x1080 */
+.ig-post{width:360px;height:360px;background:#0B3D2E;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative;display:flex;flex-direction:column}
+.ig-post .photo-area{flex:1;background:linear-gradient(135deg,#14573F 0%,#0B3D2E 50%,#1A1A1A 100%);display:flex;align-items:center;justify-content:center;position:relative}
+.ig-post .photo-area .placeholder{font-size:11px;color:rgba(254,253,251,0.3);text-transform:uppercase;letter-spacing:0.1em}
+.ig-post .kw-badge{position:absolute;top:16px;right:16px;background:#D4A843;color:#0B3D2E;font-size:11px;font-weight:700;padding:6px 12px;border-radius:100px}
+.ig-post .overlay{background:linear-gradient(transparent,rgba(11,61,46,0.95));padding:20px;position:absolute;bottom:0;left:0;right:0}
+.ig-post .overlay h3{font-family:'Playfair Display',serif;font-size:18px;color:#FEFDFB;margin-bottom:4px}
+.ig-post .overlay p{font-size:11px;color:rgba(254,253,251,0.7);line-height:1.4}
+.ig-post .brand-bar{background:#0B3D2E;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(212,168,67,0.2)}
+.ig-post .brand-bar .logo{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:#FEFDFB;letter-spacing:0.04em}
+.ig-post .brand-bar .tag{font-size:8px;color:#D4A843;font-weight:700;letter-spacing:0.12em;text-transform:uppercase}
+
+/* Instagram Story 1080x1920 → scaled */
+.ig-story{width:216px;height:384px;background:#FEFDFB;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.15);display:flex;flex-direction:column;position:relative}
+.ig-story .header{padding:16px;text-align:center}
+.ig-story .header .logo{font-family:'Playfair Display',serif;font-size:14px;color:#0B3D2E;font-weight:700}
+.ig-story .header .label{font-size:7px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#D4A843;margin-top:2px}
+.ig-story .split{flex:1;display:flex;flex-direction:column}
+.ig-story .half{flex:1;display:flex;align-items:center;justify-content:center;font-size:10px;color:#8A8A8A;text-transform:uppercase;letter-spacing:0.08em}
+.ig-story .half.before{background:#F5EFE0}
+.ig-story .half.after{background:#0B3D2E;color:rgba(254,253,251,0.4)}
+.ig-story .divider{background:#D4A843;color:#0B3D2E;text-align:center;font-size:8px;font-weight:700;padding:4px;letter-spacing:0.1em}
+.ig-story .cta{background:#0B3D2E;padding:14px;text-align:center}
+.ig-story .cta a{display:inline-block;background:#D4A843;color:#0B3D2E;font-size:9px;font-weight:700;padding:6px 16px;border-radius:100px;text-decoration:none;letter-spacing:0.06em;text-transform:uppercase}
+
+/* Facebook Cover 820x312 → scaled */
+.fb-cover{width:547px;height:208px;background:#0B3D2E;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.15);display:flex;align-items:center;padding:0 40px;position:relative}
+.fb-cover .content{position:relative;z-index:1}
+.fb-cover .content h3{font-family:'Playfair Display',serif;font-size:28px;color:#FEFDFB;line-height:1.15;margin-bottom:8px}
+.fb-cover .content h3 span{color:#D4A843}
+.fb-cover .content p{font-size:12px;color:rgba(254,253,251,0.6);max-width:280px;line-height:1.5}
+.fb-cover .deco{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:120px;height:120px;border:2px solid rgba(212,168,67,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.fb-cover .deco-inner{width:80px;height:80px;border:2px solid rgba(212,168,67,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.fb-cover .deco-inner span{font-family:'Playfair Display',serif;font-size:18px;color:#D4A843;font-weight:700}
+
+/* WhatsApp Status 1080x1920 → scaled */
+.wa-status{width:216px;height:384px;background:#0B3D2E;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;position:relative}
+.wa-status .big-num{font-family:'Playfair Display',serif;font-size:56px;font-weight:700;color:#D4A843;line-height:1}
+.wa-status .unit{font-size:12px;font-weight:700;color:#D4A843;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+.wa-status .desc{font-size:11px;color:rgba(254,253,251,0.6);margin-top:12px;line-height:1.5;max-width:160px}
+.wa-status .quote{font-family:'Playfair Display',serif;font-size:13px;color:#FEFDFB;font-style:italic;margin-top:20px;line-height:1.4;padding-top:16px;border-top:1px solid rgba(212,168,67,0.3)}
+.wa-status .author{font-size:9px;color:#D4A843;margin-top:8px;font-weight:700;letter-spacing:0.06em}
+.wa-status .bottom-brand{position:absolute;bottom:16px;font-family:'Playfair Display',serif;font-size:11px;color:rgba(254,253,251,0.3);letter-spacing:0.04em}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Social Media Templates</h1>
+  <p class="subtitle">Solaris Energy — Consistent brand across all platforms</p>
+
+  <!-- Instagram Post -->
+  <div class="grid">
+    <div>
+      <h2>Instagram Post</h2>
+      <p class="dim">1080 × 1080px — Project Showcase</p>
+      <div class="ig-post">
+        <div class="photo-area">
+          <span class="placeholder">[ Project Photo ]</span>
+          <span class="kw-badge">300 kW</span>
+          <div class="overlay">
+            <h3>Tipi Playa Venao</h3>
+            <p>300kW commercial installation powering Panama's premier surf resort. 100% clean energy.</p>
+          </div>
+        </div>
+        <div class="brand-bar">
+          <span class="logo">SOLARIS</span>
+          <span class="tag">Own Your Energy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instagram Story -->
+    <div>
+      <h2>Instagram Story</h2>
+      <p class="dim">1080 × 1920px — Before / After</p>
+      <div class="ig-story">
+        <div class="header">
+          <div class="logo">SOLARIS</div>
+          <div class="label">Transformation</div>
+        </div>
+        <div class="split">
+          <div class="half before">[ Before Photo ]</div>
+          <div class="divider">▼ AFTER ▼</div>
+          <div class="half after">[ After Photo ]</div>
+        </div>
+        <div class="cta"><a href="#">Get Your Free Quote</a></div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Status -->
+    <div>
+      <h2>WhatsApp Status</h2>
+      <p class="dim">1080 × 1920px — Testimonial / Stat</p>
+      <div class="wa-status">
+        <div class="big-num">40%</div>
+        <div class="unit">Savings</div>
+        <div class="desc">Average electricity bill reduction for our residential clients in Year 1</div>
+        <div class="quote">"Best investment we made for our property in Pedasi."</div>
+        <div class="author">— Happy Homeowner, Pedasi</div>
+        <span class="bottom-brand">SOLARIS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Facebook Cover -->
+  <div style="text-align:center;margin-bottom:64px">
+    <h2 style="text-align:center">Facebook Cover</h2>
+    <p class="dim" style="text-align:center">820 × 312px</p>
+    <div class="fb-cover" style="margin:0 auto">
+      <div class="content">
+        <h3>Clean Energy<br>for <span>Paradise</span></h3>
+        <p>Premium solar installations for homes and businesses across Panama's Azuero Peninsula.</p>
+      </div>
+      <div class="deco">
+        <div class="deco-inner"><span>S</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,6 +1,11 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/towns/:path*", "destination": "/towns/:path*" },
+    { "source": "/blog/:path*", "destination": "/blog/:path*" },
+    { "source": "/ads/creatives/:path*", "destination": "/ads/creatives/:path*" },
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
