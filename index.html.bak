@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panamá — Energía Solar para el Azuero</title>
+<meta name="description" content="Instalación de paneles solares en la Península de Azuero. Ahorra hasta 95% en electricidad con los beneficios fiscales de la Ley 417.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   SOLARIS PANAMÁ — Design System
+   Noa / Design Agent
+   Colors: Deep jungle green + solar gold + warm white
+   Type: DM Serif Display (display) + DM Sans (body)
+   ══════════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-900: #0B3D2E;
+  --green-800: #0E4D3A;
+  --green-700: #116B50;
+  --green-600: #158C68;
+  --green-100: #E8F5EF;
+  --green-50:  #F4FAF7;
+  --gold-500:  #D4A843;
+  --gold-400:  #E4BE5A;
+  --gold-300:  #F0D47A;
+  --gold-100:  #FDF6E3;
+  --white:     #FEFDFB;
+  --gray-50:   #FAFAF8;
+  --gray-100:  #F0EFEB;
+  --gray-200:  #E0DED8;
+  --gray-400:  #A8A59E;
+  --gray-600:  #6B6860;
+  --gray-800:  #2E2C28;
+  --gray-900:  #1A1916;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 1px 3px rgba(11,61,46,0.06);
+  --shadow-md: 0 4px 16px rgba(11,61,46,0.08);
+  --shadow-lg: 0 12px 40px rgba(11,61,46,0.12);
+  --shadow-xl: 0 20px 60px rgba(11,61,46,0.16);
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: var(--gray-800);
+  background: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Typography ── */
+h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; line-height: 1.15; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.01em; }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+
+/* ── Layout ── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+}
+
+section { padding: clamp(4rem, 10vw, 8rem) 0; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: var(--radius-xl);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--gold-500);
+  color: var(--green-900);
+  box-shadow: 0 4px 16px rgba(212,168,67,0.3);
+}
+.btn-primary:hover {
+  background: var(--gold-400);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,168,67,0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.3);
+}
+.btn-outline:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.6);
+}
+
+.btn-green {
+  background: var(--green-700);
+  color: var(--white);
+}
+.btn-green:hover {
+  background: var(--green-600);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ══════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: var(--green-900);
+  overflow: hidden;
+  padding: 0;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=80') center/cover no-repeat;
+  opacity: 0.3;
+  filter: saturate(0.7);
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(11,61,46,0.95) 0%,
+    rgba(11,61,46,0.7) 50%,
+    rgba(11,61,46,0.85) 100%
+  );
+}
+
+.hero .container {
+  position: relative;
+  z-index: 2;
+  padding-top: 6rem;
+  padding-bottom: 4rem;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; }
+}
+
+.hero h1 {
+  color: var(--white);
+  margin: 1rem 0 1.5rem;
+}
+
+.hero h1 span {
+  color: var(--gold-400);
+}
+
+.hero-subtitle {
+  color: rgba(255,255,255,0.75);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+
+.hero-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Hero stats strip */
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.hero-stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: var(--gold-400);
+}
+
+.hero-stat-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.25rem;
+}
+
+/* Hero image card */
+.hero-image-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  backdrop-filter: blur(20px);
+}
+
+.hero-image-card img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.hero-image-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+}
+
+.hero-image-caption svg { flex-shrink: 0; }
+
+/* ── Floating nav ── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 0;
+  transition: all 0.4s ease;
+}
+
+.nav.scrolled {
+  background: rgba(11,61,46,0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+  padding: 0.6rem 0;
+}
+
+.nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-logo svg { color: var(--gold-400); }
+
+.nav-links {
+  display: none;
+  list-style: none;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .nav-links { display: flex; }
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* ══════════════════════════════════════════
+   VALUE PROPS — Law 417 + Savings
+   ══════════════════════════════════════════ */
+.value-section {
+  background: var(--white);
+  position: relative;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .value-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.value-card {
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-100);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.value-card:hover {
+  border-color: var(--green-100);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.value-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.value-card:nth-child(1) .value-card-icon { background: var(--green-100); color: var(--green-700); }
+.value-card:nth-child(2) .value-card-icon { background: var(--gold-100); color: var(--gold-500); }
+.value-card:nth-child(3) .value-card-icon { background: var(--green-100); color: var(--green-700); }
+
+.value-card h3 { margin-bottom: 0.75rem; color: var(--gray-900); }
+.value-card p { color: var(--gray-600); font-size: 0.95rem; line-height: 1.7; }
+
+.value-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3.5rem;
+}
+
+.value-header h2 { margin-top: 0.75rem; color: var(--green-900); }
+.value-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
+
+/* Law 417 badge */
+.law-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--green-100);
+  border: 1px solid rgba(17,107,80,0.15);
+  border-radius: var(--radius-xl);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green-700);
+  margin-top: 1.25rem;
+}
+
+/* ══════════════════════════════════════════
+   HOW IT WORKS — 3 Steps
+   ══════════════════════════════════════════ */
+.steps-section {
+  background: var(--green-900);
+  position: relative;
+  overflow: hidden;
+}
+
+.steps-section::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+}
+
+.steps-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 4rem;
+}
+
+.steps-header .label { color: var(--gold-400); }
+.steps-header h2 { color: var(--white); margin-top: 0.75rem; }
+.steps-header p { color: rgba(255,255,255,0.6); margin-top: 1rem; font-size: 1.05rem; }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .steps-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+}
+
+.step-card {
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-4px);
+}
+
+.step-number {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.5rem;
+  color: var(--gold-500);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.step-card h3 { color: var(--white); margin-bottom: 0.75rem; }
+.step-card p { color: rgba(255,255,255,0.55); font-size: 0.95rem; line-height: 1.7; }
+
+/* ══════════════════════════════════════════
+   ROI CALCULATOR
+   ══════════════════════════════════════════ */
+.calc-section { background: var(--gray-50); }
+
+.calc-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3.5rem;
+}
+.calc-header h2 { color: var(--green-900); margin-top: 0.75rem; }
+.calc-header p { color: var(--gray-600); margin-top: 1rem; font-size: 1.05rem; }
+
+.calc-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.calc-body {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .calc-body { grid-template-columns: 1fr 1fr; }
+}
+
+.calc-input-side {
+  padding: 2.5rem;
+}
+
+.calc-input-group {
+  margin-bottom: 2rem;
+}
+
+.calc-input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 0.75rem;
+}
+
+.calc-slider-container {
+  position: relative;
+}
+
+.calc-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--gray-200);
+  outline: none;
+}
+
+.calc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--green-700);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(17,107,80,0.3);
+  transition: transform 0.2s;
+}
+
+.calc-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+.calc-slider-value {
+  text-align: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: var(--green-900);
+  margin-top: 0.75rem;
+}
+
+.calc-slider-value span { font-size: 1rem; color: var(--gray-400); font-family: 'DM Sans', sans-serif; }
+
+.calc-result-side {
+  background: var(--green-900);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.calc-result-item {
+  margin-bottom: 1.75rem;
+}
+.calc-result-item:last-child { margin-bottom: 0; }
+
+.calc-result-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.calc-result-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: var(--gold-400);
+  margin-top: 0.25rem;
+}
+
+.calc-result-note {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.25rem;
+}
+
+.calc-cta {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ══════════════════════════════════════════
+   TESTIMONIALS
+   ══════════════════════════════════════════ */
+.testimonials-section { background: var(--white); }
+
+.testimonials-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3.5rem;
+}
+.testimonials-header h2 { color: var(--green-900); margin-top: 0.75rem; }
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .testimonials-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.testimonial-card {
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-100);
+  position: relative;
+}
+
+.testimonial-stars {
+  color: var(--gold-500);
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+
+.testimonial-text {
+  color: var(--gray-600);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--green-700);
+  font-size: 0.9rem;
+}
+
+.testimonial-name { font-weight: 600; font-size: 0.9rem; color: var(--gray-800); }
+.testimonial-role { font-size: 0.8rem; color: var(--gray-400); }
+
+/* ══════════════════════════════════════════
+   LEAD CAPTURE FORM
+   ══════════════════════════════════════════ */
+.form-section {
+  background: var(--green-900);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-section::before {
+  content: '';
+  position: absolute;
+  bottom: -300px;
+  left: -200px;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 70%);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .form-grid { grid-template-columns: 1fr 1.1fr; gap: 4rem; }
+}
+
+.form-info { position: relative; z-index: 1; }
+.form-info .label { color: var(--gold-400); }
+.form-info h2 { color: var(--white); margin: 0.75rem 0 1.25rem; }
+.form-info p { color: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.7; }
+
+.form-magnet {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.form-magnet-title {
+  color: var(--gold-400);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-magnet p { font-size: 0.9rem !important; color: rgba(255,255,255,0.5) !important; }
+
+.trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.trust-badge svg { color: var(--gold-500); }
+
+.form-card {
+  position: relative;
+  z-index: 1;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  box-shadow: var(--shadow-xl);
+}
+
+.form-card h3 {
+  color: var(--green-900);
+  margin-bottom: 0.25rem;
+}
+
+.form-card > p {
+  color: var(--gray-400);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 480px) {
+  .form-row-2 { grid-template-columns: 1fr 1fr; }
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 0.4rem;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--gray-800);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--white);
+  outline: none;
+}
+
+.form-field input::placeholder { color: var(--gray-400); }
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--green-600);
+  box-shadow: 0 0 0 3px rgba(21,140,104,0.1);
+}
+
+.form-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  justify-content: center;
+}
+
+.form-privacy {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 1rem;
+}
+
+/* ══════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════ */
+footer {
+  background: var(--gray-900);
+  padding: 3rem 0 2rem;
+  text-align: center;
+}
+
+footer .nav-logo { justify-content: center; margin-bottom: 1rem; }
+
+footer p {
+  color: var(--gray-600);
+  font-size: 0.85rem;
+}
+
+/* ══════════════════════════════════════════
+   FLOATING WHATSAPP
+   ══════════════════════════════════════════ */
+.whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(37,211,102,0.5);
+}
+
+.whatsapp-float svg { width: 32px; height: 32px; fill: white; }
+
+.whatsapp-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid #25D366;
+  animation: wa-pulse 2s ease-out infinite;
+}
+
+@keyframes wa-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* ── Animations ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Success state ── */
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.form-success.show { display: block; }
+.form-success svg { color: var(--green-600); margin-bottom: 1rem; }
+.form-success h3 { color: var(--green-900); margin-bottom: 0.5rem; }
+.form-success p { color: var(--gray-600); font-size: 0.95rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <img src="logo-light.png" alt="Solaris Panamá" height="44" style="vertical-align:middle;margin-right:8px;">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#beneficios">Beneficios</a></li>
+      <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#calculadora">Calculadora</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="#contacto" class="btn btn-primary nav-cta">Cotización Gratis</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="label">Energía Solar en el Azuero</span>
+        <h1>Tu techo produce <span>energía</span>. Solo falta activarlo.</h1>
+        <p class="hero-subtitle">Instalamos sistemas solares premium en la Península de Azuero. Reduce tu factura eléctrica hasta un 95% y aprovecha los beneficios fiscales de la Ley 417.</p>
+        <div class="hero-btns">
+          <a href="#contacto" class="btn btn-primary">Evaluación Gratuita por Satélite</a>
+          <a href="#calculadora" class="btn btn-outline">Calcular Ahorro</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-value">95%</div>
+            <div class="hero-stat-label">Ahorro en electricidad</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">3-5</div>
+            <div class="hero-stat-label">Años de retorno</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">25+</div>
+            <div class="hero-stat-label">Años de garantía</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-card">
+        <img src="https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=800&q=80" alt="Paneles solares instalados en techo tropical" loading="eager">
+        <div class="hero-image-caption">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Instalación reciente — Chitré, Herrera
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VALUE PROPS ═══ -->
+<section class="value-section" id="beneficios">
+  <div class="container">
+    <div class="value-header fade-up">
+      <span class="label">¿Por qué solar?</span>
+      <h2>La inversión más inteligente para tu negocio</h2>
+      <p>En Panamá, el sol es tu activo más valioso. Conviértelo en ahorro real con tecnología de primera.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card fade-up">
+        <div class="value-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Ahorro Inmediato</h3>
+        <p>Reduce tu factura eléctrica desde el primer mes. Nuestros clientes ahorran entre $200 y $2,000 mensuales dependiendo del tamaño de su instalación.</p>
+      </div>
+      <div class="value-card fade-up">
+        <div class="value-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3>Ley 417 — Beneficios Fiscales</h3>
+        <p>La ley panameña te permite deducir el 100% de la inversión solar del impuesto sobre la renta. Es prácticamente como si el gobierno te pagara los paneles.</p>
+        <div class="law-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Certificado bajo Ley 417
+        </div>
+      </div>
+      <div class="value-card fade-up">
+        <div class="value-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Garantía Total</h3>
+        <p>Paneles con garantía de 25 años de rendimiento, inversores con 10 años de garantía, e instalación certificada. Tu inversión está protegida.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="steps-section" id="proceso">
+  <div class="container">
+    <div class="steps-header fade-up">
+      <span class="label">El proceso</span>
+      <h2>De cotización a generando energía en 3 pasos</h2>
+      <p>Sin complicaciones. Nos encargamos de todo — permisos, instalación y puesta en marcha.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-up">
+        <div class="step-number">01</div>
+        <h3>Análisis Satelital Gratuito</h3>
+        <p>Analizamos tu techo por satélite y creamos un reporte personalizado con la capacidad solar de tu propiedad y el ahorro estimado.</p>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-number">02</div>
+        <h3>Diseño e Ingeniería</h3>
+        <p>Nuestros ingenieros diseñan el sistema óptimo para tu techo. Gestionamos todos los permisos con la distribuidora eléctrica.</p>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-number">03</div>
+        <h3>Instalación y Ahorro</h3>
+        <p>Instalación profesional en 1-3 días. Desde el primer día generas tu propia energía y empiezas a ahorrar en tu factura.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ROI CALCULATOR ═══ -->
+<section class="calc-section" id="calculadora">
+  <div class="container">
+    <div class="calc-header fade-up">
+      <span class="label">Calculadora Solar</span>
+      <h2>¿Cuánto puedes ahorrar?</h2>
+      <p>Mueve el deslizador para estimar el ahorro según el tamaño de tu techo disponible.</p>
+    </div>
+    <div class="calc-card fade-up">
+      <div class="calc-body">
+        <div class="calc-input-side">
+          <div class="calc-input-group">
+            <label>Área disponible en tu techo</label>
+            <div class="calc-slider-container">
+              <input type="range" class="calc-slider" id="roofSlider" min="20" max="500" value="100" step="10">
+              <div class="calc-slider-value"><span id="roofValue">100</span> <span>m²</span></div>
+            </div>
+          </div>
+          <div class="calc-input-group">
+            <label>Tu factura mensual actual</label>
+            <div class="calc-slider-container">
+              <input type="range" class="calc-slider" id="billSlider" min="50" max="3000" value="400" step="50">
+              <div class="calc-slider-value">$<span id="billValue">400</span> <span>/mes</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="calc-result-side">
+          <div class="calc-result-item">
+            <div class="calc-result-label">Capacidad estimada</div>
+            <div class="calc-result-value" id="calcCapacity">15 kWp</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="calc-result-label">Ahorro mensual estimado</div>
+            <div class="calc-result-value" id="calcSavings">$380</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="calc-result-label">Ahorro en 25 años</div>
+            <div class="calc-result-value" id="calcTotal">$114,000</div>
+            <div class="calc-result-note">Con inflación energética del 3% anual</div>
+          </div>
+          <div class="calc-cta">
+            <a href="#contacto" class="btn btn-primary" style="width:100%;justify-content:center;">Obtener Cotización Exacta</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="testimonials-section" id="testimonios">
+  <div class="container">
+    <div class="testimonials-header fade-up">
+      <span class="label">Testimonios</span>
+      <h2>Lo que dicen nuestros clientes</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Nuestra factura pasó de $850 a $45 al mes. La inversión se paga sola y con la Ley 417, la deducción fiscal fue inmediata."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div>
+            <div class="testimonial-name">María Rodríguez</div>
+            <div class="testimonial-role">Hotel Boutique, Pedasí</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Proceso impecable. Desde el análisis satelital hasta la instalación, todo fue profesional. En 4 años ya recuperé la inversión completa."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JC</div>
+          <div>
+            <div class="testimonial-name">José Castillo</div>
+            <div class="testimonial-role">Ganadería, Los Santos</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Pusimos 40 paneles en el techo de la fábrica. Producimos más energía de la que consumimos. El excedente nos lo paga la distribuidora."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">LC</div>
+          <div>
+            <div class="testimonial-name">Luis Chen</div>
+            <div class="testimonial-role">Manufactura, Chitré</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LEAD FORM ═══ -->
+<section class="form-section" id="contacto">
+  <div class="container">
+    <div class="form-grid">
+      <div class="form-info fade-up">
+        <span class="label">Cotización gratuita</span>
+        <h2>Descubre cuánto puedes ahorrar</h2>
+        <p>Completa el formulario y recibe un análisis satelital personalizado de tu techo con estimaciones reales de ahorro y retorno de inversión.</p>
+        <div class="form-magnet">
+          <div class="form-magnet-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Evaluación Solar Gratis
+          </div>
+          <p>Analizamos tu techo por satélite y te enviamos un reporte personalizado con tu capacidad solar y ahorro estimado. Sin compromiso.</p>
+        </div>
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Ley 417 Certificado
+          </div>
+          <div class="trust-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Instalador Licenciado
+          </div>
+          <div class="trust-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Garantía de Satisfacción
+          </div>
+        </div>
+      </div>
+      <div class="form-card fade-up">
+        <h3>Solicita tu Evaluación</h3>
+        <p>Responderemos en menos de 24 horas</p>
+        <form id="leadForm">
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label for="fname">Nombre completo *</label>
+              <input type="text" id="fname" name="name" placeholder="Tu nombre" required>
+            </div>
+            <div class="form-field">
+              <label for="fbiz">Nombre del negocio</label>
+              <input type="text" id="fbiz" name="business" placeholder="Tu empresa (opcional)">
+            </div>
+          </div>
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label for="fphone">Teléfono *</label>
+              <input type="tel" id="fphone" name="phone" placeholder="+507 6000-0000" required>
+            </div>
+            <div class="form-field">
+              <label for="femail">Correo electrónico *</label>
+              <input type="email" id="femail" name="email" placeholder="tu@email.com" required>
+            </div>
+          </div>
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label for="froof">Área estimada del techo (m²)</label>
+              <input type="number" id="froof" name="roof_size" placeholder="Ej: 100">
+            </div>
+            <div class="form-field">
+              <label for="floc">Ubicación</label>
+              <select id="floc" name="location">
+                <option value="">Selecciona tu zona</option>
+                <option value="chitre">Chitré</option>
+                <option value="pedasi">Pedasí</option>
+                <option value="las-tablas">Las Tablas</option>
+                <option value="los-santos">Los Santos</option>
+                <option value="guarare">Guararé</option>
+                <option value="ocu">Ocú</option>
+                <option value="otro-azuero">Otro (Azuero)</option>
+                <option value="otro-panama">Otro (Panamá)</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-green form-submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+            Solicitar Evaluación Gratuita
+          </button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <h3>¡Solicitud Enviada!</h3>
+          <p>Nuestro equipo analizará tu techo y te contactará en menos de 24 horas con tu reporte personalizado.</p>
+        </div>
+        <p class="form-privacy">🔒 Tus datos están seguros. No compartimos información con terceros.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <a href="#" class="nav-logo" style="margin-bottom:1rem;">
+      <img src="logo-dark.png" alt="Solaris Panamá" height="40" style="vertical-align:middle;">
+    </a>
+    <p>© 2026 Solaris Panamá. Todos los derechos reservados.</p>
+    <p style="margin-top:0.5rem;font-size:0.75rem;color:var(--gray-600);">Instalador certificado bajo Ley 417 de Incentivos para Energías Renovables</p>
+  </div>
+</footer>
+
+<!-- ═══ WHATSAPP FLOAT ═══ -->
+<a href="https://wa.me/50765831822?text=Hola%2C%20me%20interesa%20una%20cotizaci%C3%B3n%20de%20paneles%20solares" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <div class="whatsapp-pulse"></div>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+// ═══ NAV SCROLL ═══
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ═══ FADE-UP OBSERVER ═══
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ═══ ROI CALCULATOR ═══
+const roofSlider = document.getElementById('roofSlider');
+const billSlider = document.getElementById('billSlider');
+const roofValue = document.getElementById('roofValue');
+const billValue = document.getElementById('billValue');
+
+function updateCalc() {
+  const roof = parseInt(roofSlider.value);
+  const bill = parseInt(billSlider.value);
+  roofValue.textContent = roof;
+  billValue.textContent = bill;
+
+  // ~150W per m² capacity, 4.5 peak sun hours avg in Azuero
+  const kWp = Math.round(roof * 0.15 * 10) / 10;
+  // Monthly production: kWp * 4.5h * 30 days * 0.85 efficiency
+  const monthlyKWh = kWp * 4.5 * 30 * 0.85;
+  // Savings: min of production value or current bill * 0.95
+  const savingsPercent = Math.min(0.95, (monthlyKWh * 0.18) / bill);
+  const monthlySavings = Math.round(bill * savingsPercent);
+
+  // 25 year total with 3% annual energy inflation
+  let total = 0;
+  for (let y = 0; y < 25; y++) total += monthlySavings * 12 * Math.pow(1.03, y);
+  total = Math.round(total);
+
+  document.getElementById('calcCapacity').textContent = kWp + ' kWp';
+  document.getElementById('calcSavings').textContent = '$' + monthlySavings.toLocaleString();
+  document.getElementById('calcTotal').textContent = '$' + total.toLocaleString();
+}
+
+roofSlider.addEventListener('input', updateCalc);
+billSlider.addEventListener('input', updateCalc);
+updateCalc();
+
+// ═══ FORM SUBMIT → WhatsApp ═══
+document.getElementById('leadForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const fd = new FormData(this);
+  const data = Object.fromEntries(fd);
+
+  const msg = `🌞 *Nueva Solicitud - Solaris Panamá*%0A%0A` +
+    `👤 *Nombre:* ${data.name}%0A` +
+    `🏢 *Negocio:* ${data.business || 'N/A'}%0A` +
+    `📞 *Teléfono:* ${data.phone}%0A` +
+    `📧 *Email:* ${data.email}%0A` +
+    `📐 *Techo:* ${data.roof_size || 'No especificado'} m²%0A` +
+    `📍 *Ubicación:* ${data.location || 'No especificada'}`;
+
+  window.open(`https://wa.me/50765831822?text=${msg}`, '_blank');
+
+  this.style.display = 'none';
+  document.getElementById('formSuccess').classList.add('show');
+});
+</script>
+
+</body>
+</html>

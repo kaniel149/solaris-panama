@@ -557,9 +557,17 @@ footer p { color: rgba(255,255,255,0.25); font-size: 0.8rem; }
             <div class="calc-result-value" id="calcSavings">$380</div>
           </div>
           <div class="calc-result-item">
+            <div class="calc-result-label">Inversión estimada</div>
+            <div class="calc-result-value" id="calcCost">~$16,500</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="calc-result-label">Retorno de inversión</div>
+            <div class="calc-result-value" id="calcPayback">3.2 años</div>
+          </div>
+          <div class="calc-result-item">
             <div class="calc-result-label">Ahorro en 25 años</div>
             <div class="calc-result-value" id="calcTotal">$114,000</div>
-            <div class="calc-result-note">Con inflación energética del 3% anual</div>
+            <div class="calc-result-note">ROI: <span id="calcROI">690</span>% · Inflación energética 3%</div>
           </div>
           <div class="calc-cta">
             <a href="#contacto" class="btn btn-primary" style="width:100%;justify-content:center;">Cotización Exacta →</a>
@@ -716,14 +724,35 @@ function updateCalc(){
   const roof=+roofSlider.value,bill=+billSlider.value;
   document.getElementById('roofValue').textContent=roof;
   document.getElementById('billValue').textContent=bill;
-  const kWp=Math.round(roof*0.15*10)/10;
+
+  // Panel: 550W, 1.7m², so ~0.175 kWp/m² usable area (accounting for spacing)
+  const kWp=Math.round(roof*0.175*10)/10;
+  // Monthly production: kWp × 4.5 peak sun hours × 30 days × 0.85 system efficiency
   const monthlyKWh=kWp*4.5*30*0.85;
-  const pct=Math.min(0.95,(monthlyKWh*0.195)/bill);
-  const save=Math.round(bill*pct);
+  // Monthly savings = min(production value, 95% of bill) — can't save more than you spend
+  const productionValue=Math.round(monthlyKWh*0.195);
+  const maxSavings=Math.round(bill*0.95);
+  const save=Math.min(productionValue, maxSavings);
+  // System cost: ~$1.10/Wp installed (Panama market rate)
+  const systemCost=Math.round(kWp*1100);
+  // Payback: system cost / annual savings
+  const annualSavings=save*12;
+  const paybackYears=annualSavings>0?Math.round(systemCost/annualSavings*10)/10:0;
+  // 25-year total with 3% annual energy inflation
   let total=0;for(let y=0;y<25;y++)total+=save*12*Math.pow(1.03,y);
+  // ROI percentage
+  const roi=systemCost>0?Math.round((total-systemCost)/systemCost*100):0;
+
   document.getElementById('calcCapacity').textContent=kWp+' kWp';
-  document.getElementById('calcSavings').textContent='$'+save.toLocaleString();
+  document.getElementById('calcSavings').textContent='$'+save.toLocaleString()+'/mes';
   document.getElementById('calcTotal').textContent='$'+Math.round(total).toLocaleString();
+  // Update payback & ROI if elements exist
+  const paybackEl=document.getElementById('calcPayback');
+  if(paybackEl) paybackEl.textContent=paybackYears+' años';
+  const roiEl=document.getElementById('calcROI');
+  if(roiEl) roiEl.textContent=roi+'%';
+  const costEl=document.getElementById('calcCost');
+  if(costEl) costEl.textContent='~$'+systemCost.toLocaleString();
 }
 roofSlider.addEventListener('input',updateCalc);
 billSlider.addEventListener('input',updateCalc);
