@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Energy — Legal & Contracts</title>
+    <meta name="description" content="Contract templates, maintenance agreements, and legal checklists for Panama solar installations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== BACK NAV ===== */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green);
+            color: var(--pearl);
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-elevated);
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        /* ===== HERO ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%);
+            padding: 8rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero .badge {
+            display: inline-block;
+            background: rgba(254,253,251,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(254,253,251,0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-pill);
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            color: var(--pearl);
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-hero h1 em { font-style: italic; color: var(--gold); }
+
+        .page-hero p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 5rem 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            color: var(--green);
+            margin-bottom: 0.6rem;
+        }
+
+        .section-sub {
+            color: var(--ash);
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin-bottom: 3rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== CONTRACT DOCUMENT ===== */
+        .contract-doc {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-modal);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto 3rem;
+        }
+
+        .contract-header {
+            background: var(--green);
+            padding: 2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contract-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--pearl);
+        }
+
+        .contract-header .doc-type {
+            background: var(--gold);
+            color: var(--green);
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .contract-body {
+            padding: 2.5rem;
+        }
+
+        .clause {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .clause:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .clause h4 {
+            font-size: 1rem;
+            color: var(--green);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clause h4 .num {
+            background: var(--gold);
+            color: var(--green);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .clause p, .clause li {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.7;
+        }
+
+        .clause ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .clause ul li {
+            padding: 0.3rem 0;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .clause ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .clause .placeholder {
+            background: var(--cloud);
+            border: 1px dashed var(--mist);
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            color: var(--ash);
+            font-style: italic;
+            margin: 0.5rem 0;
+        }
+
+        .clause .highlight-box {
+            background: rgba(212,168,67,0.08);
+            border-left: 3px solid var(--gold);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+
+        /* ===== PAYMENT SCHEDULE ===== */
+        .payment-schedule {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .payment-step {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 10px;
+            background: var(--cloud);
+            position: relative;
+        }
+
+        .payment-step .pct {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .payment-step .when {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 0.3rem;
+        }
+
+        .payment-step:nth-child(2) {
+            background: rgba(212,168,67,0.08);
+        }
+
+        /* ===== MAINTENANCE TIERS ===== */
+        .maint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .maint-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .maint-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .maint-card.featured {
+            border: 2px solid var(--gold);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .maint-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gold);
+        }
+
+        .maint-card .tier-name {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-basic .tier-name { color: var(--green); }
+        .tier-standard .tier-name { color: var(--gold-aged); }
+        .tier-premium .tier-name { color: var(--green); }
+
+        .maint-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--charcoal);
+            margin-bottom: 0.3rem;
+        }
+
+        .maint-card .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            margin-bottom: 0.2rem;
+        }
+
+        .maint-card .price span {
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ash);
+        }
+
+        .maint-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .maint-card ul li {
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            color: var(--slate);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .maint-card ul li::before {
+            content: '◆';
+            color: var(--gold);
+            font-size: 8px;
+        }
+
+        .sla-badge {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .sla-48 { background: rgba(11,61,46,0.08); color: var(--green); }
+        .sla-24 { background: rgba(212,168,67,0.15); color: var(--gold-aged); }
+        .sla-4 { background: rgba(11,61,46,0.12); color: var(--green); }
+
+        /* ===== PPA SECTION ===== */
+        .ppa-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .ppa-item {
+            background: var(--cloud);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .ppa-item .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+        }
+
+        .ppa-item .lbl {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 4px;
+        }
+
+        /* ===== CHECKLIST ===== */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .check-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--mist);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            color: var(--ash);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .check-icon.checked {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .check-content h5 {
+            font-size: 0.95rem;
+            color: var(--charcoal);
+            margin-bottom: 2px;
+        }
+
+        .check-content p {
+            font-size: 0.8rem;
+            color: var(--ash);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--green);
+            color: rgba(254,253,251,0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.85rem;
+        }
+
+        footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .payment-schedule { grid-template-columns: 1fr; }
+            .maint-grid { grid-template-columns: 1fr; }
+            .contract-body { padding: 1.5rem; }
+            .contract-header { flex-direction: column; gap: 0.5rem; text-align: center; }
+            .ppa-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media print {
+            .lang-toggle, .back-nav { display: none; }
+            .page-hero { padding: 4rem 2rem 3rem; }
+            section { padding: 2rem; }
+            .reveal { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Back Nav -->
+<div class="back-nav">
+    <a href="index.html">
+        ← <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="badge" data-en="LEGAL & COMPLIANCE" data-es="LEGAL Y CUMPLIMIENTO" data-he="משפטי ותאימות">LEGAL & COMPLIANCE</div>
+    <h1 data-en="Contracts &amp; <em>Legal</em> Templates" data-es="Contratos y Plantillas <em>Legales</em>" data-he="חוזים ותבניות <em>משפטיות</em>">Contracts &amp; <em>Legal</em> Templates</h1>
+    <p data-en="Installation contracts, maintenance agreements, PPA templates, and legal checklists for Panama solar projects." data-es="Contratos de instalación, acuerdos de mantenimiento, plantillas PPA y listas de verificación legales para proyectos solares en Panamá." data-he="חוזי התקנה, הסכמי תחזוקה, תבניות PPA ורשימות ביקורת משפטיות לפרויקטים סולאריים בפנמה.">Installation contracts, maintenance agreements, PPA templates, and legal checklists for Panama solar projects.</p>
+</div>
+
+<!-- ===== INSTALLATION CONTRACT ===== -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="CONTRACT TEMPLATE" data-es="PLANTILLA DE CONTRATO" data-he="תבנית חוזה">CONTRACT TEMPLATE</div>
+        <h2 class="section-title reveal" data-en="Installation Contract" data-es="Contrato de Instalación" data-he="חוזה התקנה">Installation Contract</h2>
+        <p class="section-sub reveal" data-en="Complete EPC contract template for solar installations in Panama. Primary language: Spanish (legal standard)." data-es="Plantilla completa de contrato EPC para instalaciones solares en Panamá. Idioma principal: español (estándar legal)." data-he="תבנית חוזה EPC מלאה להתקנות סולאריות בפנמה. שפה ראשית: ספרדית (סטנדרט משפטי).">Complete EPC contract template for solar installations in Panama. Primary language: Spanish (legal standard).</p>
+
+        <div class="contract-doc reveal">
+            <div class="contract-header">
+                <h3>CONTRATO DE INSTALACIÓN DE SISTEMA SOLAR FOTOVOLTAICO</h3>
+                <span class="doc-type">EPC</span>
+            </div>
+            <div class="contract-body">
+                <!-- Clause 1: Parties -->
+                <div class="clause">
+                    <h4><span class="num">1</span> <span data-en="Parties" data-es="Partes" data-he="צדדים">Partes</span></h4>
+                    <p><strong>EL CONTRATISTA:</strong> Solaris Energy Panamá, S.A., con RUC <span class="placeholder">[RUC Number]</span>, domiciliada en Playa Venao, Distrito de Pedasí, Provincia de Los Santos, República de Panamá, representada por su Representante Legal.</p>
+                    <p style="margin-top: 0.8rem;"><strong>EL CLIENTE:</strong></p>
+                    <div class="placeholder" data-en="[Client full legal name, identification number (cédula/passport/RUC), registered address]" data-es="[Nombre legal completo del cliente, número de identificación (cédula/pasaporte/RUC), dirección registrada]" data-he="[שם משפטי מלא של הלקוח, מספר זיהוי, כתובת רשומה]">[Nombre legal completo del cliente, número de identificación (cédula/pasaporte/RUC), dirección registrada]</div>
+                </div>
+
+                <!-- Clause 2: Scope -->
+                <div class="clause">
+                    <h4><span class="num">2</span> <span data-en="Scope of Work" data-es="Alcance del Trabajo" data-he="היקף העבודה">Alcance del Trabajo</span></h4>
+                    <p data-en="The Contractor agrees to design, supply, install, and commission a grid-tied photovoltaic solar system at the Client's property, including:" data-es="El Contratista se compromete a diseñar, suministrar, instalar y poner en marcha un sistema solar fotovoltaico conectado a la red en la propiedad del Cliente, incluyendo:" data-he="הקבלן מתחייב לתכנן, לספק, להתקין ולהפעיל מערכת סולארית פוטוולטאית מחוברת לרשת בנכס הלקוח, כולל:">El Contratista se compromete a diseñar, suministrar, instalar y poner en marcha un sistema solar fotovoltaico conectado a la red en la propiedad del Cliente, incluyendo:</p>
+                    <ul>
+                        <li data-en="Structural assessment and engineering design" data-es="Evaluación estructural y diseño de ingeniería" data-he="הערכה מבנית ותכנון הנדסי">Evaluación estructural y diseño de ingeniería</li>
+                        <li data-en="Supply and delivery of all equipment (panels, inverter, mounting, wiring)" data-es="Suministro y entrega de todos los equipos (paneles, inversor, estructura, cableado)" data-he="אספקה ומשלוח של כל הציוד (פאנלים, ממיר, מבנה, חיווט)">Suministro y entrega de todos los equipos (paneles, inversor, estructura, cableado)</li>
+                        <li data-en="Professional installation by certified technicians" data-es="Instalación profesional por técnicos certificados" data-he="התקנה מקצועית על ידי טכנאים מוסמכים">Instalación profesional por técnicos certificados</li>
+                        <li data-en="ASEP permit applications and distributor coordination" data-es="Solicitudes de permisos ASEP y coordinación con distribuidora" data-he="בקשות היתרי ASEP ותיאום עם חברת חשמל">Solicitudes de permisos ASEP y coordinación con distribuidora</li>
+                        <li data-en="Grid connection and net metering activation" data-es="Conexión a la red y activación de medición neta" data-he="חיבור לרשת והפעלת מדידה נטו">Conexión a la red y activación de medición neta</li>
+                        <li data-en="System commissioning, testing, and monitoring setup" data-es="Puesta en marcha del sistema, pruebas y configuración de monitoreo" data-he="הפעלת מערכת, בדיקות והתקנת ניטור">Puesta en marcha del sistema, pruebas y configuración de monitoreo</li>
+                    </ul>
+                </div>
+
+                <!-- Clause 3: System Specs -->
+                <div class="clause">
+                    <h4><span class="num">3</span> <span data-en="System Specifications" data-es="Especificaciones del Sistema" data-he="מפרט מערכת">Especificaciones del Sistema</span></h4>
+                    <div class="placeholder" data-en="[System size, panel model/qty, inverter model, mounting type, estimated annual production — to be filled per project]" data-es="[Tamaño del sistema, modelo/cantidad de paneles, modelo de inversor, tipo de estructura, producción anual estimada — completar por proyecto]" data-he="[גודל מערכת, דגם/כמות פאנלים, דגם ממיר, סוג הרכבה, ייצור שנתי משוער — למלא לפי פרויקט]">[Tamaño del sistema, modelo/cantidad de paneles, modelo de inversor, tipo de estructura, producción anual estimada — completar por proyecto]</div>
+                </div>
+
+                <!-- Clause 4: Price & Payment -->
+                <div class="clause">
+                    <h4><span class="num">4</span> <span data-en="Price & Payment Schedule" data-es="Precio y Calendario de Pagos" data-he="מחיר ולוח תשלומים">Precio y Calendario de Pagos</span></h4>
+                    <p data-en="Total contract price:" data-es="Precio total del contrato:" data-he="מחיר חוזה כולל:">Precio total del contrato: <span class="placeholder">[USD $X,XXX.00]</span></p>
+                    <div class="payment-schedule">
+                        <div class="payment-step">
+                            <div class="pct">50%</div>
+                            <div class="when" data-en="Upon contract signing" data-es="Al firmar el contrato" data-he="בחתימת החוזה">Al firmar el contrato</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="pct">40%</div>
+                            <div class="when" data-en="Upon equipment delivery" data-es="Al entregar los equipos" data-he="באספקת הציוד">Al entregar los equipos</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="pct">10%</div>
+                            <div class="when" data-en="Upon commissioning" data-es="Al poner en marcha" data-he="בהפעלה">Al poner en marcha</div>
+                        </div>
+                    </div>
+                    <div class="highlight-box" data-en="Payment methods: wire transfer, certified check, or cash. All prices in USD. Ley 417 tax documentation provided at no additional cost." data-es="Métodos de pago: transferencia bancaria, cheque certificado o efectivo. Todos los precios en USD. Documentación fiscal Ley 417 proporcionada sin costo adicional." data-he="אמצעי תשלום: העברה בנקאית, צ'ק מאושר או מזומן. כל המחירים בדולר. תיעוד מס חוק 417 ללא עלות נוספת.">Métodos de pago: transferencia bancaria, cheque certificado o efectivo. Todos los precios en USD. Documentación fiscal Ley 417 proporcionada sin costo adicional.</div>
+                </div>
+
+                <!-- Clause 5: Timeline -->
+                <div class="clause">
+                    <h4><span class="num">5</span> <span data-en="Installation Timeline" data-es="Cronograma de Instalación" data-he="לוח זמנים להתקנה">Cronograma de Instalación</span></h4>
+                    <ul>
+                        <li data-en="Site assessment and design: 3–5 business days from contract signing" data-es="Evaluación del sitio y diseño: 3–5 días hábiles desde la firma del contrato" data-he="הערכת אתר ותכנון: 3-5 ימי עבודה מחתימת החוזה">Evaluación del sitio y diseño: 3–5 días hábiles desde la firma del contrato</li>
+                        <li data-en="Permit processing (ASEP + distributor): 2–4 weeks" data-es="Trámites de permisos (ASEP + distribuidora): 2–4 semanas" data-he="עיבוד היתרים (ASEP + מפיץ): 2-4 שבועות">Trámites de permisos (ASEP + distribuidora): 2–4 semanas</li>
+                        <li data-en="Equipment procurement and delivery: 1–3 weeks" data-es="Adquisición y entrega de equipos: 1–3 semanas" data-he="רכש ואספקת ציוד: 1-3 שבועות">Adquisición y entrega de equipos: 1–3 semanas</li>
+                        <li data-en="Installation and commissioning: 1–5 days depending on system size" data-es="Instalación y puesta en marcha: 1–5 días según tamaño del sistema" data-he="התקנה והפעלה: 1-5 ימים בהתאם לגודל המערכת">Instalación y puesta en marcha: 1–5 días según tamaño del sistema</li>
+                    </ul>
+                    <div class="highlight-box" data-en="Total estimated project duration: 4–8 weeks from contract signing to grid connection." data-es="Duración estimada total del proyecto: 4–8 semanas desde la firma del contrato hasta la conexión a la red." data-he="משך פרויקט משוער כולל: 4-8 שבועות מחתימת החוזה עד חיבור לרשת.">Duración estimada total del proyecto: 4–8 semanas desde la firma del contrato hasta la conexión a la red.</div>
+                </div>
+
+                <!-- Clause 6: Warranty -->
+                <div class="clause">
+                    <h4><span class="num">6</span> <span data-en="Warranty Terms" data-es="Términos de Garantía" data-he="תנאי אחריות">Términos de Garantía</span></h4>
+                    <ul>
+                        <li data-en="Solar panels: 25-year manufacturer performance warranty (≥80% output at year 25)" data-es="Paneles solares: garantía de rendimiento del fabricante de 25 años (≥80% producción al año 25)" data-he="פאנלים סולאריים: אחריות ביצועים של היצרן ל-25 שנה (≥80% תפוקה בשנה 25)">Paneles solares: garantía de rendimiento del fabricante de 25 años (≥80% producción al año 25)</li>
+                        <li data-en="Inverter: 10-year manufacturer warranty (extendable to 15/20 years)" data-es="Inversor: garantía del fabricante de 10 años (extensible a 15/20 años)" data-he="ממיר: אחריות יצרן ל-10 שנים (ניתנת להארכה ל-15/20 שנים)">Inversor: garantía del fabricante de 10 años (extensible a 15/20 años)</li>
+                        <li data-en="Installation workmanship: 5-year Solaris Energy warranty" data-es="Mano de obra de instalación: garantía Solaris Energy de 5 años" data-he="עבודת התקנה: אחריות Solaris Energy ל-5 שנים">Mano de obra de instalación: garantía Solaris Energy de 5 años</li>
+                        <li data-en="Mounting structure: 10-year corrosion and structural integrity warranty" data-es="Estructura de montaje: garantía de 10 años contra corrosión e integridad estructural" data-he="מבנה הרכבה: אחריות ל-10 שנים נגד קורוזיה ושלמות מבנית">Estructura de montaje: garantía de 10 años contra corrosión e integridad estructural</li>
+                    </ul>
+                </div>
+
+                <!-- Clause 7: Liability -->
+                <div class="clause">
+                    <h4><span class="num">7</span> <span data-en="Liability & Insurance" data-es="Responsabilidad y Seguro" data-he="אחריות וביטוח">Responsabilidad y Seguro</span></h4>
+                    <p data-en="The Contractor maintains comprehensive liability insurance during installation. The Contractor is responsible for any damage to the Client's property caused during installation works. Upon commissioning, risk transfers to the Client." data-es="El Contratista mantiene un seguro integral de responsabilidad durante la instalación. El Contratista es responsable de cualquier daño a la propiedad del Cliente causado durante los trabajos de instalación. Al momento de la puesta en marcha, el riesgo se transfiere al Cliente." data-he="הקבלן מחזיק ביטוח אחריות מקיף במהלך ההתקנה. הקבלן אחראי לכל נזק לנכס הלקוח שנגרם במהלך עבודות ההתקנה. עם ההפעלה, הסיכון עובר ללקוח.">El Contratista mantiene un seguro integral de responsabilidad durante la instalación. El Contratista es responsable de cualquier daño a la propiedad del Cliente causado durante los trabajos de instalación. Al momento de la puesta en marcha, el riesgo se transfiere al Cliente.</p>
+                </div>
+
+                <!-- Clause 8: ASEP Compliance -->
+                <div class="clause">
+                    <h4><span class="num">8</span> <span data-en="ASEP Compliance" data-es="Cumplimiento ASEP" data-he="תאימות ASEP">Cumplimiento ASEP</span></h4>
+                    <div class="highlight-box" data-en="This installation will comply with all regulations established by the Autoridad Nacional de los Servicios Públicos (ASEP) for distributed generation systems, including Resolution AN No. 12,028 and subsequent amendments. The Contractor will manage all permit applications and coordinate with the relevant electricity distributor (ENSA/Naturgy)." data-es="Esta instalación cumplirá con todas las regulaciones establecidas por la Autoridad Nacional de los Servicios Públicos (ASEP) para sistemas de generación distribuida, incluyendo la Resolución AN No. 12,028 y enmiendas posteriores. El Contratista gestionará todas las solicitudes de permisos y coordinará con la distribuidora eléctrica correspondiente (ENSA/Naturgy)." data-he="התקנה זו תעמוד בכל התקנות שנקבעו על ידי ASEP למערכות ייצור מבוזר, כולל החלטה מס' 12,028 ותיקונים עוקבים. הקבלן ינהל את כל בקשות ההיתרים ויתאם עם מפיץ החשמל הרלוונטי (ENSA/Naturgy).">Esta instalación cumplirá con todas las regulaciones establecidas por la Autoridad Nacional de los Servicios Públicos (ASEP) para sistemas de generación distribuida, incluyendo la Resolución AN No. 12,028 y enmiendas posteriores. El Contratista gestionará todas las solicitudes de permisos y coordinará con la distribuidora eléctrica correspondiente (ENSA/Naturgy).</div>
+                </div>
+
+                <!-- Clause 9: Ley 417 -->
+                <div class="clause">
+                    <h4><span class="num">9</span> <span data-en="Ley 417 Tax Benefits" data-es="Beneficios Fiscales Ley 417" data-he="הטבות מס חוק 417">Beneficios Fiscales Ley 417</span></h4>
+                    <p data-en="The Contractor will provide all necessary documentation for the Client to claim tax benefits under Ley 417 (Ley de Incentivos para el Fomento de Fuentes de Energías Renovables), including equipment certifications, installation reports, and ASEP approval documentation." data-es="El Contratista proporcionará toda la documentación necesaria para que el Cliente reclame los beneficios fiscales bajo la Ley 417 (Ley de Incentivos para el Fomento de Fuentes de Energías Renovables), incluyendo certificaciones de equipos, informes de instalación y documentación de aprobación ASEP." data-he="הקבלן יספק את כל התיעוד הדרוש ללקוח לטעון הטבות מס תחת חוק 417, כולל הסמכות ציוד, דוחות התקנה ותיעוד אישור ASEP.">El Contratista proporcionará toda la documentación necesaria para que el Cliente reclame los beneficios fiscales bajo la Ley 417 (Ley de Incentivos para el Fomento de Fuentes de Energías Renovables), incluyendo certificaciones de equipos, informes de instalación y documentación de aprobación ASEP.</p>
+                </div>
+
+                <!-- Signatures -->
+                <div class="clause" style="border-bottom: none;">
+                    <h4><span class="num">10</span> <span data-en="Signatures" data-es="Firmas" data-he="חתימות">Firmas</span></h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                        <div>
+                            <p style="font-size: 0.85rem; color: var(--ash); margin-bottom: 2rem;" data-en="THE CONTRACTOR" data-es="EL CONTRATISTA" data-he="הקבלן">EL CONTRATISTA</p>
+                            <div style="border-bottom: 1px solid var(--charcoal); width: 80%; margin-bottom: 0.5rem;"></div>
+                            <p style="font-size: 0.8rem; color: var(--ash);">Solaris Energy Panamá, S.A.</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.85rem; color: var(--ash); margin-bottom: 2rem;" data-en="THE CLIENT" data-es="EL CLIENTE" data-he="הלקוח">EL CLIENTE</p>
+                            <div style="border-bottom: 1px solid var(--charcoal); width: 80%; margin-bottom: 0.5rem;"></div>
+                            <p style="font-size: 0.8rem; color: var(--ash);" data-en="[Client Name]" data-es="[Nombre del Cliente]" data-he="[שם הלקוח]">[Nombre del Cliente]</p>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--ash); margin-top: 1.5rem;" data-en="Date: _____________ Place: Playa Venao, Los Santos, Panamá" data-es="Fecha: _____________ Lugar: Playa Venao, Los Santos, Panamá" data-he="תאריך: _____________ מקום: פלאיה וונאו, לוס סנטוס, פנמה">Fecha: _____________ Lugar: Playa Venao, Los Santos, Panamá</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MAINTENANCE AGREEMENT ===== -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="RECURRING REVENUE" data-es="INGRESOS RECURRENTES" data-he="הכנסה חוזרת">RECURRING REVENUE</div>
+        <h2 class="section-title reveal" data-en="Maintenance Packages" data-es="Paquetes de Mantenimiento" data-he="חבילות תחזוקה">Maintenance Packages</h2>
+        <p class="section-sub reveal" data-en="Monthly service contracts with defined SLAs. Three tiers to match every client's needs — from basic monitoring to full concierge service." data-es="Contratos de servicio mensual con SLAs definidos. Tres niveles para cada necesidad del cliente — desde monitoreo básico hasta servicio concierge completo." data-he="חוזי שירות חודשיים עם SLA מוגדרים. שלוש רמות להתאמה לצרכי כל לקוח — מניטור בסיסי ועד שירות קונסיירז' מלא.">Monthly service contracts with defined SLAs. Three tiers to match every client's needs — from basic monitoring to full concierge service.</p>
+
+        <div class="maint-grid reveal">
+            <!-- Basic -->
+            <div class="maint-card tier-basic">
+                <div class="tier-name" data-en="BASIC" data-es="BÁSICO" data-he="בסיסי">BÁSICO</div>
+                <h4 data-en="Essential" data-es="Esencial" data-he="חיוני">Esencial</h4>
+                <div class="price">$50 <span data-en="/month" data-es="/mes" data-he="לחודש">/mes</span></div>
+                <ul>
+                    <li data-en="Remote system monitoring" data-es="Monitoreo remoto del sistema" data-he="ניטור מערכת מרחוק">Monitoreo remoto del sistema</li>
+                    <li data-en="Quarterly performance report" data-es="Informe de rendimiento trimestral" data-he="דוח ביצועים רבעוני">Informe de rendimiento trimestral</li>
+                    <li data-en="Annual panel cleaning (1×/year)" data-es="Limpieza anual de paneles (1×/año)" data-he="ניקוי פאנלים שנתי (1 פעם/שנה)">Limpieza anual de paneles (1×/año)</li>
+                    <li data-en="Email support (business hours)" data-es="Soporte por correo (horario laboral)" data-he="תמיכה במייל (שעות עבודה)">Soporte por correo (horario laboral)</li>
+                    <li data-en="Error alert notifications" data-es="Notificaciones de alertas de error" data-he="התראות שגיאה">Notificaciones de alertas de error</li>
+                </ul>
+                <div class="sla-badge sla-48" data-en="SLA: 48h response" data-es="SLA: respuesta en 48h" data-he="SLA: מענה תוך 48 שעות">SLA: respuesta en 48h</div>
+            </div>
+
+            <!-- Standard -->
+            <div class="maint-card tier-standard featured">
+                <div class="tier-name" data-en="STANDARD" data-es="ESTÁNDAR" data-he="סטנדרט">ESTÁNDAR</div>
+                <h4 data-en="Professional" data-es="Profesional" data-he="מקצועי">Profesional</h4>
+                <div class="price">$100 <span data-en="/month" data-es="/mes" data-he="לחודש">/mes</span></div>
+                <ul>
+                    <li data-en="Everything in Basic, plus:" data-es="Todo lo del Básico, más:" data-he="הכל מהבסיסי, בתוספת:">Todo lo del Básico, más:</li>
+                    <li data-en="Bi-annual panel cleaning (2×/year)" data-es="Limpieza semestral de paneles (2×/año)" data-he="ניקוי פאנלים חצי-שנתי (2 פעמים/שנה)">Limpieza semestral de paneles (2×/año)</li>
+                    <li data-en="Annual full system inspection" data-es="Inspección completa anual del sistema" data-he="בדיקה מלאה שנתית של המערכת">Inspección completa anual del sistema</li>
+                    <li data-en="Phone + WhatsApp support" data-es="Soporte por teléfono + WhatsApp" data-he="תמיכה טלפונית + WhatsApp">Soporte por teléfono + WhatsApp</li>
+                    <li data-en="Inverter firmware updates" data-es="Actualizaciones de firmware del inversor" data-he="עדכוני firmware לממיר">Actualizaciones de firmware del inversor</li>
+                    <li data-en="Priority scheduling" data-es="Programación prioritaria" data-he="תזמון עדיפות">Programación prioritaria</li>
+                </ul>
+                <div class="sla-badge sla-24" data-en="SLA: 24h response" data-es="SLA: respuesta en 24h" data-he="SLA: מענה תוך 24 שעות">SLA: respuesta en 24h</div>
+            </div>
+
+            <!-- Premium -->
+            <div class="maint-card tier-premium">
+                <div class="tier-name" data-en="PREMIUM" data-es="PREMIUM" data-he="פרימיום">PREMIUM</div>
+                <h4 data-en="Concierge" data-es="Concierge" data-he="קונסיירז'">Concierge</h4>
+                <div class="price">$200 <span data-en="/month" data-es="/mes" data-he="לחודש">/mes</span></div>
+                <ul>
+                    <li data-en="Everything in Standard, plus:" data-es="Todo lo del Estándar, más:" data-he="הכל מהסטנדרט, בתוספת:">Todo lo del Estándar, más:</li>
+                    <li data-en="Quarterly panel cleaning (4×/year)" data-es="Limpieza trimestral de paneles (4×/año)" data-he="ניקוי פאנלים רבעוני (4 פעמים/שנה)">Limpieza trimestral de paneles (4×/año)</li>
+                    <li data-en="Emergency response (same day)" data-es="Respuesta de emergencia (mismo día)" data-he="מענה חירום (באותו יום)">Respuesta de emergencia (mismo día)</li>
+                    <li data-en="Dedicated account manager" data-es="Gerente de cuenta dedicado" data-he="מנהל חשבון ייעודי">Gerente de cuenta dedicado</li>
+                    <li data-en="Extended inverter warranty management" data-es="Gestión de garantía extendida del inversor" data-he="ניהול אחריות ממיר מורחבת">Gestión de garantía extendida del inversor</li>
+                    <li data-en="Annual ROI report for Ley 417" data-es="Informe anual de ROI para Ley 417" data-he="דוח ROI שנתי לחוק 417">Informe anual de ROI para Ley 417</li>
+                    <li data-en="Insurance claim assistance" data-es="Asistencia con reclamos de seguro" data-he="סיוע בתביעות ביטוח">Asistencia con reclamos de seguro</li>
+                </ul>
+                <div class="sla-badge sla-4" data-en="SLA: 4h emergency response" data-es="SLA: respuesta de emergencia en 4h" data-he="SLA: מענה חירום תוך 4 שעות">SLA: respuesta de emergencia en 4h</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PPA TEMPLATE ===== -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="POWER PURCHASE AGREEMENT" data-es="CONTRATO DE COMPRA DE ENERGÍA" data-he="הסכם רכישת חשמל">POWER PURCHASE AGREEMENT</div>
+        <h2 class="section-title reveal" data-en="PPA Template" data-es="Plantilla PPA" data-he="תבנית PPA">PPA Template</h2>
+        <p class="section-sub reveal" data-en="For commercial clients who prefer zero upfront cost — Solaris owns the system, the client buys the power at a discount." data-es="Para clientes comerciales que prefieren cero costo inicial — Solaris es dueña del sistema, el cliente compra la energía con descuento." data-he="ללקוחות מסחריים שמעדיפים אפס עלות מקדימה — Solaris הבעלים של המערכת, הלקוח קונה את החשמל בהנחה.">For commercial clients who prefer zero upfront cost — Solaris owns the system, the client buys the power at a discount.</p>
+
+        <div class="contract-doc reveal">
+            <div class="contract-header">
+                <h3 data-en="Power Purchase Agreement — Key Terms" data-es="Contrato de Compra de Energía — Términos Clave" data-he="הסכם רכישת חשמל — תנאים עיקריים">Contrato de Compra de Energía — Términos Clave</h3>
+                <span class="doc-type">PPA</span>
+            </div>
+            <div class="contract-body">
+                <div class="ppa-grid">
+                    <div class="ppa-item">
+                        <div class="val" data-en="15–25 yr" data-es="15–25 años" data-he="15-25 שנה">15–25 años</div>
+                        <div class="lbl" data-en="Contract Term" data-es="Plazo del Contrato" data-he="תקופת חוזה">Plazo del Contrato</div>
+                    </div>
+                    <div class="ppa-item">
+                        <div class="val">$0.14–$0.16</div>
+                        <div class="lbl" data-en="Per kWh Rate" data-es="Tarifa por kWh" data-he="תעריף ל-kWh">Tarifa por kWh</div>
+                    </div>
+                    <div class="ppa-item">
+                        <div class="val" data-en="15–20%" data-es="15–20%" data-he="15-20%">15–20%</div>
+                        <div class="lbl" data-en="Below Grid Rate" data-es="Debajo Tarifa Red" data-he="מתחת לתעריף רשת">Debajo Tarifa Red</div>
+                    </div>
+                    <div class="ppa-item">
+                        <div class="val" data-en="2% /yr" data-es="2% /año" data-he="2% לשנה">2% /año</div>
+                        <div class="lbl" data-en="Annual Escalation" data-es="Escalación Anual" data-he="עליית מחיר שנתית">Escalación Anual</div>
+                    </div>
+                </div>
+
+                <div class="clause" style="margin-top: 1rem;">
+                    <h4 data-en="How it Works" data-es="Cómo Funciona" data-he="איך זה עובד">Cómo Funciona</h4>
+                    <ul>
+                        <li data-en="Solaris Energy installs, owns, and maintains the solar system at zero cost to the client" data-es="Solaris Energy instala, es dueña y mantiene el sistema solar sin costo para el cliente" data-he="Solaris Energy מתקינה, מחזיקה בבעלות ומתחזקת את המערכת הסולארית ללא עלות ללקוח">Solaris Energy instala, es dueña y mantiene el sistema solar sin costo para el cliente</li>
+                        <li data-en="Client purchases all energy produced at the agreed PPA rate" data-es="El cliente compra toda la energía producida a la tarifa PPA acordada" data-he="הלקוח רוכש את כל האנרגיה שמיוצרת בתעריף PPA המוסכם">El cliente compra toda la energía producida a la tarifa PPA acordada</li>
+                        <li data-en="Bi-directional metering installed; monthly invoicing based on actual production" data-es="Medición bidireccional instalada; facturación mensual basada en producción real" data-he="מונה דו-כיווני מותקן; חיוב חודשי לפי ייצור בפועל">Medición bidireccional instalada; facturación mensual basada en producción real</li>
+                        <li data-en="Client has buyout option at years 5, 10, and 15 at fair market value" data-es="El cliente tiene opción de compra en los años 5, 10 y 15 a valor justo de mercado" data-he="ללקוח אופציית רכישה בשנים 5, 10 ו-15 בשווי שוק הוגן">El cliente tiene opción de compra en los años 5, 10 y 15 a valor justo de mercado</li>
+                        <li data-en="All maintenance, repairs, and monitoring included in the PPA rate" data-es="Todo mantenimiento, reparaciones y monitoreo incluidos en la tarifa PPA" data-he="כל התחזוקה, תיקונים וניטור כלולים בתעריף ה-PPA">Todo mantenimiento, reparaciones y monitoreo incluidos en la tarifa PPA</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box" data-en="PPA is ideal for commercial clients with high energy consumption (50+ kWp) who want immediate savings without capital expenditure. Minimum system size: 50 kWp. Minimum contract term: 15 years." data-es="PPA es ideal para clientes comerciales con alto consumo energético (50+ kWp) que desean ahorros inmediatos sin gasto de capital. Tamaño mínimo del sistema: 50 kWp. Plazo mínimo del contrato: 15 años." data-he="PPA אידיאלי ללקוחות מסחריים עם צריכת אנרגיה גבוהה (50+ kWp) שרוצים חיסכון מיידי ללא הוצאה הונית. גודל מערכת מינימלי: 50 kWp. תקופת חוזה מינימלית: 15 שנה.">PPA es ideal para clientes comerciales con alto consumo energético (50+ kWp) que desean ahorros inmediatos sin gasto de capital. Tamaño mínimo del sistema: 50 kWp. Plazo mínimo del contrato: 15 años.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LEGAL CHECKLIST ===== -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="PRE-INSTALLATION" data-es="PRE-INSTALACIÓN" data-he="לפני התקנה">PRE-INSTALLATION</div>
+        <h2 class="section-title reveal" data-en="Legal Checklist" data-es="Lista de Verificación Legal" data-he="רשימת ביקורת משפטית">Legal Checklist</h2>
+        <p class="section-sub reveal" data-en="Required documents and approvals before any installation can proceed. Interactive — click to mark items as complete." data-es="Documentos y aprobaciones requeridos antes de que cualquier instalación pueda proceder. Interactivo — haga clic para marcar como completados." data-he="מסמכים ואישורים נדרשים לפני שכל התקנה יכולה להתקדם. אינטראקטיבי — לחץ לסימון כהושלם.">Required documents and approvals before any installation can proceed. Interactive — click to mark items as complete.</p>
+
+        <div class="contract-doc reveal">
+            <div class="contract-header">
+                <h3 data-en="Pre-Installation Requirements" data-es="Requisitos Pre-Instalación" data-he="דרישות טרום-התקנה">Requisitos Pre-Instalación</h3>
+                <span class="doc-type" data-en="CHECKLIST" data-es="LISTA" data-he="רשימה">LISTA</span>
+            </div>
+            <div class="contract-body">
+                <ul class="checklist">
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="ASEP Distributed Generation Application" data-es="Solicitud de Generación Distribuida ASEP" data-he="בקשת ייצור מבוזר ASEP">Solicitud de Generación Distribuida ASEP</h5>
+                            <p data-en="Form submitted to ASEP for distributed generation authorization. Processing time: 15-30 days." data-es="Formulario presentado a ASEP para autorización de generación distribuida. Tiempo de procesamiento: 15-30 días." data-he="טופס הוגש ל-ASEP לאישור ייצור מבוזר. זמן עיבוד: 15-30 ימים.">Formulario presentado a ASEP para autorización de generación distribuida. Tiempo de procesamiento: 15-30 días.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Distributor Approval (ENSA / Naturgy)" data-es="Aprobación de Distribuidora (ENSA / Naturgy)" data-he="אישור מפיץ (ENSA / Naturgy)">Aprobación de Distribuidora (ENSA / Naturgy)</h5>
+                            <p data-en="Grid connection approval from the local electricity distributor. Includes meter upgrade coordination." data-es="Aprobación de conexión a la red de la distribuidora eléctrica local. Incluye coordinación de actualización del medidor." data-he="אישור חיבור לרשת ממפיץ החשמל המקומי. כולל תיאום שדרוג מונה.">Aprobación de conexión a la red de la distribuidora eléctrica local. Incluye coordinación de actualización del medidor.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Structural Certification" data-es="Certificación Estructural" data-he="אישור קונסטרוקציה">Certificación Estructural</h5>
+                            <p data-en="Licensed engineer confirms roof can support solar array weight. Required for all installations." data-es="Ingeniero licenciado confirma que el techo puede soportar el peso del arreglo solar. Requerido para todas las instalaciones." data-he="מהנדס מורשה מאשר שהגג יכול לשאת את משקל מערך הסולארי. נדרש לכל ההתקנות.">Ingeniero licenciado confirma que el techo puede soportar el peso del arreglo solar. Requerido para todas las instalaciones.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Property Ownership / Authorization" data-es="Propiedad / Autorización del Inmueble" data-he="בעלות / אישור נכס">Propiedad / Autorización del Inmueble</h5>
+                            <p data-en="Proof of property ownership or written authorization from property owner for installation." data-es="Comprobante de propiedad del inmueble o autorización escrita del propietario para la instalación." data-he="הוכחת בעלות על הנכס או אישור בכתב מבעל הנכס להתקנה.">Comprobante de propiedad del inmueble o autorización escrita del propietario para la instalación.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Liability Insurance" data-es="Seguro de Responsabilidad" data-he="ביטוח אחריות">Seguro de Responsabilidad</h5>
+                            <p data-en="Contractor's liability insurance active for the installation period. Coverage minimum: $100,000." data-es="Seguro de responsabilidad del contratista activo para el período de instalación. Cobertura mínima: $100,000." data-he="ביטוח אחריות של הקבלן פעיל לתקופת ההתקנה. כיסוי מינימלי: $100,000.">Seguro de responsabilidad del contratista activo para el período de instalación. Cobertura mínima: $100,000.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Electrical Assessment" data-es="Evaluación Eléctrica" data-he="הערכה חשמלית">Evaluación Eléctrica</h5>
+                            <p data-en="Existing electrical panel capacity assessment. Panel upgrade if needed (100A minimum for residential)." data-es="Evaluación de capacidad del panel eléctrico existente. Actualización del panel si es necesario (100A mínimo para residencial)." data-he="הערכת קיבולת לוח חשמלי קיים. שדרוג לוח במידת הצורך (100A מינימום למגורים).">Evaluación de capacidad del panel eléctrico existente. Actualización del panel si es necesario (100A mínimo para residencial).</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Signed Contract + First Payment (50%)" data-es="Contrato Firmado + Primer Pago (50%)" data-he="חוזה חתום + תשלום ראשון (50%)">Contrato Firmado + Primer Pago (50%)</h5>
+                            <p data-en="Installation contract signed by both parties with 50% deposit received." data-es="Contrato de instalación firmado por ambas partes con depósito del 50% recibido." data-he="חוזה התקנה חתום על ידי שני הצדדים עם פיקדון 50% שהתקבל.">Contrato de instalación firmado por ambas partes con depósito del 50% recibido.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="check-icon" onclick="this.classList.toggle('checked'); this.textContent = this.classList.contains('checked') ? '✓' : ''">
+                        </div>
+                        <div class="check-content">
+                            <h5 data-en="Recent Electricity Bills (6 months)" data-es="Facturas de Electricidad Recientes (6 meses)" data-he="חשבונות חשמל אחרונים (6 חודשים)">Facturas de Electricidad Recientes (6 meses)</h5>
+                            <p data-en="Last 6 months of electricity bills to determine consumption patterns and optimal system sizing." data-es="Últimas 6 facturas de electricidad para determinar patrones de consumo y dimensionamiento óptimo del sistema." data-he="6 חשבונות חשמל אחרונים לקביעת דפוסי צריכה וגודל מערכת אופטימלי.">Últimas 6 facturas de electricidad para determinar patrones de consumo y dimensionamiento óptimo del sistema.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="https://solaris-panama.com">solaris-panama.com</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+    if (btn) btn.classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        const val = el.getAttribute('data-' + lang);
+        if (val.includes('<')) {
+            el.innerHTML = val;
+        } else {
+            el.textContent = val;
+        }
+    });
+}
+
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
