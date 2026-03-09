@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Licensing & Permits — Solaris Energy Panama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; color: var(--pearl); background: var(--green); padding: 8px 18px; border-radius: var(--radius-pill); text-decoration: none; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%); padding: 8rem 2rem 4rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); color: var(--pearl); margin-bottom: 0.8rem; }
+        .page-hero p { color: rgba(254,253,251,0.7); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+        .section-badge { display: inline-block; background: rgba(212,168,67,0.15); color: var(--gold); padding: 0.4rem 1rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.4rem); color: var(--green); margin-bottom: 0.6rem; }
+        .section-sub { color: var(--ash); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 3rem; margin: 2rem 0; }
+        .timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, var(--gold), var(--green)); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 2.5rem; }
+        .timeline-dot { position: absolute; left: -3rem; top: 4px; width: 32px; height: 32px; background: var(--green); border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--pearl); font-weight: 700; z-index: 2; }
+        .timeline-content { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem 2rem; transition: all 0.3s; }
+        .timeline-content:hover { box-shadow: var(--shadow-elevated); transform: translateX(4px); }
+        .timeline-content h3 { font-size: 1.1rem; color: var(--green); margin-bottom: 0.4rem; }
+        .timeline-content p { color: var(--slate); font-size: 0.9rem; }
+        .timeline-content .duration { display: inline-block; background: rgba(212,168,67,0.15); color: var(--gold-aged); padding: 0.2rem 0.8rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; margin-top: 0.6rem; }
+
+        /* Process Cards */
+        .process-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+        .process-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); overflow: hidden; transition: all 0.3s; }
+        .process-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-4px); }
+        .process-card-header { padding: 1.5rem; background: var(--green); display: flex; align-items: center; gap: 1rem; }
+        .process-card-header .step-num { width: 40px; height: 40px; background: var(--gold); color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; }
+        .process-card-header h3 { color: var(--pearl); font-size: 1rem; }
+        .process-card-body { padding: 1.5rem; }
+        .process-card-body ul { list-style: none; }
+        .process-card-body li { padding: 0.5rem 0; border-bottom: 1px solid var(--mist); font-size: 0.88rem; color: var(--slate); display: flex; align-items: flex-start; gap: 0.6rem; }
+        .process-card-body li:last-child { border-bottom: none; }
+        .process-card-body li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+        /* Checklist */
+        .checklist { background: var(--sand); border-radius: var(--radius-card); padding: 2rem; margin: 2rem 0; }
+        .checklist h3 { font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 1rem; }
+        .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .check-item { background: var(--pearl); border-radius: 10px; padding: 1rem 1.2rem; border: 1px solid var(--mist); display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.88rem; }
+        .check-icon { width: 24px; height: 24px; background: var(--green); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--pearl); font-size: 0.7rem; flex-shrink: 0; margin-top: 2px; }
+        .check-item .label { color: var(--slate); }
+        .check-item .label strong { color: var(--charcoal); display: block; margin-bottom: 2px; }
+
+        /* Law Card */
+        .law-card { background: linear-gradient(135deg, var(--green), var(--green-canopy)); border-radius: var(--radius-card); padding: 2.5rem; color: var(--pearl); margin: 2rem 0; position: relative; overflow: hidden; }
+        .law-card::before { content: ''; position: absolute; top: -20%; right: -10%; width: 40%; height: 140%; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 60%); border-radius: 50%; }
+        .law-card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.8rem; }
+        .law-card .gold { color: var(--gold); }
+        .law-card p { color: rgba(254,253,251,0.8); margin-bottom: 1rem; font-size: 0.95rem; }
+        .law-benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .law-benefit { background: rgba(254,253,251,0.1); backdrop-filter: blur(8px); border: 1px solid rgba(254,253,251,0.15); border-radius: 10px; padding: 1.2rem; text-align: center; }
+        .law-benefit .num { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+        .law-benefit .desc { font-size: 0.8rem; color: rgba(254,253,251,0.7); margin-top: 0.3rem; }
+
+        /* Doc Templates */
+        .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .doc-item { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem; text-align: center; transition: all 0.3s; }
+        .doc-item:hover { box-shadow: var(--shadow-elevated); transform: translateY(-3px); }
+        .doc-item .doc-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+        .doc-item h4 { font-size: 0.95rem; color: var(--green); margin-bottom: 0.3rem; }
+        .doc-item p { font-size: 0.8rem; color: var(--ash); }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        footer { background: var(--green); color: rgba(254,253,251,0.5); text-align: center; padding: 2rem; font-size: 0.85rem; }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .process-grid { grid-template-columns: 1fr; }
+            .check-grid { grid-template-columns: 1fr; }
+            .law-benefits { grid-template-columns: 1fr 1fr; }
+            .doc-grid { grid-template-columns: 1fr 1fr; }
+            .container { padding: 3rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+    <span class="icon">📋</span>
+    <h1 data-en="Licensing & Permits" data-es="Licencias y Permisos" data-he="רישוי והיתרים">Licensing & Permits</h1>
+    <p data-en="Complete guide to ASEP registration, distributor approvals, Ley 417 compliance, and the permit process for solar installations in Panama." data-es="Guía completa de registro ASEP, aprobaciones de distribuidoras, cumplimiento de la Ley 417 y el proceso de permisos para instalaciones solares en Panamá." data-he="מדריך מלא לרישום ASEP, אישורי מפיצים, תאימות לחוק 417 ותהליך ההיתרים להתקנות סולאריות בפנמה.">Complete guide to ASEP registration, distributor approvals, Ley 417 compliance, and the permit process for solar installations in Panama.</p>
+</div>
+
+<!-- LEY 417 -->
+<div class="container">
+    <div class="law-card reveal">
+        <h3 data-en="Ley 417 — Panama's Solar Incentive" data-es="Ley 417 — Incentivo Solar de Panamá" data-he="חוק 417 — תמריץ הסולאר של פנמה">Ley 417 — <span class="gold" data-en="Panama's Solar Incentive" data-es="Incentivo Solar de Panamá" data-he="תמריץ הסולאר של פנמה">Panama's Solar Incentive</span></h3>
+        <p data-en="Law 417 of 2015 establishes a framework for distributed generation of renewable energy in Panama. It allows net metering for systems up to 500kW and provides significant tax benefits for qualifying installations." data-es="La Ley 417 de 2015 establece un marco para la generación distribuida de energía renovable en Panamá. Permite medición neta para sistemas hasta 500kW y proporciona beneficios fiscales significativos para instalaciones calificadas." data-he="חוק 417 משנת 2015 מבסס מסגרת לייצור מבוזר של אנרגיה מתחדשת בפנמה. הוא מאפשר מונה נטו למערכות עד 500 קוו״ט ומספק הטבות מס משמעותיות להתקנות מזכות.">Law 417 of 2015 establishes a framework for distributed generation of renewable energy in Panama. It allows net metering for systems up to 500kW and provides significant tax benefits for qualifying installations.</p>
+        <div class="law-benefits">
+            <div class="law-benefit">
+                <div class="num" data-en="100%" data-es="100%" data-he="100%">100%</div>
+                <div class="desc" data-en="Tax deduction on equipment" data-es="Deducción fiscal en equipo" data-he="ניכוי מס על ציוד">Tax deduction on equipment</div>
+            </div>
+            <div class="law-benefit">
+                <div class="num" data-en="500 kW" data-es="500 kW" data-he="500 קוו״ט">500 kW</div>
+                <div class="desc" data-en="Max system size (net metering)" data-es="Tamaño máx. del sistema" data-he="גודל מקס׳ מערכת">Max system size (net metering)</div>
+            </div>
+            <div class="law-benefit">
+                <div class="num" data-en="Net Meter" data-es="Medición Neta" data-he="מונה נטו">Net Meter</div>
+                <div class="desc" data-en="Credits roll month-to-month" data-es="Los créditos se acumulan mes a mes" data-he="זיכויים מועברים חודש לחודש">Credits roll month-to-month</div>
+            </div>
+            <div class="law-benefit">
+                <div class="num" data-en="25 yr" data-es="25 años" data-he="25 שנים">25 yr</div>
+                <div class="desc" data-en="Contract term with distributor" data-es="Plazo de contrato con distribuidora" data-he="תקופת חוזה עם מפיץ">Contract term with distributor</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LEY 417 REQUIREMENTS -->
+<div class="container" style="padding-top: 0;">
+    <div class="section-badge" data-en="LEY 417 COMPLIANCE" data-es="CUMPLIMIENTO LEY 417" data-he="תאימות חוק 417">LEY 417 COMPLIANCE</div>
+    <h2 class="section-title reveal" data-en="Requirements for Tax Deduction" data-es="Requisitos para Deducción Fiscal" data-he="דרישות לניכוי מס">Requirements for Tax Deduction</h2>
+    <p class="section-sub reveal" data-en="To qualify for the 100% tax deduction under Ley 417, installations must meet these requirements:" data-es="Para calificar para la deducción fiscal del 100% bajo la Ley 417, las instalaciones deben cumplir estos requisitos:" data-he="כדי לזכות בניכוי המס של 100% לפי חוק 417, התקנות חייבות לעמוד בדרישות הבאות:">To qualify for the 100% tax deduction under Ley 417, installations must meet these requirements:</p>
+
+    <div class="checklist reveal">
+        <h3 data-en="Eligibility Checklist" data-es="Lista de Elegibilidad" data-he="רשימת זכאות">Eligibility Checklist</h3>
+        <div class="check-grid">
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="Registered Installer" data-es="Instalador Registrado" data-he="מתקין רשום">Registered Installer</strong>
+                    <span data-en="Must be installed by ASEP-registered solar company" data-es="Debe ser instalado por empresa solar registrada en ASEP" data-he="חייב להיות מותקן על ידי חברת סולאר רשומה ב-ASEP">Must be installed by ASEP-registered solar company</span>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="System Size ≤ 500kW" data-es="Tamaño del Sistema ≤ 500kW" data-he="גודל מערכת ≤ 500kW">System Size ≤ 500kW</strong>
+                    <span data-en="Net metering applies up to 500kW capacity" data-es="La medición neta aplica hasta 500kW de capacidad" data-he="מונה נטו חל עד קיבולת של 500 קוו״ט">Net metering applies up to 500kW capacity</span>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="Distributor Approval" data-es="Aprobación de Distribuidora" data-he="אישור מפיץ">Distributor Approval</strong>
+                    <span data-en="ENSA or Naturgy must approve the interconnection" data-es="ENSA o Naturgy deben aprobar la interconexión" data-he="ENSA או Naturgy חייבים לאשר את החיבור">ENSA or Naturgy must approve the interconnection</span>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="Certified Equipment" data-es="Equipo Certificado" data-he="ציוד מוסמך">Certified Equipment</strong>
+                    <span data-en="Panels and inverters must meet IEC standards" data-es="Paneles e inversores deben cumplir estándares IEC" data-he="פאנלים וממירים חייבים לעמוד בתקני IEC">Panels and inverters must meet IEC standards</span>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="Bidirectional Meter" data-es="Medidor Bidireccional" data-he="מונה דו-כיווני">Bidirectional Meter</strong>
+                    <span data-en="Distributor installs bidirectional meter for net metering" data-es="La distribuidora instala medidor bidireccional" data-he="המפיץ מתקין מונה דו-כיווני למונה נטו">Distributor installs bidirectional meter for net metering</span>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon">✓</div>
+                <div class="label">
+                    <strong data-en="Commercial Entity" data-es="Entidad Comercial" data-he="ישות מסחרית">Commercial Entity</strong>
+                    <span data-en="Tax deduction available to businesses (income tax offset)" data-es="Deducción fiscal disponible para empresas" data-he="ניכוי מס זמין לעסקים (קיזוז מס הכנסה)">Tax deduction available to businesses (income tax offset)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ASEP REGISTRATION -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="STEP 1" data-es="PASO 1" data-he="שלב 1">STEP 1</div>
+        <h2 class="section-title reveal" data-en="ASEP Registration" data-es="Registro ASEP" data-he="רישום ASEP">ASEP Registration</h2>
+        <p class="section-sub reveal" data-en="Register as a solar energy installer with the Autoridad Nacional de los Servicios Públicos (ASEP). This is the regulatory body overseeing all energy services in Panama." data-es="Regístrese como instalador de energía solar ante la Autoridad Nacional de los Servicios Públicos (ASEP). Este es el ente regulador que supervisa todos los servicios energéticos en Panamá." data-he="הירשם כמתקין אנרגיה סולארית ברשות הלאומית לשירותים ציבוריים (ASEP). זהו הגוף הרגולטורי המפקח על כל שירותי האנרגיה בפנמה.">Register as a solar energy installer with the Autoridad Nacional de los Servicios Públicos (ASEP). This is the regulatory body overseeing all energy services in Panama.</p>
+
+        <div class="process-grid">
+            <div class="process-card reveal">
+                <div class="process-card-header">
+                    <div class="step-num">1</div>
+                    <h3 data-en="Company Formation" data-es="Formación de Empresa" data-he="הקמת חברה">Company Formation</h3>
+                </div>
+                <div class="process-card-body">
+                    <ul>
+                        <li data-en="Panamanian S.A. or SRL entity" data-es="Entidad S.A. o SRL panameña" data-he="ישות S.A. או SRL פנמית">Panamanian S.A. or SRL entity</li>
+                        <li data-en="Registered with Registro Público" data-es="Registrada en el Registro Público" data-he="רשום ב-Registro Público">Registered with Registro Público</li>
+                        <li data-en="Tax ID (RUC) from DGI" data-es="RUC de la DGI" data-he="מספר מס (RUC) מ-DGI">Tax ID (RUC) from DGI</li>
+                        <li data-en="Aviso de Operación (business license)" data-es="Aviso de Operación" data-he="רישיון עסק (Aviso de Operación)">Aviso de Operación (business license)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="process-card reveal">
+                <div class="process-card-header">
+                    <div class="step-num">2</div>
+                    <h3 data-en="Technical Documentation" data-es="Documentación Técnica" data-he="תיעוד טכני">Technical Documentation</h3>
+                </div>
+                <div class="process-card-body">
+                    <ul>
+                        <li data-en="Electrical engineer credentials (licensed in Panama)" data-es="Credenciales de ingeniero eléctrico (licenciado en Panamá)" data-he="אישורי מהנדס חשמל (מורשה בפנמה)">Electrical engineer credentials (licensed in Panama)</li>
+                        <li data-en="Portfolio of prior installations (if any)" data-es="Portafolio de instalaciones previas (si aplica)" data-he="פורטפוליו התקנות קודמות (אם יש)">Portfolio of prior installations (if any)</li>
+                        <li data-en="Equipment certifications (IEC, UL)" data-es="Certificaciones de equipo (IEC, UL)" data-he="אישורי ציוד (IEC, UL)">Equipment certifications (IEC, UL)</li>
+                        <li data-en="Insurance: liability + workers' compensation" data-es="Seguro: responsabilidad civil + accidentes laborales" data-he="ביטוח: צד ג׳ + פיצויי עובדים">Insurance: liability + workers' compensation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="process-card reveal">
+                <div class="process-card-header">
+                    <div class="step-num">3</div>
+                    <h3 data-en="ASEP Application" data-es="Solicitud ASEP" data-he="הגשת בקשה ל-ASEP">ASEP Application</h3>
+                </div>
+                <div class="process-card-body">
+                    <ul>
+                        <li data-en="Submit Solicitud de Registro to ASEP" data-es="Presentar Solicitud de Registro ante ASEP" data-he="הגש בקשת רישום ל-ASEP">Submit Solicitud de Registro to ASEP</li>
+                        <li data-en="Include technical capacity proof" data-es="Incluir prueba de capacidad técnica" data-he="כלול הוכחת יכולת טכנית">Include technical capacity proof</li>
+                        <li data-en="Pay registration fee (~$500)" data-es="Pagar tarifa de registro (~$500)" data-he="שלם דמי רישום (~$500)">Pay registration fee (~$500)</li>
+                        <li data-en="Processing time: 2-4 weeks" data-es="Tiempo de procesamiento: 2-4 semanas" data-he="זמן עיבוד: 2-4 שבועות">Processing time: 2-4 weeks</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DISTRIBUTOR APPROVAL -->
+<div class="container">
+    <div class="section-badge" data-en="STEP 2" data-es="PASO 2" data-he="שלב 2">STEP 2</div>
+    <h2 class="section-title reveal" data-en="Distributor Approval" data-es="Aprobación de Distribuidora" data-he="אישור מפיץ">Distributor Approval</h2>
+    <p class="section-sub reveal" data-en="Each solar installation requires approval from the local electricity distributor. In the Azuero Peninsula, this is ENSA (Empresa de Distribución Eléctrica Chiriquí for some areas) or Naturgy." data-es="Cada instalación solar requiere aprobación de la distribuidora eléctrica local. En la Península de Azuero, es ENSA o Naturgy." data-he="כל התקנה סולארית דורשת אישור ממפיץ החשמל המקומי. בחצי האי אזוארו, זה ENSA או Naturgy.">Each solar installation requires approval from the local electricity distributor. In the Azuero Peninsula, this is ENSA or Naturgy.</p>
+
+    <div class="process-grid">
+        <div class="process-card reveal">
+            <div class="process-card-header" style="background: var(--gold);">
+                <div class="step-num" style="background: var(--green); color: var(--pearl);">E</div>
+                <h3 style="color: var(--green);" data-en="ENSA Process" data-es="Proceso ENSA" data-he="תהליך ENSA">ENSA Process</h3>
+            </div>
+            <div class="process-card-body">
+                <ul>
+                    <li data-en="Submit net metering application form" data-es="Presentar formulario de medición neta" data-he="הגש טופס בקשת מונה נטו">Submit net metering application form</li>
+                    <li data-en="Include single-line diagram + site plan" data-es="Incluir diagrama unifilar + plano del sitio" data-he="כלול תרשים חד-קווי + תוכנית אתר">Include single-line diagram + site plan</li>
+                    <li data-en="Equipment datasheets (panels + inverter)" data-es="Fichas técnicas de equipo (paneles + inversor)" data-he="גיליונות נתונים של ציוד (פאנלים + ממיר)">Equipment datasheets (panels + inverter)</li>
+                    <li data-en="ENSA technical review: 5-10 business days" data-es="Revisión técnica ENSA: 5-10 días hábiles" data-he="בדיקה טכנית ENSA: 5-10 ימי עסקים">ENSA technical review: 5-10 business days</li>
+                    <li data-en="Interconnection agreement signing" data-es="Firma de acuerdo de interconexión" data-he="חתימה על הסכם חיבור">Interconnection agreement signing</li>
+                    <li data-en="Post-install inspection by ENSA" data-es="Inspección post-instalación por ENSA" data-he="בדיקת ENSA אחרי התקנה">Post-install inspection by ENSA</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="process-card reveal">
+            <div class="process-card-header" style="background: var(--gold);">
+                <div class="step-num" style="background: var(--green); color: var(--pearl);">N</div>
+                <h3 style="color: var(--green);" data-en="Naturgy Process" data-es="Proceso Naturgy" data-he="תהליך Naturgy">Naturgy Process</h3>
+            </div>
+            <div class="process-card-body">
+                <ul>
+                    <li data-en="Submit Solicitud de Generación Distribuida" data-es="Presentar Solicitud de Generación Distribuida" data-he="הגש בקשת ייצור מבוזר">Submit Solicitud de Generación Distribuida</li>
+                    <li data-en="Provide electrical study (signed by engineer)" data-es="Proveer estudio eléctrico (firmado por ingeniero)" data-he="ספק מחקר חשמלי (חתום ע״י מהנדס)">Provide electrical study (signed by engineer)</li>
+                    <li data-en="Include transformer capacity analysis" data-es="Incluir análisis de capacidad del transformador" data-he="כלול ניתוח קיבולת שנאי">Include transformer capacity analysis</li>
+                    <li data-en="Naturgy review: 10-15 business days" data-es="Revisión Naturgy: 10-15 días hábiles" data-he="בדיקת Naturgy: 10-15 ימי עסקים">Naturgy review: 10-15 business days</li>
+                    <li data-en="Meter installation by Naturgy" data-es="Instalación de medidor por Naturgy" data-he="התקנת מונה ע״י Naturgy">Meter installation by Naturgy</li>
+                    <li data-en="System commissioning and activation" data-es="Comisionamiento y activación del sistema" data-he="הפעלה ואקטיבציה של המערכת">System commissioning and activation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PERMITS CHECKLIST -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="STEP 3" data-es="PASO 3" data-he="שלב 3">STEP 3</div>
+        <h2 class="section-title reveal" data-en="Permits Checklist" data-es="Lista de Permisos" data-he="רשימת היתרים">Permits Checklist</h2>
+        <p class="section-sub reveal" data-en="Depending on system size and location, additional permits may be required beyond the distributor approval." data-es="Dependiendo del tamaño del sistema y la ubicación, se pueden requerir permisos adicionales además de la aprobación de la distribuidora." data-he="בהתאם לגודל המערכת והמיקום, ייתכן שיידרשו היתרים נוספים מעבר לאישור המפיץ.">Depending on system size and location, additional permits may be required beyond the distributor approval.</p>
+
+        <div class="checklist reveal">
+            <h3 data-en="Required Permits" data-es="Permisos Requeridos" data-he="היתרים נדרשים">Required Permits</h3>
+            <div class="check-grid">
+                <div class="check-item">
+                    <div class="check-icon">⚡</div>
+                    <div class="label">
+                        <strong data-en="Electrical Permit" data-es="Permiso Eléctrico" data-he="היתר חשמלי">Electrical Permit</strong>
+                        <span data-en="Required for all installations. Signed by licensed electrical engineer." data-es="Requerido para todas las instalaciones. Firmado por ingeniero eléctrico licenciado." data-he="נדרש לכל ההתקנות. חתום ע״י מהנדס חשמל מורשה.">Required for all installations. Signed by licensed electrical engineer.</span>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">🏗️</div>
+                    <div class="label">
+                        <strong data-en="Structural Assessment" data-es="Evaluación Estructural" data-he="הערכה מבנית">Structural Assessment</strong>
+                        <span data-en="Roof load analysis. Required for systems > 10kW or older buildings." data-es="Análisis de carga del techo. Requerido para sistemas > 10kW o edificios antiguos." data-he="ניתוח עומס גג. נדרש למערכות > 10 קוו״ט או מבנים ישנים.">Roof load analysis. Required for systems > 10kW or older buildings.</span>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">🔥</div>
+                    <div class="label">
+                        <strong data-en="Fire Safety" data-es="Seguridad contra Incendios" data-he="בטיחות אש">Fire Safety</strong>
+                        <span data-en="Fire department clearance for commercial installations > 25kW." data-es="Aprobación de bomberos para instalaciones comerciales > 25kW." data-he="אישור כיבוי אש להתקנות מסחריות > 25 קוו״ט.">Fire department clearance for commercial installations > 25kW.</span>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">🌿</div>
+                    <div class="label">
+                        <strong data-en="Environmental (ANAM)" data-es="Ambiental (ANAM)" data-he="סביבתי (ANAM)">Environmental (ANAM)</strong>
+                        <span data-en="Environmental review for ground-mount systems > 100kW." data-es="Revisión ambiental para montaje en suelo > 100kW." data-he="בדיקה סביבתית להרכבת קרקע > 100 קוו״ט.">Environmental review for ground-mount systems > 100kW.</span>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">📐</div>
+                    <div class="label">
+                        <strong data-en="Municipal Construction" data-es="Construcción Municipal" data-he="בנייה עירונית">Municipal Construction</strong>
+                        <span data-en="Local building permit if structural modifications needed." data-es="Permiso de construcción local si se requieren modificaciones estructurales." data-he="היתר בנייה מקומי אם נדרשים שינויים מבניים.">Local building permit if structural modifications needed.</span>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">📊</div>
+                    <div class="label">
+                        <strong data-en="Grid Impact Study" data-es="Estudio de Impacto en la Red" data-he="מחקר השפעה על רשת">Grid Impact Study</strong>
+                        <span data-en="Required for systems > 100kW. Distributor may request for smaller." data-es="Requerido para sistemas > 100kW. La distribuidora puede solicitar para menores." data-he="נדרש למערכות > 100 קוו״ט. המפיץ עשוי לדרוש גם עבור קטנות.">Required for systems > 100kW. Distributor may request for smaller.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TIMELINE -->
+<div class="container">
+    <div class="section-badge" data-en="TYPICAL TIMELINE" data-es="LÍNEA DE TIEMPO TÍPICA" data-he="לוח זמנים אופייני">TYPICAL TIMELINE</div>
+    <h2 class="section-title reveal" data-en="Permit Process Timeline" data-es="Línea de Tiempo del Proceso" data-he="לוח זמנים של תהליך ההיתרים">Permit Process Timeline</h2>
+    <p class="section-sub reveal" data-en="From initial application to system activation, the typical permit process takes 2-4 weeks for residential and 4-6 weeks for commercial." data-es="Desde la solicitud inicial hasta la activación del sistema, el proceso típico toma 2-4 semanas para residencial y 4-6 semanas para comercial." data-he="מהגשת הבקשה ועד הפעלת המערכת, תהליך ההיתרים האופייני לוקח 2-4 שבועות למגורים ו-4-6 שבועות למסחרי.">From initial application to system activation, the typical permit process takes 2-4 weeks for residential and 4-6 weeks for commercial.</p>
+
+    <div class="timeline reveal">
+        <div class="timeline-item">
+            <div class="timeline-dot">1</div>
+            <div class="timeline-content">
+                <h3 data-en="Site Assessment & Design" data-es="Evaluación del Sitio y Diseño" data-he="הערכת אתר ועיצוב">Site Assessment & Design</h3>
+                <p data-en="Conduct site survey, structural assessment, electrical audit. Create system design with single-line diagram, equipment selection, and layout." data-es="Realizar encuesta del sitio, evaluación estructural, auditoría eléctrica. Crear diseño del sistema con diagrama unifilar, selección de equipo y disposición." data-he="ביצוע סקר אתר, הערכה מבנית, ביקורת חשמלית. יצירת עיצוב מערכת עם תרשים חד-קווי, בחירת ציוד ופריסה.">Conduct site survey, structural assessment, electrical audit. Create system design with single-line diagram, equipment selection, and layout.</p>
+                <span class="duration" data-en="2-3 days" data-es="2-3 días" data-he="2-3 ימים">2-3 days</span>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">2</div>
+            <div class="timeline-content">
+                <h3 data-en="Distributor Application" data-es="Solicitud a Distribuidora" data-he="הגשה למפיץ">Distributor Application</h3>
+                <p data-en="Submit net metering application to ENSA/Naturgy with all technical documentation. Engineering review begins." data-es="Presentar solicitud de medición neta a ENSA/Naturgy con toda la documentación técnica. La revisión de ingeniería comienza." data-he="הגשת בקשת מונה נטו ל-ENSA/Naturgy עם כל התיעוד הטכני. הבדיקה ההנדסית מתחילה.">Submit net metering application to ENSA/Naturgy with all technical documentation. Engineering review begins.</p>
+                <span class="duration" data-en="5-15 business days" data-es="5-15 días hábiles" data-he="5-15 ימי עסקים">5-15 business days</span>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">3</div>
+            <div class="timeline-content">
+                <h3 data-en="Additional Permits" data-es="Permisos Adicionales" data-he="היתרים נוספים">Additional Permits</h3>
+                <p data-en="Submit structural, fire safety, or environmental permits in parallel with distributor review. Municipal permits if needed." data-es="Presentar permisos estructurales, de seguridad contra incendios o ambientales en paralelo con la revisión de la distribuidora." data-he="הגשת היתרים מבניים, בטיחות אש או סביבתיים במקביל לבדיקת המפיץ. היתרים עירוניים אם נדרש.">Submit structural, fire safety, or environmental permits in parallel with distributor review. Municipal permits if needed.</p>
+                <span class="duration" data-en="Parallel — 1-2 weeks" data-es="Paralelo — 1-2 semanas" data-he="במקביל — 1-2 שבועות">Parallel — 1-2 weeks</span>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">4</div>
+            <div class="timeline-content">
+                <h3 data-en="Approval & Agreement" data-es="Aprobación y Acuerdo" data-he="אישור והסכם">Approval & Agreement</h3>
+                <p data-en="Receive distributor approval. Sign interconnection agreement. Schedule meter installation." data-es="Recibir aprobación de la distribuidora. Firmar acuerdo de interconexión. Programar instalación del medidor." data-he="קבלת אישור מפיץ. חתימה על הסכם חיבור. תיאום התקנת מונה.">Receive distributor approval. Sign interconnection agreement. Schedule meter installation.</p>
+                <span class="duration" data-en="2-3 days" data-es="2-3 días" data-he="2-3 ימים">2-3 days</span>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">5</div>
+            <div class="timeline-content">
+                <h3 data-en="Installation & Commissioning" data-es="Instalación y Comisionamiento" data-he="התקנה והפעלה">Installation & Commissioning</h3>
+                <p data-en="Install system, conduct testing, schedule distributor inspection. Bidirectional meter installed. System goes live." data-es="Instalar sistema, realizar pruebas, programar inspección de la distribuidora. Instalar medidor bidireccional. El sistema se activa." data-he="התקנת מערכת, ביצוע בדיקות, תיאום ביקורת מפיץ. התקנת מונה דו-כיווני. המערכת עולה לאוויר.">Install system, conduct testing, schedule distributor inspection. Bidirectional meter installed. System goes live.</p>
+                <span class="duration" data-en="1-3 days install + 1-2 weeks commissioning" data-es="1-3 días instalación + 1-2 semanas comisionamiento" data-he="1-3 ימים התקנה + 1-2 שבועות הפעלה">1-3 days install + 1-2 weeks commissioning</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DOCUMENT TEMPLATES -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="PREPARATION" data-es="PREPARACIÓN" data-he="הכנה">PREPARATION</div>
+        <h2 class="section-title reveal" data-en="Document Templates" data-es="Plantillas de Documentos" data-he="תבניות מסמכים">Document Templates</h2>
+        <p class="section-sub reveal" data-en="Key forms and documents to prepare for each installation project." data-es="Formularios y documentos clave a preparar para cada proyecto de instalación." data-he="טפסים ומסמכים מפתח להכנה לכל פרויקט התקנה.">Key forms and documents to prepare for each installation project.</p>
+
+        <div class="doc-grid reveal">
+            <div class="doc-item">
+                <div class="doc-icon">📄</div>
+                <h4 data-en="Net Metering Application" data-es="Solicitud de Medición Neta" data-he="בקשת מונה נטו">Net Metering Application</h4>
+                <p data-en="ENSA/Naturgy official form" data-es="Formulario oficial ENSA/Naturgy" data-he="טופס רשמי ENSA/Naturgy">ENSA/Naturgy official form</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">📐</div>
+                <h4 data-en="Single-Line Diagram" data-es="Diagrama Unifilar" data-he="תרשים חד-קווי">Single-Line Diagram</h4>
+                <p data-en="Electrical system layout (AutoCAD)" data-es="Diseño del sistema eléctrico (AutoCAD)" data-he="פריסת מערכת חשמלית (AutoCAD)">Electrical system layout (AutoCAD)</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">🏠</div>
+                <h4 data-en="Site Plan" data-es="Plano del Sitio" data-he="תוכנית אתר">Site Plan</h4>
+                <p data-en="Panel placement, orientation, shading" data-es="Ubicación de paneles, orientación, sombras" data-he="מיקום פאנלים, כיוון, הצללה">Panel placement, orientation, shading</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">📊</div>
+                <h4 data-en="Structural Report" data-es="Informe Estructural" data-he="דוח מבני">Structural Report</h4>
+                <p data-en="Roof load capacity analysis" data-es="Análisis de capacidad de carga del techo" data-he="ניתוח קיבולת עומס גג">Roof load capacity analysis</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">📋</div>
+                <h4 data-en="Equipment Datasheets" data-es="Fichas Técnicas de Equipo" data-he="גיליונות נתוני ציוד">Equipment Datasheets</h4>
+                <p data-en="Panel + inverter specs and certifications" data-es="Especificaciones y certificaciones de paneles + inversores" data-he="מפרטי ואישורי פאנלים + ממירים">Panel + inverter specs and certifications</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">🔐</div>
+                <h4 data-en="Insurance Certificate" data-es="Certificado de Seguro" data-he="תעודת ביטוח">Insurance Certificate</h4>
+                <p data-en="Liability insurance for installation" data-es="Seguro de responsabilidad para instalación" data-he="ביטוח צד ג׳ להתקנה">Liability insurance for installation</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">✍️</div>
+                <h4 data-en="Client Agreement" data-es="Acuerdo con el Cliente" data-he="הסכם לקוח">Client Agreement</h4>
+                <p data-en="Installation contract + warranty terms" data-es="Contrato de instalación + términos de garantía" data-he="חוזה התקנה + תנאי אחריות">Installation contract + warranty terms</p>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon">✅</div>
+                <h4 data-en="Commissioning Report" data-es="Informe de Comisionamiento" data-he="דוח הפעלה">Commissioning Report</h4>
+                <p data-en="Post-install test results (IEC 62446)" data-es="Resultados de pruebas post-instalación (IEC 62446)" data-he="תוצאות בדיקות אחרי התקנה (IEC 62446)">Post-install test results (IEC 62446)</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="https://solaris-panama.com" data-en="solaris-panama.com" data-es="solaris-panama.com" data-he="solaris-panama.com">solaris-panama.com</a>
+    </p>
+</footer>
+
+<script>
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
