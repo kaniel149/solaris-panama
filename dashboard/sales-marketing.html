@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Energy — Sales & Marketing Strategy</title>
+    <meta name="description" content="Sales funnel, marketing channels, ad campaigns, and outreach strategy for Solaris Energy Panama.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%);
+            padding: 5rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-header .container { position: relative; z-index: 2; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(254,253,251,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: var(--gold); }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+            color: var(--pearl);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.65);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ===== GENERAL ===== */
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        section { padding: 5rem 2rem; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            color: var(--green);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-sub {
+            font-size: 1rem;
+            color: var(--slate);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ===== FUNNEL ===== */
+        .funnel-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin: 2rem 0;
+        }
+
+        .funnel-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.2rem 2rem;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            position: relative;
+            text-align: center;
+            transition: transform 0.3s;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
+
+        .funnel-stage:hover { transform: scale(1.03); }
+
+        .funnel-stage:nth-child(1) { background: var(--green); width: 100%; max-width: 700px; }
+        .funnel-stage:nth-child(2) { background: var(--green-canopy); width: 85%; max-width: 595px; }
+        .funnel-stage:nth-child(3) { background: #1A7A5A; width: 70%; max-width: 490px; }
+        .funnel-stage:nth-child(4) { background: var(--gold-aged); width: 55%; max-width: 385px; }
+        .funnel-stage:nth-child(5) { background: var(--gold); width: 40%; max-width: 280px; color: var(--green); }
+
+        .funnel-icon { font-size: 1.3rem; }
+
+        .funnel-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .funnel-detail-card {
+            background: var(--cloud);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .funnel-detail-card h4 {
+            font-size: 0.85rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .funnel-detail-card p {
+            font-size: 0.82rem;
+            color: var(--slate);
+            line-height: 1.5;
+        }
+
+        /* ===== TABS ===== */
+        .tabs-container { margin: 2rem 0; }
+
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--mist);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.4rem;
+            border: none;
+            background: transparent;
+            color: var(--ash);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: var(--radius-btn) var(--radius-btn) 0 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--green);
+            background: rgba(11,61,46,0.06);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        .tab-btn:hover:not(.active) { color: var(--charcoal); }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .channel-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .channel-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .channel-icon.social { background: linear-gradient(135deg, rgba(20,87,63,0.12), rgba(20,87,63,0.04)); }
+        .channel-icon.search { background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05)); }
+        .channel-icon.direct { background: linear-gradient(135deg, rgba(11,61,46,0.12), rgba(11,61,46,0.04)); }
+        .channel-icon.partner { background: linear-gradient(135deg, rgba(184,145,46,0.15), rgba(184,145,46,0.05)); }
+
+        .channel-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .channel-card p {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        .channel-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 0.8rem;
+        }
+
+        .tag-high { background: rgba(20,87,63,0.12); color: var(--green-canopy); }
+        .tag-med { background: rgba(212,168,67,0.15); color: var(--gold-aged); }
+        .tag-low { background: rgba(138,138,138,0.15); color: var(--ash); }
+
+        /* ===== CAMPAIGN CARDS ===== */
+        .campaigns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .campaign-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .campaign-header {
+            padding: 2rem;
+            color: white;
+            position: relative;
+        }
+
+        .campaign-card:nth-child(1) .campaign-header { background: linear-gradient(135deg, var(--green), var(--green-canopy)); }
+        .campaign-card:nth-child(2) .campaign-header { background: linear-gradient(135deg, var(--gold-aged), var(--gold)); }
+        .campaign-card:nth-child(3) .campaign-header { background: linear-gradient(135deg, #1A6B4A, var(--green-canopy)); }
+
+        .campaign-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .campaign-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            line-height: 1.3;
+        }
+
+        .campaign-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .campaign-copy {
+            background: var(--cloud);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--gold);
+        }
+
+        .campaign-copy p {
+            font-size: 0.85rem;
+            color: var(--slate);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .campaign-copy .lang-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gold-aged);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .campaign-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .campaign-meta span {
+            font-size: 0.8rem;
+            color: var(--ash);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== OUTREACH ===== */
+        .template-card {
+            background: var(--cloud);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            color: var(--green);
+            margin-bottom: 0.8rem;
+        }
+
+        .template-text {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: 8px;
+            padding: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--slate);
+            line-height: 1.7;
+            white-space: pre-line;
+            font-style: italic;
+        }
+
+        .template-note {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            color: var(--ash);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* ===== REFERRAL ===== */
+        .referral-section { background: var(--green); }
+        .referral-section .section-title { color: var(--pearl); }
+        .referral-section .section-sub { color: rgba(254,253,251,0.6); }
+        .referral-section .section-badge { background: rgba(212,168,67,0.15); color: var(--gold); }
+
+        .referral-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .referral-step {
+            background: rgba(254,253,251,0.06);
+            border: 1px solid rgba(254,253,251,0.12);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+        }
+
+        .referral-step .step-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .referral-step h4 { color: var(--pearl); font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .referral-step p { color: rgba(254,253,251,0.5); font-size: 0.8rem; }
+
+        .referral-arrow { color: var(--gold); font-size: 1.5rem; font-weight: 700; }
+
+        .referral-bonus {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .bonus-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--gold);
+        }
+
+        .bonus-label {
+            color: rgba(254,253,251,0.6);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ===== CALENDAR TABLE ===== */
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+        }
+
+        .calendar-table th {
+            background: var(--green);
+            color: var(--pearl);
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-table td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--mist);
+            color: var(--slate);
+        }
+
+        .calendar-table tr:nth-child(even) { background: var(--cloud); }
+        .calendar-table tr:hover td { background: rgba(212,168,67,0.06); }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-fb { background: rgba(59,89,152,0.12); color: #3B5998; }
+        .badge-ig { background: rgba(193,53,132,0.12); color: #C13584; }
+        .badge-goog { background: rgba(66,133,244,0.12); color: #4285F4; }
+        .badge-wa { background: rgba(37,211,102,0.12); color: #25D366; }
+        .badge-blog { background: rgba(11,61,46,0.12); color: var(--green); }
+
+        /* ===== SEO ===== */
+        .keyword-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .keyword-card {
+            background: var(--cloud);
+            border: 1px solid var(--mist);
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .keyword-card .kw {
+            font-weight: 700;
+            color: var(--green);
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .keyword-card .vol {
+            font-size: 0.78rem;
+            color: var(--ash);
+        }
+
+        .keyword-card .diff-bar {
+            height: 4px;
+            background: var(--mist);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .keyword-card .diff-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        .diff-easy { background: #2ED89A; }
+        .diff-med { background: var(--gold); }
+        .diff-hard { background: #E85D3A; }
+
+        /* ===== PRICING ===== */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .pricing-card {
+            background: var(--pearl);
+            border: 2px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--gold);
+            background: linear-gradient(to bottom, rgba(212,168,67,0.04), var(--pearl));
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST COMMON';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--green);
+            padding: 4px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .pricing-type {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--ash);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-range {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--green);
+            margin-bottom: 0.3rem;
+        }
+
+        .pricing-unit {
+            font-size: 0.85rem;
+            color: var(--ash);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-example {
+            background: var(--cloud);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .pricing-example h5 {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold-aged);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-example .line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--slate);
+            padding: 0.3rem 0;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .pricing-example .line:last-child {
+            border: none;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--charcoal);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(254,253,251,0.4);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            section { padding: 3rem 1.5rem; }
+            .page-header { padding: 4rem 1.5rem 3rem; }
+            .funnel-stage { font-size: 0.8rem; padding: 1rem; }
+            .funnel-stage:nth-child(1) { width: 100%; }
+            .funnel-stage:nth-child(2) { width: 92%; }
+            .funnel-stage:nth-child(3) { width: 84%; }
+            .funnel-stage:nth-child(4) { width: 76%; }
+            .funnel-stage:nth-child(5) { width: 68%; }
+            .referral-flow { flex-direction: column; }
+            .referral-arrow { transform: rotate(90deg); }
+            .campaigns-grid { grid-template-columns: 1fr; }
+            .tab-nav { gap: 0.25rem; }
+            .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
+            .calendar-table { font-size: 0.75rem; }
+            .calendar-table th, .calendar-table td { padding: 0.5rem; }
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RTL support */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .back-link { direction: rtl; }
+        [dir="rtl"] .campaign-copy { border-left: none; border-right: 3px solid var(--gold); }
+        [dir="rtl"] .calendar-table th { text-align: right; }
+        [dir="rtl"] .template-text { direction: rtl; }
+
+        /* ===== TABLE RESPONSIVE ===== */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--mist);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+    <div class="container">
+        <a href="index.html" class="back-link" data-en="← Back to Dashboard" data-es="← Volver al Panel" data-he="→ חזרה ללוח בקרה">← Back to Dashboard</a>
+        <h1>
+            <span data-en="Sales &" data-es="Ventas y" data-he="מכירות">Sales &</span><br>
+            <em data-en="Marketing" data-es="Marketing" data-he="ושיווק">Marketing</em>
+        </h1>
+        <p data-en="Go-to-market strategy for Solaris Energy in the Azuero Peninsula. Channels, campaigns, and outreach playbooks." data-es="Estrategia de entrada al mercado para Solaris Energy en la Península de Azuero. Canales, campañas y playbooks de alcance." data-he="אסטרטגיית כניסה לשוק של Solaris Energy בחצי האי אזוארו. ערוצים, קמפיינים ותוכניות הגעה.">Go-to-market strategy for Solaris Energy in the Azuero Peninsula. Channels, campaigns, and outreach playbooks.</p>
+    </div>
+</header>
+
+<!-- SECTION 1: SALES FUNNEL -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="SALES FUNNEL" data-es="EMBUDO DE VENTAS" data-he="משפך מכירות">SALES FUNNEL</div>
+        <h2 class="section-title reveal" data-en="From Awareness to Referral" data-es="De Conocimiento a Referencia" data-he="ממודעות להפניה">From Awareness to Referral</h2>
+        <p class="section-sub reveal" data-en="A 5-stage funnel tailored for Panama's solar market. Each stage has specific channels and conversion tactics." data-es="Un embudo de 5 etapas adaptado al mercado solar de Panamá. Cada etapa tiene canales específicos y tácticas de conversión." data-he="משפך בן 5 שלבים המותאם לשוק הסולארי של פנמה. לכל שלב יש ערוצים וטקטיקות המרה ייעודיים.">A 5-stage funnel tailored for Panama's solar market. Each stage has specific channels and conversion tactics.</p>
+
+        <div class="funnel-wrap reveal">
+            <div class="funnel-stage">
+                <span class="funnel-icon">📣</span>
+                <span data-en="AWARENESS — Social Media, Google, Local Events" data-es="CONOCIMIENTO — Redes Sociales, Google, Eventos Locales" data-he="מודעות — רשתות חברתיות, גוגל, אירועים מקומיים">AWARENESS — Social Media, Google, Local Events</span>
+            </div>
+            <div class="funnel-stage">
+                <span class="funnel-icon">💡</span>
+                <span data-en="INTEREST — Website Visit, WhatsApp Chat, Content" data-es="INTERES — Visita al Sitio, Chat WhatsApp, Contenido" data-he="עניין — ביקור באתר, צ'אט WhatsApp, תוכן">INTEREST — Website Visit, WhatsApp Chat, Content</span>
+            </div>
+            <div class="funnel-stage">
+                <span class="funnel-icon">📋</span>
+                <span data-en="QUOTE — Site Survey, System Design, Proposal" data-es="COTIZACION — Visita al Sitio, Diseño, Propuesta" data-he="הצעת מחיר — סקר אתר, תכנון, הצעה">QUOTE — Site Survey, System Design, Proposal</span>
+            </div>
+            <div class="funnel-stage">
+                <span class="funnel-icon">🤝</span>
+                <span data-en="CLOSE — Contract, Deposit, Installation" data-es="CIERRE — Contrato, Depósito, Instalación" data-he="סגירה — חוזה, מקדמה, התקנה">CLOSE — Contract, Deposit, Installation</span>
+            </div>
+            <div class="funnel-stage">
+                <span class="funnel-icon">⭐</span>
+                <span data-en="REFERRAL — $200 Bonus, Review, Repeat" data-es="REFERENCIA — Bono $200, Reseña, Repetir" data-he="הפניה — בונוס $200, ביקורת, חזרה">REFERRAL — $200 Bonus, Review, Repeat</span>
+            </div>
+        </div>
+
+        <div class="funnel-details reveal">
+            <div class="funnel-detail-card">
+                <h4 data-en="Awareness → Interest" data-es="Conocimiento → Interés" data-he="מודעות → עניין">Awareness → Interest</h4>
+                <p data-en="Target: 30% click-through. Use Facebook/Instagram ads, Google Business profile, and WhatsApp broadcast lists." data-es="Objetivo: 30% tasa de clics. Usar anuncios Facebook/Instagram, perfil Google Business y listas de difusión WhatsApp." data-he="יעד: 30% קליקים. שימוש בפרסום פייסבוק/אינסטגרם, פרופיל Google Business ורשימות WhatsApp.">Target: 30% click-through. Use Facebook/Instagram ads, Google Business profile, and WhatsApp broadcast lists.</p>
+            </div>
+            <div class="funnel-detail-card">
+                <h4 data-en="Interest → Quote" data-es="Interés → Cotización" data-he="עניין → הצעת מחיר">Interest → Quote</h4>
+                <p data-en="Target: 50% conversion. Free site survey within 48 hours. WhatsApp follow-up within 2 hours of inquiry." data-es="Objetivo: 50% conversión. Visita gratuita al sitio dentro de 48 horas. Seguimiento WhatsApp dentro de 2 horas." data-he="יעד: 50% המרה. סקר אתר חינם תוך 48 שעות. מעקב WhatsApp תוך שעתיים מפנייה.">Target: 50% conversion. Free site survey within 48 hours. WhatsApp follow-up within 2 hours of inquiry.</p>
+            </div>
+            <div class="funnel-detail-card">
+                <h4 data-en="Quote → Close" data-es="Cotización → Cierre" data-he="הצעה → סגירה">Quote → Close</h4>
+                <p data-en="Target: 40% close rate. Law 417 tax calculator in proposal. 3 follow-up touches over 14 days." data-es="Objetivo: 40% tasa de cierre. Calculadora Ley 417 en propuesta. 3 seguimientos en 14 días." data-he="יעד: 40% סגירה. מחשבון חוק 417 בהצעה. 3 מגעי מעקב ב-14 יום.">Target: 40% close rate. Law 417 tax calculator in proposal. 3 follow-up touches over 14 days.</p>
+            </div>
+            <div class="funnel-detail-card">
+                <h4 data-en="Close → Referral" data-es="Cierre → Referencia" data-he="סגירה → הפניה">Close → Referral</h4>
+                <p data-en="Target: 30% referral rate. $200 cash bonus per successful referral. Google review request post-installation." data-es="Objetivo: 30% tasa de referencia. Bono de $200 por referencia exitosa. Solicitar reseña Google post-instalación." data-he="יעד: 30% הפניות. בונוס $200 לכל הפניה מוצלחת. בקשת ביקורת גוגל אחרי התקנה.">Target: 30% referral rate. $200 cash bonus per successful referral. Google review request post-installation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: MARKETING CHANNELS -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="MARKETING CHANNELS" data-es="CANALES DE MARKETING" data-he="ערוצי שיווק">MARKETING CHANNELS</div>
+        <h2 class="section-title reveal" data-en="Where We Reach Them" data-es="Dónde Los Alcanzamos" data-he="איפה מגיעים אליהם">Where We Reach Them</h2>
+        <p class="section-sub reveal" data-en="Multi-channel approach targeting both expat homeowners and local Panamanian businesses." data-es="Enfoque multicanal dirigido tanto a propietarios expatriados como a empresas panameñas locales." data-he="גישה רב-ערוצית המכוונת הן לבעלי בתים אקספטים והן לעסקים מקומיים בפנמה.">Multi-channel approach targeting both expat homeowners and local Panamanian businesses.</p>
+
+        <div class="tabs-container reveal">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showTab('digital')" data-en="Digital" data-es="Digital" data-he="דיגיטל">Digital</button>
+                <button class="tab-btn" onclick="showTab('direct')" data-en="Direct" data-es="Directo" data-he="ישיר">Direct</button>
+                <button class="tab-btn" onclick="showTab('partnerships')" data-en="Partnerships" data-es="Alianzas" data-he="שותפויות">Partnerships</button>
+                <button class="tab-btn" onclick="showTab('community')" data-en="Community" data-es="Comunidad" data-he="קהילה">Community</button>
+            </div>
+
+            <!-- Digital Tab -->
+            <div class="tab-panel active" id="tab-digital">
+                <div class="channel-grid">
+                    <div class="channel-card">
+                        <div class="channel-icon social">📱</div>
+                        <h3 data-en="Facebook & Instagram" data-es="Facebook e Instagram" data-he="פייסבוק ואינסטגרם">Facebook & Instagram</h3>
+                        <p data-en="Primary channel for expats. Target: Pedasi/Playa Venao expat groups (3,000+ members). Instagram Reels showing installations, before/after bills. Budget: $500/month." data-es="Canal principal para expatriados. Objetivo: grupos de expatriados Pedasi/Playa Venao (3,000+ miembros). Instagram Reels mostrando instalaciones, facturas antes/después. Presupuesto: $500/mes." data-he="ערוץ עיקרי לאקספטים. יעד: קבוצות אקספטים בפדסי/פלאיה וונאו (3,000+ חברים). אינסטגרם Reels של התקנות, חשבונות לפני/אחרי. תקציב: $500/חודש.">Primary channel for expats. Target: Pedasi/Playa Venao expat groups (3,000+ members). Instagram Reels showing installations, before/after bills. Budget: $500/month.</p>
+                        <span class="channel-tag tag-high" data-en="HIGH PRIORITY" data-es="ALTA PRIORIDAD" data-he="עדיפות גבוהה">HIGH PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon search">🔍</div>
+                        <h3 data-en="Google Business Profile" data-es="Perfil de Google Business" data-he="פרופיל Google Business">Google Business Profile</h3>
+                        <p data-en="Zero competition for 'solar panel installation Azuero'. Claim and optimize: photos, reviews, posts. Aim for 3-pack within 30 days. Free organic traffic." data-es="Cero competencia para 'instalación panel solar Azuero'. Reclamar y optimizar: fotos, reseñas, publicaciones. Objetivo: 3-pack en 30 días. Tráfico orgánico gratuito." data-he="אפס תחרות ל'התקנת פנלים סולאריים אזוארו'. תפיסת ואופטימיזציה: תמונות, ביקורות, פוסטים. יעד: 3-pack תוך 30 יום. תנועה אורגנית חינם.">Zero competition for 'solar panel installation Azuero'. Claim and optimize: photos, reviews, posts. Aim for 3-pack within 30 days. Free organic traffic.</p>
+                        <span class="channel-tag tag-high" data-en="HIGH PRIORITY" data-es="ALTA PRIORIDAD" data-he="עדיפות גבוהה">HIGH PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon direct">💬</div>
+                        <h3 data-en="WhatsApp Marketing" data-es="Marketing WhatsApp" data-he="שיווק WhatsApp">WhatsApp Marketing</h3>
+                        <p data-en="Panama's #1 messaging app. Build broadcast lists of property owners. Share project updates, testimonials, and bill comparisons. Response rate: 80%+." data-es="App de mensajería #1 de Panamá. Crear listas de difusión de propietarios. Compartir actualizaciones, testimonios y comparaciones de facturas. Tasa de respuesta: 80%+." data-he="אפליקציית המסרים #1 בפנמה. בניית רשימות שידור של בעלי נכסים. שיתוף עדכונים, המלצות והשוואות חשבונות. אחוז תגובה: 80%+.">Panama's #1 messaging app. Build broadcast lists of property owners. Share project updates, testimonials, and bill comparisons. Response rate: 80%+.</p>
+                        <span class="channel-tag tag-high" data-en="HIGH PRIORITY" data-es="ALTA PRIORIDAD" data-he="עדיפות גבוהה">HIGH PRIORITY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Direct Tab -->
+            <div class="tab-panel" id="tab-direct">
+                <div class="channel-grid">
+                    <div class="channel-card">
+                        <div class="channel-icon direct">🚗</div>
+                        <h3 data-en="Door-to-Door (Targeted)" data-es="Puerta a Puerta (Dirigido)" data-he="דלת לדלת (ממוקד)">Door-to-Door (Targeted)</h3>
+                        <p data-en="Drive through upscale neighborhoods in Pedasi, Las Tablas, Chitré. Leave branded flyers with QR code linking to WhatsApp. Focus on houses with high electricity bills (visible large AC units)." data-es="Recorrer vecindarios exclusivos en Pedasi, Las Tablas, Chitré. Dejar folletos con código QR vinculado a WhatsApp. Enfoque en casas con facturas altas (unidades AC grandes visibles)." data-he="נסיעה בשכונות יוקרתיות בפדסי, לאס טאבלאס, צ'יטרה. השארת פלאיירים ממותגים עם QR לוואטסאפ. מיקוד בבתים עם חשבונות חשמל גבוהים (יחידות מיזוג גדולות נראות).">Drive through upscale neighborhoods in Pedasi, Las Tablas, Chitré. Leave branded flyers with QR code linking to WhatsApp. Focus on houses with high electricity bills (visible large AC units).</p>
+                        <span class="channel-tag tag-med" data-en="MEDIUM PRIORITY" data-es="PRIORIDAD MEDIA" data-he="עדיפות בינונית">MEDIUM PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon direct">📧</div>
+                        <h3 data-en="Cold Email Outreach" data-es="Emails en Frío" data-he="אימייל קר">Cold Email Outreach</h3>
+                        <p data-en="Target hotel owners, restaurant operators, and commercial property managers. Personalized emails with bill-savings analysis. 3-email sequence over 10 days." data-es="Dirigido a dueños de hoteles, operadores de restaurantes y administradores de propiedades comerciales. Emails personalizados con análisis de ahorro. Secuencia de 3 emails en 10 días." data-he="מכוון לבעלי מלונות, מפעילי מסעדות ומנהלי נכסים מסחריים. אימיילים מותאמים עם ניתוח חיסכון. רצף של 3 אימיילים ב-10 ימים.">Target hotel owners, restaurant operators, and commercial property managers. Personalized emails with bill-savings analysis. 3-email sequence over 10 days.</p>
+                        <span class="channel-tag tag-med" data-en="MEDIUM PRIORITY" data-es="PRIORIDAD MEDIA" data-he="עדיפות בינונית">MEDIUM PRIORITY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partnerships Tab -->
+            <div class="tab-panel" id="tab-partnerships">
+                <div class="channel-grid">
+                    <div class="channel-card">
+                        <div class="channel-icon partner">🏨</div>
+                        <h3 data-en="Hotels & Resorts" data-es="Hoteles y Resorts" data-he="מלונות ורזורטים">Hotels & Resorts</h3>
+                        <p data-en="Partner with boutique hotels and eco-lodges. They get lower operating costs; we get high-value commercial projects and social proof. Target: 5 partnerships in Q1." data-es="Asociarse con hoteles boutique y eco-lodges. Obtienen menores costos operativos; nosotros obtenemos proyectos comerciales de alto valor y prueba social. Objetivo: 5 alianzas en Q1." data-he="שותפות עם מלונות בוטיק ואקו-לודג'ים. הם מקבלים עלויות תפעול נמוכות; אנחנו מקבלים פרויקטים מסחריים בעלי ערך גבוה והוכחה חברתית. יעד: 5 שותפויות ברבעון הראשון.">Partner with boutique hotels and eco-lodges. They get lower operating costs; we get high-value commercial projects and social proof. Target: 5 partnerships in Q1.</p>
+                        <span class="channel-tag tag-high" data-en="HIGH PRIORITY" data-es="ALTA PRIORIDAD" data-he="עדיפות גבוהה">HIGH PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon partner">🏠</div>
+                        <h3 data-en="Real Estate Agents" data-es="Agentes Inmobiliarios" data-he="סוכני נדל״ן">Real Estate Agents</h3>
+                        <p data-en="Commission-based referrals from agents selling properties to expats. Solar adds value to listings. $150 referral fee per closed deal. Target: 10 agent relationships." data-es="Referencias basadas en comisión de agentes que venden propiedades a expatriados. Solar agrega valor a las propiedades. $150 por referencia cerrada. Objetivo: 10 relaciones con agentes." data-he="הפניות מבוססות עמלה מסוכנים שמוכרים נכסים לאקספטים. סולארי מוסיף ערך לנכסים. $150 דמי הפניה לכל עסקה. יעד: 10 קשרים עם סוכנים.">Commission-based referrals from agents selling properties to expats. Solar adds value to listings. $150 referral fee per closed deal. Target: 10 agent relationships.</p>
+                        <span class="channel-tag tag-high" data-en="HIGH PRIORITY" data-es="ALTA PRIORIDAD" data-he="עדיפות גבוהה">HIGH PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon partner">🔧</div>
+                        <h3 data-en="Electricians & Contractors" data-es="Electricistas y Contratistas" data-he="חשמלאים וקבלנים">Electricians & Contractors</h3>
+                        <p data-en="Local electricians and construction contractors as sub-contractors and referral sources. They recommend us to their clients building new homes. $100 referral fee." data-es="Electricistas y contratistas locales como subcontratistas y fuentes de referencia. Nos recomiendan a sus clientes que construyen casas nuevas. $100 por referencia." data-he="חשמלאים וקבלני בנייה מקומיים כקבלני משנה ומקורות הפניה. הם ממליצים עלינו ללקוחות שבונים בתים חדשים. $100 דמי הפניה.">Local electricians and construction contractors as sub-contractors and referral sources. They recommend us to their clients building new homes. $100 referral fee.</p>
+                        <span class="channel-tag tag-med" data-en="MEDIUM PRIORITY" data-es="PRIORIDAD MEDIA" data-he="עדיפות בינונית">MEDIUM PRIORITY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Tab -->
+            <div class="tab-panel" id="tab-community">
+                <div class="channel-grid">
+                    <div class="channel-card">
+                        <div class="channel-icon social">🎪</div>
+                        <h3 data-en="Local Events & Markets" data-es="Eventos Locales y Mercados" data-he="אירועים ושווקים מקומיים">Local Events & Markets</h3>
+                        <p data-en="Booth at Pedasi Saturday market, surf events at Playa Venao, expat mixers. Branded tent with solar panel demo. Collect WhatsApp contacts with QR." data-es="Stand en mercado sabatino de Pedasi, eventos de surf en Playa Venao, encuentros de expatriados. Carpa con demo de panel solar. Recopilar contactos WhatsApp con QR." data-he="דוכן בשוק שבת בפדסי, אירועי גלישה בפלאיה וונאו, מפגשי אקספטים. אוהל ממותג עם הדגמת פנל סולארי. איסוף קשרי WhatsApp עם QR.">Booth at Pedasi Saturday market, surf events at Playa Venao, expat mixers. Branded tent with solar panel demo. Collect WhatsApp contacts with QR.</p>
+                        <span class="channel-tag tag-med" data-en="MEDIUM PRIORITY" data-es="PRIORIDAD MEDIA" data-he="עדיפות בינונית">MEDIUM PRIORITY</span>
+                    </div>
+                    <div class="channel-card">
+                        <div class="channel-icon social">🎤</div>
+                        <h3 data-en="Educational Workshops" data-es="Talleres Educativos" data-he="סדנאות חינוכיות">Educational Workshops</h3>
+                        <p data-en="'Solar 101 in Panama' free workshops at co-working spaces and community centers. Establish authority, collect leads. Monthly event, 15-20 attendees target." data-es="Talleres gratuitos 'Solar 101 en Panamá' en espacios coworking y centros comunitarios. Establecer autoridad, captar leads. Evento mensual, 15-20 asistentes objetivo." data-he="סדנאות חינם 'סולארי 101 בפנמה' במרחבי עבודה משותפים ומרכזים קהילתיים. ביסוס סמכות, איסוף לידים. אירוע חודשי, יעד 15-20 משתתפים.">&#8220;Solar 101 in Panama&#8221; free workshops at co-working spaces and community centers. Establish authority, collect leads. Monthly event, 15-20 attendees target.</p>
+                        <span class="channel-tag tag-low" data-en="LONG TERM" data-es="LARGO PLAZO" data-he="טווח ארוך">LONG TERM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: AD CAMPAIGNS -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="AD CAMPAIGNS" data-es="CAMPAÑAS PUBLICITARIAS" data-he="קמפיינים">AD CAMPAIGNS</div>
+        <h2 class="section-title reveal" data-en="3 Campaign Concepts" data-es="3 Conceptos de Campaña" data-he="3 קונספטים לקמפיינים">3 Campaign Concepts</h2>
+        <p class="section-sub reveal" data-en="Bilingual campaigns targeting different buyer motivations. Spanish for locals, English for expats." data-es="Campañas bilingües dirigidas a diferentes motivaciones de compra. Español para locales, inglés para expatriados." data-he="קמפיינים דו-לשוניים המכוונים למוטיבציות קנייה שונות. ספרדית למקומיים, אנגלית לאקספטים.">Bilingual campaigns targeting different buyer motivations. Spanish for locals, English for expats.</p>
+
+        <div class="campaigns-grid reveal">
+            <!-- Campaign 1: Ahorro -->
+            <div class="campaign-card">
+                <div class="campaign-header">
+                    <div class="campaign-label" data-en="CAMPAIGN 1 — SAVINGS" data-es="CAMPAÑA 1 — AHORRO" data-he="קמפיין 1 — חיסכון">CAMPAIGN 1 — SAVINGS</div>
+                    <h3 data-en="Tu techo puede ahorrarte $500 al mes" data-es="Tu techo puede ahorrarte $500 al mes" data-he="הגג שלך יכול לחסוך לך $500 בחודש">Tu techo puede ahorrarte $500 al mes</h3>
+                </div>
+                <div class="campaign-body">
+                    <div class="campaign-copy">
+                        <div class="lang-label">Español</div>
+                        <p>¿Estás cansado de pagar cuentas de luz de $500, $800 o más? Con energía solar, tu techo trabaja para ti. Instalación profesional. Retorno en menos de 3 años. ¡Cotización gratis!</p>
+                    </div>
+                    <div class="campaign-copy">
+                        <div class="lang-label">English</div>
+                        <p>Tired of $500+ electricity bills? Your roof can pay for itself. Professional solar installation in the Azuero Peninsula. Payback under 3 years. Free quote today!</p>
+                    </div>
+                    <div class="campaign-meta">
+                        <span>📍 <span data-en="Azuero, 25-65 age" data-es="Azuero, 25-65 años" data-he="אזוארו, גיל 25-65">Azuero, 25-65 age</span></span>
+                        <span>💰 <span data-en="$15/day budget" data-es="$15/día presupuesto" data-he="תקציב $15/יום">$15/day budget</span></span>
+                        <span>🎯 <span data-en="Homeowners" data-es="Propietarios" data-he="בעלי בתים">Homeowners</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign 2: Ley 417 -->
+            <div class="campaign-card">
+                <div class="campaign-header">
+                    <div class="campaign-label" data-en="CAMPAIGN 2 — TAX BENEFIT" data-es="CAMPAÑA 2 — BENEFICIO FISCAL" data-he="קמפיין 2 — הטבת מס">CAMPAIGN 2 — TAX BENEFIT</div>
+                    <h3 data-en="El gobierno paga tu inversión solar" data-es="El gobierno paga tu inversión solar" data-he="הממשלה משלמת את ההשקעה הסולארית שלך">El gobierno paga tu inversión solar</h3>
+                </div>
+                <div class="campaign-body">
+                    <div class="campaign-copy">
+                        <div class="lang-label">Español</div>
+                        <p>Ley 417: Deducción fiscal del 100% en equipos solares + exención total de impuestos de importación. El gobierno de Panamá quiere que uses energía solar. ¿A qué esperas?</p>
+                    </div>
+                    <div class="campaign-copy">
+                        <div class="lang-label">English</div>
+                        <p>Panama's Law 417: 100% tax deduction on solar equipment + zero import duty. The government literally pays you to go solar. Don't leave money on the table.</p>
+                    </div>
+                    <div class="campaign-meta">
+                        <span>📍 <span data-en="Panama-wide, business owners" data-es="Toda Panamá, empresarios" data-he="כל פנמה, בעלי עסקים">Panama-wide, business owners</span></span>
+                        <span>💰 <span data-en="$20/day budget" data-es="$20/día presupuesto" data-he="תקציב $20/יום">$20/day budget</span></span>
+                        <span>🎯 <span data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign 3: Social Proof -->
+            <div class="campaign-card">
+                <div class="campaign-header">
+                    <div class="campaign-label" data-en="CAMPAIGN 3 — SOCIAL PROOF" data-es="CAMPAÑA 3 — PRUEBA SOCIAL" data-he="קמפיין 3 — הוכחה חברתית">CAMPAIGN 3 — SOCIAL PROOF</div>
+                    <h3 data-en="De $850 a $45 al mes" data-es="De $850 a $45 al mes" data-he="מ-$850 ל-$45 לחודש">De $850 a $45 al mes</h3>
+                </div>
+                <div class="campaign-body">
+                    <div class="campaign-copy">
+                        <div class="lang-label">Español</div>
+                        <p>Nuestro cliente en Playa Venao pasó de pagar $850/mes a solo $45. Sistema de 15kW, instalado en 3 días. ¿Cuánto puedes ahorrar? Escríbenos por WhatsApp.</p>
+                    </div>
+                    <div class="campaign-copy">
+                        <div class="lang-label">English</div>
+                        <p>Our client in Playa Venao went from $850/month to just $45. 15kW system, installed in 3 days. How much could you save? Message us on WhatsApp.</p>
+                    </div>
+                    <div class="campaign-meta">
+                        <span>📍 <span data-en="Lookalike audiences" data-es="Audiencias similares" data-he="קהלים דומים">Lookalike audiences</span></span>
+                        <span>💰 <span data-en="$10/day budget" data-es="$10/día presupuesto" data-he="תקציב $10/יום">$10/day budget</span></span>
+                        <span>🎯 <span data-en="Retargeting" data-es="Retargeting" data-he="רימרקטינג">Retargeting</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: OUTREACH TEMPLATES -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="OUTREACH TEMPLATES" data-es="PLANTILLAS DE CONTACTO" data-he="תבניות פנייה">OUTREACH TEMPLATES</div>
+        <h2 class="section-title reveal" data-en="Ready-to-Send Messages" data-es="Mensajes Listos para Enviar" data-he="הודעות מוכנות לשליחה">Ready-to-Send Messages</h2>
+        <p class="section-sub reveal" data-en="Copy-paste outreach templates in Spanish for cold email, WhatsApp, and follow-up sequences." data-es="Plantillas de contacto listas para copiar y pegar en español para email frío, WhatsApp y secuencias de seguimiento." data-he="תבניות פנייה מוכנות להעתקה בספרדית לאימייל קר, וואטסאפ ורצפי מעקב.">Copy-paste outreach templates in Spanish for cold email, WhatsApp, and follow-up sequences.</p>
+
+        <div class="template-card reveal">
+            <h4 data-en="Cold Email — Hotels & Restaurants" data-es="Email Frío — Hoteles y Restaurantes" data-he="אימייל קר — מלונות ומסעדות">Cold Email — Hotels & Restaurants</h4>
+            <div class="template-text">Asunto: Reduzca su factura eléctrica un 85% — sin inversión inicial
+
+Estimado/a [Nombre],
+
+Mi nombre es Omri de Solaris Energy. Ayudamos a hoteles y restaurantes en la Península de Azuero a reducir drásticamente sus costos de electricidad con energía solar.
+
+Con la Ley 417, su inversión es 100% deducible de impuestos — y los equipos están exentos de impuestos de importación.
+
+Ejemplo reciente: un hotel boutique en Playa Venao redujo su factura de $850/mes a $45/mes.
+
+¿Le interesaría una cotización gratuita sin compromiso? Puedo visitarle esta semana.
+
+Saludos,
+Omri Peretz
+Solaris Energy · +507 6583-1822
+solaris-panama.com</div>
+            <div class="template-note">💡 <span data-en="Personalize [Nombre] and mention their specific business name" data-es="Personalizar [Nombre] y mencionar el nombre específico del negocio" data-he="להתאים [Nombre] ולהזכיר את שם העסק הספציפי">Personalize [Nombre] and mention their specific business name</span></div>
+        </div>
+
+        <div class="template-card reveal">
+            <h4 data-en="WhatsApp — First Contact" data-es="WhatsApp — Primer Contacto" data-he="WhatsApp — פנייה ראשונה">WhatsApp — First Contact</h4>
+            <div class="template-text">Hola [Nombre] 👋
+
+Soy Omri de Solaris Energy. Instalamos paneles solares en la Península de Azuero.
+
+Vi su propiedad y creo que podría ahorrar bastante en electricidad con un sistema solar. Con la Ley 417, la inversión es 100% deducible.
+
+¿Cuánto está pagando actualmente de luz? Le puedo dar un estimado de ahorro en 5 minutos.
+
+📞 +507 6583-1822
+🌐 solaris-panama.com</div>
+            <div class="template-note">💡 <span data-en="Keep it conversational — WhatsApp is informal in Panama" data-es="Mantenerlo conversacional — WhatsApp es informal en Panamá" data-he="לשמור על טון שיחתי — WhatsApp הוא לא רשמי בפנמה">Keep it conversational — WhatsApp is informal in Panama</span></div>
+        </div>
+
+        <div class="template-card reveal">
+            <h4 data-en="Follow-up Sequence (3 touches)" data-es="Secuencia de Seguimiento (3 contactos)" data-he="רצף מעקב (3 מגעים)">Follow-up Sequence (3 touches)</h4>
+            <div class="template-text">📅 Día 3: "Hola [Nombre], ¿tuvo oportunidad de revisar la información sobre energía solar? Estoy disponible para responder cualquier pregunta."
+
+📅 Día 7: "Hola [Nombre], le comparto un caso reciente: [Cliente] en [Zona] pasó de $[X]/mes a $[Y]/mes con nuestro sistema. ¿Le gustaría ver una cotización personalizada?"
+
+📅 Día 14: "Hola [Nombre], última actualización: la Ley 417 permite deducir el 100% de la inversión solar este año fiscal. No quiero que pierda esta oportunidad. ¿Agendamos una visita de 15 minutos?"</div>
+            <div class="template-note">💡 <span data-en="Space out follow-ups — don't be pushy. Stop after 3 if no response." data-es="Espaciar los seguimientos — no ser insistente. Parar después de 3 si no hay respuesta." data-he="לרווח בין מגעי מעקב — לא להיות דוחק. לעצור אחרי 3 אם אין תגובה.">Space out follow-ups — don't be pushy. Stop after 3 if no response.</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: REFERRAL PROGRAM -->
+<section class="referral-section">
+    <div class="container">
+        <div class="section-badge" data-en="REFERRAL PROGRAM" data-es="PROGRAMA DE REFERIDOS" data-he="תוכנית הפניות">REFERRAL PROGRAM</div>
+        <h2 class="section-title reveal" data-en="Turn Clients Into Salespeople" data-es="Convierte Clientes en Vendedores" data-he="הפכו לקוחות לאנשי מכירות">Turn Clients Into Salespeople</h2>
+        <p class="section-sub reveal" data-en="Word-of-mouth is king in small communities. Every happy client is a potential ambassador." data-es="El boca a boca es rey en comunidades pequeñas. Cada cliente feliz es un embajador potencial." data-he="שמועות מפה לאוזן שולטות בקהילות קטנות. כל לקוח מרוצה הוא שגריר פוטנציאלי.">Word-of-mouth is king in small communities. Every happy client is a potential ambassador.</p>
+
+        <div class="referral-flow reveal">
+            <div class="referral-step">
+                <div class="step-icon">🏠</div>
+                <h4 data-en="Happy Client" data-es="Cliente Feliz" data-he="לקוח מרוצה">Happy Client</h4>
+                <p data-en="Post-installation survey" data-es="Encuesta post-instalación" data-he="סקר אחרי התקנה">Post-installation survey</p>
+            </div>
+            <span class="referral-arrow">→</span>
+            <div class="referral-step">
+                <div class="step-icon">📢</div>
+                <h4 data-en="Refers a Friend" data-es="Refiere un Amigo" data-he="מפנה חבר">Refers a Friend</h4>
+                <p data-en="Shares WhatsApp link" data-es="Comparte enlace WhatsApp" data-he="משתף קישור WhatsApp">Shares WhatsApp link</p>
+            </div>
+            <span class="referral-arrow">→</span>
+            <div class="referral-step">
+                <div class="step-icon">📋</div>
+                <h4 data-en="Friend Gets Quote" data-es="Amigo Recibe Cotización" data-he="חבר מקבל הצעה">Friend Gets Quote</h4>
+                <p data-en="Mentions referrer name" data-es="Menciona nombre del referente" data-he="מזכיר שם המפנה">Mentions referrer name</p>
+            </div>
+            <span class="referral-arrow">→</span>
+            <div class="referral-step">
+                <div class="step-icon">🤝</div>
+                <h4 data-en="Deal Closes" data-es="Se Cierra el Trato" data-he="עסקה נסגרת">Deal Closes</h4>
+                <p data-en="Contract signed" data-es="Contrato firmado" data-he="חוזה נחתם">Contract signed</p>
+            </div>
+            <span class="referral-arrow">→</span>
+            <div class="referral-step">
+                <div class="step-icon">💰</div>
+                <h4 data-en="Bonus Paid" data-es="Bono Pagado" data-he="בונוס משולם">Bonus Paid</h4>
+                <p data-en="Cash or credit" data-es="Efectivo o crédito" data-he="מזומן או קרדיט">Cash or credit</p>
+            </div>
+        </div>
+
+        <div class="referral-bonus reveal">
+            <div class="bonus-amount">$200</div>
+            <div class="bonus-label" data-en="Per successful referral — paid in cash upon installation completion" data-es="Por cada referencia exitosa — pagado en efectivo al completar la instalación" data-he="לכל הפניה מוצלחת — משולם במזומן עם השלמת ההתקנה">Per successful referral — paid in cash upon installation completion</div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 6: CONTENT CALENDAR -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="CONTENT CALENDAR" data-es="CALENDARIO DE CONTENIDO" data-he="לוח תוכן">CONTENT CALENDAR</div>
+        <h2 class="section-title reveal" data-en="30-Day Posting Plan" data-es="Plan de Publicaciones 30 Días" data-he="תוכנית פרסום ל-30 יום">30-Day Posting Plan</h2>
+        <p class="section-sub reveal" data-en="Consistent content builds trust and keeps Solaris top-of-mind in the community." data-es="El contenido consistente construye confianza y mantiene a Solaris en la mente de la comunidad." data-he="תוכן עקבי בונה אמון ושומר את Solaris בראש המודעות של הקהילה.">Consistent content builds trust and keeps Solaris top-of-mind in the community.</p>
+
+        <div class="table-wrap reveal">
+            <table class="calendar-table">
+                <thead>
+                    <tr>
+                        <th data-en="Week" data-es="Semana" data-he="שבוע">Week</th>
+                        <th data-en="Day" data-es="Día" data-he="יום">Day</th>
+                        <th data-en="Topic" data-es="Tema" data-he="נושא">Topic</th>
+                        <th data-en="Platform" data-es="Plataforma" data-he="פלטפורמה">Platform</th>
+                        <th data-en="Format" data-es="Formato" data-he="פורמט">Format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="5" style="font-weight:700; color:var(--green);">1</td>
+                        <td data-en="Mon" data-es="Lun" data-he="שני">Mon</td>
+                        <td data-en="Law 417 Explainer" data-es="Explicación Ley 417" data-he="הסבר חוק 417">Law 417 Explainer</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Carousel" data-es="Carrusel" data-he="קרוסלה">Carousel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Tue" data-es="Mar" data-he="שלישי">Tue</td>
+                        <td data-en="Behind-the-scenes: Tipi project" data-es="Detrás de cámaras: proyecto Tipi" data-he="מאחורי הקלעים: פרויקט טיפי">Behind-the-scenes: Tipi project</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Reel" data-es="Reel" data-he="ריל">Reel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Wed" data-es="Mié" data-he="רביעי">Wed</td>
+                        <td data-en="Customer bill comparison" data-es="Comparación de factura" data-he="השוואת חשבון">Customer bill comparison</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-wa">WA</span></td>
+                        <td data-en="Image + text" data-es="Imagen + texto" data-he="תמונה + טקסט">Image + text</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Thu" data-es="Jue" data-he="חמישי">Thu</td>
+                        <td data-en="FAQ: How long does installation take?" data-es="FAQ: ¿Cuánto tarda la instalación?" data-he="שאלות נפוצות: כמה זמן לוקחת התקנה?">FAQ: How long does installation take?</td>
+                        <td><span class="platform-badge badge-fb">FB</span></td>
+                        <td data-en="Text post" data-es="Publicación" data-he="פוסט">Text post</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Fri" data-es="Vie" data-he="שישי">Fri</td>
+                        <td data-en="Team photo / lifestyle" data-es="Foto del equipo / lifestyle" data-he="תמונת צוות / סגנון חיים">Team photo / lifestyle</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Photo" data-es="Foto" data-he="תמונה">Photo</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="5" style="font-weight:700; color:var(--green);">2</td>
+                        <td data-en="Mon" data-es="Lun" data-he="שני">Mon</td>
+                        <td data-en="Solar myths debunked" data-es="Mitos solares desmentidos" data-he="מיתוסים סולאריים שנשברו">Solar myths debunked</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Carousel" data-es="Carrusel" data-he="קרוסלה">Carousel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Tue" data-es="Mar" data-he="שלישי">Tue</td>
+                        <td data-en="Time-lapse: panel installation" data-es="Time-lapse: instalación de paneles" data-he="טיימלאפס: התקנת פנלים">Time-lapse: panel installation</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Reel" data-es="Reel" data-he="ריל">Reel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Wed" data-es="Mié" data-he="רביעי">Wed</td>
+                        <td data-en="Blog: ROI calculator walkthrough" data-es="Blog: Guía calculadora ROI" data-he="בלוג: הדרכת מחשבון ROI">Blog: ROI calculator walkthrough</td>
+                        <td><span class="platform-badge badge-blog">Blog</span> <span class="platform-badge badge-goog">Google</span></td>
+                        <td data-en="Article" data-es="Artículo" data-he="מאמר">Article</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Thu" data-es="Jue" data-he="חמישי">Thu</td>
+                        <td data-en="Testimonial: Playa Venao client" data-es="Testimonio: cliente Playa Venao" data-he="המלצה: לקוח פלאיה וונאו">Testimonial: Playa Venao client</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-wa">WA</span></td>
+                        <td data-en="Video" data-es="Video" data-he="וידאו">Video</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Fri" data-es="Vie" data-he="שישי">Fri</td>
+                        <td data-en="Weekend poll: biggest electricity concern" data-es="Encuesta fin de semana: mayor preocupación eléctrica" data-he="סקר סוף שבוע: הדאגה הגדולה מחשמל">Weekend poll: biggest electricity concern</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Story poll" data-es="Encuesta story" data-he="סקר סטורי">Story poll</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="5" style="font-weight:700; color:var(--green);">3</td>
+                        <td data-en="Mon" data-es="Lun" data-he="שני">Mon</td>
+                        <td data-en="Panama electricity rates vs solar" data-es="Tarifas eléctricas Panamá vs solar" data-he="תעריפי חשמל פנמה מול סולארי">Panama electricity rates vs solar</td>
+                        <td><span class="platform-badge badge-fb">FB</span></td>
+                        <td data-en="Infographic" data-es="Infografía" data-he="אינפוגרפיקה">Infographic</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Tue" data-es="Mar" data-he="שלישי">Tue</td>
+                        <td data-en="Drone footage: completed installation" data-es="Drone: instalación completada" data-he="צילום רחפן: התקנה שהושלמה">Drone footage: completed installation</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Reel" data-es="Reel" data-he="ריל">Reel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Wed" data-es="Mié" data-he="רביעי">Wed</td>
+                        <td data-en="Partner spotlight: local electrician" data-es="Destacado: electricista local" data-he="זרקור שותפים: חשמלאי מקומי">Partner spotlight: local electrician</td>
+                        <td><span class="platform-badge badge-fb">FB</span></td>
+                        <td data-en="Photo + story" data-es="Foto + historia" data-he="תמונה + סיפור">Photo + story</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Thu" data-es="Jue" data-he="חמישי">Thu</td>
+                        <td data-en="Blog: 5 questions before going solar" data-es="Blog: 5 preguntas antes del solar" data-he="בלוג: 5 שאלות לפני שעוברים לסולארי">Blog: 5 questions before going solar</td>
+                        <td><span class="platform-badge badge-blog">Blog</span></td>
+                        <td data-en="Article" data-es="Artículo" data-he="מאמר">Article</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Fri" data-es="Vie" data-he="שישי">Fri</td>
+                        <td data-en="Friday vibes: sunset + panels" data-es="Viernes: atardecer + paneles" data-he="שישי: שקיעה + פנלים">Friday vibes: sunset + panels</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Photo" data-es="Foto" data-he="תמונה">Photo</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="5" style="font-weight:700; color:var(--green);">4</td>
+                        <td data-en="Mon" data-es="Lun" data-he="שני">Mon</td>
+                        <td data-en="Case study: Tipi 300kW deep dive" data-es="Caso de estudio: Tipi 300kW" data-he="מקרה בוחן: טיפי 300kW">Case study: Tipi 300kW deep dive</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-blog">Blog</span></td>
+                        <td data-en="Long post + article" data-es="Post largo + artículo" data-he="פוסט ארוך + מאמר">Long post + article</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Tue" data-es="Mar" data-he="שלישי">Tue</td>
+                        <td data-en="Customer Q&A session" data-es="Sesión Q&A con clientes" data-he="מפגש שאלות ותשובות">Customer Q&A session</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Live / Story" data-es="En vivo / Story" data-he="לייב / סטורי">Live / Story</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Wed" data-es="Mié" data-he="רביעי">Wed</td>
+                        <td data-en="Referral program announcement" data-es="Anuncio programa de referidos" data-he="הכרזת תוכנית הפניות">Referral program announcement</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-wa">WA</span></td>
+                        <td data-en="Image + text" data-es="Imagen + texto" data-he="תמונה + טקסט">Image + text</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Thu" data-es="Jue" data-he="חמישי">Thu</td>
+                        <td data-en="Equipment showcase: panels & inverters" data-es="Muestra de equipos: paneles e inversores" data-he="תצוגת ציוד: פנלים ומהפכים">Equipment showcase: panels & inverters</td>
+                        <td><span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Carousel" data-es="Carrusel" data-he="קרוסלה">Carousel</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Fri" data-es="Vie" data-he="שישי">Fri</td>
+                        <td data-en="Month recap + next month preview" data-es="Resumen del mes + adelanto próximo" data-he="סיכום חודש + תצוגה מקדימה">Month recap + next month preview</td>
+                        <td><span class="platform-badge badge-fb">FB</span> <span class="platform-badge badge-ig">IG</span></td>
+                        <td data-en="Video" data-es="Video" data-he="וידאו">Video</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 7: SEO STRATEGY -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="SEO STRATEGY" data-es="ESTRATEGIA SEO" data-he="אסטרטגיית SEO">SEO STRATEGY</div>
+        <h2 class="section-title reveal" data-en="Dominate Local Search" data-es="Domina la Búsqueda Local" data-he="שלטו בחיפוש המקומי">Dominate Local Search</h2>
+        <p class="section-sub reveal" data-en="Zero digital competition in Azuero for solar keywords. First-mover advantage to capture organic search traffic." data-es="Cero competencia digital en Azuero para palabras clave solares. Ventaja del primer movimiento para capturar tráfico orgánico." data-he="אפס תחרות דיגיטלית באזוארו למילות מפתח סולאריות. יתרון ראשון לנוע ולתפוס תנועה אורגנית.">Zero digital competition in Azuero for solar keywords. First-mover advantage to capture organic search traffic.</p>
+
+        <h3 style="font-family:'Playfair Display',serif; color:var(--green); margin-bottom:1rem;" class="reveal" data-en="Target Keywords" data-es="Palabras Clave Objetivo" data-he="מילות מפתח יעד">Target Keywords</h3>
+        <div class="keyword-grid reveal">
+            <div class="keyword-card">
+                <div class="kw">paneles solares panama</div>
+                <div class="vol" data-en="~1,200 searches/mo · Low competition" data-es="~1,200 búsquedas/mes · Baja competencia" data-he="~1,200 חיפושים/חודש · תחרות נמוכה">~1,200 searches/mo · Low competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-easy" style="width:25%"></div></div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw">energia solar azuero</div>
+                <div class="vol" data-en="~90 searches/mo · No competition" data-es="~90 búsquedas/mes · Sin competencia" data-he="~90 חיפושים/חודש · אין תחרות">~90 searches/mo · No competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-easy" style="width:10%"></div></div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw">ley 417 panama solar</div>
+                <div class="vol" data-en="~300 searches/mo · Low competition" data-es="~300 búsquedas/mes · Baja competencia" data-he="~300 חיפושים/חודש · תחרות נמוכה">~300 searches/mo · Low competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-easy" style="width:20%"></div></div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw">solar panel installation panama</div>
+                <div class="vol" data-en="~500 searches/mo · Medium competition" data-es="~500 búsquedas/mes · Competencia media" data-he="~500 חיפושים/חודש · תחרות בינונית">~500 searches/mo · Medium competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-med" style="width:45%"></div></div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw">cuanto cuesta paneles solares panama</div>
+                <div class="vol" data-en="~400 searches/mo · Low competition" data-es="~400 búsquedas/mes · Baja competencia" data-he="~400 חיפושים/חודש · תחרות נמוכה">~400 searches/mo · Low competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-easy" style="width:30%"></div></div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw">solar energy pedasi</div>
+                <div class="vol" data-en="~40 searches/mo · No competition" data-es="~40 búsquedas/mes · Sin competencia" data-he="~40 חיפושים/חודש · אין תחרות">~40 searches/mo · No competition</div>
+                <div class="diff-bar"><div class="diff-fill diff-easy" style="width:5%"></div></div>
+            </div>
+        </div>
+
+        <h3 style="font-family:'Playfair Display',serif; color:var(--green); margin: 2rem 0 1rem;" class="reveal" data-en="Blog Topics (SEO Content)" data-es="Temas de Blog (Contenido SEO)" data-he="נושאי בלוג (תוכן SEO)">Blog Topics (SEO Content)</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1rem;" class="reveal">
+            <div class="keyword-card">
+                <div class="kw" data-en="How Much Do Solar Panels Cost in Panama?" data-es="¿Cuánto Cuestan los Paneles Solares en Panamá?" data-he="כמה עולים פנלים סולאריים בפנמה?">How Much Do Solar Panels Cost in Panama?</div>
+                <div class="vol" data-en="High purchase intent · 1,500 words" data-es="Alta intención de compra · 1,500 palabras" data-he="כוונת רכישה גבוהה · 1,500 מילים">High purchase intent · 1,500 words</div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw" data-en="Panama Law 417: Complete Tax Guide for Solar" data-es="Ley 417 Panamá: Guía Fiscal Completa para Solar" data-he="חוק 417 פנמה: מדריך מס מלא לסולארי">Panama Law 417: Complete Tax Guide for Solar</div>
+                <div class="vol" data-en="Educational · 2,000 words" data-es="Educativo · 2,000 palabras" data-he="חינוכי · 2,000 מילים">Educational · 2,000 words</div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw" data-en="Solar for Hotels in Panama: ROI Guide" data-es="Solar para Hoteles en Panamá: Guía ROI" data-he="סולארי למלונות בפנמה: מדריך ROI">Solar for Hotels in Panama: ROI Guide</div>
+                <div class="vol" data-en="Commercial segment · 1,800 words" data-es="Segmento comercial · 1,800 palabras" data-he="מגזר מסחרי · 1,800 מילים">Commercial segment · 1,800 words</div>
+            </div>
+            <div class="keyword-card">
+                <div class="kw" data-en="Expat Guide: Going Solar in Azuero Peninsula" data-es="Guía Expatriado: Solar en Península de Azuero" data-he="מדריך אקספטים: סולארי בחצי האי אזוארו">Expat Guide: Going Solar in Azuero Peninsula</div>
+                <div class="vol" data-en="Expat audience · 1,200 words" data-es="Audiencia expatriada · 1,200 palabras" data-he="קהל אקספטים · 1,200 מילים">Expat audience · 1,200 words</div>
+            </div>
+        </div>
+
+        <h3 style="font-family:'Playfair Display',serif; color:var(--green); margin: 2rem 0 1rem;" class="reveal" data-en="Google Business Optimization" data-es="Optimización Google Business" data-he="אופטימיזציית Google Business">Google Business Optimization</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;" class="reveal">
+            <div class="funnel-detail-card">
+                <h4 data-en="Complete Profile" data-es="Perfil Completo" data-he="פרופיל מלא">Complete Profile</h4>
+                <p data-en="All fields filled, 20+ photos of installations, team, and equipment" data-es="Todos los campos llenos, 20+ fotos de instalaciones, equipo y maquinaria" data-he="כל השדות מלאים, 20+ תמונות של התקנות, צוות וציוד">All fields filled, 20+ photos of installations, team, and equipment</p>
+            </div>
+            <div class="funnel-detail-card">
+                <h4 data-en="Weekly Posts" data-es="Publicaciones Semanales" data-he="פוסטים שבועיים">Weekly Posts</h4>
+                <p data-en="Share project updates, offers, and tips directly on Google Business" data-es="Compartir actualizaciones, ofertas y tips directamente en Google Business" data-he="שיתוף עדכונים, מבצעים וטיפים ישירות ב-Google Business">Share project updates, offers, and tips directly on Google Business</p>
+            </div>
+            <div class="funnel-detail-card">
+                <h4 data-en="Review Collection" data-es="Recopilación de Reseñas" data-he="איסוף ביקורות">Review Collection</h4>
+                <p data-en="Request review from every client post-installation. Target: 15 reviews in 6 months" data-es="Solicitar reseña de cada cliente post-instalación. Objetivo: 15 reseñas en 6 meses" data-he="בקשת ביקורת מכל לקוח אחרי התקנה. יעד: 15 ביקורות ב-6 חודשים">Request review from every client post-installation. Target: 15 reviews in 6 months</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 8: PRICING STRATEGY -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="PRICING STRATEGY" data-es="ESTRATEGIA DE PRECIOS" data-he="אסטרטגיית תמחור">PRICING STRATEGY</div>
+        <h2 class="section-title reveal" data-en="Competitive & Profitable" data-es="Competitivo y Rentable" data-he="תחרותי ורווחי">Competitive & Profitable</h2>
+        <p class="section-sub reveal" data-en="Pricing benchmarked against Panama City installers. Premium positioning justified by Azuero expertise and Law 417 guidance." data-es="Precios comparados con instaladores de Ciudad de Panamá. Posicionamiento premium justificado por experiencia en Azuero y asesoría Ley 417." data-he="תמחור מבוסס השוואה מול מתקינים בפנמה סיטי. מיצוב פרימיום מוצדק על ידי מומחיות באזוארו וייעוץ חוק 417.">Pricing benchmarked against Panama City installers. Premium positioning justified by Azuero expertise and Law 417 guidance.</p>
+
+        <div class="pricing-grid reveal">
+            <div class="pricing-card featured">
+                <div class="pricing-type" data-en="RESIDENTIAL" data-es="RESIDENCIAL" data-he="מגורים">RESIDENTIAL</div>
+                <h3 data-en="Home Systems" data-es="Sistemas para Hogar" data-he="מערכות לבית">Home Systems</h3>
+                <div class="pricing-range">$1.10–$1.30</div>
+                <div class="pricing-unit" data-en="per Watt-peak installed" data-es="por Watt-pico instalado" data-he="לוואט-פיק מותקן">per Watt-peak installed</div>
+                <div class="pricing-example">
+                    <h5 data-en="EXAMPLE: 10kW RESIDENTIAL" data-es="EJEMPLO: 10kW RESIDENCIAL" data-he="דוגמה: 10kW מגורים">EXAMPLE: 10kW RESIDENTIAL</h5>
+                    <div class="line"><span data-en="System size" data-es="Tamaño" data-he="גודל מערכת">System size</span><span>10,000 Wp</span></div>
+                    <div class="line"><span data-en="Price/Wp" data-es="Precio/Wp" data-he="מחיר/Wp">Price/Wp</span><span>$1.20</span></div>
+                    <div class="line"><span data-en="Total price" data-es="Precio total" data-he="מחיר כולל">Total price</span><span>$12,000</span></div>
+                    <div class="line"><span data-en="Monthly savings" data-es="Ahorro mensual" data-he="חיסכון חודשי">Monthly savings</span><span>~$300</span></div>
+                    <div class="line"><span data-en="Payback" data-es="Retorno" data-he="החזר השקעה">Payback</span><span>~3.3 years</span></div>
+                </div>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-type" data-en="COMMERCIAL" data-es="COMERCIAL" data-he="מסחרי">COMMERCIAL</div>
+                <h3 data-en="Business Systems" data-es="Sistemas Comerciales" data-he="מערכות לעסקים">Business Systems</h3>
+                <div class="pricing-range">$1.00–$1.20</div>
+                <div class="pricing-unit" data-en="per Watt-peak installed" data-es="por Watt-pico instalado" data-he="לוואט-פיק מותקן">per Watt-peak installed</div>
+                <div class="pricing-example">
+                    <h5 data-en="EXAMPLE: 50kW COMMERCIAL" data-es="EJEMPLO: 50kW COMERCIAL" data-he="דוגמה: 50kW מסחרי">EXAMPLE: 50kW COMMERCIAL</h5>
+                    <div class="line"><span data-en="System size" data-es="Tamaño" data-he="גודל מערכת">System size</span><span>50,000 Wp</span></div>
+                    <div class="line"><span data-en="Price/Wp" data-es="Precio/Wp" data-he="מחיר/Wp">Price/Wp</span><span>$1.10</span></div>
+                    <div class="line"><span data-en="Total price" data-es="Precio total" data-he="מחיר כולל">Total price</span><span>$55,000</span></div>
+                    <div class="line"><span data-en="Monthly savings" data-es="Ahorro mensual" data-he="חיסכון חודשי">Monthly savings</span><span>~$1,600</span></div>
+                    <div class="line"><span data-en="Payback" data-es="Retorno" data-he="החזר השקעה">Payback</span><span>~2.8 years</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+
+// Init language
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// Tab switching
+function showTab(tabName) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

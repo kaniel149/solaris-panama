@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Energy — Financial Dashboard</title>
+    <meta name="description" content="Financial projections, revenue model, P&L, and ROI calculator for Solaris Energy Panama.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --positive: #1A7A5A;
+            --negative: #C0392B;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%);
+            padding: 5rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-header .container { position: relative; z-index: 2; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(254,253,251,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: var(--gold); }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+            color: var(--pearl);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.65);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ===== GENERAL ===== */
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        section { padding: 5rem 2rem; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            color: var(--green);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-sub {
+            font-size: 1rem;
+            color: var(--slate);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 3rem 2rem;
+            background: var(--pearl);
+            box-shadow: 0 4px 40px rgba(0,0,0,0.04);
+        }
+
+        .kpi-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--cloud);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--mist);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .kpi-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--green);
+            letter-spacing: -0.02em;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .kpi-delta {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .kpi-up { color: var(--positive); }
+        .kpi-down { color: var(--negative); }
+
+        /* ===== REVENUE MODEL ===== */
+        .revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .revenue-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .revenue-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .revenue-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .revenue-icon.res { background: linear-gradient(135deg, rgba(20,87,63,0.12), rgba(20,87,63,0.04)); }
+        .revenue-icon.com { background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05)); }
+        .revenue-icon.maint { background: linear-gradient(135deg, rgba(11,61,46,0.12), rgba(11,61,46,0.04)); }
+
+        .revenue-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-card .range {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--gold-aged);
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-card p {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        /* ===== DONUT CHART ===== */
+        .cost-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .donut-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .donut-chart {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-center {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: var(--pearl);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .donut-center .pct {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+        }
+
+        .donut-center .label {
+            font-size: 0.7rem;
+            color: var(--ash);
+        }
+
+        .cost-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .legend-item .name {
+            font-weight: 600;
+            color: var(--charcoal);
+            font-size: 0.95rem;
+        }
+
+        .legend-item .pct {
+            margin-left: auto;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        /* ===== P&L TABLE ===== */
+        .pnl-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .pnl-table th {
+            background: var(--green);
+            color: var(--pearl);
+            padding: 0.7rem 0.8rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .pnl-table th:first-child { text-align: left; }
+
+        .pnl-table td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--mist);
+            text-align: center;
+            color: var(--slate);
+        }
+
+        .pnl-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .pnl-table tr:nth-child(even) { background: var(--cloud); }
+        .pnl-table tr:hover td { background: rgba(212,168,67,0.06); }
+        .pnl-table .total-row { background: rgba(11,61,46,0.06) !important; font-weight: 700; }
+        .pnl-table .total-row td { color: var(--green); border-bottom: 2px solid var(--green); }
+        .pnl-table .profit-positive { color: var(--positive); font-weight: 700; }
+        .pnl-table .profit-negative { color: var(--negative); font-weight: 700; }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--mist);
+        }
+
+        /* ===== BAR CHART ===== */
+        .bar-chart-container {
+            margin: 2rem 0;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .chart-label {
+            min-width: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--slate);
+            text-align: right;
+        }
+
+        .chart-bars {
+            flex: 1;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            height: 32px;
+        }
+
+        .bar-revenue {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--green-canopy));
+            border-radius: 6px 0 0 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 2px;
+            transition: width 1s ease;
+        }
+
+        .bar-expense {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-aged), var(--gold));
+            border-radius: 0 6px 6px 0;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 0.7rem;
+            color: var(--green);
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 2px;
+            transition: width 1s ease;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 0.82rem;
+        }
+
+        .legend-dot-sm {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        /* ===== ROI CALCULATOR ===== */
+        .calc-section { background: var(--green); }
+        .calc-section .section-title { color: var(--pearl); }
+        .calc-section .section-sub { color: rgba(254,253,251,0.6); }
+        .calc-section .section-badge { background: rgba(212,168,67,0.15); color: var(--gold); }
+
+        .calc-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .calc-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .calc-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .calc-group label {
+            font-size: 0.82rem;
+            color: rgba(254,253,251,0.7);
+            font-weight: 600;
+        }
+
+        .calc-group input, .calc-group select {
+            background: rgba(254,253,251,0.08);
+            border: 1px solid rgba(254,253,251,0.15);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            color: var(--pearl);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .calc-group input:focus, .calc-group select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .calc-group select option { color: var(--charcoal); }
+
+        .calc-btn {
+            background: var(--gold);
+            color: var(--green);
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: var(--radius-pill);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.02em;
+            margin-top: 0.5rem;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212,168,67,0.4);
+        }
+
+        .calc-results {
+            background: rgba(254,253,251,0.06);
+            border: 1px solid rgba(254,253,251,0.12);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .calc-result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(254,253,251,0.08);
+        }
+
+        .calc-result-row:last-child { border: none; }
+
+        .calc-result-label {
+            font-size: 0.85rem;
+            color: rgba(254,253,251,0.6);
+        }
+
+        .calc-result-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .calc-result-row.highlight {
+            background: rgba(212,168,67,0.1);
+            margin: 0 -2rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+        }
+
+        .calc-result-row.highlight .calc-result-value {
+            font-size: 1.6rem;
+        }
+
+        /* ===== UNIT ECONOMICS ===== */
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .unit-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.8rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .unit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .unit-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .unit-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--green);
+            margin-bottom: 0.3rem;
+        }
+
+        .unit-card .label {
+            font-size: 0.82rem;
+            color: var(--ash);
+        }
+
+        /* ===== FUNDING ===== */
+        .funding-card {
+            background: var(--cloud);
+            border: 2px solid var(--gold);
+            border-radius: var(--radius-card);
+            padding: 3rem;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .funding-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+
+        .funding-card p {
+            color: var(--slate);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .funding-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .funding-item .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+        }
+
+        .funding-item .desc {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 0.2rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--charcoal);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(254,253,251,0.4);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            section { padding: 3rem 1.5rem; }
+            .page-header { padding: 4rem 1.5rem 3rem; }
+            .cost-section { grid-template-columns: 1fr; }
+            .calc-container { grid-template-columns: 1fr; }
+            .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 2rem 1rem; }
+            .kpi-value { font-size: 1.6rem; }
+            .chart-label { min-width: 35px; font-size: 0.7rem; }
+            .pnl-table { font-size: 0.72rem; }
+            .pnl-table th, .pnl-table td { padding: 0.4rem; }
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RTL support */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .back-link { direction: rtl; }
+        [dir="rtl"] .pnl-table th:first-child,
+        [dir="rtl"] .pnl-table td:first-child { text-align: right; }
+        [dir="rtl"] .chart-label { text-align: left; }
+        [dir="rtl"] .legend-item .pct { margin-left: 0; margin-right: auto; }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+    <div class="container">
+        <a href="index.html" class="back-link" data-en="← Back to Dashboard" data-es="← Volver al Panel" data-he="→ חזרה ללוח בקרה">← Back to Dashboard</a>
+        <h1>
+            <span data-en="Financial" data-es="Dashboard" data-he="דשבורד">Financial</span><br>
+            <em data-en="Dashboard" data-es="Financiero" data-he="פיננסי">Dashboard</em>
+        </h1>
+        <p data-en="Revenue projections, cost structure, P&L, and ROI modeling for Solaris Energy Panama. Bootstrap plan — no external funding required." data-es="Proyecciones de ingresos, estructura de costos, P&L y modelado ROI para Solaris Energy Panamá. Plan bootstrap — sin financiamiento externo." data-he="תחזיות הכנסות, מבנה עלויות, רו״ח ומודל ROI ל-Solaris Energy Panama. תוכנית bootstrap — ללא מימון חיצוני.">Revenue projections, cost structure, P&L, and ROI modeling for Solaris Energy Panama. Bootstrap plan — no external funding required.</p>
+    </div>
+</header>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+    <div class="kpi-card">
+        <div class="kpi-value">$680K</div>
+        <div class="kpi-label" data-en="Year 1 Revenue Target" data-es="Meta Ingresos Año 1" data-he="יעד הכנסות שנה 1">Year 1 Revenue Target</div>
+        <div class="kpi-delta kpi-up" data-en="Conservative estimate" data-es="Estimación conservadora" data-he="הערכה שמרנית">Conservative estimate</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">Month 4</div>
+        <div class="kpi-label" data-en="Break-Even Point" data-es="Punto de Equilibrio" data-he="נקודת איזון">Break-Even Point</div>
+        <div class="kpi-delta kpi-up" data-en="Cumulative cash-flow positive" data-es="Flujo de caja acumulado positivo" data-he="תזרים מצטבר חיובי">Cumulative cash-flow positive</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">35%</div>
+        <div class="kpi-label" data-en="Gross Margin" data-es="Margen Bruto" data-he="רווח גולמי">Gross Margin</div>
+        <div class="kpi-delta kpi-up" data-en="After COGS" data-es="Después de COGS" data-he="אחרי עלות מכר">After COGS</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">$0</div>
+        <div class="kpi-label" data-en="External Funding" data-es="Financiamiento Externo" data-he="מימון חיצוני">External Funding</div>
+        <div class="kpi-delta kpi-up" data-en="100% bootstrapped" data-es="100% bootstrapped" data-he="100% עצמאי">100% bootstrapped</div>
+    </div>
+</div>
+
+<!-- SECTION 1: REVENUE MODEL -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="REVENUE MODEL" data-es="MODELO DE INGRESOS" data-he="מודל הכנסות">REVENUE MODEL</div>
+        <h2 class="section-title reveal" data-en="Three Revenue Streams" data-es="Tres Fuentes de Ingresos" data-he="שלושה זרמי הכנסות">Three Revenue Streams</h2>
+        <p class="section-sub reveal" data-en="Installation revenue drives growth. Maintenance contracts build recurring income. Commercial projects deliver scale." data-es="Los ingresos por instalación impulsan el crecimiento. Los contratos de mantenimiento generan ingresos recurrentes. Los proyectos comerciales entregan escala." data-he="הכנסות התקנה מניעות צמיחה. חוזי תחזוקה בונים הכנסה חוזרת. פרויקטים מסחריים מספקים סקייל.">Installation revenue drives growth. Maintenance contracts build recurring income. Commercial projects deliver scale.</p>
+
+        <div class="revenue-grid reveal">
+            <div class="revenue-card">
+                <div class="revenue-icon res">🏠</div>
+                <h3 data-en="Residential" data-es="Residencial" data-he="מגורים">Residential</h3>
+                <div class="range">$8,000–$15,000</div>
+                <p data-en="Per project. Typical 5-15kW systems for expat homes and local residences. Average deal size: $12,000. Fastest to close, highest volume." data-es="Por proyecto. Sistemas típicos de 5-15kW para hogares de expatriados y residencias locales. Tamaño promedio: $12,000. Más rápido de cerrar, mayor volumen." data-he="לפרויקט. מערכות טיפוסיות של 5-15kW לבתי אקספטים ומגורים מקומיים. גודל עסקה ממוצע: $12,000. הכי מהיר לסגור, נפח הכי גבוה.">Per project. Typical 5-15kW systems for expat homes and local residences. Average deal size: $12,000. Fastest to close, highest volume.</p>
+            </div>
+            <div class="revenue-card">
+                <div class="revenue-icon com">🏨</div>
+                <h3 data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</h3>
+                <div class="range">$20,000–$80,000</div>
+                <p data-en="Per project. Hotels, restaurants, farms, and large properties. Average deal: $45,000. Longer sales cycle but higher margins and stronger social proof." data-es="Por proyecto. Hoteles, restaurantes, fincas y propiedades grandes. Promedio: $45,000. Ciclo de venta más largo pero mejores márgenes y prueba social más fuerte." data-he="לפרויקט. מלונות, מסעדות, חוות ונכסים גדולים. עסקה ממוצעת: $45,000. מחזור מכירות ארוך יותר אך מרווחים גבוהים יותר והוכחה חברתית חזקה.">Per project. Hotels, restaurants, farms, and large properties. Average deal: $45,000. Longer sales cycle but higher margins and stronger social proof.</p>
+            </div>
+            <div class="revenue-card">
+                <div class="revenue-icon maint">🔧</div>
+                <h3 data-en="Maintenance" data-es="Mantenimiento" data-he="תחזוקה">Maintenance</h3>
+                <div class="range">$50–$200<span style="font-size:0.8rem;color:var(--ash)">/mo</span></div>
+                <p data-en="Per system. Annual cleaning, monitoring, inverter checks, and performance reports. Builds to $3K+/month recurring by year-end with 20+ active systems." data-es="Por sistema. Limpieza anual, monitoreo, revisión de inversores y reportes de rendimiento. Crece a $3K+/mes recurrente al fin de año con 20+ sistemas activos." data-he="למערכת. ניקיון שנתי, ניטור, בדיקות מהפכים ודוחות ביצועים. בונה ל-$3K+/חודש חוזר עד סוף השנה עם 20+ מערכות פעילות.">Per system. Annual cleaning, monitoring, inverter checks, and performance reports. Builds to $3K+/month recurring by year-end with 20+ active systems.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: COST STRUCTURE -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="COST STRUCTURE" data-es="ESTRUCTURA DE COSTOS" data-he="מבנה עלויות">COST STRUCTURE</div>
+        <h2 class="section-title reveal" data-en="Where the Money Goes" data-es="A Dónde Va el Dinero" data-he="לאן הולך הכסף">Where the Money Goes</h2>
+        <p class="section-sub reveal" data-en="Equipment is the largest cost component. Law 417's import duty exemption keeps it competitive." data-es="El equipo es el mayor componente de costo. La exención de importación de la Ley 417 lo mantiene competitivo." data-he="ציוד הוא מרכיב העלות הגדול ביותר. פטור המכס של חוק 417 שומר על תחרותיות.">Equipment is the largest cost component. Law 417's import duty exemption keeps it competitive.</p>
+
+        <div class="cost-section reveal">
+            <div class="donut-container">
+                <div class="donut-chart" style="background: conic-gradient(
+                    var(--green) 0deg 216deg,
+                    var(--gold) 216deg 288deg,
+                    var(--green-canopy) 288deg 324deg,
+                    var(--gold-aged) 324deg 360deg
+                );">
+                    <div class="donut-center">
+                        <div class="pct">100%</div>
+                        <div class="label" data-en="Total COGS" data-es="COGS Total" data-he="סה״כ עלויות">Total COGS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="cost-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--green);"></div>
+                    <span class="name" data-en="Equipment (Panels, Inverters, BOS)" data-es="Equipos (Paneles, Inversores, BOS)" data-he="ציוד (פנלים, מהפכים, BOS)">Equipment (Panels, Inverters, BOS)</span>
+                    <span class="pct">60%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--gold);"></div>
+                    <span class="name" data-en="Labor (Installation Crew)" data-es="Mano de Obra (Equipo de Instalación)" data-he="עבודה (צוות התקנה)">Labor (Installation Crew)</span>
+                    <span class="pct">20%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--green-canopy);"></div>
+                    <span class="name" data-en="Overhead (Office, Transport, Insurance)" data-es="Overhead (Oficina, Transporte, Seguro)" data-he="תקורה (משרד, הובלה, ביטוח)">Overhead (Office, Transport, Insurance)</span>
+                    <span class="pct">10%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--gold-aged);"></div>
+                    <span class="name" data-en="Marketing (Ads, Events, Referrals)" data-es="Marketing (Anuncios, Eventos, Referidos)" data-he="שיווק (פרסום, אירועים, הפניות)">Marketing (Ads, Events, Referrals)</span>
+                    <span class="pct">10%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: P&L PROJECTION -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="P&L PROJECTION" data-es="PROYECCION P&L" data-he="תחזית רו״ח">P&L PROJECTION</div>
+        <h2 class="section-title reveal" data-en="12-Month Financial Plan" data-es="Plan Financiero 12 Meses" data-he="תוכנית פיננסית ל-12 חודשים">12-Month Financial Plan</h2>
+        <p class="section-sub reveal" data-en="Conservative projections. Break-even at Month 4. Ramp-up based on sales funnel velocity and referral engine." data-es="Proyecciones conservadoras. Equilibrio en Mes 4. Crecimiento basado en velocidad del embudo y motor de referidos." data-he="תחזיות שמרניות. נקודת איזון בחודש 4. גידול מבוסס מהירות משפך ומנוע הפניות.">Conservative projections. Break-even at Month 4. Ramp-up based on sales funnel velocity and referral engine.</p>
+
+        <div class="table-wrap reveal">
+            <table class="pnl-table">
+                <thead>
+                    <tr>
+                        <th data-en="Metric" data-es="Métrica" data-he="מדד">Metric</th>
+                        <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th>
+                        <th>M7</th><th>M8</th><th>M9</th><th>M10</th><th>M11</th><th>M12</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-en="Residential Projects" data-es="Proyectos Residenciales" data-he="פרויקטים למגורים">Residential Projects</td>
+                        <td>2</td><td>2</td><td>3</td><td>3</td><td>4</td><td>5</td>
+                        <td>5</td><td>6</td><td>6</td><td>7</td><td>7</td><td>8</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Commercial Projects" data-es="Proyectos Comerciales" data-he="פרויקטים מסחריים">Commercial Projects</td>
+                        <td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>2</td>
+                        <td>2</td><td>2</td><td>3</td><td>2</td><td>3</td><td>3</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td data-en="Revenue" data-es="Ingresos" data-he="הכנסות">Revenue</td>
+                        <td>$24K</td><td>$24K</td><td>$81K</td><td>$69K</td><td>$93K</td><td>$150K</td>
+                        <td>$150K</td><td>$162K</td><td>$207K</td><td>$174K</td><td>$219K</td><td>$231K</td>
+                    </tr>
+                    <tr>
+                        <td data-en="COGS (65%)" data-es="COGS (65%)" data-he="עלות מכר (65%)">COGS (65%)</td>
+                        <td>$16K</td><td>$16K</td><td>$53K</td><td>$45K</td><td>$60K</td><td>$98K</td>
+                        <td>$98K</td><td>$105K</td><td>$135K</td><td>$113K</td><td>$142K</td><td>$150K</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Gross Profit" data-es="Ganancia Bruta" data-he="רווח גולמי">Gross Profit</td>
+                        <td>$8K</td><td>$8K</td><td>$28K</td><td>$24K</td><td>$33K</td><td>$53K</td>
+                        <td>$53K</td><td>$57K</td><td>$72K</td><td>$61K</td><td>$77K</td><td>$81K</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Operating Expenses" data-es="Gastos Operativos" data-he="הוצאות תפעול">Operating Expenses</td>
+                        <td>$12K</td><td>$12K</td><td>$14K</td><td>$14K</td><td>$16K</td><td>$18K</td>
+                        <td>$18K</td><td>$20K</td><td>$20K</td><td>$20K</td><td>$22K</td><td>$22K</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td data-en="Net Profit" data-es="Ganancia Neta" data-he="רווח נקי">Net Profit</td>
+                        <td class="profit-negative">-$4K</td>
+                        <td class="profit-negative">-$4K</td>
+                        <td class="profit-positive">$14K</td>
+                        <td class="profit-positive">$10K</td>
+                        <td class="profit-positive">$17K</td>
+                        <td class="profit-positive">$35K</td>
+                        <td class="profit-positive">$35K</td>
+                        <td class="profit-positive">$37K</td>
+                        <td class="profit-positive">$52K</td>
+                        <td class="profit-positive">$41K</td>
+                        <td class="profit-positive">$55K</td>
+                        <td class="profit-positive">$59K</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Maintenance MRR" data-es="MRR Mantenimiento" data-he="MRR תחזוקה">Maintenance MRR</td>
+                        <td>$0</td><td>$200</td><td>$500</td><td>$900</td><td>$1.3K</td><td>$1.9K</td>
+                        <td>$2.4K</td><td>$3.0K</td><td>$3.6K</td><td>$4.2K</td><td>$4.9K</td><td>$5.5K</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: ROI CALCULATOR -->
+<section class="calc-section">
+    <div class="container">
+        <div class="section-badge" data-en="ROI CALCULATOR" data-es="CALCULADORA ROI" data-he="מחשבון ROI">ROI CALCULATOR</div>
+        <h2 class="section-title reveal" data-en="Customer ROI with Law 417" data-es="ROI del Cliente con Ley 417" data-he="ROI ללקוח עם חוק 417">Customer ROI with Law 417</h2>
+        <p class="section-sub reveal" data-en="Interactive calculator showing customer payback period including Law 417 tax benefits." data-es="Calculadora interactiva mostrando período de retorno del cliente incluyendo beneficios fiscales de la Ley 417." data-he="מחשבון אינטראקטיבי המציג תקופת החזר ללקוח כולל הטבות מס חוק 417.">Interactive calculator showing customer payback period including Law 417 tax benefits.</p>
+
+        <div class="calc-container reveal">
+            <div class="calc-inputs">
+                <div class="calc-group">
+                    <label data-en="System Size (kW)" data-es="Tamaño del Sistema (kW)" data-he="גודל מערכת (kW)">System Size (kW)</label>
+                    <input type="number" id="calcSize" value="10" min="1" max="500" step="1">
+                </div>
+                <div class="calc-group">
+                    <label data-en="Segment" data-es="Segmento" data-he="מגזר">Segment</label>
+                    <select id="calcType">
+                        <option value="residential" data-en="Residential ($1.20/Wp)" data-es="Residencial ($1.20/Wp)" data-he="מגורים ($1.20/Wp)">Residential ($1.20/Wp)</option>
+                        <option value="commercial" data-en="Commercial ($1.10/Wp)" data-es="Comercial ($1.10/Wp)" data-he="מסחרי ($1.10/Wp)">Commercial ($1.10/Wp)</option>
+                    </select>
+                </div>
+                <div class="calc-group">
+                    <label data-en="Current Monthly Bill ($)" data-es="Factura Mensual Actual ($)" data-he="חשבון חודשי נוכחי ($)">Current Monthly Bill ($)</label>
+                    <input type="number" id="calcBill" value="500" min="50" max="50000" step="50">
+                </div>
+                <div class="calc-group">
+                    <label data-en="Tax Rate (for Law 417 benefit)" data-es="Tasa Impositiva (para beneficio Ley 417)" data-he="שיעור מס (להטבת חוק 417)">Tax Rate (for Law 417 benefit)</label>
+                    <input type="number" id="calcTax" value="25" min="0" max="50" step="1">
+                </div>
+                <button class="calc-btn" onclick="calculateROI()" data-en="Calculate ROI" data-es="Calcular ROI" data-he="חשב ROI">Calculate ROI</button>
+            </div>
+
+            <div class="calc-results" id="calcResults">
+                <div class="calc-result-row">
+                    <span class="calc-result-label" data-en="System Cost" data-es="Costo del Sistema" data-he="עלות מערכת">System Cost</span>
+                    <span class="calc-result-value" id="resultCost">$12,000</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label" data-en="Law 417 Tax Savings" data-es="Ahorro Fiscal Ley 417" data-he="חיסכון מס חוק 417">Law 417 Tax Savings</span>
+                    <span class="calc-result-value" id="resultTax">$3,000</span>
+                </div>
+                <div class="calc-result-row highlight">
+                    <span class="calc-result-label" data-en="Net Cost After Tax Benefit" data-es="Costo Neto Después de Beneficio" data-he="עלות נטו אחרי הטבה">Net Cost After Tax Benefit</span>
+                    <span class="calc-result-value" id="resultNet">$9,000</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label" data-en="Monthly Energy Production" data-es="Producción Mensual de Energía" data-he="ייצור אנרגיה חודשי">Monthly Energy Production</span>
+                    <span class="calc-result-value" id="resultProd">1,325 kWh</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label" data-en="Estimated Monthly Savings" data-es="Ahorro Mensual Estimado" data-he="חיסכון חודשי משוער">Estimated Monthly Savings</span>
+                    <span class="calc-result-value" id="resultSavings">~$259</span>
+                </div>
+                <div class="calc-result-row highlight">
+                    <span class="calc-result-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</span>
+                    <span class="calc-result-value" id="resultPayback">2.9 years</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label" data-en="25-Year Net Savings" data-es="Ahorro Neto 25 Años" data-he="חיסכון נטו 25 שנה">25-Year Net Savings</span>
+                    <span class="calc-result-value" id="result25yr">$68,700</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: CASH FLOW CHART -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="CASH FLOW" data-es="FLUJO DE CAJA" data-he="תזרים מזומנים">CASH FLOW</div>
+        <h2 class="section-title reveal" data-en="Monthly Revenue vs Expenses" data-es="Ingresos Mensuales vs Gastos" data-he="הכנסות מול הוצאות חודשיות">Monthly Revenue vs Expenses</h2>
+        <p class="section-sub reveal" data-en="Visual breakdown of monthly cash flow. Revenue exceeds expenses from Month 3 onward." data-es="Desglose visual del flujo de caja mensual. Los ingresos superan los gastos desde el Mes 3." data-he="פירוט ויזואלי של תזרים מזומנים חודשי. הכנסות עולות על הוצאות מחודש 3 ואילך.">Visual breakdown of monthly cash flow. Revenue exceeds expenses from Month 3 onward.</p>
+
+        <div class="bar-chart-container reveal" id="cashFlowChart">
+            <!-- Generated by JS -->
+        </div>
+
+        <div class="chart-legend">
+            <span><span class="legend-dot-sm" style="background: var(--green);"></span> <span data-en="Revenue" data-es="Ingresos" data-he="הכנסות">Revenue</span></span>
+            <span><span class="legend-dot-sm" style="background: var(--gold);"></span> <span data-en="Expenses" data-es="Gastos" data-he="הוצאות">Expenses</span></span>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 6: UNIT ECONOMICS -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="UNIT ECONOMICS" data-es="ECONOMIA UNITARIA" data-he="כלכלת יחידה">UNIT ECONOMICS</div>
+        <h2 class="section-title reveal" data-en="Per-Project Breakdown" data-es="Desglose por Proyecto" data-he="פירוט לפרויקט">Per-Project Breakdown</h2>
+        <p class="section-sub reveal" data-en="Average residential project economics. Commercial projects show similar margins at higher absolute values." data-es="Economía promedio de proyecto residencial. Proyectos comerciales muestran márgenes similares con valores absolutos más altos." data-he="כלכלת פרויקט מגורים ממוצע. פרויקטים מסחריים מציגים מרווחים דומים בערכים מוחלטים גבוהים יותר.">Average residential project economics. Commercial projects show similar margins at higher absolute values.</p>
+
+        <div class="unit-grid reveal">
+            <div class="unit-card">
+                <div class="icon">💰</div>
+                <div class="value">$12,000</div>
+                <div class="label" data-en="Avg Revenue (Residential)" data-es="Ingreso Promedio (Residencial)" data-he="הכנסה ממוצעת (מגורים)">Avg Revenue (Residential)</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📦</div>
+                <div class="value">$7,200</div>
+                <div class="label" data-en="COGS (Equipment 60%)" data-es="COGS (Equipos 60%)" data-he="עלות מכר (ציוד 60%)">COGS (Equipment 60%)</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">👷</div>
+                <div class="value">$2,400</div>
+                <div class="label" data-en="Labor (20%)" data-es="Mano de Obra (20%)" data-he="עבודה (20%)">Labor (20%)</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📊</div>
+                <div class="value">$4,200</div>
+                <div class="label" data-en="Gross Margin (35%)" data-es="Margen Bruto (35%)" data-he="רווח גולמי (35%)">Gross Margin (35%)</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📢</div>
+                <div class="value">$350</div>
+                <div class="label" data-en="Customer Acquisition Cost" data-es="Costo de Adquisición" data-he="עלות רכישת לקוח">Customer Acquisition Cost</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">🔄</div>
+                <div class="value">$100/mo</div>
+                <div class="label" data-en="Maintenance Revenue" data-es="Ingresos Mantenimiento" data-he="הכנסת תחזוקה">Maintenance Revenue</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">⚡</div>
+                <div class="value">12x</div>
+                <div class="label" data-en="LTV:CAC Ratio" data-es="Ratio LTV:CAC" data-he="יחס LTV:CAC">LTV:CAC Ratio</div>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📈</div>
+                <div class="value">$45,000</div>
+                <div class="label" data-en="Avg Revenue (Commercial)" data-es="Ingreso Promedio (Comercial)" data-he="הכנסה ממוצעת (מסחרי)">Avg Revenue (Commercial)</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 7: FUNDING -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="FUNDING PLAN" data-es="PLAN DE FINANCIAMIENTO" data-he="תוכנית מימון">FUNDING PLAN</div>
+        <h2 class="section-title reveal" data-en="Bootstrap Strategy" data-es="Estrategia Bootstrap" data-he="אסטרטגיית Bootstrap">Bootstrap Strategy</h2>
+        <p class="section-sub reveal" data-en="No external funding needed. Revenue from first projects funds growth. Lean operations keep burn rate minimal." data-es="No se necesita financiamiento externo. Los ingresos de los primeros proyectos financian el crecimiento. Operaciones lean mantienen el burn rate mínimo." data-he="אין צורך במימון חיצוני. הכנסות מפרויקטים ראשונים ממנות צמיחה. תפעול רזה שומר על שריפה מינימלית.">No external funding needed. Revenue from first projects funds growth. Lean operations keep burn rate minimal.</p>
+
+        <div class="funding-card reveal">
+            <h3 data-en="Self-Funded Growth Engine" data-es="Motor de Crecimiento Autofinanciado" data-he="מנוע צמיחה עצמאי">Self-Funded Growth Engine</h3>
+            <p data-en="Solaris Energy is designed as a capital-light business. Equipment is ordered per-project (no inventory risk). Labor is contracted per installation. Marketing spend scales with revenue. The 300kW Tipi project alone generates enough margin to fund 6+ months of operations." data-es="Solaris Energy está diseñado como un negocio de bajo capital. Los equipos se ordenan por proyecto (sin riesgo de inventario). La mano de obra se contrata por instalación. El gasto en marketing escala con los ingresos. Solo el proyecto Tipi de 300kW genera suficiente margen para financiar 6+ meses de operaciones." data-he="Solaris Energy מתוכנן כעסק עם דרישות הון נמוכות. ציוד מוזמן לפי פרויקט (ללא סיכון מלאי). עבודה מגויסת לפי התקנה. הוצאות שיווק גדלות עם הכנסות. פרויקט טיפי 300kW לבדו מייצר מספיק מרווח למימון 6+ חודשי פעילות.">Solaris Energy is designed as a capital-light business. Equipment is ordered per-project (no inventory risk). Labor is contracted per installation. Marketing spend scales with revenue. The 300kW Tipi project alone generates enough margin to fund 6+ months of operations.</p>
+
+            <div class="funding-items">
+                <div class="funding-item">
+                    <div class="amount">$15K</div>
+                    <div class="desc" data-en="Initial Working Capital" data-es="Capital de Trabajo Inicial" data-he="הון חוזר ראשוני">Initial Working Capital</div>
+                </div>
+                <div class="funding-item">
+                    <div class="amount">$5K</div>
+                    <div class="desc" data-en="Marketing Launch Budget" data-es="Presupuesto Lanzamiento Marketing" data-he="תקציב השקת שיווק">Marketing Launch Budget</div>
+                </div>
+                <div class="funding-item">
+                    <div class="amount">$3K</div>
+                    <div class="desc" data-en="Tools & Licenses" data-es="Herramientas y Licencias" data-he="כלים ורישיונות">Tools & Licenses</div>
+                </div>
+                <div class="funding-item">
+                    <div class="amount">$0</div>
+                    <div class="desc" data-en="External Investment" data-es="Inversión Externa" data-he="השקעה חיצונית">External Investment</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+
+// Init language
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// ROI Calculator
+function calculateROI() {
+    const size = parseFloat(document.getElementById('calcSize').value) || 10;
+    const type = document.getElementById('calcType').value;
+    const bill = parseFloat(document.getElementById('calcBill').value) || 500;
+    const taxRate = parseFloat(document.getElementById('calcTax').value) || 25;
+
+    const pricePerWp = type === 'residential' ? 1.20 : 1.10;
+    const systemCost = size * 1000 * pricePerWp;
+    const taxSavings = systemCost * (taxRate / 100);
+    const netCost = systemCost - taxSavings;
+
+    // 5.3 peak sun hours, 80% performance ratio, 30 days
+    const monthlyProduction = size * 5.3 * 0.80 * 30;
+    const electricityRate = 0.195; // $/kWh Panama
+    const monthlySavings = Math.min(monthlyProduction * electricityRate, bill * 0.95);
+    const paybackYears = netCost / (monthlySavings * 12);
+    const savings25yr = (monthlySavings * 12 * 25) - systemCost;
+
+    document.getElementById('resultCost').textContent = '$' + systemCost.toLocaleString();
+    document.getElementById('resultTax').textContent = '$' + Math.round(taxSavings).toLocaleString();
+    document.getElementById('resultNet').textContent = '$' + Math.round(netCost).toLocaleString();
+    document.getElementById('resultProd').textContent = Math.round(monthlyProduction).toLocaleString() + ' kWh';
+    document.getElementById('resultSavings').textContent = '~$' + Math.round(monthlySavings).toLocaleString();
+    document.getElementById('resultPayback').textContent = paybackYears.toFixed(1) + ' years';
+    document.getElementById('result25yr').textContent = '$' + Math.round(savings25yr).toLocaleString();
+}
+
+// Cash Flow Bar Chart
+function renderCashFlow() {
+    const data = [
+        { month: 'M1', revenue: 24, expenses: 28 },
+        { month: 'M2', revenue: 24, expenses: 28 },
+        { month: 'M3', revenue: 81, expenses: 67 },
+        { month: 'M4', revenue: 69, expenses: 59 },
+        { month: 'M5', revenue: 93, expenses: 76 },
+        { month: 'M6', revenue: 150, expenses: 116 },
+        { month: 'M7', revenue: 150, expenses: 116 },
+        { month: 'M8', revenue: 162, expenses: 125 },
+        { month: 'M9', revenue: 207, expenses: 155 },
+        { month: 'M10', revenue: 174, expenses: 133 },
+        { month: 'M11', revenue: 219, expenses: 164 },
+        { month: 'M12', revenue: 231, expenses: 172 },
+    ];
+
+    const maxVal = Math.max(...data.map(d => d.revenue));
+    const container = document.getElementById('cashFlowChart');
+    container.innerHTML = '';
+
+    data.forEach(d => {
+        const row = document.createElement('div');
+        row.className = 'chart-row';
+
+        const label = document.createElement('div');
+        label.className = 'chart-label';
+        label.textContent = d.month;
+
+        const bars = document.createElement('div');
+        bars.className = 'chart-bars';
+
+        const revBar = document.createElement('div');
+        revBar.className = 'bar-revenue';
+        revBar.style.width = (d.revenue / maxVal * 55) + '%';
+        revBar.textContent = '$' + d.revenue + 'K';
+
+        const expBar = document.createElement('div');
+        expBar.className = 'bar-expense';
+        expBar.style.width = (d.expenses / maxVal * 55) + '%';
+        expBar.textContent = '$' + d.expenses + 'K';
+
+        bars.appendChild(revBar);
+        bars.appendChild(expBar);
+        row.appendChild(label);
+        row.appendChild(bars);
+        container.appendChild(row);
+    });
+}
+
+renderCashFlow();
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
