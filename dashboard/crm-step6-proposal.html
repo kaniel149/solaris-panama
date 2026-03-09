@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 6: Proposal Creation — Solaris CRM</title>
+    <meta name="description" content="Create winning solar proposals for Panama clients. Template structure, pricing, Ley 417 benefits, payment terms, and follow-up sequences.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em;
+        }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav {
+            background: var(--green); padding: 16px 40px;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .top-nav a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.8; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 100px 40px 80px; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -30%; right: -10%;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+        }
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.12); color: white;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px;
+        }
+        .step-number {
+            background: var(--gold); color: var(--green);
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+        }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); color: white; margin-bottom: 16px; line-height: 1.15; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 680px; margin: 0 auto; }
+
+        .hero-stats {
+            display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; margin-top: 40px;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); }
+        .hero-stat .lbl { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 4px; font-weight: 500; }
+
+        .content-section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 48px; }
+        .section-header h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--green); margin-bottom: 12px; }
+        .section-header p { color: var(--ash); font-size: 16px; max-width: 600px; margin: 0 auto; }
+        .alt-bg { background: var(--sand); }
+
+        /* Template Structure */
+        .template-flow {
+            display: grid; gap: 0; max-width: 800px; margin: 0 auto;
+            position: relative;
+        }
+        .template-flow::before {
+            content: ''; position: absolute; left: 28px; top: 20px; bottom: 20px;
+            width: 3px; background: linear-gradient(to bottom, var(--gold), var(--green));
+            border-radius: 2px;
+        }
+        [dir="rtl"] .template-flow::before { left: auto; right: 28px; }
+
+        .template-step {
+            display: flex; gap: 24px; padding: 24px 0;
+            position: relative;
+        }
+        .template-dot {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: white; border: 3px solid var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700; color: var(--green);
+            flex-shrink: 0; z-index: 2;
+            box-shadow: var(--shadow-card);
+        }
+        .template-content {
+            background: white; border-radius: var(--radius-card);
+            padding: 24px 28px; box-shadow: var(--shadow-card);
+            flex: 1;
+        }
+        .template-content h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px; color: var(--green); margin-bottom: 8px;
+        }
+        .template-content p { font-size: 14px; color: var(--slate); margin-bottom: 12px; }
+        .template-content ul {
+            list-style: none; padding: 0;
+        }
+        .template-content ul li {
+            font-size: 13px; color: var(--slate); padding: 4px 0;
+            padding-left: 16px; position: relative;
+        }
+        .template-content ul li::before {
+            content: '→'; position: absolute; left: 0; color: var(--gold); font-weight: 700;
+        }
+        [dir="rtl"] .template-content ul li { padding-left: 0; padding-right: 16px; }
+        [dir="rtl"] .template-content ul li::before { left: auto; right: 0; }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .pricing-card {
+            background: white; border-radius: var(--radius-card);
+            overflow: hidden; box-shadow: var(--shadow-card);
+        }
+        .pricing-card-header {
+            padding: 28px; text-align: center;
+        }
+        .pricing-card-header.residential { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+        .pricing-card-header.commercial { background: linear-gradient(135deg, #1565C0, #0D47A1); }
+        .pricing-card-header h3 {
+            font-family: 'Playfair Display', serif; font-size: 22px; color: white; margin-bottom: 8px;
+        }
+        .pricing-card-header .price-range {
+            font-family: 'Playfair Display', serif; font-size: 36px; color: var(--gold);
+        }
+        .pricing-card-header .price-unit { font-size: 14px; color: rgba(255,255,255,0.7); }
+        .pricing-card-body { padding: 28px; }
+        .pricing-row {
+            display: flex; justify-content: space-between; padding: 10px 0;
+            border-bottom: 1px solid var(--cloud); font-size: 14px;
+        }
+        .pricing-row:last-child { border-bottom: none; }
+        .pricing-row .label { color: var(--ash); }
+        .pricing-row .value { font-weight: 600; color: var(--charcoal); }
+
+        .pricing-example {
+            background: var(--cloud); border-radius: 8px; padding: 20px;
+            margin-top: 16px;
+        }
+        .pricing-example h5 {
+            font-size: 13px; color: var(--green); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;
+        }
+        .pricing-example .calc-line {
+            display: flex; justify-content: space-between; font-size: 14px;
+            padding: 6px 0;
+        }
+        .pricing-example .calc-total {
+            border-top: 2px solid var(--gold); padding-top: 10px; margin-top: 8px;
+            font-weight: 700; color: var(--green);
+        }
+
+        /* Ley 417 */
+        .ley-card {
+            background: linear-gradient(135deg, var(--green) 0%, #1B5E20 100%);
+            border-radius: var(--radius-card); padding: 48px; color: white;
+            position: relative; overflow: hidden;
+        }
+        .ley-card::after {
+            content: '⚖️'; position: absolute; right: 40px; top: 40px;
+            font-size: 80px; opacity: 0.1;
+        }
+        .ley-card h3 {
+            font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 8px;
+        }
+        .ley-card h3 span { color: var(--gold); }
+        .ley-card .subtitle { color: rgba(255,255,255,0.7); margin-bottom: 24px; font-size: 15px; }
+        .ley-benefits {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; list-style: none;
+        }
+        .ley-benefits li {
+            display: flex; gap: 12px; align-items: flex-start;
+            font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.6;
+        }
+        .ley-benefits li .icon {
+            background: rgba(212,168,67,0.2); color: var(--gold);
+            min-width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+        .ley-include {
+            margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .ley-include h4 {
+            color: var(--gold); font-size: 14px; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 12px;
+        }
+        .ley-include p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.7; }
+
+        /* Payment Terms */
+        .payment-flow {
+            display: flex; justify-content: center; align-items: center;
+            gap: 0; flex-wrap: wrap; margin: 32px 0;
+        }
+        .payment-block {
+            text-align: center; padding: 32px 24px; min-width: 160px;
+            background: white; border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card); position: relative;
+        }
+        .payment-block .pct {
+            font-family: 'Playfair Display', serif; font-size: 48px; color: var(--gold);
+            line-height: 1;
+        }
+        .payment-block .trigger {
+            font-size: 14px; font-weight: 600; color: var(--green); margin-top: 8px;
+        }
+        .payment-block .desc {
+            font-size: 12px; color: var(--ash); margin-top: 4px;
+        }
+        .payment-arrow {
+            font-size: 24px; color: var(--mist); padding: 0 16px;
+        }
+
+        /* Follow-up Sequence */
+        .followup-timeline {
+            max-width: 700px; margin: 0 auto; position: relative;
+        }
+        .followup-timeline::before {
+            content: ''; position: absolute; left: 20px; top: 20px; bottom: 20px;
+            width: 2px; background: var(--mist);
+        }
+        [dir="rtl"] .followup-timeline::before { left: auto; right: 20px; }
+
+        .followup-item {
+            display: flex; gap: 20px; padding: 20px 0; position: relative;
+        }
+        .followup-dot {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0; z-index: 2;
+        }
+        .followup-dot.send { background: var(--gold); color: var(--green); }
+        .followup-dot.wait { background: var(--cloud); color: var(--ash); border: 2px solid var(--mist); }
+        .followup-dot.final { background: #C62828; color: white; }
+
+        .followup-content {
+            background: white; border-radius: var(--radius-card);
+            padding: 20px 24px; box-shadow: var(--shadow-card); flex: 1;
+        }
+        .followup-content h4 { font-size: 15px; color: var(--green); margin-bottom: 6px; }
+        .followup-content .timing {
+            font-size: 12px; color: var(--gold); font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+        }
+        .followup-content p { font-size: 13px; color: var(--slate); }
+        .followup-content .script {
+            background: var(--cloud); border-radius: 8px; padding: 12px 16px;
+            margin-top: 8px; font-size: 13px; color: var(--slate);
+            font-style: italic; border-left: 3px solid var(--gold);
+        }
+
+        /* Proposal Checklist */
+        .checklist {
+            max-width: 700px; margin: 0 auto;
+            background: white; border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card); overflow: hidden;
+        }
+        .checklist-header {
+            background: var(--green); padding: 20px 28px; color: white;
+            font-family: 'Playfair Display', serif; font-size: 18px;
+        }
+        .checklist-item {
+            display: flex; gap: 12px; padding: 14px 28px;
+            border-bottom: 1px solid var(--cloud); align-items: flex-start;
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        .check-box {
+            width: 20px; height: 20px; border: 2px solid var(--mist);
+            border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+        }
+        .checklist-item .text { font-size: 14px; color: var(--charcoal); }
+        .checklist-item .text small { display: block; color: var(--ash); font-size: 12px; margin-top: 2px; }
+
+        .step-nav {
+            display: flex; justify-content: space-between; padding: 32px 40px;
+            background: var(--cloud); border-top: 1px solid var(--mist);
+        }
+        .step-nav a { color: var(--green); text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
+        .step-nav a:hover { color: var(--gold); }
+        .step-nav a.next { color: var(--gold); }
+        .step-nav a.next:hover { color: var(--gold-aged); }
+
+        .footer {
+            text-align: center; padding: 32px 40px; background: var(--green);
+            color: rgba(255,255,255,0.5); font-size: 13px;
+        }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .top-nav, .content-section, .step-nav { padding-left: 20px; padding-right: 20px; }
+            .hero { padding: 80px 20px 60px; }
+            .hero-stats { gap: 24px; }
+            .template-flow::before { left: 20px; }
+            .payment-arrow { display: none; }
+            .payment-flow { gap: 16px; }
+            .ley-card { padding: 32px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <nav class="top-nav">
+        <a href="crm-value-chain.html" data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 6: Proposal Creation" data-es="Paso 6: Creación de Propuesta" data-he="שלב 6: יצירת הצעת מחיר">Step 6: Proposal Creation</span>
+    </nav>
+
+    <section class="hero">
+        <div class="step-badge">
+            <span class="step-number">6</span>
+            <span data-en="CRM STEP" data-es="PASO CRM" data-he="שלב CRM">CRM STEP</span>
+        </div>
+        <h1 data-en="Proposal <span>Creation</span>" data-es="Creación de <span>Propuesta</span>" data-he="יצירת <span>הצעת מחיר</span>">Proposal <span>Creation</span></h1>
+        <p data-en="Craft professional proposals that close deals. From template structure to follow-up sequences." data-es="Cree propuestas profesionales que cierren negocios. Desde estructura de plantilla hasta secuencias de seguimiento." data-he="צרו הצעות מחיר מקצועיות שסוגרות עסקאות. ממבנה תבנית ועד רצפי מעקב.">Craft professional proposals that close deals. From template structure to follow-up sequences.</p>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="val">50/40/10</div>
+                <div class="lbl" data-en="Payment Split" data-es="División de Pago" data-he="פיצול תשלום">Payment Split</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">Ley 417</div>
+                <div class="lbl" data-en="Legal Framework" data-es="Marco Legal" data-he="מסגרת חוקית">Legal Framework</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">7 days</div>
+                <div class="lbl" data-en="Follow-up Cycle" data-es="Ciclo de Seguimiento" data-he="מחזור מעקב">Follow-up Cycle</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proposal Template Structure -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="Proposal Template Structure" data-es="Estructura de Plantilla de Propuesta" data-he="מבנה תבנית הצעה">Proposal Template Structure</h2>
+            <p data-en="Every proposal follows this 7-section format for consistency and professionalism." data-es="Cada propuesta sigue este formato de 7 secciones para consistencia y profesionalismo." data-he="כל הצעה עוקבת אחר מבנה 7 חלקים לעקביות ומקצועיות.">Every proposal follows this 7-section format for consistency and professionalism.</p>
+        </div>
+
+        <div class="template-flow">
+            <div class="template-step">
+                <div class="template-dot">1</div>
+                <div class="template-content">
+                    <h4 data-en="Cover Page" data-es="Portada" data-he="עמוד שער">Cover Page</h4>
+                    <p data-en="First impression matters. Branded, professional, personalized." data-es="La primera impresión importa. Con marca, profesional, personalizada." data-he="הרושם הראשון קובע. ממותג, מקצועי, מותאם אישית.">First impression matters. Branded, professional, personalized.</p>
+                    <ul>
+                        <li data-en="Solaris Energy logo & brand colors" data-es="Logo y colores de marca Solaris Energy" data-he="לוגו וצבעי מותג סולאריס אנרגי">Solaris Energy logo & brand colors</li>
+                        <li data-en="Client name & property address" data-es="Nombre del cliente y dirección de la propiedad" data-he="שם לקוח וכתובת נכס">Client name & property address</li>
+                        <li data-en="Proposal date & validity (30 days)" data-es="Fecha de propuesta y validez (30 días)" data-he="תאריך הצעה ותוקף (30 יום)">Proposal date & validity (30 days)</li>
+                        <li data-en="Unique proposal reference number" data-es="Número de referencia único de propuesta" data-he="מספר הפניה ייחודי להצעה">Unique proposal reference number</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">2</div>
+                <div class="template-content">
+                    <h4 data-en="Executive Summary" data-es="Resumen Ejecutivo" data-he="תקציר מנהלים">Executive Summary</h4>
+                    <p data-en="One page that tells the whole story. Client's problem → our solution → their savings." data-es="Una página que cuenta toda la historia. Problema del cliente → nuestra solución → sus ahorros." data-he="עמוד אחד שמספר את כל הסיפור. בעיית הלקוח ← הפתרון שלנו ← החיסכון שלהם.">One page that tells the whole story. Client's problem → our solution → their savings.</p>
+                    <ul>
+                        <li data-en="Current monthly bill & annual electricity cost" data-es="Factura mensual actual y costo anual de electricidad" data-he="חשבון חודשי נוכחי ועלות חשמל שנתית">Current monthly bill & annual electricity cost</li>
+                        <li data-en="Proposed system size & expected generation" data-es="Tamaño del sistema propuesto y generación esperada" data-he="גודל מערכת מוצע וייצור צפוי">Proposed system size & expected generation</li>
+                        <li data-en="Estimated monthly & annual savings" data-es="Ahorro mensual y anual estimado" data-he="חיסכון חודשי ושנתי משוער">Estimated monthly & annual savings</li>
+                        <li data-en="Payback period & 25-year ROI" data-es="Período de retorno y ROI a 25 años" data-he="תקופת החזר ו-ROI ל-25 שנה">Payback period & 25-year ROI</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">3</div>
+                <div class="template-content">
+                    <h4 data-en="Technical Specifications" data-es="Especificaciones Técnicas" data-he="מפרטים טכניים">Technical Specifications</h4>
+                    <p data-en="Equipment details that build trust and justify pricing." data-es="Detalles del equipo que generan confianza y justifican el precio." data-he="פרטי ציוד שבונים אמון ומצדיקים תמחור.">Equipment details that build trust and justify pricing.</p>
+                    <ul>
+                        <li data-en="Panel brand, model, wattage, efficiency" data-es="Marca, modelo, potencia, eficiencia del panel" data-he="מותג, דגם, הספק ויעילות פאנל">Panel brand, model, wattage, efficiency</li>
+                        <li data-en="Inverter brand, model, type (string/micro)" data-es="Marca, modelo, tipo de inversor (string/micro)" data-he="מותג, דגם, סוג ממיר (string/micro)">Inverter brand, model, type (string/micro)</li>
+                        <li data-en="Mounting system & materials" data-es="Sistema de montaje y materiales" data-he="מערכת התקנה וחומרים">Mounting system & materials</li>
+                        <li data-en="Monitoring system included" data-es="Sistema de monitoreo incluido" data-he="מערכת ניטור כלולה">Monitoring system included</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">4</div>
+                <div class="template-content">
+                    <h4 data-en="Financial Analysis" data-es="Análisis Financiero" data-he="ניתוח פיננסי">Financial Analysis</h4>
+                    <p data-en="The numbers that close the deal. Show clear ROI and payback." data-es="Los números que cierran el trato. Muestre ROI y retorno claros." data-he="המספרים שסוגרים את העסקה. הציגו ROI והחזר ברורים.">The numbers that close the deal. Show clear ROI and payback.</p>
+                    <ul>
+                        <li data-en="System cost breakdown (equipment, labor, permits)" data-es="Desglose de costos del sistema (equipo, mano de obra, permisos)" data-he="פירוט עלויות מערכת (ציוד, עבודה, היתרים)">System cost breakdown (equipment, labor, permits)</li>
+                        <li data-en="25-year savings projection table" data-es="Tabla de proyección de ahorro a 25 años" data-he="טבלת תחזית חיסכון ל-25 שנה">25-year savings projection table</li>
+                        <li data-en="Payback calculation with rate escalation" data-es="Cálculo de retorno con aumento de tarifa" data-he="חישוב החזר עם עליית תעריפים">Payback calculation with rate escalation</li>
+                        <li data-en="Comparison: with solar vs. without solar" data-es="Comparación: con solar vs. sin solar" data-he="השוואה: עם סולאר לעומת בלי סולאר">Comparison: with solar vs. without solar</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">5</div>
+                <div class="template-content">
+                    <h4 data-en="Project Timeline" data-es="Cronograma del Proyecto" data-he="לוח זמנים">Project Timeline</h4>
+                    <p data-en="Clear milestones so clients know what to expect and when." data-es="Hitos claros para que los clientes sepan qué esperar y cuándo." data-he="אבני דרך ברורות כדי שהלקוחות ידעו למה לצפות ומתי.">Clear milestones so clients know what to expect and when.</p>
+                    <ul>
+                        <li data-en="Contract signing → Design finalization (1 week)" data-es="Firma del contrato → Finalización del diseño (1 semana)" data-he="חתימת חוזה ← סיום תכנון (שבוע)">Contract signing → Design finalization (1 week)</li>
+                        <li data-en="ENSA application & permits (2-4 weeks)" data-es="Solicitud ENSA y permisos (2-4 semanas)" data-he="בקשת ENSA והיתרים (2-4 שבועות)">ENSA application & permits (2-4 weeks)</li>
+                        <li data-en="Equipment procurement (1-2 weeks)" data-es="Adquisición de equipos (1-2 semanas)" data-he="רכש ציוד (1-2 שבועות)">Equipment procurement (1-2 weeks)</li>
+                        <li data-en="Installation (1-3 days residential, 1-2 weeks commercial)" data-es="Instalación (1-3 días residencial, 1-2 semanas comercial)" data-he="התקנה (1-3 ימים מגורים, 1-2 שבועות מסחרי)">Installation (1-3 days residential, 1-2 weeks commercial)</li>
+                        <li data-en="ENSA inspection & meter swap (1-2 weeks)" data-es="Inspección ENSA y cambio de medidor (1-2 semanas)" data-he="בדיקת ENSA והחלפת מונה (1-2 שבועות)">ENSA inspection & meter swap (1-2 weeks)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">6</div>
+                <div class="template-content">
+                    <h4 data-en="Warranty & Guarantees" data-es="Garantías" data-he="אחריות">Warranty & Guarantees</h4>
+                    <p data-en="Triple-layer warranty gives clients confidence to invest." data-es="Garantía de triple capa da confianza a los clientes para invertir." data-he="אחריות תלת-שכבתית נותנת ללקוחות ביטחון להשקיע.">Triple-layer warranty gives clients confidence to invest.</p>
+                    <ul>
+                        <li data-en="25-year panel performance warranty (80% at year 25)" data-es="25 años de garantía de rendimiento de paneles (80% al año 25)" data-he="אחריות ביצועי פאנלים 25 שנה (80% בשנה 25)">25-year panel performance warranty (80% at year 25)</li>
+                        <li data-en="10-year inverter manufacturer warranty" data-es="10 años de garantía del fabricante del inversor" data-he="אחריות יצרן ממיר 10 שנים">10-year inverter manufacturer warranty</li>
+                        <li data-en="5-year installation workmanship warranty" data-es="5 años de garantía de mano de obra" data-he="אחריות עבודת התקנה 5 שנים">5-year installation workmanship warranty</li>
+                        <li data-en="Monitoring included for first year" data-es="Monitoreo incluido el primer año" data-he="ניטור כלול בשנה הראשונה">Monitoring included for first year</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="template-step">
+                <div class="template-dot">7</div>
+                <div class="template-content">
+                    <h4 data-en="Terms & Conditions" data-es="Términos y Condiciones" data-he="תנאים והגבלות">Terms & Conditions</h4>
+                    <p data-en="Clear terms protect both parties and prevent disputes." data-es="Términos claros protegen a ambas partes y previenen disputas." data-he="תנאים ברורים מגנים על שני הצדדים ומונעים מחלוקות.">Clear terms protect both parties and prevent disputes.</p>
+                    <ul>
+                        <li data-en="Proposal validity: 30 calendar days" data-es="Validez de la propuesta: 30 días calendario" data-he="תוקף הצעה: 30 ימים קלנדריים">Proposal validity: 30 calendar days</li>
+                        <li data-en="Payment schedule: 50/40/10" data-es="Calendario de pagos: 50/40/10" data-he="לוח תשלומים: 50/40/10">Payment schedule: 50/40/10</li>
+                        <li data-en="Scope of work boundaries" data-es="Límites del alcance del trabajo" data-he="גבולות היקף העבודה">Scope of work boundaries</li>
+                        <li data-en="Cancellation policy & change order process" data-es="Política de cancelación y proceso de órdenes de cambio" data-he="מדיניות ביטול ותהליך שינויי הזמנה">Cancellation policy & change order process</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="Pricing Guidelines" data-es="Guía de Precios" data-he="הנחיות תמחור">Pricing Guidelines</h2>
+            <p data-en="Standard pricing per watt-peak for Panama market. Adjust based on complexity and access." data-es="Precio estándar por vatio-pico para el mercado de Panamá. Ajuste según complejidad y acceso." data-he="תמחור סטנדרטי לוואט-פיק לשוק פנמה. התאימו לפי מורכבות ונגישות.">Standard pricing per watt-peak for Panama market. Adjust based on complexity and access.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-card-header residential">
+                    <h3 data-en="Residential" data-es="Residencial" data-he="מגורים">Residential</h3>
+                    <div class="price-range">$1.10–$1.30</div>
+                    <div class="price-unit" data-en="per Watt-peak" data-es="por Vatio-pico" data-he="לוואט-פיק">per Watt-peak</div>
+                </div>
+                <div class="pricing-card-body">
+                    <div class="pricing-row">
+                        <span class="label" data-en="Typical Size" data-es="Tamaño Típico" data-he="גודל טיפוסי">Typical Size</span>
+                        <span class="value">2–5 kWp</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Price Range" data-es="Rango de Precio" data-he="טווח מחירים">Price Range</span>
+                        <span class="value">$2,200–$6,500</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Margin Target" data-es="Margen Objetivo" data-he="יעד מרווח">Margin Target</span>
+                        <span class="value">25–35%</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Install Time" data-es="Tiempo Instalación" data-he="זמן התקנה">Install Time</span>
+                        <span class="value" data-en="1–3 days" data-es="1–3 días" data-he="1–3 ימים">1–3 days</span>
+                    </div>
+
+                    <div class="pricing-example">
+                        <h5 data-en="Example: 3.5 kWp System" data-es="Ejemplo: Sistema 3.5 kWp" data-he="דוגמה: מערכת 3.5 kWp">Example: 3.5 kWp System</h5>
+                        <div class="calc-line">
+                            <span data-en="Equipment (panels, inverter, mount)" data-es="Equipo (paneles, inversor, montaje)" data-he="ציוד (פאנלים, ממיר, הרכבה)">Equipment (panels, inverter, mount)</span>
+                            <span>$2,450</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Labor & installation" data-es="Mano de obra e instalación" data-he="עבודה והתקנה">Labor & installation</span>
+                            <span>$700</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Permits & ENSA fees" data-es="Permisos y tarifas ENSA" data-he="היתרים ואגרות ENSA">Permits & ENSA fees</span>
+                            <span>$250</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Overhead & margin" data-es="Gastos generales y margen" data-he="תקורה ומרווח">Overhead & margin</span>
+                            <span>$850</span>
+                        </div>
+                        <div class="calc-line calc-total">
+                            <span data-en="Client Price" data-es="Precio al Cliente" data-he="מחיר ללקוח">Client Price</span>
+                            <span>$4,250 ($1.21/Wp)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-card-header commercial">
+                    <h3 data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</h3>
+                    <div class="price-range">$1.00–$1.20</div>
+                    <div class="price-unit" data-en="per Watt-peak" data-es="por Vatio-pico" data-he="לוואט-פיק">per Watt-peak</div>
+                </div>
+                <div class="pricing-card-body">
+                    <div class="pricing-row">
+                        <span class="label" data-en="Typical Size" data-es="Tamaño Típico" data-he="גודל טיפוסי">Typical Size</span>
+                        <span class="value">5–50 kWp</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Price Range" data-es="Rango de Precio" data-he="טווח מחירים">Price Range</span>
+                        <span class="value">$5,000–$60,000</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Margin Target" data-es="Margen Objetivo" data-he="יעד מרווח">Margin Target</span>
+                        <span class="value">20–30%</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="label" data-en="Install Time" data-es="Tiempo Instalación" data-he="זמן התקנה">Install Time</span>
+                        <span class="value" data-en="1–2 weeks" data-es="1–2 semanas" data-he="1–2 שבועות">1–2 weeks</span>
+                    </div>
+
+                    <div class="pricing-example">
+                        <h5 data-en="Example: 15 kWp System" data-es="Ejemplo: Sistema 15 kWp" data-he="דוגמה: מערכת 15 kWp">Example: 15 kWp System</h5>
+                        <div class="calc-line">
+                            <span data-en="Equipment (panels, inverter, mount)" data-es="Equipo (paneles, inversor, montaje)" data-he="ציוד (פאנלים, ממיר, הרכבה)">Equipment (panels, inverter, mount)</span>
+                            <span>$9,750</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Labor & installation" data-es="Mano de obra e instalación" data-he="עבודה והתקנה">Labor & installation</span>
+                            <span>$2,400</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Permits & ENSA fees" data-es="Permisos y tarifas ENSA" data-he="היתרים ואגרות ENSA">Permits & ENSA fees</span>
+                            <span>$600</span>
+                        </div>
+                        <div class="calc-line">
+                            <span data-en="Overhead & margin" data-es="Gastos generales y margen" data-he="תקורה ומרווח">Overhead & margin</span>
+                            <span>$3,750</span>
+                        </div>
+                        <div class="calc-line calc-total">
+                            <span data-en="Client Price" data-es="Precio al Cliente" data-he="מחיר ללקוח">Client Price</span>
+                            <span>$16,500 ($1.10/Wp)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ley 417 -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="Ley 417 — The Solar Law" data-es="Ley 417 — La Ley Solar" data-he="חוק 417 — חוק הסולאר">Ley 417 — The Solar Law</h2>
+            <p data-en="Panama's renewable energy law. Include this section in every proposal to educate and build confidence." data-es="La ley de energía renovable de Panamá. Incluya esta sección en cada propuesta para educar y generar confianza." data-he="חוק האנרגיה המתחדשת של פנמה. כללו חלק זה בכל הצעה לחינוך ובניית אמון.">Panama's renewable energy law. Include this section in every proposal to educate and build confidence.</p>
+        </div>
+
+        <div class="ley-card">
+            <h3>Ley 417 — <span data-en="Distributed Generation" data-es="Generación Distribuida" data-he="ייצור מבוזר">Distributed Generation</span></h3>
+            <p class="subtitle" data-en="Law 417 of 2013 regulates self-generation and net metering in Panama" data-es="La Ley 417 de 2013 regula la autogeneración y la medición neta en Panamá" data-he="חוק 417 משנת 2013 מסדיר ייצור עצמי ומדידה נטו בפנמה">Law 417 of 2013 regulates self-generation and net metering in Panama</p>
+
+            <ul class="ley-benefits">
+                <li>
+                    <span class="icon">⚡</span>
+                    <span data-en="Net metering: excess energy credits roll over monthly for up to 3 years" data-es="Medición neta: créditos de energía excedente se transfieren mensualmente por hasta 3 años" data-he="מדידה נטו: קרדיטים עודפים מועברים חודשית עד 3 שנים">Net metering: excess energy credits roll over monthly for up to 3 years</span>
+                </li>
+                <li>
+                    <span class="icon">🏠</span>
+                    <span data-en="Systems up to 500 kWp for residential and commercial self-consumption" data-es="Sistemas hasta 500 kWp para autoconsumo residencial y comercial" data-he="מערכות עד 500 kWp לצריכה עצמית למגורים ומסחר">Systems up to 500 kWp for residential and commercial self-consumption</span>
+                </li>
+                <li>
+                    <span class="icon">📋</span>
+                    <span data-en="Simplified interconnection process through local distribution company (ENSA)" data-es="Proceso simplificado de interconexión a través de la empresa distribuidora local (ENSA)" data-he="תהליך חיבור פשוט דרך חברת ההפצה המקומית (ENSA)">Simplified interconnection process through local distribution company (ENSA)</span>
+                </li>
+                <li>
+                    <span class="icon">💰</span>
+                    <span data-en="No additional taxes on self-generated energy — zero ITBMS on solar generation" data-es="Sin impuestos adicionales sobre energía autogenerada — cero ITBMS en generación solar" data-he="ללא מיסים נוספים על אנרגיה שמיוצרת עצמית — אפס ITBMS על ייצור סולארי">No additional taxes on self-generated energy — zero ITBMS on solar generation</span>
+                </li>
+                <li>
+                    <span class="icon">🔒</span>
+                    <span data-en="Right to install solar panels on your own property is protected by law" data-es="El derecho a instalar paneles solares en su propiedad está protegido por ley" data-he="הזכות להתקין פאנלים סולאריים על הנכס שלך מוגנת בחוק">Right to install solar panels on your own property is protected by law</span>
+                </li>
+                <li>
+                    <span class="icon">📊</span>
+                    <span data-en="ASEP (regulator) oversees fair implementation and dispute resolution" data-es="ASEP (regulador) supervisa la implementación justa y la resolución de disputas" data-he="ASEP (הרגולטור) מפקח על יישום הוגן ויישוב סכסוכים">ASEP (regulator) oversees fair implementation and dispute resolution</span>
+                </li>
+            </ul>
+
+            <div class="ley-include">
+                <h4 data-en="Include in Every Proposal" data-es="Incluir en Cada Propuesta" data-he="לכלול בכל הצעה">Include in Every Proposal</h4>
+                <p data-en="'Your solar installation is fully supported by Panama's Ley 417, which guarantees your right to generate your own electricity, receive credit for excess energy through net metering, and connect seamlessly to the ENSA grid. This law provides the legal framework that protects your investment for decades to come.'" data-es="'Su instalación solar está totalmente respaldada por la Ley 417 de Panamá, que garantiza su derecho a generar su propia electricidad, recibir crédito por energía excedente a través de medición neta, y conectarse sin problemas a la red ENSA. Esta ley proporciona el marco legal que protege su inversión por décadas.'" data-he="'מערכת הסולאר שלך נתמכת במלואה על ידי חוק 417 של פנמה, המבטיח את זכותך לייצר חשמל משלך, לקבל קרדיט על אנרגיה עודפת באמצעות מדידה נטו, ולהתחבר בצורה חלקה לרשת ENSA. חוק זה מספק את המסגרת החוקית המגנה על ההשקעה שלך לעשורים הבאים.'">"Your solar installation is fully supported by Panama's Ley 417, which guarantees your right to generate your own electricity, receive credit for excess energy through net metering, and connect seamlessly to the ENSA grid. This law provides the legal framework that protects your investment for decades to come."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Terms -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="Payment Terms: 50/40/10" data-es="Términos de Pago: 50/40/10" data-he="תנאי תשלום: 50/40/10">Payment Terms: 50/40/10</h2>
+            <p data-en="Standard payment schedule that balances cash flow with client confidence." data-es="Calendario de pagos estándar que equilibra flujo de caja con confianza del cliente." data-he="לוח תשלומים סטנדרטי שמאזן תזרים מזומנים עם ביטחון הלקוח.">Standard payment schedule that balances cash flow with client confidence.</p>
+        </div>
+
+        <div class="payment-flow">
+            <div class="payment-block">
+                <div class="pct">50%</div>
+                <div class="trigger" data-en="At Contract Signing" data-es="Al Firmar Contrato" data-he="בחתימת חוזה">At Contract Signing</div>
+                <div class="desc" data-en="Covers equipment procurement & permits" data-es="Cubre adquisición de equipos y permisos" data-he="מכסה רכש ציוד והיתרים">Covers equipment procurement & permits</div>
+            </div>
+            <span class="payment-arrow">→</span>
+            <div class="payment-block">
+                <div class="pct">40%</div>
+                <div class="trigger" data-en="Equipment Delivery" data-es="Entrega de Equipo" data-he="משלוח ציוד">Equipment Delivery</div>
+                <div class="desc" data-en="Before installation begins" data-es="Antes de que comience la instalación" data-he="לפני תחילת ההתקנה">Before installation begins</div>
+            </div>
+            <span class="payment-arrow">→</span>
+            <div class="payment-block">
+                <div class="pct">10%</div>
+                <div class="trigger" data-en="System Activation" data-es="Activación del Sistema" data-he="הפעלת מערכת">System Activation</div>
+                <div class="desc" data-en="After ENSA meter swap & commissioning" data-es="Después del cambio de medidor ENSA y puesta en marcha" data-he="לאחר החלפת מונה ENSA והפעלה">After ENSA meter swap & commissioning</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Follow-up Sequence -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="Follow-up Sequence" data-es="Secuencia de Seguimiento" data-he="רצף מעקב">Follow-up Sequence</h2>
+            <p data-en="Systematic follow-up turns proposals into contracts. Never let a proposal go cold." data-es="El seguimiento sistemático convierte propuestas en contratos. Nunca deje que una propuesta se enfríe." data-he="מעקב שיטתי הופך הצעות לחוזים. לעולם אל תתנו להצעה להתקרר.">Systematic follow-up turns proposals into contracts. Never let a proposal go cold.</p>
+        </div>
+
+        <div class="followup-timeline">
+            <div class="followup-item">
+                <div class="followup-dot send">📤</div>
+                <div class="followup-content">
+                    <div class="timing" data-en="Day 0 — Send Proposal" data-es="Día 0 — Enviar Propuesta" data-he="יום 0 — שליחת הצעה">Day 0 — Send Proposal</div>
+                    <h4 data-en="Proposal Delivery" data-es="Entrega de Propuesta" data-he="מסירת הצעה">Proposal Delivery</h4>
+                    <p data-en="Send via email + WhatsApp. Request read confirmation. Offer to walk through together via call." data-es="Envíe por email + WhatsApp. Solicite confirmación de lectura. Ofrezca revisarla juntos por llamada." data-he="שלחו במייל + ווטסאפ. בקשו אישור קריאה. הציעו לעבור יחד בשיחה.">Send via email + WhatsApp. Request read confirmation. Offer to walk through together via call.</p>
+                    <div class="script" data-en="'Hi [Name], I've prepared your personalized solar proposal. Would you like me to walk you through the numbers? I can call in the next hour or schedule a convenient time.'" data-es="'Hola [Nombre], he preparado su propuesta solar personalizada. ¿Le gustaría que le explique los números? Puedo llamar en la próxima hora o programar un horario conveniente.'" data-he="'שלום [שם], הכנתי את הצעת הסולאר המותאמת אישית שלך. תרצה שאעבור איתך על המספרים? אני יכול להתקשר בשעה הקרובה או לתאם זמן נוח.'">"Hi [Name], I've prepared your personalized solar proposal. Would you like me to walk you through the numbers? I can call in the next hour or schedule a convenient time."</div>
+                </div>
+            </div>
+
+            <div class="followup-item">
+                <div class="followup-dot wait">📞</div>
+                <div class="followup-content">
+                    <div class="timing" data-en="Day 2 — First Follow-up" data-es="Día 2 — Primer Seguimiento" data-he="יום 2 — מעקב ראשון">Day 2 — First Follow-up</div>
+                    <h4 data-en="Value-Add Check-in" data-es="Contacto de Valor Agregado" data-he="בדיקת ערך מוסף">Value-Add Check-in</h4>
+                    <p data-en="Don't ask 'did you review?' Instead, add value. Share a relevant case study or answer anticipated questions." data-es="No pregunte '¿lo revisó?' En su lugar, agregue valor. Comparta un caso de estudio relevante o responda preguntas anticipadas." data-he="אל תשאלו 'בדקת?' במקום, הוסיפו ערך. שתפו מקרה בוחן רלוונטי או ענו על שאלות צפויות.">Don't ask "did you review?" Instead, add value. Share a relevant case study or answer anticipated questions.</p>
+                    <div class="script" data-en="'Hi [Name], I wanted to share something interesting — one of our clients in [similar neighborhood] just saved $85 on their first month. Their system is similar to what we proposed for you. Any questions I can help with?'" data-es="'Hola [Nombre], quería compartir algo interesante — uno de nuestros clientes en [barrio similar] acaba de ahorrar $85 en su primer mes. Su sistema es similar al que propusimos para usted. ¿Alguna pregunta?'" data-he="'שלום [שם], רציתי לשתף משהו מעניין — אחד מהלקוחות שלנו ב[שכונה דומה] חסך $85 בחודש הראשון. המערכת שלו דומה למה שהצענו לך. יש שאלות?'">"Hi [Name], I wanted to share something interesting — one of our clients in [similar neighborhood] just saved $85 on their first month. Their system is similar to what we proposed for you. Any questions I can help with?"</div>
+                </div>
+            </div>
+
+            <div class="followup-item">
+                <div class="followup-dot wait">💬</div>
+                <div class="followup-content">
+                    <div class="timing" data-en="Day 5 — Urgency Follow-up" data-es="Día 5 — Seguimiento de Urgencia" data-he="יום 5 — מעקב דחיפות">Day 5 — Urgency Follow-up</div>
+                    <h4 data-en="Create Gentle Urgency" data-es="Crear Urgencia Suave" data-he="יצירת דחיפות עדינה">Create Gentle Urgency</h4>
+                    <p data-en="Mention equipment availability, upcoming price changes, or the next electricity bill cycle." data-es="Mencione disponibilidad de equipo, próximos cambios de precio, o el próximo ciclo de facturación." data-he="הזכירו זמינות ציוד, שינויי מחירים צפויים, או מחזור חשבון החשמל הבא.">Mention equipment availability, upcoming price changes, or the next electricity bill cycle.</p>
+                    <div class="script" data-en="'Quick update: we have the panels for your system in stock now, but our next shipment isn't until [date]. If you'd like to move forward, we can lock in the current pricing and start the ENSA process this week.'" data-es="'Actualización rápida: tenemos los paneles para su sistema en stock ahora, pero nuestro próximo envío no es hasta [fecha]. Si desea avanzar, podemos asegurar el precio actual y comenzar el proceso ENSA esta semana.'" data-he="'עדכון קצר: הפאנלים למערכת שלך במלאי כרגע, אבל המשלוח הבא רק ב[תאריך]. אם תרצה להתקדם, נוכל לנעול את המחיר הנוכחי ולהתחיל את תהליך ENSA השבוע.'">"Quick update: we have the panels for your system in stock now, but our next shipment isn't until [date]. If you'd like to move forward, we can lock in the current pricing and start the ENSA process this week."</div>
+                </div>
+            </div>
+
+            <div class="followup-item">
+                <div class="followup-dot final">⏰</div>
+                <div class="followup-content">
+                    <div class="timing" data-en="Day 7 — Final Follow-up" data-es="Día 7 — Seguimiento Final" data-he="יום 7 — מעקב אחרון">Day 7 — Final Follow-up</div>
+                    <h4 data-en="Decision Point" data-es="Punto de Decisión" data-he="נקודת החלטה">Decision Point</h4>
+                    <p data-en="Respectful final touch. Ask for a clear yes/no. If no, ask what would change their mind — valuable feedback." data-es="Toque final respetuoso. Pida un sí/no claro. Si es no, pregunte qué cambiaría su opinión — retroalimentación valiosa." data-he="נגיעה אחרונה מכבדת. בקשו כן/לא ברור. אם לא, שאלו מה היה משנה את דעתם — משוב יקר ערך.">Respectful final touch. Ask for a clear yes/no. If no, ask what would change their mind — valuable feedback.</p>
+                    <div class="script" data-en="'Hi [Name], I know life gets busy. I just want to make sure — is solar still something you're considering? If the timing isn't right now, I completely understand. Just let me know either way so I can plan accordingly.'" data-es="'Hola [Nombre], sé que la vida se pone ocupada. Solo quiero asegurarme — ¿la solar sigue siendo algo que está considerando? Si el momento no es el correcto ahora, lo entiendo completamente. Solo avíseme de cualquier manera para que pueda planificar.'" data-he="'שלום [שם], אני יודע שהחיים עמוסים. רק רוצה לוודא — סולאר עדיין משהו ששוקלים? אם התזמון לא מתאים כרגע, אני מבין לגמרי. רק תעדכנו בכל מקרה שאוכל לתכנן בהתאם.'">"Hi [Name], I know life gets busy. I just want to make sure — is solar still something you're considering? If the timing isn't right now, I completely understand. Just let me know either way so I can plan accordingly."</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pre-Send Checklist -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="Pre-Send Checklist" data-es="Lista de Verificación Pre-Envío" data-he="רשימת בדיקה לפני שליחה">Pre-Send Checklist</h2>
+            <p data-en="Review every proposal against this checklist before sending to the client." data-es="Revise cada propuesta contra esta lista antes de enviarla al cliente." data-he="בדקו כל הצעה מול רשימה זו לפני שליחה ללקוח.">Review every proposal against this checklist before sending to the client.</p>
+        </div>
+
+        <div class="checklist">
+            <div class="checklist-header" data-en="Proposal Quality Check" data-es="Control de Calidad de Propuesta" data-he="בקרת איכות הצעה">Proposal Quality Check</div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Client name & address are correct (match ENSA bill)" data-es="Nombre y dirección del cliente son correctos (coinciden con factura ENSA)" data-he="שם וכתובת לקוח נכונים (תואמים חשבון ENSA)">Client name & address are correct (match ENSA bill)<small data-en="Cross-reference with site survey report" data-es="Referencia cruzada con informe de inspección" data-he="הצלבה עם דוח סקר שטח">Cross-reference with site survey report</small></span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="System size matches electricity analysis" data-es="Tamaño del sistema coincide con análisis eléctrico" data-he="גודל מערכת תואם ניתוח חשמל">System size matches electricity analysis<small data-en="kWp from Step 3 formula" data-es="kWp de la fórmula del Paso 3" data-he="kWp מנוסחת שלב 3">kWp from Step 3 formula</small></span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Equipment specs are current (not discontinued models)" data-es="Especificaciones del equipo son actuales (no modelos descontinuados)" data-he="מפרטי ציוד עדכניים (לא דגמים שהופסקו)">Equipment specs are current (not discontinued models)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Pricing is within guidelines ($1.10-1.30 res / $1.00-1.20 com)" data-es="Precios están dentro de las guías ($1.10-1.30 res / $1.00-1.20 com)" data-he="תמחור בטווח ההנחיות ($1.10-1.30 מגורים / $1.00-1.20 מסחרי)">Pricing is within guidelines ($1.10-1.30 res / $1.00-1.20 com)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="25-year savings table included with realistic assumptions" data-es="Tabla de ahorro a 25 años incluida con supuestos realistas" data-he="טבלת חיסכון ל-25 שנה כלולה עם הנחות ריאליסטיות">25-year savings table included with realistic assumptions</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Ley 417 section included" data-es="Sección de Ley 417 incluida" data-he="חלק חוק 417 כלול">Ley 417 section included</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Payment terms clearly stated: 50/40/10" data-es="Términos de pago claramente establecidos: 50/40/10" data-he="תנאי תשלום ברורים: 50/40/10">Payment terms clearly stated: 50/40/10</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Warranty details (25yr/10yr/5yr) included" data-es="Detalles de garantía (25/10/5 años) incluidos" data-he="פרטי אחריות (25/10/5 שנים) כלולים">Warranty details (25yr/10yr/5yr) included</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="Proposal validity date is set (30 days from today)" data-es="Fecha de validez de la propuesta está establecida (30 días desde hoy)" data-he="תאריך תוקף הצעה נקבע (30 יום מהיום)">Proposal validity date is set (30 days from today)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="check-box"></span>
+                <span class="text" data-en="PDF exported and proofread — no typos, all numbers correct" data-es="PDF exportado y revisado — sin errores tipográficos, todos los números correctos" data-he="PDF ייצא ונבדק — ללא שגיאות הקלדה, כל המספרים נכונים">PDF exported and proofread — no typos, all numbers correct</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-step5-sld.html">
+            ← <span data-en="Prev: Single Line Diagram" data-es="Anterior: Diagrama Unifilar" data-he="קודם: תרשים חד-קווי">Prev: Single Line Diagram</span>
+        </a>
+        <a href="crm-step7-contract.html" class="next">
+            <span data-en="Next: Contract Signing" data-es="Siguiente: Firma de Contrato" data-he="הבא: חתימת חוזה">Next: Contract Signing</span> →
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="crm-value-chain.html" data-en="Back to CRM Pipeline" data-es="Volver al Pipeline CRM" data-he="חזרה לצינור CRM">Back to CRM Pipeline</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const val = el.getAttribute('data-' + lang);
+                if (val.includes('<')) {
+                    el.innerHTML = val;
+                } else {
+                    el.textContent = val;
+                }
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>

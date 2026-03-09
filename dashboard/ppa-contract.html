@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPA Contract Template — Solaris Energy Panama</title>
+    <meta name="description" content="Power Purchase Agreement template for commercial solar in Panama. Zero upfront cost, pay per kWh.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.7; }
+
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; background: var(--green); color: var(--pearl); text-decoration: none; padding: 8px 18px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%); padding: 8rem 2rem 5rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .badge { display: inline-block; background: rgba(254,253,251,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(212,168,67,0.3); padding: 6px 20px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--pearl); margin-bottom: 1rem; }
+        .page-hero p { color: rgba(254,253,251,0.8); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        .content { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+        .section { margin-bottom: 3.5rem; }
+        .section-label { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--green); margin-bottom: 1rem; }
+        .section h3 { font-size: 1.15rem; font-weight: 700; color: var(--green); margin: 1.5rem 0 0.75rem; }
+        .section p, .section li { color: var(--slate); font-size: 0.95rem; line-height: 1.8; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.5rem; }
+
+        .card { background: white; border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-card); }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .card-icon.green { background: rgba(11,61,46,0.08); color: var(--green); }
+        .card-icon.gold { background: rgba(212,168,67,0.12); color: var(--gold-aged); }
+        .card-title { font-weight: 700; font-size: 1.05rem; color: var(--charcoal); }
+
+        .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: var(--radius-card); border: 1px solid var(--mist); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        thead { background: var(--green); color: var(--pearl); }
+        th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--mist); color: var(--slate); }
+        tbody tr:hover { background: var(--cloud); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .template-field { background: var(--sand); border: 1px dashed var(--gold); border-radius: 6px; padding: 1.5rem 2rem; margin: 1rem 0; }
+        .template-field .field-label { font-size: 11px; font-weight: 700; color: var(--gold-aged); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .template-field .field-line { padding: 6px 0; border-bottom: 1px solid rgba(212,168,67,0.3); color: var(--slate); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .template-field .field-line span { color: var(--ash); font-style: italic; }
+
+        .alert { border-radius: var(--radius-card); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+        .alert-green { background: rgba(11,61,46,0.05); border-left: 4px solid var(--green); }
+        .alert-gold { background: rgba(212,168,67,0.08); border-left: 4px solid var(--gold); }
+        .alert-title { font-weight: 700; margin-bottom: 0.5rem; color: var(--charcoal); }
+
+        .bilingual { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1rem 0; }
+        .bilingual .lang-col { background: white; border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem; }
+        .bilingual .lang-col h4 { font-size: 0.8rem; color: var(--gold-aged); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .bilingual .lang-col p { font-size: 0.9rem; color: var(--slate); }
+
+        /* Highlight numbers */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .stat-card { background: white; border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem; text-align: center; box-shadow: var(--shadow-card); }
+        .stat-card .stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green); font-weight: 700; }
+        .stat-card .stat-label { font-size: 0.85rem; color: var(--ash); margin-top: 0.25rem; }
+
+        /* Financial model */
+        .financial-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--mist); font-size: 0.95rem; }
+        .financial-row:last-child { border-bottom: none; }
+        .financial-row .label { color: var(--slate); }
+        .financial-row .value { font-weight: 700; color: var(--charcoal); }
+        .financial-row.highlight { background: rgba(11,61,46,0.03); margin: 0 -1rem; padding: 10px 1rem; border-radius: 6px; }
+        .financial-row.highlight .value { color: var(--green); font-size: 1.1rem; }
+
+        /* Compare box */
+        .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 2rem 0; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--mist); }
+        .compare-col { padding: 2rem; text-align: center; }
+        .compare-col.grid-power { background: #f5f0f0; }
+        .compare-col.solar-power { background: rgba(11,61,46,0.04); }
+        .compare-col .compare-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .compare-col .compare-price { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; }
+        .compare-col.grid-power .compare-price { color: #c0392b; }
+        .compare-col.solar-power .compare-price { color: var(--green); }
+        .compare-col .compare-unit { font-size: 0.85rem; color: var(--ash); }
+        .compare-col .compare-note { font-size: 0.8rem; color: var(--ash); margin-top: 0.5rem; }
+
+        @media (max-width: 768px) {
+            .bilingual { grid-template-columns: 1fr; }
+            .compare { grid-template-columns: 1fr; }
+            .content { padding: 2rem 1rem; }
+            .page-hero { padding: 7rem 1.5rem 3rem; }
+        }
+
+        [data-lang="he"] { direction: rtl; text-align: right; }
+        [data-lang="he"] .back-nav { left: auto; right: 20px; }
+        [data-lang="he"] .lang-toggle { right: auto; left: 20px; }
+        [data-lang="he"] .section ul, [data-lang="he"] .section ol { padding-left: 0; padding-right: 1.5rem; }
+        [data-lang="he"] .alert-green, [data-lang="he"] .alert-gold { border-left: none; border-right: 4px solid; }
+        [data-lang="he"] .alert-green { border-right-color: var(--green); }
+        [data-lang="he"] .alert-gold { border-right-color: var(--gold); }
+
+        @media print { .lang-toggle, .back-nav { display: none; } .page-hero { padding: 2rem; } }
+
+        [data-lang="en"] .es, [data-lang="en"] .he,
+        [data-lang="es"] .en, [data-lang="es"] .he,
+        [data-lang="he"] .en, [data-lang="he"] .es { display: none; }
+    </style>
+</head>
+<body data-lang="en">
+
+<nav class="back-nav"><a href="index.html">&#8592; Dashboard</a></nav>
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Hero -->
+<header class="page-hero">
+    <div class="badge">
+        <span class="en">Contract Template</span>
+        <span class="es">Plantilla de Contrato</span>
+        <span class="he">תבנית חוזה</span>
+    </div>
+    <h1>
+        <span class="en">Power Purchase Agreement</span>
+        <span class="es">Acuerdo de Compra de Energía</span>
+        <span class="he">הסכם רכישת חשמל (PPA)</span>
+    </h1>
+    <p>
+        <span class="en">Zero upfront cost. Pay only for the clean energy you consume. Guaranteed savings from day one.</span>
+        <span class="es">Cero costo inicial. Pague solo por la energía limpia que consume. Ahorros garantizados desde el primer día.</span>
+        <span class="he">אפס עלות מראש. שלם רק עבור האנרגיה הנקייה שאתה צורך. חיסכון מובטח מהיום הראשון.</span>
+    </p>
+</header>
+
+<div class="content">
+
+    <!-- ============ WHAT IS PPA ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Overview</span>
+            <span class="es">Resumen</span>
+            <span class="he">סקירה</span>
+        </div>
+        <h2>
+            <span class="en">What is a PPA?</span>
+            <span class="es">¿Qué es un PPA?</span>
+            <span class="he">מהו PPA?</span>
+        </h2>
+
+        <p>
+            <span class="en">A Power Purchase Agreement (PPA) allows commercial clients to benefit from solar energy with <strong>zero upfront investment</strong>. Solaris installs, owns, and maintains the solar system on the client's roof. The client simply purchases the electricity generated at a fixed rate below grid prices.</span>
+            <span class="es">Un Acuerdo de Compra de Energía (PPA) permite a los clientes comerciales beneficiarse de la energía solar con <strong>cero inversión inicial</strong>. Solaris instala, es propietaria y mantiene el sistema solar en el techo del cliente. El cliente simplemente compra la electricidad generada a una tarifa fija por debajo de los precios de la red.</span>
+            <span class="he">הסכם רכישת חשמל (PPA) מאפשר ללקוחות מסחריים ליהנות מאנרגיה סולארית ב<strong>אפס השקעה מראש</strong>. סולאריס מתקינה, מחזיקה ומתחזקת את המערכת הסולארית על גג הלקוח. הלקוח פשוט רוכש את החשמל שנוצר בתעריף קבוע מתחת למחירי הרשת.</span>
+        </p>
+
+        <div class="compare">
+            <div class="compare-col grid-power">
+                <div class="compare-title">
+                    <span class="en">Grid Electricity</span>
+                    <span class="es">Electricidad de la Red</span>
+                    <span class="he">חשמל רשת</span>
+                </div>
+                <div class="compare-price">$0.195</div>
+                <div class="compare-unit">/kWh</div>
+                <div class="compare-note">
+                    <span class="en">Rising annually</span>
+                    <span class="es">Aumenta anualmente</span>
+                    <span class="he">עולה מדי שנה</span>
+                </div>
+            </div>
+            <div class="compare-col solar-power">
+                <div class="compare-title">
+                    <span class="en">Solaris PPA Rate</span>
+                    <span class="es">Tarifa PPA Solaris</span>
+                    <span class="he">תעריף PPA סולאריס</span>
+                </div>
+                <div class="compare-price">$0.13</div>
+                <div class="compare-unit">/kWh</div>
+                <div class="compare-note">
+                    <span class="en">2% annual escalation</span>
+                    <span class="es">Escalación anual del 2%</span>
+                    <span class="he">עלייה שנתית 2%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value">$0</div>
+                <div class="stat-label">
+                    <span class="en">Upfront Cost</span>
+                    <span class="es">Costo Inicial</span>
+                    <span class="he">עלות מראש</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">33%</div>
+                <div class="stat-label">
+                    <span class="en">Day 1 Savings</span>
+                    <span class="es">Ahorro Día 1</span>
+                    <span class="he">חיסכון מיום 1</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">20yr</div>
+                <div class="stat-label">
+                    <span class="en">Typical Term</span>
+                    <span class="es">Plazo Típico</span>
+                    <span class="he">תקופה טיפוסית</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$0</div>
+                <div class="stat-label">
+                    <span class="en">Maintenance Cost</span>
+                    <span class="es">Costo de Mantenimiento</span>
+                    <span class="he">עלות תחזוקה</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PARTIES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 1</span>
+            <span class="es">Artículo 1</span>
+            <span class="he">סעיף 1</span>
+        </div>
+        <h2>
+            <span class="en">Contracting Parties</span>
+            <span class="es">Partes Contratantes</span>
+            <span class="he">הצדדים להסכם</span>
+        </h2>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">System Owner (Provider)</span>
+                <span class="es">Propietario del Sistema (Proveedor)</span>
+                <span class="he">בעל המערכת (ספק)</span>
+            </div>
+            <div class="field-line"><span>Company: </span> Solaris Energy Panama, S.A.</div>
+            <div class="field-line"><span>RUC: </span> ___________________________</div>
+            <div class="field-line"><span>Address: </span> ___________________________</div>
+            <div class="field-line"><span>Legal Representative: </span> ___________________________</div>
+        </div>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">Host (Off-taker)</span>
+                <span class="es">Anfitrión (Comprador)</span>
+                <span class="he">מארח (רוכש)</span>
+            </div>
+            <div class="field-line"><span>Company: </span> ___________________________</div>
+            <div class="field-line"><span>RUC: </span> ___________________________</div>
+            <div class="field-line"><span>Site Address: </span> ___________________________</div>
+            <div class="field-line"><span>Legal Representative: </span> ___________________________</div>
+            <div class="field-line"><span>Contact Email: </span> ___________________________</div>
+        </div>
+
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>This Power Purchase Agreement ("PPA" or "Agreement") is entered into by Solaris Energy Panama, S.A. ("Provider") and the entity identified above ("Host"), collectively the "Parties." The Provider shall install, own, operate, and maintain a solar photovoltaic system ("System") at the Host's premises ("Site"), and the Host shall purchase all electrical energy produced by the System at the rates specified herein.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>Este Acuerdo de Compra de Energía ("PPA" o "Acuerdo") se celebra entre Solaris Energy Panama, S.A. ("Proveedor") y la entidad identificada arriba ("Anfitrión"), colectivamente las "Partes." El Proveedor instalará, será propietario, operará y mantendrá un sistema solar fotovoltaico ("Sistema") en las instalaciones del Anfitrión ("Sitio"), y el Anfitrión comprará toda la energía eléctrica producida por el Sistema a las tarifas especificadas en este documento.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ RATE & ESCALATION ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 2</span>
+            <span class="es">Artículo 2</span>
+            <span class="he">סעיף 2</span>
+        </div>
+        <h2>
+            <span class="en">Energy Rate & Escalation</span>
+            <span class="es">Tarifa de Energía y Escalación</span>
+            <span class="he">תעריף אנרגיה והתאמות</span>
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Parameter</span>
+                            <span class="es">Parámetro</span>
+                            <span class="he">פרמטר</span>
+                        </th>
+                        <th>
+                            <span class="en">Value</span>
+                            <span class="es">Valor</span>
+                            <span class="he">ערך</span>
+                        </th>
+                        <th>
+                            <span class="en">Notes</span>
+                            <span class="es">Notas</span>
+                            <span class="he">הערות</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="en">Initial PPA Rate</span>
+                            <span class="es">Tarifa PPA Inicial</span>
+                            <span class="he">תעריף PPA ראשוני</span>
+                        </td>
+                        <td><strong>$0.12 – $0.15/kWh</strong></td>
+                        <td>
+                            <span class="en">Depends on system size and consumption profile</span>
+                            <span class="es">Depende del tamaño del sistema y perfil de consumo</span>
+                            <span class="he">תלוי בגודל המערכת ופרופיל צריכה</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Annual Escalation</span>
+                            <span class="es">Escalación Anual</span>
+                            <span class="he">עלייה שנתית</span>
+                        </td>
+                        <td><strong>2.0%</strong></td>
+                        <td>
+                            <span class="en">Applied on each anniversary of Commercial Operation Date</span>
+                            <span class="es">Aplicada en cada aniversario de la Fecha de Operación Comercial</span>
+                            <span class="he">מיושמת בכל יום שנה למועד ההפעלה המסחרית</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Current Grid Rate</span>
+                            <span class="es">Tarifa Actual de Red</span>
+                            <span class="he">תעריף רשת נוכחי</span>
+                        </td>
+                        <td>$0.195/kWh</td>
+                        <td>
+                            <span class="en">Panama average commercial rate (reference only)</span>
+                            <span class="es">Tarifa comercial promedio de Panamá (solo referencia)</span>
+                            <span class="he">תעריף מסחרי ממוצע בפנמה (לייחוס בלבד)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Billing Cycle</span>
+                            <span class="es">Ciclo de Facturación</span>
+                            <span class="he">מחזור חיוב</span>
+                        </td>
+                        <td>
+                            <span class="en">Monthly</span>
+                            <span class="es">Mensual</span>
+                            <span class="he">חודשי</span>
+                        </td>
+                        <td>
+                            <span class="en">Invoice issued within 5 business days of month-end</span>
+                            <span class="es">Factura emitida dentro de 5 días hábiles del fin de mes</span>
+                            <span class="he">חשבונית מונפקת תוך 5 ימי עסקים מסוף החודש</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Payment Terms</span>
+                            <span class="es">Términos de Pago</span>
+                            <span class="he">תנאי תשלום</span>
+                        </td>
+                        <td>
+                            <span class="en">Net 30 days</span>
+                            <span class="es">Neto 30 días</span>
+                            <span class="he">נטו 30 יום</span>
+                        </td>
+                        <td>
+                            <span class="en">Late payment: 1.5% monthly interest</span>
+                            <span class="es">Pago tardío: 1.5% interés mensual</span>
+                            <span class="he">תשלום באיחור: 1.5% ריבית חודשית</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">Agreed Rate</span>
+                <span class="es">Tarifa Acordada</span>
+                <span class="he">תעריף מוסכם</span>
+            </div>
+            <div class="field-line"><span>Initial Rate ($/kWh): </span> ___________________________</div>
+            <div class="field-line"><span>Annual Escalation (%): </span> ___________________________</div>
+            <div class="field-line"><span>Rate Cap (if applicable): </span> ___________________________</div>
+        </div>
+    </div>
+
+    <!-- ============ TERM ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 3</span>
+            <span class="es">Artículo 3</span>
+            <span class="he">סעיף 3</span>
+        </div>
+        <h2>
+            <span class="en">Term & Duration</span>
+            <span class="es">Plazo y Duración</span>
+            <span class="he">תקופה ומשך</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">T</div>
+                <div class="card-title">
+                    <span class="en">Agreement Term: 15–25 Years</span>
+                    <span class="es">Plazo del Acuerdo: 15–25 Años</span>
+                    <span class="he">תקופת ההסכם: 15–25 שנים</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">The PPA term commences on the Commercial Operation Date (COD) — the date the System passes final testing and begins producing energy</span>
+                    <span class="es">El plazo del PPA comienza en la Fecha de Operación Comercial (COD) — la fecha en que el Sistema pasa las pruebas finales y comienza a producir energía</span>
+                    <span class="he">תקופת ה-PPA מתחילה במועד ההפעלה המסחרית (COD) — התאריך בו המערכת עוברת בדיקות סופיות ומתחילה לייצר אנרגיה</span>
+                </li>
+                <li>
+                    <span class="en">Typical term: <strong>20 years</strong> for commercial systems &gt;30 kWp</span>
+                    <span class="es">Plazo típico: <strong>20 años</strong> para sistemas comerciales &gt;30 kWp</span>
+                    <span class="he">תקופה טיפוסית: <strong>20 שנים</strong> למערכות מסחריות &gt;30 kWp</span>
+                </li>
+                <li>
+                    <span class="en">Extension option: renewable in 5-year increments upon mutual agreement</span>
+                    <span class="es">Opción de extensión: renovable en incrementos de 5 años por acuerdo mutuo</span>
+                    <span class="he">אופציית הארכה: ניתנת לחידוש בתקופות של 5 שנים בהסכמה הדדית</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ METERING ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 4</span>
+            <span class="es">Artículo 4</span>
+            <span class="he">סעיף 4</span>
+        </div>
+        <h2>
+            <span class="en">Metering & Invoicing</span>
+            <span class="es">Medición y Facturación</span>
+            <span class="he">מדידה וחיוב</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">M</div>
+                <div class="card-title">
+                    <span class="en">Production Metering</span>
+                    <span class="es">Medición de Producción</span>
+                    <span class="he">מדידת ייצור</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">A dedicated, revenue-grade production meter shall be installed at the System's AC output</span>
+                    <span class="es">Se instalará un medidor de producción dedicado de grado de ingresos en la salida AC del Sistema</span>
+                    <span class="he">מונה ייצור ייעודי ברמת הכנסות יותקן בפלט AC של המערכת</span>
+                </li>
+                <li>
+                    <span class="en">Meter shall be ASEP-compliant and bi-directional capable</span>
+                    <span class="es">El medidor cumplirá con ASEP y será capaz de medición bidireccional</span>
+                    <span class="he">המונה יעמוד בתקני ASEP ויהיה בעל יכולת דו-כיוונית</span>
+                </li>
+                <li>
+                    <span class="en">Real-time monitoring via cloud platform accessible to both Parties</span>
+                    <span class="es">Monitoreo en tiempo real a través de plataforma en la nube accesible para ambas Partes</span>
+                    <span class="he">ניטור בזמן אמת דרך פלטפורמת ענן נגישה לשני הצדדים</span>
+                </li>
+                <li>
+                    <span class="en">Monthly meter reading taken on the last day of each calendar month</span>
+                    <span class="es">Lectura mensual del medidor tomada el último día de cada mes calendario</span>
+                    <span class="he">קריאת מונה חודשית נלקחת ביום האחרון של כל חודש קלנדרי</span>
+                </li>
+                <li>
+                    <span class="en">Invoice = kWh produced × applicable rate. Sent within 5 business days</span>
+                    <span class="es">Factura = kWh producidos × tarifa aplicable. Enviada dentro de 5 días hábiles</span>
+                    <span class="he">חשבונית = kWh שיוצרו × תעריף ישים. נשלחת תוך 5 ימי עסקים</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ OWNERSHIP ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 5</span>
+            <span class="es">Artículo 5</span>
+            <span class="he">סעיף 5</span>
+        </div>
+        <h2>
+            <span class="en">System Ownership & Maintenance</span>
+            <span class="es">Propiedad y Mantenimiento del Sistema</span>
+            <span class="he">בעלות על המערכת ותחזוקה</span>
+        </h2>
+
+        <div class="alert alert-green">
+            <div class="alert-title">
+                <span class="en">Solaris Owns. Client Hosts.</span>
+                <span class="es">Solaris es Propietaria. El Cliente Aloja.</span>
+                <span class="he">סולאריס הבעלים. הלקוח מארח.</span>
+            </div>
+            <p>
+                <span class="en">The System remains the exclusive property of Solaris Energy Panama throughout the PPA term. The Host provides roof space and access. The Host pays zero for maintenance, repairs, monitoring, or insurance of the System.</span>
+                <span class="es">El Sistema permanece como propiedad exclusiva de Solaris Energy Panama durante todo el plazo del PPA. El Anfitrión proporciona espacio en el techo y acceso. El Anfitrión paga cero por mantenimiento, reparaciones, monitoreo o seguro del Sistema.</span>
+                <span class="he">המערכת נשארת בבעלות בלעדית של סולאריס אנרג'י פנמה לאורך כל תקופת ה-PPA. המארח מספק שטח גג וגישה. המארח משלם אפס עבור תחזוקה, תיקונים, ניטור או ביטוח של המערכת.</span>
+            </p>
+        </div>
+
+        <h3>
+            <span class="en">Provider Responsibilities</span>
+            <span class="es">Responsabilidades del Proveedor</span>
+            <span class="he">אחריות הספק</span>
+        </h3>
+        <ul>
+            <li>
+                <span class="en">All preventive and corrective maintenance</span>
+                <span class="es">Todo el mantenimiento preventivo y correctivo</span>
+                <span class="he">כל התחזוקה המונעת והמתקנת</span>
+            </li>
+            <li>
+                <span class="en">Module cleaning (quarterly minimum)</span>
+                <span class="es">Limpieza de módulos (mínimo trimestral)</span>
+                <span class="he">ניקוי מודולים (מינימום רבעוני)</span>
+            </li>
+            <li>
+                <span class="en">Inverter repairs/replacement</span>
+                <span class="es">Reparaciones/reemplazo de inversores</span>
+                <span class="he">תיקוני/החלפת ממירים</span>
+            </li>
+            <li>
+                <span class="en">System insurance (all-risk policy)</span>
+                <span class="es">Seguro del sistema (póliza todo riesgo)</span>
+                <span class="he">ביטוח מערכת (פוליסת כל הסיכונים)</span>
+            </li>
+            <li>
+                <span class="en">24/7 remote monitoring and performance alerts</span>
+                <span class="es">Monitoreo remoto 24/7 y alertas de rendimiento</span>
+                <span class="he">ניטור מרחוק 24/7 והתראות ביצועים</span>
+            </li>
+        </ul>
+
+        <h3>
+            <span class="en">Host Responsibilities</span>
+            <span class="es">Responsabilidades del Anfitrión</span>
+            <span class="he">אחריות המארח</span>
+        </h3>
+        <ul>
+            <li>
+                <span class="en">Provide unobstructed roof access for installation and maintenance</span>
+                <span class="es">Proporcionar acceso al techo sin obstrucciones para instalación y mantenimiento</span>
+                <span class="he">לספק גישה לגג ללא מכשולים להתקנה ותחזוקה</span>
+            </li>
+            <li>
+                <span class="en">Not to shade, obstruct, or modify the System</span>
+                <span class="es">No sombrear, obstruir ni modificar el Sistema</span>
+                <span class="he">לא להצליל, לחסום או לשנות את המערכת</span>
+            </li>
+            <li>
+                <span class="en">Maintain the roof structure in good condition</span>
+                <span class="es">Mantener la estructura del techo en buenas condiciones</span>
+                <span class="he">לשמור על מבנה הגג במצב תקין</span>
+            </li>
+            <li>
+                <span class="en">Allow Provider access with 24-hour notice (emergency: immediate)</span>
+                <span class="es">Permitir acceso del Proveedor con 24 horas de aviso (emergencia: inmediato)</span>
+                <span class="he">לאפשר גישה לספק עם התראה של 24 שעות (חירום: מיידי)</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============ END OF TERM ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 6</span>
+            <span class="es">Artículo 6</span>
+            <span class="he">סעיף 6</span>
+        </div>
+        <h2>
+            <span class="en">End of Term Options</span>
+            <span class="es">Opciones al Fin del Plazo</span>
+            <span class="he">אפשרויות בתום התקופה</span>
+        </h2>
+
+        <p>
+            <span class="en">At the expiration of the PPA term, the Host may select one of the following options:</span>
+            <span class="es">Al vencimiento del plazo del PPA, el Anfitrión podrá seleccionar una de las siguientes opciones:</span>
+            <span class="he">עם פקיעת תקופת ה-PPA, המארח יוכל לבחור באחת מהאפשרויות הבאות:</span>
+        </p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">1</div>
+                <div class="card-title">
+                    <span class="en">Purchase the System at Fair Market Value</span>
+                    <span class="es">Comprar el Sistema a Valor Justo de Mercado</span>
+                    <span class="he">רכישת המערכת בשווי שוק הוגן</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">The Host may purchase the System at its then-current Fair Market Value (FMV), determined by an independent appraiser. Typical FMV after 20 years: <strong>10–15% of original system cost</strong>. The system typically has 10–15 years of productive life remaining.</span>
+                <span class="es">El Anfitrión puede comprar el Sistema a su Valor Justo de Mercado (VJM) vigente, determinado por un tasador independiente. VJM típico después de 20 años: <strong>10–15% del costo original del sistema</strong>. El sistema típicamente tiene 10–15 años de vida productiva restante.</span>
+                <span class="he">המארח יוכל לרכוש את המערכת בשווי השוק ההוגן (FMV) הנוכחי, כפי שנקבע על ידי שמאי עצמאי. FMV טיפוסי לאחר 20 שנה: <strong>10–15% מעלות המערכת המקורית</strong>. למערכת בדרך כלל נותרו 10–15 שנות חיים פרודוקטיביים.</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">2</div>
+                <div class="card-title">
+                    <span class="en">Extend the PPA</span>
+                    <span class="es">Extender el PPA</span>
+                    <span class="he">הארכת ה-PPA</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">Renew the PPA for an additional 5-year period at a mutually agreed rate. The extension rate is typically <strong>lower than the final-year PPA rate</strong>, reflecting the fully depreciated system.</span>
+                <span class="es">Renovar el PPA por un período adicional de 5 años a una tarifa mutuamente acordada. La tarifa de extensión es típicamente <strong>menor que la tarifa PPA del último año</strong>, reflejando el sistema completamente depreciado.</span>
+                <span class="he">חידוש ה-PPA לתקופה נוספת של 5 שנים בתעריף מוסכם הדדית. תעריף ההארכה בדרך כלל <strong>נמוך מתעריף PPA של השנה האחרונה</strong>, המשקף מערכת שנפחתה במלואה.</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">3</div>
+                <div class="card-title">
+                    <span class="en">System Removal</span>
+                    <span class="es">Remoción del Sistema</span>
+                    <span class="he">הסרת המערכת</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">The Provider shall remove the System at its own cost within 90 days and restore the roof to its pre-installation condition. The Provider bears all removal and restoration costs.</span>
+                <span class="es">El Proveedor removerá el Sistema a su propio costo dentro de 90 días y restaurará el techo a su condición previa a la instalación. El Proveedor asume todos los costos de remoción y restauración.</span>
+                <span class="he">הספק יסיר את המערכת על חשבונו תוך 90 יום וישקם את הגג למצבו טרם ההתקנה. הספק נושא בכל עלויות ההסרה והשיקום.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ PERFORMANCE GUARANTEE ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 7</span>
+            <span class="es">Artículo 7</span>
+            <span class="he">סעיף 7</span>
+        </div>
+        <h2>
+            <span class="en">Performance Guarantee</span>
+            <span class="es">Garantía de Rendimiento</span>
+            <span class="he">ערבות ביצועים</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">kWh</div>
+                <div class="card-title">
+                    <span class="en">Minimum Annual Production Guarantee</span>
+                    <span class="es">Garantía Mínima de Producción Anual</span>
+                    <span class="he">ערבות ייצור שנתי מינימלי</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">The Provider guarantees that the System will produce a minimum of <strong>90% of the estimated annual production</strong> (kWh/kWp × system size), weather-adjusted. If actual production falls below the guaranteed minimum for any given year, the Provider shall credit the Host for the shortfall at the applicable PPA rate.</span>
+                <span class="es">El Proveedor garantiza que el Sistema producirá un mínimo del <strong>90% de la producción anual estimada</strong> (kWh/kWp × tamaño del sistema), ajustada por clima. Si la producción real cae por debajo del mínimo garantizado en cualquier año dado, el Proveedor acreditará al Anfitrión por el déficit a la tarifa PPA aplicable.</span>
+                <span class="he">הספק מבטיח שהמערכת תייצר מינימום של <strong>90% מהייצור השנתי המוערך</strong> (kWh/kWp × גודל המערכת), מותאם מזג אוויר. אם הייצור בפועל יורד מתחת למינימום המובטח בכל שנה נתונה, הספק יזכה את המארח עבור החוסר בתעריף PPA הישים.</span>
+            </p>
+        </div>
+
+        <div class="alert alert-gold">
+            <div class="alert-title">
+                <span class="en">Panama Solar Production Reference</span>
+                <span class="es">Referencia de Producción Solar de Panamá</span>
+                <span class="he">ייחוס ייצור סולארי בפנמה</span>
+            </div>
+            <p>
+                <span class="en">Average specific yield in Panama (Azuero Peninsula): <strong>1,450–1,600 kWh/kWp/year</strong>. A 50 kWp system is expected to produce approximately 75,000–80,000 kWh/year.</span>
+                <span class="es">Rendimiento específico promedio en Panamá (Península de Azuero): <strong>1,450–1,600 kWh/kWp/año</strong>. Un sistema de 50 kWp se espera que produzca aproximadamente 75,000–80,000 kWh/año.</span>
+                <span class="he">תפוקה סגולית ממוצעת בפנמה (חצי האי אזוארו): <strong>1,450–1,600 kWh/kWp/שנה</strong>. מערכת 50 kWp צפויה לייצר כ-75,000–80,000 kWh/שנה.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ FINANCIAL MODEL ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 8</span>
+            <span class="es">Artículo 8</span>
+            <span class="he">סעיף 8</span>
+        </div>
+        <h2>
+            <span class="en">Financial Model — 50 kWp Example</span>
+            <span class="es">Modelo Financiero — Ejemplo 50 kWp</span>
+            <span class="he">מודל פיננסי — דוגמת 50 kWp</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">$</div>
+                <div class="card-title">
+                    <span class="en">20-Year PPA Projection: 50 kWp Commercial Rooftop</span>
+                    <span class="es">Proyección PPA a 20 Años: Techo Comercial 50 kWp</span>
+                    <span class="he">תחזית PPA ל-20 שנה: גג מסחרי 50 kWp</span>
+                </div>
+            </div>
+
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">System Size</span>
+                    <span class="es">Tamaño del Sistema</span>
+                    <span class="he">גודל מערכת</span>
+                </div>
+                <div class="value">50 kWp</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">Estimated Annual Production</span>
+                    <span class="es">Producción Anual Estimada</span>
+                    <span class="he">ייצור שנתי מוערך</span>
+                </div>
+                <div class="value">77,500 kWh</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">PPA Rate (Year 1)</span>
+                    <span class="es">Tarifa PPA (Año 1)</span>
+                    <span class="he">תעריף PPA (שנה 1)</span>
+                </div>
+                <div class="value">$0.13/kWh</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">Annual PPA Payment (Year 1)</span>
+                    <span class="es">Pago Anual PPA (Año 1)</span>
+                    <span class="he">תשלום PPA שנתי (שנה 1)</span>
+                </div>
+                <div class="value">$10,075</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">Grid Cost for Same Energy (Year 1)</span>
+                    <span class="es">Costo de Red por Misma Energía (Año 1)</span>
+                    <span class="he">עלות רשת לאותה אנרגיה (שנה 1)</span>
+                </div>
+                <div class="value">$15,113</div>
+            </div>
+            <div class="financial-row highlight">
+                <div class="label">
+                    <span class="en"><strong>Year 1 Savings</strong></span>
+                    <span class="es"><strong>Ahorro Año 1</strong></span>
+                    <span class="he"><strong>חיסכון שנה 1</strong></span>
+                </div>
+                <div class="value">$5,038 (33%)</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">PPA Rate (Year 10)</span>
+                    <span class="es">Tarifa PPA (Año 10)</span>
+                    <span class="he">תעריף PPA (שנה 10)</span>
+                </div>
+                <div class="value">$0.156/kWh</div>
+            </div>
+            <div class="financial-row">
+                <div class="label">
+                    <span class="en">PPA Rate (Year 20)</span>
+                    <span class="es">Tarifa PPA (Año 20)</span>
+                    <span class="he">תעריף PPA (שנה 20)</span>
+                </div>
+                <div class="value">$0.190/kWh</div>
+            </div>
+            <div class="financial-row highlight">
+                <div class="label">
+                    <span class="en"><strong>Total 20-Year Savings (est.)</strong></span>
+                    <span class="es"><strong>Ahorro Total 20 Años (est.)</strong></span>
+                    <span class="he"><strong>חיסכון כולל 20 שנה (משוער)</strong></span>
+                </div>
+                <div class="value">$65,000–$85,000</div>
+            </div>
+        </div>
+
+        <div class="alert alert-green">
+            <div class="alert-title">
+                <span class="en">Note on Grid Rate Assumption</span>
+                <span class="es">Nota sobre la Suposición de Tarifa de Red</span>
+                <span class="he">הערה על הנחת תעריף רשת</span>
+            </div>
+            <p>
+                <span class="en">Grid rates in Panama have historically increased 3–5% annually. The savings projection assumes a conservative 3% annual grid rate increase. Actual savings may be higher if grid rates rise faster.</span>
+                <span class="es">Las tarifas de red en Panamá históricamente han aumentado 3–5% anualmente. La proyección de ahorro asume un aumento conservador del 3% anual en la tarifa de red. Los ahorros reales pueden ser mayores si las tarifas de red aumentan más rápido.</span>
+                <span class="he">תעריפי הרשת בפנמה עלו היסטורית 3–5% בשנה. תחזית החיסכון מניחה עלייה שנתית שמרנית של 3% בתעריף הרשת. החיסכון בפועל עשוי להיות גבוה יותר אם תעריפי הרשת יעלו מהר יותר.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ WHEN TO OFFER PPA ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Sales Guide</span>
+            <span class="es">Guía de Ventas</span>
+            <span class="he">מדריך מכירות</span>
+        </div>
+        <h2>
+            <span class="en">When to Offer PPA vs. Direct Sale</span>
+            <span class="es">Cuándo Ofrecer PPA vs. Venta Directa</span>
+            <span class="he">מתי להציע PPA לעומת מכירה ישירה</span>
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Criteria</span>
+                            <span class="es">Criterio</span>
+                            <span class="he">קריטריון</span>
+                        </th>
+                        <th>
+                            <span class="en">PPA</span>
+                            <span class="es">PPA</span>
+                            <span class="he">PPA</span>
+                        </th>
+                        <th>
+                            <span class="en">Direct Sale (EPC)</span>
+                            <span class="es">Venta Directa (EPC)</span>
+                            <span class="he">מכירה ישירה (EPC)</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="en">System Size</span>
+                            <span class="es">Tamaño del Sistema</span>
+                            <span class="he">גודל מערכת</span>
+                        </td>
+                        <td><strong>&gt;30 kWp</strong></td>
+                        <td>
+                            <span class="en">Any size</span>
+                            <span class="es">Cualquier tamaño</span>
+                            <span class="he">כל גודל</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Client Budget</span>
+                            <span class="es">Presupuesto del Cliente</span>
+                            <span class="he">תקציב לקוח</span>
+                        </td>
+                        <td>
+                            <span class="en">Limited / prefers OPEX</span>
+                            <span class="es">Limitado / prefiere OPEX</span>
+                            <span class="he">מוגבל / מעדיף OPEX</span>
+                        </td>
+                        <td>
+                            <span class="en">Available for CAPEX</span>
+                            <span class="es">Disponible para CAPEX</span>
+                            <span class="he">זמין ל-CAPEX</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Client Type</span>
+                            <span class="es">Tipo de Cliente</span>
+                            <span class="he">סוג לקוח</span>
+                        </td>
+                        <td>
+                            <span class="en">Hotels, factories, supermarkets</span>
+                            <span class="es">Hoteles, fábricas, supermercados</span>
+                            <span class="he">מלונות, מפעלים, סופרמרקטים</span>
+                        </td>
+                        <td>
+                            <span class="en">Property owners, farms</span>
+                            <span class="es">Propietarios, fincas</span>
+                            <span class="he">בעלי נכסים, חוות</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Ley 417 Benefit</span>
+                            <span class="es">Beneficio Ley 417</span>
+                            <span class="he">הטבת חוק 417</span>
+                        </td>
+                        <td>
+                            <span class="en">Provider claims tax credit</span>
+                            <span class="es">Proveedor reclama crédito fiscal</span>
+                            <span class="he">הספק מנצל זיכוי מס</span>
+                        </td>
+                        <td>
+                            <span class="en">Client claims tax credit</span>
+                            <span class="es">Cliente reclama crédito fiscal</span>
+                            <span class="he">הלקוח מנצל זיכוי מס</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Solaris Revenue Model</span>
+                            <span class="es">Modelo de Ingresos Solaris</span>
+                            <span class="he">מודל הכנסות סולאריס</span>
+                        </td>
+                        <td>
+                            <span class="en">Recurring 20yr revenue</span>
+                            <span class="es">Ingresos recurrentes 20 años</span>
+                            <span class="he">הכנסה חוזרת 20 שנה</span>
+                        </td>
+                        <td>
+                            <span class="en">One-time + O&M contract</span>
+                            <span class="es">Una vez + contrato O&M</span>
+                            <span class="he">חד-פעמי + חוזה תפעול</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ LEGAL CLAUSES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 9</span>
+            <span class="es">Artículo 9</span>
+            <span class="he">סעיף 9</span>
+        </div>
+        <h2>
+            <span class="en">Legal Provisions</span>
+            <span class="es">Disposiciones Legales</span>
+            <span class="he">הוראות משפטיות</span>
+        </h2>
+
+        <h3>
+            <span class="en">9.1 Force Majeure</span>
+            <span class="es">9.1 Fuerza Mayor</span>
+            <span class="he">9.1 כוח עליון</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>Neither Party shall be liable for failure to perform due to events beyond reasonable control. If a Force Majeure event prevents System operation for more than 180 consecutive days, either Party may terminate the Agreement without penalty. The Host shall not be obligated to pay for energy not produced during Force Majeure events.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>Ninguna de las Partes será responsable por el incumplimiento debido a eventos fuera del control razonable. Si un evento de Fuerza Mayor impide la operación del Sistema por más de 180 días consecutivos, cualquiera de las Partes puede terminar el Acuerdo sin penalidad. El Anfitrión no estará obligado a pagar por energía no producida durante eventos de Fuerza Mayor.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">9.2 Assignment</span>
+            <span class="es">9.2 Cesión</span>
+            <span class="he">9.2 המחאה</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>The Provider may assign or transfer this Agreement to a qualified successor entity with prior written notice to the Host. The Host may not assign this Agreement without Provider's written consent, except in connection with the sale of the Site, provided the buyer assumes all Host obligations.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>El Proveedor puede ceder o transferir este Acuerdo a una entidad sucesora calificada con aviso escrito previo al Anfitrión. El Anfitrión no puede ceder este Acuerdo sin el consentimiento escrito del Proveedor, excepto en conexión con la venta del Sitio, siempre que el comprador asuma todas las obligaciones del Anfitrión.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">9.3 Termination</span>
+            <span class="es">9.3 Terminación</span>
+            <span class="he">9.3 סיום</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p><strong>Early termination by Host:</strong> The Host may terminate before the end of the term by purchasing the System at a pre-agreed buyout schedule. Buyout price = remaining depreciated value + lost revenue premium (capped at 3 years of PPA payments).</p>
+                <p style="margin-top:0.75rem;"><strong>Default termination:</strong> Either Party may terminate for material breach not cured within 60 days of written notice.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p><strong>Terminación anticipada por el Anfitrión:</strong> El Anfitrión puede terminar antes del fin del plazo comprando el Sistema según un calendario de compra preacordado. Precio de compra = valor depreciado restante + prima de ingresos perdidos (limitado a 3 años de pagos PPA).</p>
+                <p style="margin-top:0.75rem;"><strong>Terminación por incumplimiento:</strong> Cualquiera de las Partes puede terminar por incumplimiento material no subsanado dentro de 60 días del aviso escrito.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">9.4 Site Access</span>
+            <span class="es">9.4 Acceso al Sitio</span>
+            <span class="he">9.4 גישה לאתר</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>The Host grants the Provider a license to access the Site for installation, operation, maintenance, and removal of the System. Access shall be provided during normal business hours with 24-hour advance notice. Emergency access (safety, equipment failure) shall be provided immediately. The Provider shall maintain insurance covering its personnel while on Site.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>El Anfitrión otorga al Proveedor una licencia para acceder al Sitio para la instalación, operación, mantenimiento y remoción del Sistema. El acceso se proporcionará durante horas laborales normales con 24 horas de aviso previo. El acceso de emergencia (seguridad, falla de equipo) se proporcionará inmediatamente. El Proveedor mantendrá seguro que cubra a su personal mientras esté en el Sitio.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">9.5 Governing Law</span>
+            <span class="es">9.5 Ley Aplicable</span>
+            <span class="he">9.5 דין חל</span>
+        </h3>
+        <div class="alert alert-green">
+            <p>
+                <span class="en">This Agreement shall be governed by the laws of the Republic of Panama. Disputes shall be resolved through arbitration at CeCAP (Centro de Conciliación y Arbitraje de Panamá), Panama City.</span>
+                <span class="es">Este Acuerdo se regirá por las leyes de la República de Panamá. Las disputas se resolverán mediante arbitraje en CeCAP (Centro de Conciliación y Arbitraje de Panamá), Ciudad de Panamá.</span>
+                <span class="he">הסכם זה יהיה כפוף לחוקי הרפובליקה של פנמה. סכסוכים ייושבו באמצעות בוררות ב-CeCAP (מרכז הגישור והבוררות של פנמה), עיר פנמה.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ SIGNATURES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Execution</span>
+            <span class="es">Ejecución</span>
+            <span class="he">חתימה</span>
+        </div>
+        <h2>
+            <span class="en">Signatures</span>
+            <span class="es">Firmas</span>
+            <span class="he">חתימות</span>
+        </h2>
+
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>
+                    <span class="en">Provider (Solaris Energy Panama)</span>
+                    <span class="es">Proveedor (Solaris Energy Panama)</span>
+                    <span class="he">ספק (סולאריס אנרג'י פנמה)</span>
+                </h4>
+                <div class="template-field" style="border:none;background:transparent;padding:0;">
+                    <div class="field-line"><span>Name: </span> ___________________________</div>
+                    <div class="field-line"><span>Title: </span> ___________________________</div>
+                    <div class="field-line"><span>Signature: </span> ___________________________</div>
+                    <div class="field-line"><span>Date: </span> ___________________________</div>
+                </div>
+            </div>
+            <div class="lang-col">
+                <h4>
+                    <span class="en">Host (Off-taker)</span>
+                    <span class="es">Anfitrión (Comprador)</span>
+                    <span class="he">מארח (רוכש)</span>
+                </h4>
+                <div class="template-field" style="border:none;background:transparent;padding:0;">
+                    <div class="field-line"><span>Name: </span> ___________________________</div>
+                    <div class="field-line"><span>Title: </span> ___________________________</div>
+                    <div class="field-line"><span>Signature: </span> ___________________________</div>
+                    <div class="field-line"><span>Date: </span> ___________________________</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function setLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+}
+</script>
+</body>
+</html>

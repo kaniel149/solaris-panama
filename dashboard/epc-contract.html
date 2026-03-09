@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPC Contract Template — Solaris Energy Panama</title>
+    <meta name="description" content="Engineering, Procurement & Construction contract template for commercial solar projects in Panama.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.7; }
+
+        /* Language toggle */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* Back nav */
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; background: var(--green); color: var(--pearl); text-decoration: none; padding: 8px 18px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        /* Hero */
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%); padding: 8rem 2rem 5rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .badge { display: inline-block; background: rgba(254,253,251,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(212,168,67,0.3); padding: 6px 20px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--pearl); margin-bottom: 1rem; }
+        .page-hero p { color: rgba(254,253,251,0.8); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        /* Content */
+        .content { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+        .section { margin-bottom: 3.5rem; }
+        .section-label { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--green); margin-bottom: 1rem; }
+        .section h3 { font-size: 1.15rem; font-weight: 700; color: var(--green); margin: 1.5rem 0 0.75rem; }
+        .section p, .section li { color: var(--slate); font-size: 0.95rem; line-height: 1.8; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.5rem; }
+
+        /* Cards */
+        .card { background: white; border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-card); }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .card-icon.green { background: rgba(11,61,46,0.08); color: var(--green); }
+        .card-icon.gold { background: rgba(212,168,67,0.12); color: var(--gold-aged); }
+        .card-title { font-weight: 700; font-size: 1.05rem; color: var(--charcoal); }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: var(--radius-card); border: 1px solid var(--mist); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        thead { background: var(--green); color: var(--pearl); }
+        th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--mist); color: var(--slate); }
+        tbody tr:hover { background: var(--cloud); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        /* Template fill-in */
+        .template-field { background: var(--sand); border: 1px dashed var(--gold); border-radius: 6px; padding: 1.5rem 2rem; margin: 1rem 0; font-family: 'DM Sans', sans-serif; }
+        .template-field .field-label { font-size: 11px; font-weight: 700; color: var(--gold-aged); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .template-field .field-line { padding: 6px 0; border-bottom: 1px solid rgba(212,168,67,0.3); color: var(--slate); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .template-field .field-line span { color: var(--ash); font-style: italic; }
+
+        /* Alert / highlight boxes */
+        .alert { border-radius: var(--radius-card); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+        .alert-green { background: rgba(11,61,46,0.05); border-left: 4px solid var(--green); }
+        .alert-gold { background: rgba(212,168,67,0.08); border-left: 4px solid var(--gold); }
+        .alert-title { font-weight: 700; margin-bottom: 0.5rem; color: var(--charcoal); }
+
+        /* Bilingual clause */
+        .bilingual { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1rem 0; }
+        .bilingual .lang-col { background: white; border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem; }
+        .bilingual .lang-col h4 { font-size: 0.8rem; color: var(--gold-aged); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .bilingual .lang-col p { font-size: 0.9rem; color: var(--slate); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bilingual { grid-template-columns: 1fr; }
+            .content { padding: 2rem 1rem; }
+            .page-hero { padding: 7rem 1.5rem 3rem; }
+        }
+
+        /* RTL for Hebrew */
+        [data-lang="he"] { direction: rtl; text-align: right; }
+        [data-lang="he"] .back-nav { left: auto; right: 20px; }
+        [data-lang="he"] .lang-toggle { right: auto; left: 20px; }
+        [data-lang="he"] .section ul, [data-lang="he"] .section ol { padding-left: 0; padding-right: 1.5rem; }
+        [data-lang="he"] .alert-green, [data-lang="he"] .alert-gold { border-left: none; border-right: 4px solid; }
+        [data-lang="he"] .alert-green { border-right-color: var(--green); }
+        [data-lang="he"] .alert-gold { border-right-color: var(--gold); }
+
+        /* Print */
+        @media print { .lang-toggle, .back-nav { display: none; } .page-hero { padding: 2rem; } }
+
+        /* Hide inactive langs */
+        [data-lang="en"] .es, [data-lang="en"] .he,
+        [data-lang="es"] .en, [data-lang="es"] .he,
+        [data-lang="he"] .en, [data-lang="he"] .es { display: none; }
+    </style>
+</head>
+<body data-lang="en">
+
+<!-- Navigation -->
+<nav class="back-nav"><a href="index.html">&#8592; Dashboard</a></nav>
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Hero -->
+<header class="page-hero">
+    <div class="badge">
+        <span class="en">Contract Template</span>
+        <span class="es">Plantilla de Contrato</span>
+        <span class="he">תבנית חוזה</span>
+    </div>
+    <h1>
+        <span class="en">EPC Contract — Commercial Solar</span>
+        <span class="es">Contrato EPC — Solar Comercial</span>
+        <span class="he">חוזה EPC — סולארי מסחרי</span>
+    </h1>
+    <p>
+        <span class="en">Engineering, Procurement & Construction agreement template for solar installations in Panama. Compliant with ASEP regulations and Ley 417.</span>
+        <span class="es">Plantilla de acuerdo de Ingeniería, Adquisición y Construcción para instalaciones solares en Panamá. Cumple con regulaciones de ASEP y Ley 417.</span>
+        <span class="he">תבנית הסכם הנדסה, רכש ובנייה להתקנות סולאריות בפנמה. בהתאם לתקנות ASEP וחוק 417.</span>
+    </p>
+</header>
+
+<div class="content">
+
+    <!-- ============ PARTIES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 1</span>
+            <span class="es">Artículo 1</span>
+            <span class="he">סעיף 1</span>
+        </div>
+        <h2>
+            <span class="en">Contracting Parties</span>
+            <span class="es">Partes Contratantes</span>
+            <span class="he">הצדדים להסכם</span>
+        </h2>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">Contractor (EPC Provider)</span>
+                <span class="es">Contratista (Proveedor EPC)</span>
+                <span class="he">קבלן (ספק EPC)</span>
+            </div>
+            <div class="field-line"><span>Company Name: </span> Solaris Energy Panama, S.A.</div>
+            <div class="field-line"><span>RUC: </span> ___________________________</div>
+            <div class="field-line"><span>Address: </span> ___________________________</div>
+            <div class="field-line"><span>Legal Representative: </span> ___________________________</div>
+        </div>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">Client (System Owner)</span>
+                <span class="es">Cliente (Propietario del Sistema)</span>
+                <span class="he">לקוח (בעל המערכת)</span>
+            </div>
+            <div class="field-line"><span>Company Name: </span> ___________________________</div>
+            <div class="field-line"><span>RUC: </span> ___________________________</div>
+            <div class="field-line"><span>Address: </span> ___________________________</div>
+            <div class="field-line"><span>Legal Representative: </span> ___________________________</div>
+            <div class="field-line"><span>Contact Email: </span> ___________________________</div>
+        </div>
+
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>This Engineering, Procurement and Construction ("EPC") Agreement is entered into by and between the Contractor and the Client (collectively, the "Parties"), effective as of the date last signed below ("Effective Date"), for the design, supply, installation, testing, and commissioning of a solar photovoltaic system at the Client's premises in the Republic of Panama.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>Este Acuerdo de Ingeniería, Adquisición y Construcción ("EPC") se celebra entre el Contratista y el Cliente (en conjunto, las "Partes"), efectivo a partir de la fecha de última firma a continuación ("Fecha Efectiva"), para el diseño, suministro, instalación, pruebas y puesta en marcha de un sistema solar fotovoltaico en las instalaciones del Cliente en la República de Panamá.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SCOPE OF WORK ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 2</span>
+            <span class="es">Artículo 2</span>
+            <span class="he">סעיף 2</span>
+        </div>
+        <h2>
+            <span class="en">Scope of Work</span>
+            <span class="es">Alcance del Trabajo</span>
+            <span class="he">היקף העבודה</span>
+        </h2>
+
+        <p>
+            <span class="en">The Contractor shall perform the following services on a turnkey basis:</span>
+            <span class="es">El Contratista realizará los siguientes servicios de forma llave en mano:</span>
+            <span class="he">הקבלן יבצע את השירותים הבאים במתכונת מפתח:</span>
+        </p>
+
+        <h3>
+            <span class="en">2.1 Engineering</span>
+            <span class="es">2.1 Ingeniería</span>
+            <span class="he">2.1 הנדסה</span>
+        </h3>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">E</div>
+                <div class="card-title">
+                    <span class="en">Engineering & Design Services</span>
+                    <span class="es">Servicios de Ingeniería y Diseño</span>
+                    <span class="he">שירותי הנדסה ותכנון</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">Site survey including structural assessment, shade analysis, and electrical audit</span>
+                    <span class="es">Inspección del sitio incluyendo evaluación estructural, análisis de sombras y auditoría eléctrica</span>
+                    <span class="he">סקר אתר כולל הערכה מבנית, ניתוח הצללות וביקורת חשמלית</span>
+                </li>
+                <li>
+                    <span class="en">PV system design: module layout, string sizing, inverter selection</span>
+                    <span class="es">Diseño del sistema FV: disposición de módulos, dimensionamiento de cadenas, selección de inversores</span>
+                    <span class="he">תכנון מערכת PV: פריסת מודולים, גודל סטרינגים, בחירת ממירים</span>
+                </li>
+                <li>
+                    <span class="en">Electrical single-line diagram (SLD) and wiring schematics</span>
+                    <span class="es">Diagrama unifilar eléctrico (SLD) y esquemas de cableado</span>
+                    <span class="he">תרשים חד-קווי חשמלי (SLD) וסכמות חיווט</span>
+                </li>
+                <li>
+                    <span class="en">Structural engineering for mounting system (wind load calculations per local code)</span>
+                    <span class="es">Ingeniería estructural para sistema de montaje (cálculos de carga de viento según código local)</span>
+                    <span class="he">הנדסת מבנים למערכת התקנה (חישובי עומס רוח לפי תקן מקומי)</span>
+                </li>
+                <li>
+                    <span class="en">Energy yield simulation (PVsyst or equivalent) with P50/P90 estimates</span>
+                    <span class="es">Simulación de rendimiento energético (PVsyst o equivalente) con estimaciones P50/P90</span>
+                    <span class="he">סימולציית תפוקת אנרגיה (PVsyst או מקביל) עם הערכות P50/P90</span>
+                </li>
+                <li>
+                    <span class="en">ASEP interconnection application and net metering documentation</span>
+                    <span class="es">Solicitud de interconexión ASEP y documentación de medición neta</span>
+                    <span class="he">בקשת חיבור ASEP ותיעוד מדידה נטו</span>
+                </li>
+            </ul>
+        </div>
+
+        <h3>
+            <span class="en">2.2 Procurement</span>
+            <span class="es">2.2 Adquisición</span>
+            <span class="he">2.2 רכש</span>
+        </h3>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">P</div>
+                <div class="card-title">
+                    <span class="en">Equipment Procurement & Logistics</span>
+                    <span class="es">Adquisición y Logística de Equipos</span>
+                    <span class="he">רכש וציוד לוגיסטיקה</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">Tier-1 solar modules (minimum 25-year performance warranty, RETIE/IEC certified)</span>
+                    <span class="es">Módulos solares Tier-1 (garantía mínima de rendimiento de 25 años, certificados RETIE/IEC)</span>
+                    <span class="he">מודולים סולאריים Tier-1 (אחריות ביצועים מינימלית 25 שנה, מוסמכי RETIE/IEC)</span>
+                </li>
+                <li>
+                    <span class="en">Grid-tie inverters with monitoring capability (10-year manufacturer warranty)</span>
+                    <span class="es">Inversores de conexión a red con capacidad de monitoreo (garantía del fabricante de 10 años)</span>
+                    <span class="he">ממירי רשת עם יכולת ניטור (אחריות יצרן 10 שנים)</span>
+                </li>
+                <li>
+                    <span class="en">Mounting structures: aluminum/galvanized steel, rated for 160 km/h wind</span>
+                    <span class="es">Estructuras de montaje: aluminio/acero galvanizado, clasificadas para viento de 160 km/h</span>
+                    <span class="he">מבני התקנה: אלומיניום/פלדה מגולוונת, מדורגים לרוח 160 קמ"ש</span>
+                </li>
+                <li>
+                    <span class="en">DC/AC cabling, conduit, combiner boxes, disconnects, surge protectors</span>
+                    <span class="es">Cableado DC/AC, conduit, cajas combinadoras, desconectores, protectores contra sobretensiones</span>
+                    <span class="he">כבלי DC/AC, צנרת, קופסאות מאגדות, מנתקים, מגני ברקים</span>
+                </li>
+                <li>
+                    <span class="en">Production meter (bi-directional, ASEP-compliant)</span>
+                    <span class="es">Medidor de producción (bidireccional, compatible con ASEP)</span>
+                    <span class="he">מונה ייצור (דו-כיווני, תואם ASEP)</span>
+                </li>
+                <li>
+                    <span class="en">Import, customs clearance, and delivery to site (CIF Panama)</span>
+                    <span class="es">Importación, despacho de aduanas y entrega en sitio (CIF Panamá)</span>
+                    <span class="he">יבוא, מכס ומשלוח לאתר (CIF פנמה)</span>
+                </li>
+            </ul>
+        </div>
+
+        <h3>
+            <span class="en">2.3 Construction</span>
+            <span class="es">2.3 Construcción</span>
+            <span class="he">2.3 בנייה</span>
+        </h3>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">C</div>
+                <div class="card-title">
+                    <span class="en">Installation & Commissioning</span>
+                    <span class="es">Instalación y Puesta en Marcha</span>
+                    <span class="he">התקנה והפעלה</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">Mounting structure installation on roof or ground-mount</span>
+                    <span class="es">Instalación de estructura de montaje en techo o suelo</span>
+                    <span class="he">התקנת מבנה התקנה על גג או קרקע</span>
+                </li>
+                <li>
+                    <span class="en">Module installation and string wiring</span>
+                    <span class="es">Instalación de módulos y cableado de cadenas</span>
+                    <span class="he">התקנת מודולים וחיווט סטרינגים</span>
+                </li>
+                <li>
+                    <span class="en">Inverter mounting, DC/AC wiring, grounding system</span>
+                    <span class="es">Montaje de inversor, cableado DC/AC, sistema de puesta a tierra</span>
+                    <span class="he">התקנת ממיר, חיווט DC/AC, מערכת הארקה</span>
+                </li>
+                <li>
+                    <span class="en">Grid interconnection and meter installation</span>
+                    <span class="es">Interconexión a red e instalación de medidor</span>
+                    <span class="he">חיבור לרשת והתקנת מונה</span>
+                </li>
+                <li>
+                    <span class="en">System testing: insulation resistance, I-V curve, ground fault, functional test</span>
+                    <span class="es">Pruebas del sistema: resistencia de aislamiento, curva I-V, falla a tierra, prueba funcional</span>
+                    <span class="he">בדיקות מערכת: התנגדות בידוד, עקומת I-V, תקלת הארקה, בדיקה פונקציונלית</span>
+                </li>
+                <li>
+                    <span class="en">Commissioning, monitoring setup, and client training</span>
+                    <span class="es">Puesta en marcha, configuración de monitoreo y capacitación del cliente</span>
+                    <span class="he">הפעלה, הגדרת ניטור והדרכת לקוח</span>
+                </li>
+                <li>
+                    <span class="en">ASEP final inspection coordination</span>
+                    <span class="es">Coordinación de inspección final de ASEP</span>
+                    <span class="he">תיאום בדיקה סופית מול ASEP</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ PRICING ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 3</span>
+            <span class="es">Artículo 3</span>
+            <span class="he">סעיף 3</span>
+        </div>
+        <h2>
+            <span class="en">Pricing Models</span>
+            <span class="es">Modelos de Precio</span>
+            <span class="he">מודלי תמחור</span>
+        </h2>
+
+        <p>
+            <span class="en">The Contract Price shall be determined according to one of the following models, as selected by the Parties:</span>
+            <span class="es">El Precio del Contrato se determinará según uno de los siguientes modelos, seleccionado por las Partes:</span>
+            <span class="he">מחיר החוזה ייקבע לפי אחד מהמודלים הבאים, כפי שייבחר על ידי הצדדים:</span>
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Model</span>
+                            <span class="es">Modelo</span>
+                            <span class="he">מודל</span>
+                        </th>
+                        <th>
+                            <span class="en">Price Range</span>
+                            <span class="es">Rango de Precio</span>
+                            <span class="he">טווח מחירים</span>
+                        </th>
+                        <th>
+                            <span class="en">Best For</span>
+                            <span class="es">Ideal Para</span>
+                            <span class="he">מתאים ל</span>
+                        </th>
+                        <th>
+                            <span class="en">Risk Allocation</span>
+                            <span class="es">Asignación de Riesgo</span>
+                            <span class="he">הקצאת סיכון</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>
+                            <span class="en">Fixed Price (Lump Sum)</span>
+                            <span class="es">Precio Fijo (Suma Global)</span>
+                            <span class="he">מחיר קבוע (סכום חד-פעמי)</span>
+                        </strong></td>
+                        <td>$1.00 – $1.20/Wp</td>
+                        <td>
+                            <span class="en">Standard rooftop 10–100 kWp</span>
+                            <span class="es">Techo estándar 10–100 kWp</span>
+                            <span class="he">גגות סטנדרטיים 10–100 kWp</span>
+                        </td>
+                        <td>
+                            <span class="en">Contractor bears cost risk</span>
+                            <span class="es">Contratista asume riesgo de costo</span>
+                            <span class="he">הקבלן נושא בסיכון העלות</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>
+                            <span class="en">Cost-Plus</span>
+                            <span class="es">Costo Más</span>
+                            <span class="he">עלות פלוס</span>
+                        </strong></td>
+                        <td>
+                            <span class="en">Cost + 15–20% margin</span>
+                            <span class="es">Costo + 15–20% margen</span>
+                            <span class="he">עלות + 15–20% מרווח</span>
+                        </td>
+                        <td>
+                            <span class="en">Complex sites, ground-mount</span>
+                            <span class="es">Sitios complejos, montaje en suelo</span>
+                            <span class="he">אתרים מורכבים, התקנת קרקע</span>
+                        </td>
+                        <td>
+                            <span class="en">Client bears cost risk</span>
+                            <span class="es">Cliente asume riesgo de costo</span>
+                            <span class="he">הלקוח נושא בסיכון העלות</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>
+                            <span class="en">Hybrid</span>
+                            <span class="es">Híbrido</span>
+                            <span class="he">היברידי</span>
+                        </strong></td>
+                        <td>
+                            <span class="en">Fixed equipment + cost-plus labor</span>
+                            <span class="es">Equipo fijo + mano de obra costo-más</span>
+                            <span class="he">ציוד קבוע + עבודה בעלות-פלוס</span>
+                        </td>
+                        <td>
+                            <span class="en">Large commercial &gt;100 kWp</span>
+                            <span class="es">Comercial grande &gt;100 kWp</span>
+                            <span class="he">מסחרי גדול &gt;100 kWp</span>
+                        </td>
+                        <td>
+                            <span class="en">Shared risk</span>
+                            <span class="es">Riesgo compartido</span>
+                            <span class="he">סיכון משותף</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="template-field">
+            <div class="field-label">
+                <span class="en">Selected Pricing</span>
+                <span class="es">Precio Seleccionado</span>
+                <span class="he">תמחור שנבחר</span>
+            </div>
+            <div class="field-line"><span>Model: </span> ___________________________</div>
+            <div class="field-line"><span>System Size (kWp): </span> ___________________________</div>
+            <div class="field-line"><span>Total Contract Price (USD): </span> ___________________________</div>
+            <div class="field-line"><span>Price per Wp (USD): </span> ___________________________</div>
+        </div>
+    </div>
+
+    <!-- ============ TIMELINE ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 4</span>
+            <span class="es">Artículo 4</span>
+            <span class="he">סעיף 4</span>
+        </div>
+        <h2>
+            <span class="en">Project Timeline & Milestones</span>
+            <span class="es">Cronograma y Hitos del Proyecto</span>
+            <span class="he">לוח זמנים ואבני דרך</span>
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Phase</span>
+                            <span class="es">Fase</span>
+                            <span class="he">שלב</span>
+                        </th>
+                        <th>
+                            <span class="en">Duration</span>
+                            <span class="es">Duración</span>
+                            <span class="he">משך</span>
+                        </th>
+                        <th>
+                            <span class="en">Deliverable</span>
+                            <span class="es">Entregable</span>
+                            <span class="he">תוצר</span>
+                        </th>
+                        <th>
+                            <span class="en">Payment %</span>
+                            <span class="es">Pago %</span>
+                            <span class="he">תשלום %</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="en">1. Contract Signing</span>
+                            <span class="es">1. Firma del Contrato</span>
+                            <span class="he">1. חתימת חוזה</span>
+                        </td>
+                        <td>Day 0</td>
+                        <td>
+                            <span class="en">Signed agreement</span>
+                            <span class="es">Acuerdo firmado</span>
+                            <span class="he">הסכם חתום</span>
+                        </td>
+                        <td><strong>30%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">2. Engineering & Permits</span>
+                            <span class="es">2. Ingeniería y Permisos</span>
+                            <span class="he">2. הנדסה והיתרים</span>
+                        </td>
+                        <td>
+                            <span class="en">1–2 weeks</span>
+                            <span class="es">1–2 semanas</span>
+                            <span class="he">1–2 שבועות</span>
+                        </td>
+                        <td>
+                            <span class="en">Design package, ASEP application</span>
+                            <span class="es">Paquete de diseño, solicitud ASEP</span>
+                            <span class="he">חבילת תכנון, בקשת ASEP</span>
+                        </td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">3. Equipment Delivery</span>
+                            <span class="es">3. Entrega de Equipos</span>
+                            <span class="he">3. אספקת ציוד</span>
+                        </td>
+                        <td>
+                            <span class="en">2–4 weeks</span>
+                            <span class="es">2–4 semanas</span>
+                            <span class="he">2–4 שבועות</span>
+                        </td>
+                        <td>
+                            <span class="en">All equipment on site</span>
+                            <span class="es">Todo el equipo en sitio</span>
+                            <span class="he">כל הציוד באתר</span>
+                        </td>
+                        <td><strong>30%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">4. Installation</span>
+                            <span class="es">4. Instalación</span>
+                            <span class="he">4. התקנה</span>
+                        </td>
+                        <td>
+                            <span class="en">1–4 weeks</span>
+                            <span class="es">1–4 semanas</span>
+                            <span class="he">1–4 שבועות</span>
+                        </td>
+                        <td>
+                            <span class="en">Mechanical + electrical complete</span>
+                            <span class="es">Mecánica + eléctrica completa</span>
+                            <span class="he">מכאני + חשמלי הושלם</span>
+                        </td>
+                        <td><strong>30%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">5. Commissioning & Handover</span>
+                            <span class="es">5. Puesta en Marcha y Entrega</span>
+                            <span class="he">5. הפעלה ומסירה</span>
+                        </td>
+                        <td>
+                            <span class="en">1–2 weeks</span>
+                            <span class="es">1–2 semanas</span>
+                            <span class="he">1–2 שבועות</span>
+                        </td>
+                        <td>
+                            <span class="en">Grid connection, testing complete</span>
+                            <span class="es">Conexión a red, pruebas completadas</span>
+                            <span class="he">חיבור לרשת, בדיקות הושלמו</span>
+                        </td>
+                        <td><strong>10%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert alert-gold">
+            <div class="alert-title">
+                <span class="en">Total Timeline: 4–12 Weeks</span>
+                <span class="es">Cronograma Total: 4–12 Semanas</span>
+                <span class="he">לוח זמנים כולל: 4–12 שבועות</span>
+            </div>
+            <p>
+                <span class="en">Timeline depends on system size, permit processing, and equipment availability. Typical residential (10 kWp) = 4 weeks. Large commercial (100+ kWp) = 8–12 weeks.</span>
+                <span class="es">El cronograma depende del tamaño del sistema, procesamiento de permisos y disponibilidad de equipos. Residencial típico (10 kWp) = 4 semanas. Comercial grande (100+ kWp) = 8–12 semanas.</span>
+                <span class="he">לוח הזמנים תלוי בגודל המערכת, עיבוד היתרים וזמינות ציוד. מגורים טיפוסי (10 kWp) = 4 שבועות. מסחרי גדול (100+ kWp) = 8–12 שבועות.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ LIQUIDATED DAMAGES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 5</span>
+            <span class="es">Artículo 5</span>
+            <span class="he">סעיף 5</span>
+        </div>
+        <h2>
+            <span class="en">Liquidated Damages</span>
+            <span class="es">Daños Liquidados</span>
+            <span class="he">פיצויים מוסכמים</span>
+        </h2>
+
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>In the event that the Contractor fails to achieve Substantial Completion by the Guaranteed Completion Date, the Contractor shall pay the Client liquidated damages of <strong>$500 USD per calendar day</strong> of delay, subject to a maximum aggregate cap of <strong>10% of the Contract Price</strong>.</p>
+                <p style="margin-top:1rem;">The Guaranteed Completion Date shall be extended on a day-for-day basis for: (a) Force Majeure events; (b) delays caused by the Client; (c) delays in ASEP permit processing beyond 30 business days; (d) changes in scope requested by the Client.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>En caso de que el Contratista no logre la Terminación Sustancial para la Fecha de Terminación Garantizada, el Contratista pagará al Cliente daños liquidados de <strong>$500 USD por día calendario</strong> de retraso, sujeto a un tope máximo agregado del <strong>10% del Precio del Contrato</strong>.</p>
+                <p style="margin-top:1rem;">La Fecha de Terminación Garantizada se extenderá día por día por: (a) eventos de Fuerza Mayor; (b) retrasos causados por el Cliente; (c) retrasos en el procesamiento de permisos de ASEP más allá de 30 días hábiles; (d) cambios de alcance solicitados por el Cliente.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PERFORMANCE GUARANTEES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 6</span>
+            <span class="es">Artículo 6</span>
+            <span class="he">סעיף 6</span>
+        </div>
+        <h2>
+            <span class="en">Performance Guarantees</span>
+            <span class="es">Garantías de Rendimiento</span>
+            <span class="he">ערבויות ביצועים</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">PR</div>
+                <div class="card-title">
+                    <span class="en">Performance Ratio (PR)</span>
+                    <span class="es">Ratio de Rendimiento (PR)</span>
+                    <span class="he">יחס ביצועים (PR)</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">The system shall maintain a minimum Performance Ratio of <strong>>80%</strong> during the first year of operation, measured at the production meter and weather-corrected per IEC 61724-3.</span>
+                <span class="es">El sistema mantendrá un Ratio de Rendimiento mínimo de <strong>>80%</strong> durante el primer año de operación, medido en el medidor de producción y corregido por clima según IEC 61724-3.</span>
+                <span class="he">המערכת תשמור על יחס ביצועים מינימלי של <strong>>80%</strong> בשנת הפעילות הראשונה, נמדד במונה הייצור ומותאם למזג אוויר לפי IEC 61724-3.</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">AV</div>
+                <div class="card-title">
+                    <span class="en">System Availability</span>
+                    <span class="es">Disponibilidad del Sistema</span>
+                    <span class="he">זמינות מערכת</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">Guaranteed system availability of <strong>>99%</strong> during daylight hours, excluding scheduled maintenance and Force Majeure events. Downtime caused by grid outages is excluded.</span>
+                <span class="es">Disponibilidad garantizada del sistema de <strong>>99%</strong> durante horas de luz solar, excluyendo mantenimiento programado y eventos de Fuerza Mayor. Tiempo de inactividad causado por cortes de red se excluye.</span>
+                <span class="he">זמינות מערכת מובטחת של <strong>>99%</strong> בשעות אור, למעט תחזוקה מתוכננת ואירועי כוח עליון. השבתות הנגרמות מהפסקות רשת אינן נכללות.</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">kWh</div>
+                <div class="card-title">
+                    <span class="en">Annual Production Warranty</span>
+                    <span class="es">Garantía de Producción Anual</span>
+                    <span class="he">אחריות ייצור שנתית</span>
+                </div>
+            </div>
+            <p>
+                <span class="en">The Contractor guarantees minimum annual energy production of <strong>95%</strong> of the P50 estimate provided in the design package. If actual production falls below this threshold for two consecutive years (weather-adjusted), the Contractor shall remedy the shortfall at its own cost within 90 days.</span>
+                <span class="es">El Contratista garantiza una producción anual mínima de energía del <strong>95%</strong> de la estimación P50 proporcionada en el paquete de diseño. Si la producción real cae por debajo de este umbral durante dos años consecutivos (ajustado por clima), el Contratista remediará el déficit a su propio costo dentro de 90 días.</span>
+                <span class="he">הקבלן מבטיח ייצור אנרגיה שנתי מינימלי של <strong>95%</strong> מהערכת P50 שסופקה בחבילת התכנון. אם הייצור בפועל יורד מתחת לסף זה במשך שנתיים רצופות (מותאם מזג אוויר), הקבלן יתקן את החוסר על חשבונו תוך 90 יום.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ INSURANCE ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 7</span>
+            <span class="es">Artículo 7</span>
+            <span class="he">סעיף 7</span>
+        </div>
+        <h2>
+            <span class="en">Insurance Requirements</span>
+            <span class="es">Requisitos de Seguro</span>
+            <span class="he">דרישות ביטוח</span>
+        </h2>
+
+        <p>
+            <span class="en">The Contractor shall maintain the following insurance policies throughout the project duration and for a period of 12 months following Substantial Completion:</span>
+            <span class="es">El Contratista mantendrá las siguientes pólizas de seguro durante toda la duración del proyecto y por un período de 12 meses después de la Terminación Sustancial:</span>
+            <span class="he">הקבלן ישמור על פוליסות הביטוח הבאות לאורך כל משך הפרויקט ולתקופה של 12 חודשים לאחר השלמה מהותית:</span>
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Coverage Type</span>
+                            <span class="es">Tipo de Cobertura</span>
+                            <span class="he">סוג כיסוי</span>
+                        </th>
+                        <th>
+                            <span class="en">Minimum Coverage</span>
+                            <span class="es">Cobertura Mínima</span>
+                            <span class="he">כיסוי מינימלי</span>
+                        </th>
+                        <th>
+                            <span class="en">Notes</span>
+                            <span class="es">Notas</span>
+                            <span class="he">הערות</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="en">Contractor All-Risk (CAR)</span>
+                            <span class="es">Todo Riesgo del Contratista (CAR)</span>
+                            <span class="he">כל הסיכונים קבלן (CAR)</span>
+                        </td>
+                        <td>
+                            <span class="en">110% of Contract Price</span>
+                            <span class="es">110% del Precio del Contrato</span>
+                            <span class="he">110% ממחיר החוזה</span>
+                        </td>
+                        <td>
+                            <span class="en">Covers physical loss or damage during construction</span>
+                            <span class="es">Cubre pérdida o daño físico durante la construcción</span>
+                            <span class="he">מכסה אובדן או נזק פיזי במהלך הבנייה</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Professional Indemnity</span>
+                            <span class="es">Indemnización Profesional</span>
+                            <span class="he">שיפוי מקצועי</span>
+                        </td>
+                        <td>$500,000 USD</td>
+                        <td>
+                            <span class="en">Design errors and omissions</span>
+                            <span class="es">Errores y omisiones de diseño</span>
+                            <span class="he">שגיאות והשמטות בתכנון</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Third-Party Liability</span>
+                            <span class="es">Responsabilidad hacia Terceros</span>
+                            <span class="he">אחריות צד שלישי</span>
+                        </td>
+                        <td>$1,000,000 USD</td>
+                        <td>
+                            <span class="en">Bodily injury, property damage</span>
+                            <span class="es">Lesiones corporales, daños a la propiedad</span>
+                            <span class="he">נזקי גוף, נזקי רכוש</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Workers' Compensation</span>
+                            <span class="es">Compensación de Trabajadores</span>
+                            <span class="he">פיצויי עובדים</span>
+                        </td>
+                        <td>
+                            <span class="en">As required by Código de Trabajo</span>
+                            <span class="es">Según lo requiere el Código de Trabajo</span>
+                            <span class="he">כנדרש בחוק העבודה</span>
+                        </td>
+                        <td>
+                            <span class="en">Mandatory per Panama labor law</span>
+                            <span class="es">Obligatorio según la ley laboral de Panamá</span>
+                            <span class="he">חובה לפי חוק העבודה בפנמה</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ PANAMA LEGAL ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 8</span>
+            <span class="es">Artículo 8</span>
+            <span class="he">סעיף 8</span>
+        </div>
+        <h2>
+            <span class="en">Panama Legal & Regulatory Compliance</span>
+            <span class="es">Cumplimiento Legal y Regulatorio de Panamá</span>
+            <span class="he">ציות חוקי ורגולטורי בפנמה</span>
+        </h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">ASEP</div>
+                <div class="card-title">
+                    <span class="en">ASEP — Autoridad Nacional de los Servicios Públicos</span>
+                    <span class="es">ASEP — Autoridad Nacional de los Servicios Públicos</span>
+                    <span class="he">ASEP — רשות השירותים הציבוריים הלאומית</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">The Contractor shall obtain all ASEP permits required for distributed generation interconnection</span>
+                    <span class="es">El Contratista obtendrá todos los permisos de ASEP requeridos para la interconexión de generación distribuida</span>
+                    <span class="he">הקבלן ישיג את כל היתרי ASEP הנדרשים לחיבור ייצור מבוזר</span>
+                </li>
+                <li>
+                    <span class="en">System shall comply with ASEP Resolution AN No. 12,421-Elec (net metering regulations)</span>
+                    <span class="es">El sistema cumplirá con la Resolución ASEP AN No. 12,421-Elec (regulaciones de medición neta)</span>
+                    <span class="he">המערכת תעמוד בהחלטת ASEP AN מס' 12,421-Elec (תקנות מדידה נטו)</span>
+                </li>
+                <li>
+                    <span class="en">Maximum system size for net metering: 500 kWp per connection point</span>
+                    <span class="es">Tamaño máximo del sistema para medición neta: 500 kWp por punto de conexión</span>
+                    <span class="he">גודל מערכת מקסימלי למדידה נטו: 500 kWp לנקודת חיבור</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon gold">417</div>
+                <div class="card-title">
+                    <span class="en">Ley 417 — Renewable Energy Tax Incentives</span>
+                    <span class="es">Ley 417 — Incentivos Fiscales de Energía Renovable</span>
+                    <span class="he">חוק 417 — הטבות מס לאנרגיה מתחדשת</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">Tax credit of up to 50% of the system cost applied to income tax (ISR)</span>
+                    <span class="es">Crédito fiscal de hasta el 50% del costo del sistema aplicado al impuesto sobre la renta (ISR)</span>
+                    <span class="he">זיכוי מס של עד 50% מעלות המערכת המיושם על מס הכנסה (ISR)</span>
+                </li>
+                <li>
+                    <span class="en">ITBMS (VAT) exemption on solar equipment imports</span>
+                    <span class="es">Exención de ITBMS (IVA) en importaciones de equipos solares</span>
+                    <span class="he">פטור ITBMS (מע"מ) על יבוא ציוד סולארי</span>
+                </li>
+                <li>
+                    <span class="en">Accelerated depreciation for commercial installations</span>
+                    <span class="es">Depreciación acelerada para instalaciones comerciales</span>
+                    <span class="he">פחת מואץ להתקנות מסחריות</span>
+                </li>
+                <li>
+                    <span class="en">Contractor shall provide documentation required for Ley 417 tax benefit application</span>
+                    <span class="es">El Contratista proporcionará la documentación requerida para la solicitud de beneficios fiscales de la Ley 417</span>
+                    <span class="he">הקבלן יספק את התיעוד הנדרש לבקשת הטבת מס חוק 417</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">CT</div>
+                <div class="card-title">
+                    <span class="en">Código de Trabajo — Labor Law Compliance</span>
+                    <span class="es">Código de Trabajo — Cumplimiento de la Ley Laboral</span>
+                    <span class="he">חוק העבודה — ציות לדיני עבודה</span>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    <span class="en">All workers shall be registered with CSS (Caja de Seguro Social)</span>
+                    <span class="es">Todos los trabajadores estarán registrados en la CSS (Caja de Seguro Social)</span>
+                    <span class="he">כל העובדים יהיו רשומים ב-CSS (קופת ביטוח לאומי)</span>
+                </li>
+                <li>
+                    <span class="en">Compliance with safety regulations: helmets, harnesses, PPE for all rooftop work</span>
+                    <span class="es">Cumplimiento con regulaciones de seguridad: cascos, arneses, EPP para todo trabajo en techo</span>
+                    <span class="he">עמידה בתקנות בטיחות: קסדות, רתמות, ציוד מגן לכל עבודה על גג</span>
+                </li>
+                <li>
+                    <span class="en">Minimum 90% Panamanian workforce (per immigration regulations)</span>
+                    <span class="es">Mínimo 90% de fuerza laboral panameña (según regulaciones migratorias)</span>
+                    <span class="he">מינימום 90% כוח עבודה פנמי (לפי תקנות הגירה)</span>
+                </li>
+                <li>
+                    <span class="en">Working hours per Código de Trabajo: max 48 hours/week, overtime at 125–150%</span>
+                    <span class="es">Horas de trabajo según Código de Trabajo: máximo 48 horas/semana, horas extra al 125–150%</span>
+                    <span class="he">שעות עבודה לפי חוק העבודה: מקסימום 48 שעות/שבוע, שעות נוספות ב-125–150%</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ WARRANTY ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 9</span>
+            <span class="es">Artículo 9</span>
+            <span class="he">סעיף 9</span>
+        </div>
+        <h2>
+            <span class="en">Warranties</span>
+            <span class="es">Garantías</span>
+            <span class="he">אחריות</span>
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="en">Component</span>
+                            <span class="es">Componente</span>
+                            <span class="he">רכיב</span>
+                        </th>
+                        <th>
+                            <span class="en">Warranty Period</span>
+                            <span class="es">Período de Garantía</span>
+                            <span class="he">תקופת אחריות</span>
+                        </th>
+                        <th>
+                            <span class="en">Coverage</span>
+                            <span class="es">Cobertura</span>
+                            <span class="he">כיסוי</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="en">Solar Modules (product)</span>
+                            <span class="es">Módulos Solares (producto)</span>
+                            <span class="he">מודולים סולאריים (מוצר)</span>
+                        </td>
+                        <td>
+                            <span class="en">12 years</span>
+                            <span class="es">12 años</span>
+                            <span class="he">12 שנים</span>
+                        </td>
+                        <td>
+                            <span class="en">Manufacturing defects</span>
+                            <span class="es">Defectos de fabricación</span>
+                            <span class="he">פגמי ייצור</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Solar Modules (performance)</span>
+                            <span class="es">Módulos Solares (rendimiento)</span>
+                            <span class="he">מודולים סולאריים (ביצועים)</span>
+                        </td>
+                        <td>
+                            <span class="en">25 years</span>
+                            <span class="es">25 años</span>
+                            <span class="he">25 שנים</span>
+                        </td>
+                        <td>
+                            <span class="en">&ge;80% rated output at year 25</span>
+                            <span class="es">&ge;80% potencia nominal en año 25</span>
+                            <span class="he">&ge;80% הספק נקוב בשנה 25</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Inverters</span>
+                            <span class="es">Inversores</span>
+                            <span class="he">ממירים</span>
+                        </td>
+                        <td>
+                            <span class="en">10 years</span>
+                            <span class="es">10 años</span>
+                            <span class="he">10 שנים</span>
+                        </td>
+                        <td>
+                            <span class="en">Manufacturer warranty, extendable to 20 years</span>
+                            <span class="es">Garantía del fabricante, extensible a 20 años</span>
+                            <span class="he">אחריות יצרן, ניתנת להארכה ל-20 שנים</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Workmanship</span>
+                            <span class="es">Mano de Obra</span>
+                            <span class="he">עבודה</span>
+                        </td>
+                        <td>
+                            <span class="en">5 years</span>
+                            <span class="es">5 años</span>
+                            <span class="he">5 שנים</span>
+                        </td>
+                        <td>
+                            <span class="en">Installation defects, wiring, mounting</span>
+                            <span class="es">Defectos de instalación, cableado, montaje</span>
+                            <span class="he">פגמי התקנה, חיווט, התקנה</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="en">Roof Waterproofing</span>
+                            <span class="es">Impermeabilización del Techo</span>
+                            <span class="he">איטום גג</span>
+                        </td>
+                        <td>
+                            <span class="en">10 years</span>
+                            <span class="es">10 años</span>
+                            <span class="he">10 שנים</span>
+                        </td>
+                        <td>
+                            <span class="en">Leak-free guarantee at all penetration points</span>
+                            <span class="es">Garantía sin filtraciones en todos los puntos de penetración</span>
+                            <span class="he">אחריות ללא דליפות בכל נקודות החדירה</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ KEY CLAUSES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Article 10</span>
+            <span class="es">Artículo 10</span>
+            <span class="he">סעיף 10</span>
+        </div>
+        <h2>
+            <span class="en">Key Contract Clauses</span>
+            <span class="es">Cláusulas Clave del Contrato</span>
+            <span class="he">סעיפי חוזה מרכזיים</span>
+        </h2>
+
+        <h3>
+            <span class="en">10.1 Force Majeure</span>
+            <span class="es">10.1 Fuerza Mayor</span>
+            <span class="he">10.1 כוח עליון</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>Neither Party shall be liable for failure to perform due to events beyond reasonable control, including but not limited to: natural disasters, pandemics, war, government actions, strikes, or prolonged grid outages exceeding 72 hours. The affected Party shall notify the other within 5 business days and use commercially reasonable efforts to mitigate the impact.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>Ninguna de las Partes será responsable por el incumplimiento debido a eventos fuera del control razonable, incluyendo pero no limitado a: desastres naturales, pandemias, guerra, acciones gubernamentales, huelgas o cortes prolongados de red que excedan 72 horas. La Parte afectada notificará a la otra dentro de 5 días hábiles y utilizará esfuerzos comercialmente razonables para mitigar el impacto.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">10.2 Termination</span>
+            <span class="es">10.2 Terminación</span>
+            <span class="he">10.2 סיום</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p><strong>By Client:</strong> The Client may terminate for convenience with 30 days written notice, paying for all work completed and materials procured. The Client may terminate for cause if the Contractor fails to cure a material breach within 15 days of written notice.</p>
+                <p style="margin-top:0.75rem;"><strong>By Contractor:</strong> The Contractor may suspend work if payment is overdue by more than 30 days. The Contractor may terminate if payment remains unpaid for 60 days after written notice.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p><strong>Por el Cliente:</strong> El Cliente puede terminar por conveniencia con 30 días de aviso escrito, pagando todo el trabajo completado y materiales adquiridos. El Cliente puede terminar por causa si el Contratista no corrige un incumplimiento material dentro de 15 días del aviso escrito.</p>
+                <p style="margin-top:0.75rem;"><strong>Por el Contratista:</strong> El Contratista puede suspender el trabajo si el pago está vencido por más de 30 días. El Contratista puede terminar si el pago permanece impago por 60 días después del aviso escrito.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">10.3 Dispute Resolution</span>
+            <span class="es">10.3 Resolución de Disputas</span>
+            <span class="he">10.3 יישוב סכסוכים</span>
+        </h3>
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>English</h4>
+                <p>Disputes shall be resolved first through good-faith negotiation (30 days), then mediation (30 days), and finally binding arbitration under the rules of the Centro de Conciliación y Arbitraje de Panamá (CeCAP). The seat of arbitration shall be Panama City. The language of proceedings shall be Spanish, with English translations provided upon request.</p>
+            </div>
+            <div class="lang-col">
+                <h4>Español</h4>
+                <p>Las disputas se resolverán primero mediante negociación de buena fe (30 días), luego mediación (30 días), y finalmente arbitraje vinculante bajo las reglas del Centro de Conciliación y Arbitraje de Panamá (CeCAP). La sede del arbitraje será la Ciudad de Panamá. El idioma de los procedimientos será español, con traducciones al inglés proporcionadas a solicitud.</p>
+            </div>
+        </div>
+
+        <h3>
+            <span class="en">10.4 Governing Law</span>
+            <span class="es">10.4 Ley Aplicable</span>
+            <span class="he">10.4 דין חל</span>
+        </h3>
+        <div class="alert alert-green">
+            <div class="alert-title">
+                <span class="en">Republic of Panama</span>
+                <span class="es">República de Panamá</span>
+                <span class="he">הרפובליקה של פנמה</span>
+            </div>
+            <p>
+                <span class="en">This Agreement shall be governed by and construed in accordance with the laws of the Republic of Panama. Both Parties submit to the jurisdiction of the courts of Panama City for any matters not subject to arbitration.</span>
+                <span class="es">Este Acuerdo se regirá e interpretará de acuerdo con las leyes de la República de Panamá. Ambas Partes se someten a la jurisdicción de los tribunales de la Ciudad de Panamá para cualquier asunto no sujeto a arbitraje.</span>
+                <span class="he">הסכם זה יהיה כפוף לחוקי הרפובליקה של פנמה ויפורש בהתאם להם. שני הצדדים כפופים לסמכות בתי המשפט בעיר פנמה לכל עניין שאינו כפוף לבוררות.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ SIGNATURES ============ -->
+    <div class="section">
+        <div class="section-label">
+            <span class="en">Execution</span>
+            <span class="es">Ejecución</span>
+            <span class="he">חתימה</span>
+        </div>
+        <h2>
+            <span class="en">Signatures</span>
+            <span class="es">Firmas</span>
+            <span class="he">חתימות</span>
+        </h2>
+
+        <div class="bilingual">
+            <div class="lang-col">
+                <h4>
+                    <span class="en">Contractor</span>
+                    <span class="es">Contratista</span>
+                    <span class="he">קבלן</span>
+                </h4>
+                <div class="template-field" style="border:none;background:transparent;padding:0;">
+                    <div class="field-line"><span>Name: </span> ___________________________</div>
+                    <div class="field-line"><span>Title: </span> ___________________________</div>
+                    <div class="field-line"><span>Signature: </span> ___________________________</div>
+                    <div class="field-line"><span>Date: </span> ___________________________</div>
+                </div>
+            </div>
+            <div class="lang-col">
+                <h4>
+                    <span class="en">Client</span>
+                    <span class="es">Cliente</span>
+                    <span class="he">לקוח</span>
+                </h4>
+                <div class="template-field" style="border:none;background:transparent;padding:0;">
+                    <div class="field-line"><span>Name: </span> ___________________________</div>
+                    <div class="field-line"><span>Title: </span> ___________________________</div>
+                    <div class="field-line"><span>Signature: </span> ___________________________</div>
+                    <div class="field-line"><span>Date: </span> ___________________________</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function setLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+}
+</script>
+</body>
+</html>
