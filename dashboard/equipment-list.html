@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Catalog — Solaris Energy Panama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+
+        /* Lang Toggle */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* Back Nav */
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; color: var(--pearl); background: var(--green); padding: 8px 18px; border-radius: var(--radius-pill); text-decoration: none; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        /* Hero */
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%); padding: 8rem 2rem 4rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); color: var(--pearl); margin-bottom: 0.8rem; }
+        .page-hero p { color: rgba(254,253,251,0.7); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+
+        /* Section Headers */
+        .section-badge { display: inline-block; background: rgba(212,168,67,0.15); color: var(--gold); padding: 0.4rem 1rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.4rem); color: var(--green); margin-bottom: 0.6rem; }
+        .section-sub { color: var(--ash); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; }
+
+        /* Equipment Cards */
+        .equip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .equip-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); overflow: hidden; transition: all 0.3s; }
+        .equip-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-4px); }
+        .equip-card-header { background: var(--green); padding: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+        .equip-card-header .card-icon { width: 48px; height: 48px; background: rgba(212,168,67,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .equip-card-header h3 { color: var(--pearl); font-size: 1.1rem; font-weight: 700; }
+        .equip-card-header .brand { color: var(--gold); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; }
+        .equip-card-body { padding: 1.5rem; }
+        .spec-table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+        .spec-table tr { border-bottom: 1px solid var(--mist); }
+        .spec-table tr:last-child { border-bottom: none; }
+        .spec-table td { padding: 0.6rem 0; font-size: 0.88rem; }
+        .spec-table td:first-child { color: var(--ash); font-weight: 500; width: 45%; }
+        .spec-table td:last-child { color: var(--charcoal); font-weight: 600; text-align: right; }
+        .equip-badge { display: inline-block; padding: 0.25rem 0.7rem; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; margin-right: 0.4rem; margin-top: 0.6rem; }
+        .badge-tier1 { background: rgba(212,168,67,0.15); color: var(--gold-aged); }
+        .badge-tier2 { background: rgba(11,61,46,0.1); color: var(--green); }
+        .badge-warranty { background: rgba(11,61,46,0.08); color: var(--green-canopy); }
+
+        /* Cost Matrix */
+        .cost-matrix { background: var(--sand); border-radius: var(--radius-card); padding: 2rem; margin-top: 2rem; }
+        .cost-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .cost-item { background: var(--pearl); border-radius: 10px; padding: 1.5rem; border: 1px solid var(--mist); text-align: center; }
+        .cost-item .cost-label { font-size: 0.8rem; color: var(--ash); font-weight: 600; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+        .cost-item .cost-range { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--green); }
+        .cost-item .cost-unit { font-size: 0.75rem; color: var(--ash); margin-top: 0.2rem; }
+
+        /* Category Tabs */
+        .cat-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+        .cat-tab { padding: 0.6rem 1.4rem; border: 2px solid var(--mist); background: transparent; border-radius: var(--radius-pill); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s; color: var(--slate); }
+        .cat-tab.active, .cat-tab:hover { border-color: var(--green); background: var(--green); color: var(--pearl); }
+        .cat-section { display: none; }
+        .cat-section.active { display: block; }
+
+        /* Reveal */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Footer */
+        footer { background: var(--green); color: rgba(254,253,251,0.5); text-align: center; padding: 2rem; font-size: 0.85rem; }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .equip-grid { grid-template-columns: 1fr; }
+            .cost-grid { grid-template-columns: 1fr 1fr; }
+            .container { padding: 3rem 1.2rem; }
+        }
+        @media (max-width: 480px) {
+            .cost-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+    <span class="icon">⚡</span>
+    <h1 data-en="Equipment Catalog" data-es="Catálogo de Equipos" data-he="קטלוג ציוד">Equipment Catalog</h1>
+    <p data-en="Tier-1 solar components selected for Panama's tropical climate. Every product is proven, warrantied, and optimized for maximum yield." data-es="Componentes solares de nivel 1 seleccionados para el clima tropical de Panamá. Cada producto está probado, garantizado y optimizado para máximo rendimiento." data-he="רכיבי סולאר דרגה 1 שנבחרו לאקלים הטרופי של פנמה. כל מוצר מוכח, באחריות ומותאם לתפוקה מקסימלית.">Tier-1 solar components selected for Panama's tropical climate. Every product is proven, warrantied, and optimized for maximum yield.</p>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="container">
+    <div class="cat-tabs reveal">
+        <button class="cat-tab active" onclick="showCat('panels')" data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</button>
+        <button class="cat-tab" onclick="showCat('inverters')" data-en="Inverters" data-es="Inversores" data-he="ממירים">Inverters</button>
+        <button class="cat-tab" onclick="showCat('mounting')" data-en="Mounting Systems" data-es="Sistemas de Montaje" data-he="מערכות הרכבה">Mounting Systems</button>
+        <button class="cat-tab" onclick="showCat('monitoring')" data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</button>
+        <button class="cat-tab" onclick="showCat('protection')" data-en="Protection" data-es="Protección" data-he="הגנה">Protection</button>
+        <button class="cat-tab" onclick="showCat('costs')" data-en="Cost Matrix" data-es="Matriz de Costos" data-he="מטריצת עלויות">Cost Matrix</button>
+    </div>
+
+    <!-- ========== SOLAR PANELS ========== -->
+    <div class="cat-section active" id="cat-panels">
+        <div class="section-badge" data-en="TIER-1 MODULES" data-es="MÓDULOS NIVEL 1" data-he="מודולים דרגה 1">TIER-1 MODULES</div>
+        <h2 class="section-title reveal" data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</h2>
+        <p class="section-sub reveal" data-en="High-efficiency mono PERC and N-type TOPCon panels from the world's top manufacturers. All rated for high humidity and salt-mist environments." data-es="Paneles mono PERC y N-type TOPCon de alta eficiencia de los mejores fabricantes del mundo. Todos clasificados para alta humedad y ambientes de brisa marina." data-he="פאנלים מונו PERC ו-N-type TOPCon בעלי יעילות גבוהה מהיצרנים המובילים בעולם. כולם מדורגים ללחות גבוהה וסביבות ערפל מלח.">High-efficiency mono PERC and N-type TOPCon panels from the world's top manufacturers. All rated for high humidity and salt-mist environments.</p>
+
+        <div class="equip-grid">
+            <!-- Jinko -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">☀️</div>
+                    <div>
+                        <h3>Jinko Tiger Neo 580W</h3>
+                        <div class="brand">JINKO SOLAR</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Output" data-es="Potencia" data-he="הספק">Power Output</td><td>580W</td></tr>
+                        <tr><td data-en="Efficiency" data-es="Eficiencia" data-he="יעילות">Efficiency</td><td>22.53%</td></tr>
+                        <tr><td data-en="Cell Type" data-es="Tipo de Celda" data-he="סוג תא">Cell Type</td><td>N-type TOPCon</td></tr>
+                        <tr><td data-en="Dimensions" data-es="Dimensiones" data-he="מידות">Dimensions</td><td>2278 × 1134 × 30mm</td></tr>
+                        <tr><td data-en="Weight" data-es="Peso" data-he="משקל">Weight</td><td>28.9 kg</td></tr>
+                        <tr><td data-en="Temp. Coefficient" data-es="Coef. Temperatura" data-he="מקדם טמפ׳">Temp. Coefficient</td><td>-0.29%/°C</td></tr>
+                        <tr><td data-en="Max System Voltage" data-es="Voltaje Máx. Sistema" data-he="מתח מקס׳ מערכת">Max System Voltage</td><td>1500V DC</td></tr>
+                        <tr><td data-en="Warranty (Product)" data-es="Garantía (Producto)" data-he="אחריות (מוצר)">Warranty (Product)</td><td>12 years</td></tr>
+                        <tr><td data-en="Warranty (Output)" data-es="Garantía (Rendimiento)" data-he="אחריות (תפוקה)">Warranty (Output)</td><td>30 years / 87.4%</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="TIER-1 BNEF" data-es="NIVEL-1 BNEF" data-he="דרגה-1 BNEF">TIER-1 BNEF</span>
+                        <span class="equip-badge badge-tier2" data-en="BIFACIAL" data-es="BIFACIAL" data-he="דו-צדדי">BIFACIAL</span>
+                        <span class="equip-badge badge-warranty" data-en="SALT MIST RATED" data-es="RESIST. BRISA MARINA" data-he="עמיד ערפל מלח">SALT MIST RATED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canadian Solar -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">☀️</div>
+                    <div>
+                        <h3>Canadian Solar HiKu7 550W</h3>
+                        <div class="brand">CANADIAN SOLAR</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Output" data-es="Potencia" data-he="הספק">Power Output</td><td>550W</td></tr>
+                        <tr><td data-en="Efficiency" data-es="Eficiencia" data-he="יעילות">Efficiency</td><td>21.3%</td></tr>
+                        <tr><td data-en="Cell Type" data-es="Tipo de Celda" data-he="סוג תא">Cell Type</td><td>Mono PERC</td></tr>
+                        <tr><td data-en="Dimensions" data-es="Dimensiones" data-he="מידות">Dimensions</td><td>2256 × 1133 × 35mm</td></tr>
+                        <tr><td data-en="Weight" data-es="Peso" data-he="משקל">Weight</td><td>28.6 kg</td></tr>
+                        <tr><td data-en="Temp. Coefficient" data-es="Coef. Temperatura" data-he="מקדם טמפ׳">Temp. Coefficient</td><td>-0.34%/°C</td></tr>
+                        <tr><td data-en="Max System Voltage" data-es="Voltaje Máx. Sistema" data-he="מתח מקס׳ מערכת">Max System Voltage</td><td>1500V DC</td></tr>
+                        <tr><td data-en="Warranty (Product)" data-es="Garantía (Producto)" data-he="אחריות (מוצר)">Warranty (Product)</td><td>12 years</td></tr>
+                        <tr><td data-en="Warranty (Output)" data-es="Garantía (Rendimiento)" data-he="אחריות (תפוקה)">Warranty (Output)</td><td>25 years / 84.8%</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="TIER-1 BNEF" data-es="NIVEL-1 BNEF" data-he="דרגה-1 BNEF">TIER-1 BNEF</span>
+                        <span class="equip-badge badge-tier2" data-en="HIGH HUMIDITY" data-es="ALTA HUMEDAD" data-he="לחות גבוהה">HIGH HUMIDITY</span>
+                        <span class="equip-badge badge-warranty" data-en="BEST VALUE" data-es="MEJOR VALOR" data-he="ערך מיטבי">BEST VALUE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LONGi -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">☀️</div>
+                    <div>
+                        <h3>LONGi Hi-MO 6 570W</h3>
+                        <div class="brand">LONGI GREEN ENERGY</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Output" data-es="Potencia" data-he="הספק">Power Output</td><td>570W</td></tr>
+                        <tr><td data-en="Efficiency" data-es="Eficiencia" data-he="יעילות">Efficiency</td><td>22.3%</td></tr>
+                        <tr><td data-en="Cell Type" data-es="Tipo de Celda" data-he="סוג תא">Cell Type</td><td>HPDC Mono</td></tr>
+                        <tr><td data-en="Dimensions" data-es="Dimensiones" data-he="מידות">Dimensions</td><td>2278 × 1134 × 30mm</td></tr>
+                        <tr><td data-en="Weight" data-es="Peso" data-he="משקל">Weight</td><td>27.5 kg</td></tr>
+                        <tr><td data-en="Temp. Coefficient" data-es="Coef. Temperatura" data-he="מקדם טמפ׳">Temp. Coefficient</td><td>-0.29%/°C</td></tr>
+                        <tr><td data-en="Max System Voltage" data-es="Voltaje Máx. Sistema" data-he="מתח מקס׳ מערכת">Max System Voltage</td><td>1500V DC</td></tr>
+                        <tr><td data-en="Warranty (Product)" data-es="Garantía (Producto)" data-he="אחריות (מוצר)">Warranty (Product)</td><td>15 years</td></tr>
+                        <tr><td data-en="Warranty (Output)" data-es="Garantía (Rendimiento)" data-he="אחריות (תפוקה)">Warranty (Output)</td><td>30 years / 87.4%</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="TIER-1 BNEF" data-es="NIVEL-1 BNEF" data-he="דרגה-1 BNEF">TIER-1 BNEF</span>
+                        <span class="equip-badge badge-tier2" data-en="LOW DEGRADATION" data-es="BAJA DEGRADACIÓN" data-he="דגרדציה נמוכה">LOW DEGRADATION</span>
+                        <span class="equip-badge badge-warranty" data-en="15-YR PRODUCT WARRANTY" data-es="GARANTÍA 15 AÑOS" data-he="אחריות 15 שנים">15-YR PRODUCT WARRANTY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Comparison -->
+        <div class="cost-matrix reveal" style="margin-top: 3rem;">
+            <h3 style="font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 1rem;" data-en="Panel Comparison at a Glance" data-es="Comparación Rápida de Paneles" data-he="השוואת פאנלים במבט">Panel Comparison at a Glance</h3>
+            <div style="overflow-x: auto;">
+                <table class="spec-table" style="min-width: 500px;">
+                    <tr style="border-bottom: 2px solid var(--green);">
+                        <td style="font-weight: 700; color: var(--green);" data-en="Specification" data-es="Especificación" data-he="מפרט">Specification</td>
+                        <td style="font-weight: 700; color: var(--green); text-align: center;">Jinko 580W</td>
+                        <td style="font-weight: 700; color: var(--green); text-align: center;">Canadian 550W</td>
+                        <td style="font-weight: 700; color: var(--green); text-align: center;">LONGi 570W</td>
+                    </tr>
+                    <tr><td data-en="Efficiency" data-es="Eficiencia" data-he="יעילות">Efficiency</td><td style="text-align:center;">22.53%</td><td style="text-align:center;">21.3%</td><td style="text-align:center;">22.3%</td></tr>
+                    <tr><td data-en="Temp Coefficient" data-es="Coef. Temperatura" data-he="מקדם טמפ׳">Temp Coefficient</td><td style="text-align:center;">-0.29%</td><td style="text-align:center;">-0.34%</td><td style="text-align:center;">-0.29%</td></tr>
+                    <tr><td data-en="Product Warranty" data-es="Garantía Producto" data-he="אחריות מוצר">Product Warranty</td><td style="text-align:center;">12 yr</td><td style="text-align:center;">12 yr</td><td style="text-align:center;">15 yr</td></tr>
+                    <tr><td data-en="Output Warranty" data-es="Garantía Rendimiento" data-he="אחריות תפוקה">Output Warranty</td><td style="text-align:center;">30 yr</td><td style="text-align:center;">25 yr</td><td style="text-align:center;">30 yr</td></tr>
+                    <tr><td data-en="Best For" data-es="Ideal Para" data-he="מיטבי עבור">Best For</td><td style="text-align:center; font-size:0.8rem;" data-en="Max performance" data-es="Máx rendimiento" data-he="ביצועים מקס׳">Max performance</td><td style="text-align:center; font-size:0.8rem;" data-en="Budget projects" data-es="Proyectos económicos" data-he="פרויקטים חסכוניים">Budget projects</td><td style="text-align:center; font-size:0.8rem;" data-en="Long-term value" data-es="Valor a largo plazo" data-he="ערך לטווח ארוך">Long-term value</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== INVERTERS ========== -->
+    <div class="cat-section" id="cat-inverters">
+        <div class="section-badge" data-en="POWER CONVERSION" data-es="CONVERSIÓN DE ENERGÍA" data-he="המרת אנרגיה">POWER CONVERSION</div>
+        <h2 class="section-title reveal" data-en="Inverters" data-es="Inversores" data-he="ממירים">Inverters</h2>
+        <p class="section-sub reveal" data-en="String inverters and hybrid solutions from global leaders. Integrated monitoring, wide MPPT range, and tropical-grade IP65/IP66 ratings." data-es="Inversores string e híbridos de líderes globales. Monitoreo integrado, amplio rango MPPT y clasificación IP65/IP66 para clima tropical." data-he="ממירי סטרינג ופתרונות היברידיים ממובילים עולמיים. ניטור משולב, טווח MPPT רחב ודירוג IP65/IP66 לאקלים טרופי.">String inverters and hybrid solutions from global leaders. Integrated monitoring, wide MPPT range, and tropical-grade IP65/IP66 ratings.</p>
+
+        <div class="equip-grid">
+            <!-- Huawei -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🔌</div>
+                    <div>
+                        <h3>Huawei SUN2000</h3>
+                        <div class="brand">HUAWEI — 3kW to 100kW</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Range" data-es="Rango de Potencia" data-he="טווח הספק">Power Range</td><td>3–100 kW</td></tr>
+                        <tr><td data-en="Max Efficiency" data-es="Eficiencia Máx." data-he="יעילות מקס׳">Max Efficiency</td><td>98.6%</td></tr>
+                        <tr><td>MPPT</td><td>2–10 trackers</td></tr>
+                        <tr><td data-en="MPPT Voltage" data-es="Voltaje MPPT" data-he="מתח MPPT">MPPT Voltage</td><td>140–980V</td></tr>
+                        <tr><td data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td><td>FusionSolar App</td></tr>
+                        <tr><td data-en="Communication" data-es="Comunicación" data-he="תקשורת">Communication</td><td>WiFi / 4G / RS485</td></tr>
+                        <tr><td data-en="Protection Rating" data-es="Grado de Protección" data-he="דירוג הגנה">Protection Rating</td><td>IP66 (natural cooling)</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td>10 years (ext. 20)</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="MARKET LEADER" data-es="LÍDER DEL MERCADO" data-he="מוביל שוק">MARKET LEADER</span>
+                        <span class="equip-badge badge-tier2" data-en="AI-POWERED" data-es="POTENCIADO POR IA" data-he="מבוסס AI">AI-POWERED</span>
+                        <span class="equip-badge badge-warranty" data-en="NO FAN DESIGN" data-es="SIN VENTILADOR" data-he="ללא מאוורר">NO FAN DESIGN</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SolarEdge -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🔌</div>
+                    <div>
+                        <h3>SolarEdge SE Series</h3>
+                        <div class="brand">SOLAREDGE — 3kW to 100kW</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Range" data-es="Rango de Potencia" data-he="טווח הספק">Power Range</td><td>3–100 kW</td></tr>
+                        <tr><td data-en="Max Efficiency" data-es="Eficiencia Máx." data-he="יעילות מקס׳">Max Efficiency</td><td>99.0%</td></tr>
+                        <tr><td>MPPT</td><td data-en="Per-panel (optimizers)" data-es="Por panel (optimizadores)" data-he="לכל פאנל (אופטימייזרים)">Per-panel (optimizers)</td></tr>
+                        <tr><td data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td><td>SolarEdge Portal</td></tr>
+                        <tr><td data-en="Communication" data-es="Comunicación" data-he="תקשורת">Communication</td><td>WiFi / Ethernet / Cellular</td></tr>
+                        <tr><td data-en="Safety" data-es="Seguridad" data-he="בטיחות">Safety</td><td>SafeDC™ (1V shutdown)</td></tr>
+                        <tr><td data-en="Protection Rating" data-es="Grado de Protección" data-he="דירוג הגנה">Protection Rating</td><td>IP65</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td>12 years (ext. 25)</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="PANEL-LEVEL MONITORING" data-es="MONITOREO POR PANEL" data-he="ניטור ברמת פאנל">PANEL-LEVEL MONITORING</span>
+                        <span class="equip-badge badge-tier2" data-en="FIRE SAFETY" data-es="SEGURIDAD CONTRA INCENDIOS" data-he="בטיחות אש">FIRE SAFETY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solis -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🔌</div>
+                    <div>
+                        <h3>Solis S6 Series</h3>
+                        <div class="brand">GINLONG SOLIS — 3kW to 110kW</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Range" data-es="Rango de Potencia" data-he="טווח הספק">Power Range</td><td>3–110 kW</td></tr>
+                        <tr><td data-en="Max Efficiency" data-es="Eficiencia Máx." data-he="יעילות מקס׳">Max Efficiency</td><td>98.4%</td></tr>
+                        <tr><td>MPPT</td><td>2–6 trackers</td></tr>
+                        <tr><td data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td><td>Solis Cloud</td></tr>
+                        <tr><td data-en="Communication" data-es="Comunicación" data-he="תקשורת">Communication</td><td>WiFi / GPRS / Ethernet</td></tr>
+                        <tr><td data-en="Protection Rating" data-es="Grado de Protección" data-he="דירוג הגנה">Protection Rating</td><td>IP66</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td>10 years (ext. 20)</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="COST EFFECTIVE" data-es="COSTO EFECTIVO" data-he="חסכוני">COST EFFECTIVE</span>
+                        <span class="equip-badge badge-tier2" data-en="50M+ SHIPPED" data-es="50M+ ENVIADOS" data-he="50M+ נשלחו">50M+ SHIPPED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Growatt -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🔌</div>
+                    <div>
+                        <h3>Growatt MOD XH Series</h3>
+                        <div class="brand">GROWATT — 3kW to 50kW</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Power Range" data-es="Rango de Potencia" data-he="טווח הספק">Power Range</td><td>3–50 kW</td></tr>
+                        <tr><td data-en="Max Efficiency" data-es="Eficiencia Máx." data-he="יעילות מקס׳">Max Efficiency</td><td>98.4%</td></tr>
+                        <tr><td>MPPT</td><td>2–4 trackers</td></tr>
+                        <tr><td data-en="Hybrid Ready" data-es="Preparado para Híbrido" data-he="מוכן להיברידי">Hybrid Ready</td><td data-en="Yes — battery compatible" data-es="Sí — compatible con batería" data-he="כן — תואם סוללה">Yes — battery compatible</td></tr>
+                        <tr><td data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td><td>ShinePhone App</td></tr>
+                        <tr><td data-en="Protection Rating" data-es="Grado de Protección" data-he="דירוג הגנה">Protection Rating</td><td>IP65</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td>10 years (ext. 15)</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="HYBRID READY" data-es="PREPARADO HÍBRIDO" data-he="מוכן היברידי">HYBRID READY</span>
+                        <span class="equip-badge badge-tier2" data-en="BATTERY STORAGE" data-es="ALMACENAMIENTO" data-he="אגירה">BATTERY STORAGE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MOUNTING ========== -->
+    <div class="cat-section" id="cat-mounting">
+        <div class="section-badge" data-en="STRUCTURAL SYSTEMS" data-es="SISTEMAS ESTRUCTURALES" data-he="מערכות מבניות">STRUCTURAL SYSTEMS</div>
+        <h2 class="section-title reveal" data-en="Mounting Systems" data-es="Sistemas de Montaje" data-he="מערכות הרכבה">Mounting Systems</h2>
+        <p class="section-sub reveal" data-en="Engineered mounting solutions for every roof type found in Panama — metal, concrete, and tile. Wind-rated for tropical conditions." data-es="Soluciones de montaje diseñadas para cada tipo de techo en Panamá — metal, concreto y teja. Certificadas para vientos tropicales." data-he="פתרונות הרכבה מהונדסים לכל סוג גג בפנמה — מתכת, בטון ורעפים. מדורגים לרוח בתנאים טרופיים.">Engineered mounting solutions for every roof type found in Panama — metal, concrete, and tile. Wind-rated for tropical conditions.</p>
+
+        <div class="equip-grid">
+            <!-- K2 Systems -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🏗️</div>
+                    <div>
+                        <h3>K2 Systems</h3>
+                        <div class="brand">GERMANY — PREMIUM RACKING</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Roof Types" data-es="Tipos de Techo" data-he="סוגי גגות">Roof Types</td><td data-en="Metal, Tile, Flat" data-es="Metal, Teja, Plano" data-he="מתכת, רעפים, שטוח">Metal, Tile, Flat</td></tr>
+                        <tr><td data-en="Material" data-es="Material" data-he="חומר">Material</td><td data-en="Aluminum + Stainless Steel" data-es="Aluminio + Acero Inoxidable" data-he="אלומיניום + פלדה אל-חלד">Aluminum + Stainless Steel</td></tr>
+                        <tr><td data-en="Wind Rating" data-es="Clasificación de Viento" data-he="דירוג רוח">Wind Rating</td><td data-en="Up to 180 km/h" data-es="Hasta 180 km/h" data-he="עד 180 קמ״ש">Up to 180 km/h</td></tr>
+                        <tr><td data-en="Corrosion Protection" data-es="Protección contra Corrosión" data-he="הגנה מפני קורוזיה">Corrosion Protection</td><td data-en="Anodized / C5 rated" data-es="Anodizado / C5" data-he="אנודייז / C5">Anodized / C5 rated</td></tr>
+                        <tr><td data-en="System" data-es="Sistema" data-he="מערכת">System</td><td>SingleRail / CrossRail</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td data-en="20 years" data-es="20 años" data-he="20 שנים">20 years</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="GERMAN ENGINEERING" data-es="INGENIERÍA ALEMANA" data-he="הנדסה גרמנית">GERMAN ENGINEERING</span>
+                        <span class="equip-badge badge-warranty" data-en="UNIVERSAL FIT" data-es="AJUSTE UNIVERSAL" data-he="התאמה אוניברסלית">UNIVERSAL FIT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clenergy -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🏗️</div>
+                    <div>
+                        <h3>Clenergy EzRack</h3>
+                        <div class="brand">CLENERGY — RAPID DEPLOY</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Roof Types" data-es="Tipos de Techo" data-he="סוגי גגות">Roof Types</td><td data-en="Metal Trapezoidal, Standing Seam" data-es="Metal Trapezoidal, Junta Alzada" data-he="מתכת טרפזואידי, תפר עומד">Metal Trapezoidal, Standing Seam</td></tr>
+                        <tr><td data-en="Material" data-es="Material" data-he="חומר">Material</td><td data-en="AL6005-T5 Aluminum" data-es="Aluminio AL6005-T5" data-he="אלומיניום AL6005-T5">AL6005-T5 Aluminum</td></tr>
+                        <tr><td data-en="Install Speed" data-es="Velocidad de Instalación" data-he="מהירות התקנה">Install Speed</td><td data-en="30% faster (pre-assembled)" data-es="30% más rápido (preensamblado)" data-he="30% מהיר יותר (מורכב מראש)">30% faster (pre-assembled)</td></tr>
+                        <tr><td data-en="Wind Rating" data-es="Clasificación de Viento" data-he="דירוג רוח">Wind Rating</td><td data-en="Up to 160 km/h" data-es="Hasta 160 km/h" data-he="עד 160 קמ״ש">Up to 160 km/h</td></tr>
+                        <tr><td data-en="Warranty" data-es="Garantía" data-he="אחריות">Warranty</td><td data-en="15 years" data-es="15 años" data-he="15 שנים">15 years</td></tr>
+                    </table>
+                    <div>
+                        <span class="equip-badge badge-tier1" data-en="FAST INSTALL" data-es="INSTALACIÓN RÁPIDA" data-he="התקנה מהירה">FAST INSTALL</span>
+                        <span class="equip-badge badge-tier2" data-en="PRE-ASSEMBLED" data-es="PREENSAMBLADO" data-he="מורכב מראש">PRE-ASSEMBLED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roof Type Guide -->
+            <div class="equip-card reveal">
+                <div class="equip-card-header" style="background: var(--gold);">
+                    <div class="card-icon" style="background: rgba(11,61,46,0.2);">📋</div>
+                    <div>
+                        <h3 style="color: var(--green);" data-en="Panama Roof Type Guide" data-es="Guía de Techos de Panamá" data-he="מדריך סוגי גגות פנמה">Panama Roof Type Guide</h3>
+                        <div class="brand" style="color: var(--green-canopy);" data-en="AZUERO REGION" data-es="REGIÓN DE AZUERO" data-he="אזור אזוארו">AZUERO REGION</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Metal Sheet (60%)" data-es="Lámina Metal (60%)" data-he="פח מתכת (60%)">Metal Sheet (60%)</td><td data-en="Most common — clamp mount" data-es="Más común — montaje con clamp" data-he="נפוץ ביותר — הרכבה בתפס">Most common — clamp mount</td></tr>
+                        <tr><td data-en="Concrete Flat (25%)" data-es="Concreto Plano (25%)" data-he="בטון שטוח (25%)">Concrete Flat (25%)</td><td data-en="Chemical anchor + tilt frame" data-es="Anclaje químico + marco inclinado" data-he="עוגן כימי + מסגרת הטיה">Chemical anchor + tilt frame</td></tr>
+                        <tr><td data-en="Clay Tile (10%)" data-es="Teja de Barro (10%)" data-he="רעפי חימר (10%)">Clay Tile (10%)</td><td data-en="Tile hooks + rail system" data-es="Ganchos para teja + riel" data-he="ווי רעפים + מערכת מסילה">Tile hooks + rail system</td></tr>
+                        <tr><td data-en="Ground Mount (5%)" data-es="Montaje en Suelo (5%)" data-he="הרכבת קרקע (5%)">Ground Mount (5%)</td><td data-en="Concrete foundations + steel" data-es="Fundaciones de concreto + acero" data-he="יסודות בטון + פלדה">Concrete foundations + steel</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MONITORING ========== -->
+    <div class="cat-section" id="cat-monitoring">
+        <div class="section-badge" data-en="REAL-TIME INTELLIGENCE" data-es="INTELIGENCIA EN TIEMPO REAL" data-he="מודיעין בזמן אמת">REAL-TIME INTELLIGENCE</div>
+        <h2 class="section-title reveal" data-en="Monitoring Platforms" data-es="Plataformas de Monitoreo" data-he="פלטפורמות ניטור">Monitoring Platforms</h2>
+        <p class="section-sub reveal" data-en="Every system includes cloud-based monitoring. Clients and our operations team track production, savings, and alerts in real time." data-es="Cada sistema incluye monitoreo basado en la nube. Los clientes y nuestro equipo de operaciones rastrean producción, ahorro y alertas en tiempo real." data-he="כל מערכת כוללת ניטור מבוסס ענן. לקוחות וצוות התפעול שלנו עוקבים אחר ייצור, חיסכון והתראות בזמן אמת.">Every system includes cloud-based monitoring. Clients and our operations team track production, savings, and alerts in real time.</p>
+
+        <div class="equip-grid">
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3>Huawei FusionSolar</h3>
+                        <div class="brand" data-en="SMART PV MANAGEMENT" data-es="GESTIÓN PV INTELIGENTE" data-he="ניהול PV חכם">SMART PV MANAGEMENT</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Panel-Level Data" data-es="Datos por Panel" data-he="נתוני פאנל">Panel-Level Data</td><td data-en="Yes (with optimizers)" data-es="Sí (con optimizadores)" data-he="כן (עם אופטימייזרים)">Yes (with optimizers)</td></tr>
+                        <tr><td data-en="Mobile App" data-es="App Móvil" data-he="אפליקציה">Mobile App</td><td>iOS + Android</td></tr>
+                        <tr><td data-en="AI Diagnostics" data-es="Diagnóstico IA" data-he="אבחון AI">AI Diagnostics</td><td data-en="Fault detection + alerts" data-es="Detección de fallas + alertas" data-he="זיהוי תקלות + התראות">Fault detection + alerts</td></tr>
+                        <tr><td data-en="Remote Access" data-es="Acceso Remoto" data-he="גישה מרחוק">Remote Access</td><td data-en="Full parameter control" data-es="Control total de parámetros" data-he="שליטה מלאה בפרמטרים">Full parameter control</td></tr>
+                        <tr><td data-en="Data Retention" data-es="Retención de Datos" data-he="שמירת נתונים">Data Retention</td><td data-en="25 years cloud" data-es="25 años nube" data-he="25 שנים בענן">25 years cloud</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3>SolarEdge Monitoring</h3>
+                        <div class="brand" data-en="MODULE-LEVEL VISIBILITY" data-es="VISIBILIDAD POR MÓDULO" data-he="נראות ברמת מודול">MODULE-LEVEL VISIBILITY</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Panel-Level Data" data-es="Datos por Panel" data-he="נתוני פאנל">Panel-Level Data</td><td data-en="Yes (built-in)" data-es="Sí (incorporado)" data-he="כן (מובנה)">Yes (built-in)</td></tr>
+                        <tr><td data-en="Layout View" data-es="Vista de Diseño" data-he="תצוגת פריסה">Layout View</td><td data-en="Physical panel map" data-es="Mapa físico de paneles" data-he="מפת פאנלים פיזית">Physical panel map</td></tr>
+                        <tr><td data-en="Alerts" data-es="Alertas" data-he="התראות">Alerts</td><td data-en="Email + Push + SMS" data-es="Email + Push + SMS" data-he="אימייל + פוש + SMS">Email + Push + SMS</td></tr>
+                        <tr><td data-en="API Access" data-es="Acceso API" data-he="גישת API">API Access</td><td data-en="Open API for integration" data-es="API abierta para integración" data-he="API פתוח לאינטגרציה">Open API for integration</td></tr>
+                        <tr><td data-en="Data Retention" data-es="Retención de Datos" data-he="שמירת נתונים">Data Retention</td><td data-en="Lifetime cloud" data-es="Nube de por vida" data-he="ענן לכל החיים">Lifetime cloud</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3>Solis Cloud</h3>
+                        <div class="brand" data-en="FLEET MANAGEMENT" data-es="GESTIÓN DE FLOTA" data-he="ניהול צי">FLEET MANAGEMENT</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Multi-Site View" data-es="Vista Multi-Sitio" data-he="תצוגת ריבוי אתרים">Multi-Site View</td><td data-en="Unlimited plants" data-es="Plantas ilimitadas" data-he="מתקנים ללא הגבלה">Unlimited plants</td></tr>
+                        <tr><td data-en="Mobile App" data-es="App Móvil" data-he="אפליקציה">Mobile App</td><td>SolisCloud App</td></tr>
+                        <tr><td data-en="Export Reports" data-es="Exportar Reportes" data-he="ייצוא דוחות">Export Reports</td><td>PDF / Excel</td></tr>
+                        <tr><td data-en="Weather Integration" data-es="Integración Meteorológica" data-he="שילוב מזג אוויר">Weather Integration</td><td data-en="Irradiance overlay" data-es="Superposición de irradiancia" data-he="שכבת קרינה">Irradiance overlay</td></tr>
+                        <tr><td data-en="Cost" data-es="Costo" data-he="עלות">Cost</td><td data-en="Free (included)" data-es="Gratis (incluido)" data-he="חינם (כלול)">Free (included)</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PROTECTION ========== -->
+    <div class="cat-section" id="cat-protection">
+        <div class="section-badge" data-en="ELECTRICAL SAFETY" data-es="SEGURIDAD ELÉCTRICA" data-he="בטיחות חשמלית">ELECTRICAL SAFETY</div>
+        <h2 class="section-title reveal" data-en="Protection Components" data-es="Componentes de Protección" data-he="רכיבי הגנה">Protection Components</h2>
+        <p class="section-sub reveal" data-en="Every installation includes complete electrical protection: connectors, breakers, surge protection, and grounding systems rated for Panama's lightning-prone climate." data-es="Cada instalación incluye protección eléctrica completa: conectores, interruptores, protección contra sobretensiones y sistemas de puesta a tierra para el clima propenso a rayos de Panamá." data-he="כל התקנה כוללת הגנה חשמלית מלאה: מחברים, מפסקים, הגנת נחשולים ומערכות הארקה המותאמות לאקלים של פנמה הנוטה לברקים.">Every installation includes complete electrical protection: connectors, breakers, surge protection, and grounding systems rated for Panama's lightning-prone climate.</p>
+
+        <div class="equip-grid">
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🔗</div>
+                    <div>
+                        <h3 data-en="MC4 Connectors" data-es="Conectores MC4" data-he="מחברי MC4">MC4 Connectors</h3>
+                        <div class="brand" data-en="STÄUBLI / MULTI-CONTACT" data-es="STÄUBLI / MULTI-CONTACT" data-he="STÄUBLI / MULTI-CONTACT">STÄUBLI / MULTI-CONTACT</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Rating" data-es="Clasificación" data-he="דירוג">Rating</td><td>1500V DC / 30A</td></tr>
+                        <tr><td data-en="Protection" data-es="Protección" data-he="הגנה">Protection</td><td>IP68</td></tr>
+                        <tr><td data-en="Contact Resistance" data-es="Resistencia de Contacto" data-he="התנגדות מגע">Contact Resistance</td><td>< 0.5 mΩ</td></tr>
+                        <tr><td data-en="UV Resistant" data-es="Resistente a UV" data-he="עמיד UV">UV Resistant</td><td data-en="Yes — 25+ years" data-es="Sí — 25+ años" data-he="כן — 25+ שנים">Yes — 25+ years</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">⚡</div>
+                    <div>
+                        <h3 data-en="DC/AC Breakers" data-es="Interruptores DC/AC" data-he="מפסקי DC/AC">DC/AC Breakers</h3>
+                        <div class="brand">ABB / SCHNEIDER ELECTRIC</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="DC Isolator" data-es="Aislador DC" data-he="מנתק DC">DC Isolator</td><td>1000V / 32A</td></tr>
+                        <tr><td data-en="AC Breaker" data-es="Interruptor AC" data-he="מפסק AC">AC Breaker</td><td data-en="Per inverter size" data-es="Según tamaño del inversor" data-he="לפי גודל ממיר">Per inverter size</td></tr>
+                        <tr><td data-en="RCBO" data-es="RCBO" data-he="RCBO">RCBO</td><td data-en="30mA residual current" data-es="Corriente residual 30mA" data-he="זרם שיורי 30mA">30mA residual current</td></tr>
+                        <tr><td data-en="Standard" data-es="Estándar" data-he="תקן">Standard</td><td>IEC 60947 / 61008</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">🛡️</div>
+                    <div>
+                        <h3 data-en="Surge Protection (SPD)" data-es="Protección contra Sobretensiones" data-he="הגנת נחשולים (SPD)">Surge Protection (SPD)</h3>
+                        <div class="brand" data-en="CRITICAL FOR PANAMA" data-es="CRÍTICO PARA PANAMÁ" data-he="קריטי לפנמה">CRITICAL FOR PANAMA</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="DC Side (Type II)" data-es="Lado DC (Tipo II)" data-he="צד DC (סוג II)">DC Side (Type II)</td><td>1000V / 40kA</td></tr>
+                        <tr><td data-en="AC Side (Type II)" data-es="Lado AC (Tipo II)" data-he="צד AC (סוג II)">AC Side (Type II)</td><td>275V / 40kA</td></tr>
+                        <tr><td data-en="Lightning Zone" data-es="Zona de Rayos" data-he="אזור ברקים">Lightning Zone</td><td data-en="Panama: Very High" data-es="Panamá: Muy Alta" data-he="פנמה: גבוה מאוד">Panama: Very High</td></tr>
+                        <tr><td data-en="Standard" data-es="Estándar" data-he="תקן">Standard</td><td>IEC 61643-11</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="equip-card reveal">
+                <div class="equip-card-header">
+                    <div class="card-icon">⏚</div>
+                    <div>
+                        <h3 data-en="Grounding System" data-es="Sistema de Puesta a Tierra" data-he="מערכת הארקה">Grounding System</h3>
+                        <div class="brand" data-en="COPPER + ELECTRODE" data-es="COBRE + ELECTRODO" data-he="נחושת + אלקטרודה">COPPER + ELECTRODE</div>
+                    </div>
+                </div>
+                <div class="equip-card-body">
+                    <table class="spec-table">
+                        <tr><td data-en="Grounding Wire" data-es="Cable de Tierra" data-he="כבל הארקה">Grounding Wire</td><td>6mm² copper</td></tr>
+                        <tr><td data-en="Ground Rod" data-es="Varilla de Tierra" data-he="מוט הארקה">Ground Rod</td><td data-en="2.4m copper-bonded" data-es="2.4m cobre" data-he="2.4 מ׳ מצופה נחושת">2.4m copper-bonded</td></tr>
+                        <tr><td data-en="Target Resistance" data-es="Resistencia Objetivo" data-he="התנגדות יעד">Target Resistance</td><td>< 5Ω</td></tr>
+                        <tr><td data-en="Equipotential Bonding" data-es="Unión Equipotencial" data-he="השוואת פוטנציאל">Equipotential Bonding</td><td data-en="All metal structures" data-es="Todas las estructuras metálicas" data-he="כל מבני מתכת">All metal structures</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== COST MATRIX ========== -->
+    <div class="cat-section" id="cat-costs">
+        <div class="section-badge" data-en="PRICING BREAKDOWN" data-es="DESGLOSE DE PRECIOS" data-he="פירוט תמחור">PRICING BREAKDOWN</div>
+        <h2 class="section-title reveal" data-en="Equipment Cost Matrix" data-es="Matriz de Costos de Equipos" data-he="מטריצת עלויות ציוד">Equipment Cost Matrix</h2>
+        <p class="section-sub reveal" data-en="Equipment cost per Watt-peak by component. These are landed costs in Panama including shipping and import duties." data-es="Costo de equipo por Watt-pico por componente. Estos son costos puestos en Panamá incluyendo envío y aranceles." data-he="עלות ציוד לוואט-פיק לפי רכיב. אלה עלויות שנתנו בפנמה כולל משלוח ומכסי ייבוא.">Equipment cost per Watt-peak by component. These are landed costs in Panama including shipping and import duties.</p>
+
+        <div class="cost-matrix reveal">
+            <h3 style="font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 0.5rem;" data-en="Cost per Wp by Component" data-es="Costo por Wp por Componente" data-he="עלות לוואט פיק לפי רכיב">Cost per Wp by Component</h3>
+            <div class="cost-grid">
+                <div class="cost-item">
+                    <div class="cost-label" data-en="SOLAR PANELS" data-es="PANELES SOLARES" data-he="פאנלים סולאריים">SOLAR PANELS</div>
+                    <div class="cost-range">$0.35 – $0.55</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="INVERTERS" data-es="INVERSORES" data-he="ממירים">INVERTERS</div>
+                    <div class="cost-range">$0.10 – $0.20</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="MOUNTING" data-es="MONTAJE" data-he="הרכבה">MOUNTING</div>
+                    <div class="cost-range">$0.08 – $0.15</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="BOS & WIRING" data-es="BOS Y CABLEADO" data-he="BOS וחיווט">BOS & WIRING</div>
+                    <div class="cost-range">$0.05 – $0.10</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="PROTECTION & SPD" data-es="PROTECCIÓN Y SPD" data-he="הגנה ו-SPD">PROTECTION & SPD</div>
+                    <div class="cost-range">$0.02 – $0.05</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+                <div class="cost-item" style="border: 2px solid var(--gold);">
+                    <div class="cost-label" style="color: var(--gold);" data-en="TOTAL EQUIPMENT" data-es="EQUIPO TOTAL" data-he="סה״כ ציוד">TOTAL EQUIPMENT</div>
+                    <div class="cost-range" style="color: var(--gold);">$0.60 – $1.05</div>
+                    <div class="cost-unit" data-en="per Wp" data-es="por Wp" data-he="לוואט פיק">per Wp</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cost-matrix reveal" style="margin-top: 2rem;">
+            <h3 style="font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 0.5rem;" data-en="Example System Costs (Equipment Only)" data-es="Costos de Sistema Ejemplo (Solo Equipo)" data-he="עלויות מערכת לדוגמה (ציוד בלבד)">Example System Costs (Equipment Only)</h3>
+            <div class="cost-grid">
+                <div class="cost-item">
+                    <div class="cost-label" data-en="10 kW RESIDENTIAL" data-es="10 kW RESIDENCIAL" data-he="10 קוו״ט ביתי">10 kW RESIDENTIAL</div>
+                    <div class="cost-range">$6K – $10K</div>
+                    <div class="cost-unit" data-en="equipment" data-es="equipo" data-he="ציוד">equipment</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="30 kW COMMERCIAL" data-es="30 kW COMERCIAL" data-he="30 קוו״ט מסחרי">30 kW COMMERCIAL</div>
+                    <div class="cost-range">$18K – $31K</div>
+                    <div class="cost-unit" data-en="equipment" data-es="equipo" data-he="ציוד">equipment</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="100 kW INDUSTRIAL" data-es="100 kW INDUSTRIAL" data-he="100 קוו״ט תעשייתי">100 kW INDUSTRIAL</div>
+                    <div class="cost-range">$60K – $105K</div>
+                    <div class="cost-unit" data-en="equipment" data-es="equipo" data-he="ציוד">equipment</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label" data-en="300 kW (TIPI)" data-es="300 kW (TIPI)" data-he="300 קוו״ט (טיפי)">300 kW (TIPI)</div>
+                    <div class="cost-range">$180K – $315K</div>
+                    <div class="cost-unit" data-en="equipment" data-es="equipo" data-he="ציוד">equipment</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="https://solaris-panama.com" data-en="solaris-panama.com" data-es="solaris-panama.com" data-he="solaris-panama.com">solaris-panama.com</a>
+    </p>
+</footer>
+
+<script>
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+
+function showCat(cat) {
+    document.querySelectorAll('.cat-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('cat-' + cat).classList.add('active');
+    event.target.classList.add('active');
+    // Re-trigger reveal for newly visible items
+    document.querySelectorAll('#cat-' + cat + ' .reveal').forEach(el => observer.observe(el));
+}
+
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
