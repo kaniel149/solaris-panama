@@ -1121,7 +1121,7 @@ function calculateROI() {
 
     // 5.3 peak sun hours, 80% performance ratio, 30 days
     const monthlyProduction = size * 5.3 * 0.80 * 30;
-    const electricityRate = 0.195; // $/kWh Panama
+    const electricityRate = 0.195; // $/kWh Panama (commercial rate; residential ~$0.18/kWh)
     const monthlySavings = Math.min(monthlyProduction * electricityRate, bill * 0.95);
     const paybackYears = netCost / (monthlySavings * 12);
     const savings25yr = (monthlySavings * 12 * 25) - systemCost;
