@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 10: Operations & Maintenance — Solaris CRM</title>
+    <meta name="description" content="Post-installation handover: commissioning, ENSA meter activation, client training, maintenance schedules, warranty summary, and referral program.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em;
+        }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav {
+            background: var(--green); padding: 16px 40px;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .top-nav a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.8; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 100px 40px 80px; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -30%; right: -10%;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+        }
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.12); color: white;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px;
+        }
+        .step-number {
+            background: var(--gold); color: var(--green);
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+        }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); color: white; margin-bottom: 16px; line-height: 1.15; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 680px; }
+        .hero-stats { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; }
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--gold); font-weight: 700; }
+        .hero-stat .label { font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+        .content-section {
+            padding: 60px 40px; max-width: 1100px; margin: 0 auto;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green);
+            margin-bottom: 8px;
+        }
+        .section-subtitle {
+            color: var(--ash); font-size: 15px; margin-bottom: 32px;
+        }
+
+        .card {
+            background: white; border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card); margin-bottom: 24px;
+            overflow: hidden; border: 1px solid var(--mist);
+        }
+        .card-header {
+            background: var(--sand); padding: 20px 28px;
+            border-bottom: 1px solid var(--mist);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .card-header .icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--green); color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .card-header h3 {
+            font-family: 'Playfair Display', serif; font-size: 18px; color: var(--green);
+        }
+        .card-header p { font-size: 13px; color: var(--ash); margin-top: 2px; }
+        .card-body { padding: 24px 28px; }
+        .card-body p { font-size: 14px; color: var(--slate); margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        .checklist { list-style: none; }
+        .checklist li {
+            display: flex; gap: 12px; padding: 14px 0;
+            border-bottom: 1px solid var(--cloud); align-items: flex-start;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .check-box {
+            width: 20px; height: 20px; border: 2px solid var(--mist);
+            border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+        }
+        .checklist .text { font-size: 14px; color: var(--charcoal); }
+        .checklist .text small { display: block; color: var(--ash); font-size: 12px; margin-top: 2px; }
+
+        .ensa-timeline {
+            position: relative; padding-left: 40px; margin: 24px 0;
+        }
+        .ensa-timeline::before {
+            content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+            width: 3px; background: linear-gradient(to bottom, var(--gold), var(--green));
+        }
+        .ensa-step {
+            position: relative; margin-bottom: 32px;
+        }
+        .ensa-step:last-child { margin-bottom: 0; }
+        .ensa-step::before {
+            content: ''; position: absolute; left: -33px; top: 4px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--gold); border: 3px solid var(--pearl);
+        }
+        .ensa-step h4 { font-size: 15px; color: var(--green); margin-bottom: 4px; }
+        .ensa-step p { font-size: 13px; color: var(--slate); }
+        .ensa-step .time-badge {
+            display: inline-block; background: var(--sand); color: var(--gold-aged);
+            font-size: 11px; font-weight: 700; padding: 2px 10px;
+            border-radius: var(--radius-pill); margin-top: 4px;
+        }
+
+        [dir="rtl"] .ensa-timeline { padding-left: 0; padding-right: 40px; }
+        [dir="rtl"] .ensa-timeline::before { left: auto; right: 15px; }
+        [dir="rtl"] .ensa-step::before { left: auto; right: -33px; }
+
+        .training-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px; margin-top: 16px;
+        }
+        .training-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 24px; box-shadow: var(--shadow-card);
+            border-top: 3px solid var(--green); text-align: center;
+        }
+        .training-card .icon { font-size: 28px; margin-bottom: 12px; }
+        .training-card h4 { font-size: 15px; color: var(--green); margin-bottom: 8px; }
+        .training-card p { font-size: 13px; color: var(--slate); }
+
+        .maint-schedule {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px; margin-top: 16px;
+        }
+        .maint-card {
+            background: var(--cloud); border-radius: var(--radius-card);
+            padding: 24px; text-align: center; border: 1px solid var(--mist);
+            transition: all 0.3s;
+        }
+        .maint-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
+        .maint-card .freq {
+            display: inline-block; background: var(--green); color: var(--gold);
+            font-size: 11px; font-weight: 700; padding: 4px 14px;
+            border-radius: var(--radius-pill); margin-bottom: 12px;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .maint-card h4 { font-size: 15px; color: var(--green); margin-bottom: 8px; }
+        .maint-card p { font-size: 12px; color: var(--ash); }
+
+        .warranty-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px; margin-top: 16px;
+        }
+        .warranty-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 28px; box-shadow: var(--shadow-card);
+            border-left: 4px solid var(--gold); position: relative;
+        }
+        .warranty-card .years {
+            font-family: 'Playfair Display', serif; font-size: 48px;
+            color: var(--green); font-weight: 700; line-height: 1;
+        }
+        .warranty-card .yr-label {
+            font-size: 13px; color: var(--ash); text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 12px;
+        }
+        .warranty-card h4 { font-size: 16px; color: var(--green); margin-bottom: 8px; }
+        .warranty-card p { font-size: 13px; color: var(--slate); }
+
+        [dir="rtl"] .warranty-card { border-left: none; border-right: 4px solid var(--gold); }
+
+        .referral-box {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card); padding: 40px;
+            color: white; text-align: center; margin-top: 24px;
+        }
+        .referral-box .amount {
+            font-family: 'Playfair Display', serif; font-size: 56px;
+            color: var(--gold); font-weight: 700;
+        }
+        .referral-box .per {
+            font-size: 14px; color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+        }
+        .referral-box h3 {
+            font-family: 'Playfair Display', serif; font-size: 24px;
+            color: white; margin-bottom: 12px;
+        }
+        .referral-box p { font-size: 14px; color: rgba(255,255,255,0.7); max-width: 500px; margin: 0 auto; }
+        .referral-options {
+            display: flex; gap: 16px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+        }
+        .referral-opt {
+            background: rgba(255,255,255,0.1); border-radius: var(--radius-pill);
+            padding: 8px 20px; font-size: 13px; color: var(--gold); font-weight: 600;
+        }
+
+        .followup-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 28px; box-shadow: var(--shadow-card); margin-top: 24px;
+        }
+        .followup-card h3 {
+            font-family: 'Playfair Display', serif; font-size: 20px;
+            color: var(--green); margin-bottom: 16px;
+        }
+        .followup-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .followup-item {
+            background: var(--cloud); border-radius: var(--radius-card);
+            padding: 20px; text-align: center;
+        }
+        .followup-item .icon { font-size: 24px; margin-bottom: 8px; }
+        .followup-item h4 { font-size: 14px; color: var(--green); margin-bottom: 4px; }
+        .followup-item p { font-size: 12px; color: var(--ash); }
+
+        .handover-list {
+            list-style: none; margin-top: 16px;
+        }
+        .handover-list li {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 0; border-bottom: 1px solid var(--cloud);
+            font-size: 14px; color: var(--charcoal);
+        }
+        .handover-list li:last-child { border-bottom: none; }
+        .handover-list .doc-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: var(--sand); color: var(--green);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card); padding: 24px 28px;
+            color: white; margin-top: 24px;
+        }
+        .tip-box h4 { color: var(--gold); font-size: 14px; margin-bottom: 8px; }
+        .tip-box p { font-size: 13px; color: rgba(255,255,255,0.8); }
+
+        .step-nav {
+            display: flex; justify-content: space-between; padding: 32px 40px;
+            background: var(--cloud); border-top: 1px solid var(--mist);
+        }
+        .step-nav a { color: var(--green); text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
+        .step-nav a:hover { color: var(--gold); }
+        .step-nav a.back { color: var(--gold); }
+        .step-nav a.back:hover { color: var(--gold-aged); }
+
+        .footer {
+            text-align: center; padding: 32px 40px; background: var(--green);
+            color: rgba(255,255,255,0.5); font-size: 13px;
+        }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .top-nav, .content-section, .step-nav { padding-left: 20px; padding-right: 20px; }
+            .hero { padding: 80px 20px 60px; }
+            .hero-stats { gap: 24px; }
+            .referral-box { padding: 28px 20px; }
+            .referral-box .amount { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</a>
+        <span class="sep">›</span>
+        <a href="crm-value-chain.html" data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 10: O&M" data-es="Paso 10: O&M" data-he="שלב 10: תפעול ותחזוקה">Step 10: O&M</span>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="step-badge">
+            <span class="step-number">10</span>
+            <span data-en="OPERATIONS & MAINTENANCE" data-es="OPERACIONES Y MANTENIMIENTO" data-he="תפעול ותחזוקה">OPERATIONS & MAINTENANCE</span>
+        </div>
+        <h1 data-en="Handover & <span>Long-Term Care</span>" data-es="Entrega y <span>Cuidado a Largo Plazo</span>" data-he="מסירה ו<span>טיפול ארוך טווח</span>">Handover & <span>Long-Term Care</span></h1>
+        <p data-en="The final step: commission the system, train the client, and set up ongoing maintenance. This is where referrals are born." data-es="El paso final: poner en marcha el sistema, capacitar al cliente y establecer mantenimiento continuo. Aquí es donde nacen las referencias." data-he="השלב האחרון: הפעלת המערכת, הדרכת הלקוח והקמת תחזוקה שוטפת. כאן נולדות ההפניות.">The final step: commission the system, train the client, and set up ongoing maintenance. This is where referrals are born.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="val" data-en="25yr" data-es="25 años" data-he="25 שנה">25yr</div>
+                <div class="label" data-en="Panel Warranty" data-es="Garantía Paneles" data-he="אחריות פאנלים">Panel Warranty</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val" data-en="$200" data-es="$200" data-he="$200">$200</div>
+                <div class="label" data-en="Referral Reward" data-es="Recompensa por Referencia" data-he="פרס הפניה">Referral Reward</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val" data-en="30" data-es="30" data-he="30">30</div>
+                <div class="label" data-en="Day Follow-Up" data-es="Día de Seguimiento" data-he="יום מעקב">Day Follow-Up</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Commissioning Checklist -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="System Commissioning Checklist" data-es="Lista de Verificación de Puesta en Marcha" data-he="רשימת בדיקה להפעלת מערכת">System Commissioning Checklist</h2>
+        <p class="section-subtitle" data-en="Complete all tests before declaring the system operational" data-es="Complete todas las pruebas antes de declarar el sistema operativo" data-he="השלימו את כל הבדיקות לפני הכרזת המערכת כפעילה">Complete all tests before declaring the system operational</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon">⚡</div>
+                <div>
+                    <h3 data-en="Technical Commissioning Tests" data-es="Pruebas Técnicas de Puesta en Marcha" data-he="בדיקות הפעלה טכניות">Technical Commissioning Tests</h3>
+                    <p data-en="All tests must pass before client sign-off" data-es="Todas las pruebas deben pasar antes de la aprobación del cliente" data-he="כל הבדיקות חייבות לעבור לפני אישור הלקוח">All tests must pass before client sign-off</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="checklist">
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="IV Curve Test — verify each string's voltage and current match specifications<small>Use Seaward or Fluke IV curve tracer. Document results per string.</small>" data-es="Prueba de Curva IV — verificar que el voltaje y corriente de cada cadena coincidan con las especificaciones<small>Usar trazador de curva IV Seaward o Fluke. Documentar resultados por cadena.</small>" data-he="בדיקת עקום IV — אימות מתח וזרם של כל מחרוזת מול המפרט<small>השתמשו בעוקב עקום IV של Seaward או Fluke. תעדו תוצאות לכל מחרוזת.</small>">IV Curve Test — verify each string's voltage and current match specifications<small>Use Seaward or Fluke IV curve tracer. Document results per string.</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Insulation Resistance Test — minimum 1MΩ between conductors and ground<small>Test DC cables, AC cables, and grounding conductors separately.</small>" data-es="Prueba de Resistencia de Aislamiento — mínimo 1MΩ entre conductores y tierra<small>Probar cables DC, cables AC y conductores de tierra por separado.</small>" data-he="בדיקת התנגדות בידוד — מינימום 1MΩ בין מוליכים להארקה<small>בדקו כבלי DC, כבלי AC ומוליכי הארקה בנפרד.</small>">Insulation Resistance Test — minimum 1MΩ between conductors and ground<small>Test DC cables, AC cables, and grounding conductors separately.</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Grounding Verification — all metal components properly bonded to ground<small>Measure ground rod resistance: must be ≤25Ω per NEC. Use Megger ground tester.</small>" data-es="Verificación de Tierra — todos los componentes metálicos correctamente conectados a tierra<small>Medir resistencia de la varilla de tierra: debe ser ≤25Ω según NEC. Usar probador de tierra Megger.</small>" data-he="אימות הארקה — כל הרכיבים המתכתיים מחוברים כראוי להארקה<small>מדידת התנגדות מוט הארקה: חייב להיות ≤25Ω לפי NEC. השתמשו בבודק הארקה Megger.</small>">Grounding Verification — all metal components properly bonded to ground<small>Measure ground rod resistance: must be ≤25Ω per NEC. Use Megger ground tester.</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Production Verification — system producing within 5% of design estimate<small>Monitor for 2-3 sunny hours. Compare kWh to PVsyst simulation. Screenshot inverter app.</small>" data-es="Verificación de Producción — sistema produciendo dentro del 5% del estimado de diseño<small>Monitorear durante 2-3 horas soleadas. Comparar kWh con simulación PVsyst. Captura de pantalla de la app del inversor.</small>" data-he="אימות ייצור — המערכת מייצרת בטווח 5% מהערכת התכנון<small>ניטור ל-2-3 שעות שמש. השוו kWh לסימולציית PVsyst. צילום מסך מאפליקציית הממיר.</small>">Production Verification — system producing within 5% of design estimate<small>Monitor for 2-3 sunny hours. Compare kWh to PVsyst simulation. Screenshot inverter app.</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Visual Inspection — panels clean, wiring neat, labels applied, no debris<small>Take completion photos from all angles. Include close-ups of junction boxes and labels.</small>" data-es="Inspección Visual — paneles limpios, cableado ordenado, etiquetas aplicadas, sin escombros<small>Tomar fotos de finalización desde todos los ángulos. Incluir primeros planos de cajas de conexión y etiquetas.</small>" data-he="בדיקה חזותית — פאנלים נקיים, חיווט מסודר, תוויות מוצמדות, ללא פסולת<small>צלמו תמונות סיום מכל הזוויות. כוללים תקריבים של קופסאות חיבור ותוויות.</small>">Visual Inspection — panels clean, wiring neat, labels applied, no debris<small>Take completion photos from all angles. Include close-ups of junction boxes and labels.</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Monitoring Setup — FusionSolar/SolarEdge account created and linked to client<small>Share login credentials. Verify real-time data appearing in app.</small>" data-es="Configuración de Monitoreo — cuenta FusionSolar/SolarEdge creada y vinculada al cliente<small>Compartir credenciales de acceso. Verificar datos en tiempo real en la aplicación.</small>" data-he="הגדרת ניטור — חשבון FusionSolar/SolarEdge נוצר ומקושר ללקוח<small>שתפו פרטי התחברות. אמתו שנתונים בזמן אמת מופיעים באפליקציה.</small>">Monitoring Setup — FusionSolar/SolarEdge account created and linked to client<small>Share login credentials. Verify real-time data appearing in app.</small></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ENSA Meter Activation -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="ENSA Meter Activation" data-es="Activación del Medidor ENSA" data-he="הפעלת מונה ENSA">ENSA Meter Activation</h2>
+        <p class="section-subtitle" data-en="Bidirectional meter installation process with ENSA (2-4 weeks)" data-es="Proceso de instalación de medidor bidireccional con ENSA (2-4 semanas)" data-he="תהליך התקנת מונה דו-כיווני עם ENSA (2-4 שבועות)">Bidirectional meter installation process with ENSA (2-4 weeks)</p>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="ensa-timeline">
+                    <div class="ensa-step">
+                        <h4 data-en="1. Submit Application" data-es="1. Enviar Solicitud" data-he="1. הגשת בקשה">1. Submit Application</h4>
+                        <p data-en="File interconnection request with ENSA. Include single-line diagram, inverter specs, and Ley 417 certification. Submit at ENSA office in Chitré or Santiago." data-es="Presentar solicitud de interconexión con ENSA. Incluir diagrama unifilar, especificaciones del inversor y certificación de Ley 417. Presentar en oficina de ENSA en Chitré o Santiago." data-he="הגישו בקשת חיבור ל-ENSA. כוללים תרשים חד-קווי, מפרט ממיר ואישור חוק 417. הגישו במשרד ENSA בצ'יטרה או סנטיאגו.">File interconnection request with ENSA. Include single-line diagram, inverter specs, and Ley 417 certification. Submit at ENSA office in Chitré or Santiago.</p>
+                        <span class="time-badge" data-en="Day 1" data-es="Día 1" data-he="יום 1">Day 1</span>
+                    </div>
+                    <div class="ensa-step">
+                        <h4 data-en="2. ENSA Inspection" data-es="2. Inspección de ENSA" data-he="2. ביקורת ENSA">2. ENSA Inspection</h4>
+                        <p data-en="ENSA technician visits to verify installation meets interconnection standards. Must match submitted diagrams. Coordinate access with client." data-es="El técnico de ENSA visita para verificar que la instalación cumple con los estándares de interconexión. Debe coincidir con los diagramas presentados. Coordinar acceso con el cliente." data-he="טכנאי ENSA מבקר לאמת שההתקנה עומדת בתקני חיבור. חייב להתאים לתרשימים שהוגשו. תאמו גישה עם הלקוח.">ENSA technician visits to verify installation meets interconnection standards. Must match submitted diagrams. Coordinate access with client.</p>
+                        <span class="time-badge" data-en="Week 1-2" data-es="Semana 1-2" data-he="שבוע 1-2">Week 1-2</span>
+                    </div>
+                    <div class="ensa-step">
+                        <h4 data-en="3. Bidirectional Meter Install" data-es="3. Instalación de Medidor Bidireccional" data-he="3. התקנת מונה דו-כיווני">3. Bidirectional Meter Install</h4>
+                        <p data-en="ENSA replaces the existing meter with a bidirectional net meter. No cost to client (covered by Ley 417). System can now export excess energy." data-es="ENSA reemplaza el medidor existente por un medidor bidireccional neto. Sin costo para el cliente (cubierto por Ley 417). El sistema ahora puede exportar energía excedente." data-he="ENSA מחליפה את המונה הקיים במונה דו-כיווני. ללא עלות ללקוח (מכוסה בחוק 417). המערכת יכולה כעת לייצא עודפי אנרגיה.">ENSA replaces the existing meter with a bidirectional net meter. No cost to client (covered by Ley 417). System can now export excess energy.</p>
+                        <span class="time-badge" data-en="Week 2-4" data-es="Semana 2-4" data-he="שבוע 2-4">Week 2-4</span>
+                    </div>
+                    <div class="ensa-step">
+                        <h4 data-en="4. Net Metering Active" data-es="4. Medición Neta Activa" data-he="4. מדידה נטו פעילה">4. Net Metering Active</h4>
+                        <p data-en="Confirm credits appearing on client's next ENSA bill. Verify kWh exported vs. consumed are tracked correctly. Celebrate!" data-es="Confirmar que los créditos aparecen en la próxima factura de ENSA del cliente. Verificar que los kWh exportados vs. consumidos se rastrean correctamente. ¡A celebrar!" data-he="אשרו שזיכויים מופיעים בחשבון ENSA הבא של הלקוח. אמתו שה-kWh המיוצאים לעומת הנצרכים נרשמים נכון. חגגו!">Confirm credits appearing on client's next ENSA bill. Verify kWh exported vs. consumed are tracked correctly. Celebrate!</p>
+                        <span class="time-badge" data-en="Week 4+" data-es="Semana 4+" data-he="שבוע 4+">Week 4+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Training Session -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Client Training Session" data-es="Sesión de Capacitación del Cliente" data-he="הדרכת לקוח">Client Training Session</h2>
+        <p class="section-subtitle" data-en="30-minute walkthrough during commissioning day" data-es="Recorrido de 30 minutos durante el día de puesta en marcha" data-he="סקירה של 30 דקות ביום ההפעלה">30-minute walkthrough during commissioning day</p>
+
+        <div class="training-grid">
+            <div class="training-card">
+                <div class="icon">📱</div>
+                <h4 data-en="App Setup" data-es="Configuración de App" data-he="הגדרת אפליקציה">App Setup</h4>
+                <p data-en="Install FusionSolar or SolarEdge app on client's phone. Login together. Show main dashboard, daily/monthly production graphs." data-es="Instalar app FusionSolar o SolarEdge en el teléfono del cliente. Iniciar sesión juntos. Mostrar panel principal, gráficos de producción diaria/mensual." data-he="התקינו אפליקציית FusionSolar או SolarEdge בטלפון הלקוח. התחברו יחד. הראו לוח מחוונים ראשי, גרפי ייצור יומי/חודשי.">Install FusionSolar or SolarEdge app on client's phone. Login together. Show main dashboard, daily/monthly production graphs.</p>
+            </div>
+            <div class="training-card">
+                <div class="icon">📊</div>
+                <h4 data-en="Reading Production Data" data-es="Lectura de Datos de Producción" data-he="קריאת נתוני ייצור">Reading Production Data</h4>
+                <p data-en="Explain: kWh produced vs consumed, peak production hours (10am-2pm), how weather affects output, and monthly expected yield." data-es="Explicar: kWh producidos vs consumidos, horas pico de producción (10am-2pm), cómo el clima afecta la producción y rendimiento mensual esperado." data-he="הסבירו: kWh מיוצר לעומת נצרך, שעות שיא ייצור (10-14), כיצד מזג האוויר משפיע על הפלט, ותשואה חודשית צפויה.">Explain: kWh produced vs consumed, peak production hours (10am-2pm), how weather affects output, and monthly expected yield.</p>
+            </div>
+            <div class="training-card">
+                <div class="icon">⚠️</div>
+                <h4 data-en="Understanding Alerts" data-es="Entender las Alertas" data-he="הבנת התראות">Understanding Alerts</h4>
+                <p data-en="Red = system down (call us immediately). Yellow = degraded performance (schedule visit). Green = all normal. Show where to find alerts in app." data-es="Rojo = sistema caído (llámenos inmediatamente). Amarillo = rendimiento degradado (programar visita). Verde = todo normal. Mostrar dónde encontrar alertas en la app." data-he="אדום = מערכת מושבתת (התקשרו מיד). צהוב = ביצועים ירודים (תאמו ביקור). ירוק = הכל תקין. הראו היכן למצוא התראות באפליקציה.">Red = system down (call us immediately). Yellow = degraded performance (schedule visit). Green = all normal. Show where to find alerts in app.</p>
+            </div>
+            <div class="training-card">
+                <div class="icon">📞</div>
+                <h4 data-en="When to Call" data-es="Cuándo Llamar" data-he="מתי להתקשר">When to Call</h4>
+                <p data-en="Call us for: system producing 0 for 2+ days, inverter error codes, physical damage from storm. DON'T call for: cloudy day dips, night-time zero production." data-es="Llámenos por: sistema produciendo 0 por 2+ días, códigos de error del inversor, daño físico por tormenta. NO llame por: caídas en días nublados, producción cero nocturna." data-he="התקשרו בגלל: מערכת מייצרת 0 ליותר מ-2 ימים, קודי שגיאה של ממיר, נזק פיזי מסערה. אל תתקשרו בגלל: ירידה ביום מעונן, ייצור אפס בלילה.">Call us for: system producing 0 for 2+ days, inverter error codes, physical damage from storm. DON'T call for: cloudy day dips, night-time zero production.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Maintenance Schedule -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Maintenance Schedule" data-es="Calendario de Mantenimiento" data-he="לוח זמנים לתחזוקה">Maintenance Schedule</h2>
+        <p class="section-subtitle" data-en="Recommended maintenance intervals for optimal system performance" data-es="Intervalos de mantenimiento recomendados para un rendimiento óptimo del sistema" data-he="מרווחי תחזוקה מומלצים לביצועי מערכת אופטימליים">Recommended maintenance intervals for optimal system performance</p>
+
+        <div class="maint-schedule">
+            <div class="maint-card">
+                <span class="freq" data-en="QUARTERLY" data-es="TRIMESTRAL" data-he="רבעוני">QUARTERLY</span>
+                <h4 data-en="Panel Cleaning" data-es="Limpieza de Paneles" data-he="ניקוי פאנלים">Panel Cleaning</h4>
+                <p data-en="Rinse panels with water early morning or late afternoon. No abrasive chemicals. In dry season (Jan-Apr), increase to monthly. Dust, bird droppings, and pollen reduce output 5-15%." data-es="Enjuagar paneles con agua temprano en la mañana o al final de la tarde. Sin productos químicos abrasivos. En temporada seca (ene-abr), aumentar a mensual. Polvo, excrementos de aves y polen reducen la producción 5-15%." data-he="שטפו פאנלים במים בשעות הבוקר המוקדמות או אחר הצהריים. ללא כימיקלים שוחקים. בעונה היבשה (ינואר-אפריל) הגבירו לחודשי. אבק, צואת ציפורים ואבקנים מפחיתים תפוקה ב-5-15%.">Rinse panels with water early morning or late afternoon. No abrasive chemicals. In dry season (Jan-Apr), increase to monthly. Dust, bird droppings, and pollen reduce output 5-15%.</p>
+            </div>
+            <div class="maint-card">
+                <span class="freq" data-en="ANNUAL" data-es="ANUAL" data-he="שנתי">ANNUAL</span>
+                <h4 data-en="Full Inspection" data-es="Inspección Completa" data-he="בדיקה מלאה">Full Inspection</h4>
+                <p data-en="Check all connections, torque mounting bolts, inspect cables for UV damage, clean junction boxes, verify grounding, test inverter performance, compare annual kWh to design estimate." data-es="Revisar todas las conexiones, apretar pernos de montaje, inspeccionar cables por daño UV, limpiar cajas de conexión, verificar tierra, probar rendimiento del inversor, comparar kWh anual con estimado de diseño." data-he="בדקו כל החיבורים, הדקו ברגי עיגון, בדקו כבלים לנזקי UV, נקו קופסאות חיבור, אמתו הארקה, בדקו ביצועי ממיר, השוו kWh שנתי להערכת תכנון.">Check all connections, torque mounting bolts, inspect cables for UV damage, clean junction boxes, verify grounding, test inverter performance, compare annual kWh to design estimate.</p>
+            </div>
+            <div class="maint-card">
+                <span class="freq" data-en="5-YEAR" data-es="5 AÑOS" data-he="5 שנים">5-YEAR</span>
+                <h4 data-en="Inverter Check" data-es="Revisión del Inversor" data-he="בדיקת ממיר">Inverter Check</h4>
+                <p data-en="Deep inverter diagnostic: fan operation, capacitor health, firmware update, DC/AC conversion efficiency test. Consider extended warranty purchase before year 10. Budget $200-400 for inspection." data-es="Diagnóstico profundo del inversor: operación del ventilador, salud de capacitores, actualización de firmware, prueba de eficiencia de conversión DC/AC. Considerar compra de garantía extendida antes del año 10. Presupuesto $200-400 para inspección." data-he="אבחון ממיר מעמיק: פעולת מאוורר, בריאות קבלים, עדכון קושחה, בדיקת יעילות המרת DC/AC. שקלו רכישת אחריות מורחבת לפני שנה 10. תקציב $200-400 לבדיקה.">Deep inverter diagnostic: fan operation, capacitor health, firmware update, DC/AC conversion efficiency test. Consider extended warranty purchase before year 10. Budget $200-400 for inspection.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Warranty Summary -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Warranty Summary" data-es="Resumen de Garantías" data-he="סיכום אחריות">Warranty Summary</h2>
+        <p class="section-subtitle" data-en="Three-tier warranty coverage for complete peace of mind" data-es="Cobertura de garantía de tres niveles para total tranquilidad" data-he="כיסוי אחריות תלת-שכבתי לשקט נפשי מלא">Three-tier warranty coverage for complete peace of mind</p>
+
+        <div class="warranty-grid">
+            <div class="warranty-card">
+                <div class="years">25</div>
+                <div class="yr-label" data-en="YEARS" data-es="AÑOS" data-he="שנים">YEARS</div>
+                <h4 data-en="Panel Performance" data-es="Rendimiento de Paneles" data-he="ביצועי פאנלים">Panel Performance</h4>
+                <p data-en="Guaranteed minimum 80% of rated power output at year 25. Linear degradation: ~0.55% per year. JA Solar / Longi manufacturer warranty. Covers defects in materials and workmanship." data-es="Producción mínima garantizada del 80% de la potencia nominal al año 25. Degradación lineal: ~0.55% por año. Garantía del fabricante JA Solar / Longi. Cubre defectos en materiales y mano de obra." data-he="ביצוע מינימלי מובטח של 80% מההספק הנקוב בשנה 25. שחיקה ליניארית: ~0.55% בשנה. אחריות יצרן JA Solar / Longi. מכסה פגמים בחומרים ועבודה.">Guaranteed minimum 80% of rated power output at year 25. Linear degradation: ~0.55% per year. JA Solar / Longi manufacturer warranty. Covers defects in materials and workmanship.</p>
+            </div>
+            <div class="warranty-card">
+                <div class="years">10</div>
+                <div class="yr-label" data-en="YEARS" data-es="AÑOS" data-he="שנים">YEARS</div>
+                <h4 data-en="Inverter Warranty" data-es="Garantía del Inversor" data-he="אחריות ממיר">Inverter Warranty</h4>
+                <p data-en="Full replacement warranty from Huawei/SolarEdge. Covers: hardware failure, software bugs, communication module. Extended warranty to 15 or 20 years available for purchase. Typical replacement cost without warranty: $800-1500." data-es="Garantía de reemplazo completa de Huawei/SolarEdge. Cubre: fallo de hardware, errores de software, módulo de comunicación. Garantía extendida a 15 o 20 años disponible para compra. Costo típico de reemplazo sin garantía: $800-1500." data-he="אחריות החלפה מלאה מ-Huawei/SolarEdge. מכסה: תקלת חומרה, באגי תוכנה, מודול תקשורת. אחריות מורחבת ל-15 או 20 שנה זמינה לרכישה. עלות החלפה טיפוסית ללא אחריות: $800-1500.">Full replacement warranty from Huawei/SolarEdge. Covers: hardware failure, software bugs, communication module. Extended warranty to 15 or 20 years available for purchase. Typical replacement cost without warranty: $800-1500.</p>
+            </div>
+            <div class="warranty-card">
+                <div class="years">5</div>
+                <div class="yr-label" data-en="YEARS" data-es="AÑOS" data-he="שנים">YEARS</div>
+                <h4 data-en="Installation Workmanship" data-es="Mano de Obra de Instalación" data-he="עבודת התקנה">Installation Workmanship</h4>
+                <p data-en="Solaris Energy covers all installation-related issues: roof leaks at mount points, wiring faults, structural concerns, grounding failures. Response time: 48 hours. Does not cover: acts of God, client modifications, normal wear." data-es="Solaris Energy cubre todos los problemas relacionados con la instalación: filtraciones en puntos de montaje, fallas de cableado, preocupaciones estructurales, fallas de tierra. Tiempo de respuesta: 48 horas. No cubre: actos de Dios, modificaciones del cliente, desgaste normal." data-he="Solaris Energy מכסה את כל הבעיות הקשורות להתקנה: דליפות גג בנקודות עיגון, תקלות חיווט, חששות מבניים, כשלי הארקה. זמן תגובה: 48 שעות. לא מכסה: כוח עליון, שינויים של הלקוח, בלאי רגיל.">Solaris Energy covers all installation-related issues: roof leaks at mount points, wiring faults, structural concerns, grounding failures. Response time: 48 hours. Does not cover: acts of God, client modifications, normal wear.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Referral Program -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Referral Program" data-es="Programa de Referencias" data-he="תוכנית הפניות">Referral Program</h2>
+        <p class="section-subtitle" data-en="Turn happy clients into your best sales channel" data-es="Convierta a clientes satisfechos en su mejor canal de ventas" data-he="הפכו לקוחות מרוצים לערוץ המכירות הטוב ביותר שלכם">Turn happy clients into your best sales channel</p>
+
+        <div class="referral-box">
+            <div class="amount">$200</div>
+            <div class="per" data-en="per successful referral" data-es="por referencia exitosa" data-he="לכל הפניה מוצלחת">per successful referral</div>
+            <h3 data-en="Cash or Credit — Client's Choice" data-es="Efectivo o Crédito — Elección del Cliente" data-he="מזומן או זיכוי — בחירת הלקוח">Cash or Credit — Client's Choice</h3>
+            <p data-en="Paid upon signed contract of the referred client. No limit on referrals. Track all referrals in CRM with source=referral and referring client name. Best conversion rate of any channel: 60%+." data-es="Pagado al firmar contrato del cliente referido. Sin límite de referencias. Rastrear todas las referencias en CRM con fuente=referencia y nombre del cliente que refiere. Mejor tasa de conversión de cualquier canal: 60%+." data-he="משולם עם חתימת חוזה של הלקוח המופנה. ללא הגבלת הפניות. עקבו אחר כל ההפניות ב-CRM עם מקור=הפניה ושם הלקוח המפנה. שיעור המרה הטוב מכל ערוץ: 60%+.">Paid upon signed contract of the referred client. No limit on referrals. Track all referrals in CRM with source=referral and referring client name. Best conversion rate of any channel: 60%+.</p>
+            <div class="referral-options">
+                <div class="referral-opt" data-en="💵 Cash Payment" data-es="💵 Pago en Efectivo" data-he="💵 תשלום מזומן">💵 Cash Payment</div>
+                <div class="referral-opt" data-en="💳 Bill Credit" data-es="💳 Crédito en Factura" data-he="💳 זיכוי בחשבון">💳 Bill Credit</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 30-Day Follow-Up -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="30-Day Follow-Up" data-es="Seguimiento de 30 Días" data-he="מעקב 30 יום">30-Day Follow-Up</h2>
+        <p class="section-subtitle" data-en="Critical touchpoint for satisfaction and reviews" data-es="Punto de contacto crítico para satisfacción y reseñas" data-he="נקודת מגע קריטית לשביעות רצון וביקורות">Critical touchpoint for satisfaction and reviews</p>
+
+        <div class="followup-items">
+            <div class="followup-item">
+                <div class="icon">📞</div>
+                <h4 data-en="Call Template" data-es="Plantilla de Llamada" data-he="תבנית שיחה">Call Template</h4>
+                <p data-en="'Hi [name], it's been a month since your solar system went live. How's everything? Seeing the savings on your ENSA bill? Any questions about the app?'" data-es="'Hola [nombre], ha pasado un mes desde que su sistema solar entró en funcionamiento. ¿Cómo va todo? ¿Está viendo los ahorros en su factura de ENSA? ¿Alguna pregunta sobre la app?'" data-he="'שלום [שם], עבר חודש מאז שמערכת הסולאר שלך עלתה לאוויר. איך הכל? רואים את החיסכון בחשבון ENSA? שאלות על האפליקציה?'">&#39;Hi [name], it&#39;s been a month since your solar system went live. How&#39;s everything? Seeing the savings on your ENSA bill? Any questions about the app?&#39;</p>
+            </div>
+            <div class="followup-item">
+                <div class="icon">⭐</div>
+                <h4 data-en="Satisfaction Survey" data-es="Encuesta de Satisfacción" data-he="סקר שביעות רצון">Satisfaction Survey</h4>
+                <p data-en="5 questions via WhatsApp: (1) Overall experience 1-10, (2) Would you recommend us?, (3) Any issues?, (4) Savings as expected?, (5) Interest in battery storage?" data-es="5 preguntas vía WhatsApp: (1) Experiencia general 1-10, (2) ¿Nos recomendaría?, (3) ¿Algún problema?, (4) ¿Ahorro según lo esperado?, (5) ¿Interés en almacenamiento con batería?" data-he="5 שאלות דרך וואטסאפ: (1) חוויה כללית 1-10, (2) האם תמליצו עלינו?, (3) בעיות כלשהן?, (4) חיסכון כצפוי?, (5) עניין באגירת סוללות?">5 questions via WhatsApp: (1) Overall experience 1-10, (2) Would you recommend us?, (3) Any issues?, (4) Savings as expected?, (5) Interest in battery storage?</p>
+            </div>
+            <div class="followup-item">
+                <div class="icon">🌟</div>
+                <h4 data-en="Google Review Request" data-es="Solicitud de Reseña en Google" data-he="בקשת ביקורת Google">Google Review Request</h4>
+                <p data-en="If satisfaction ≥8/10, ask: 'Would you mind leaving us a quick review on Google? It really helps other families find us.' Send direct review link via WhatsApp." data-es="Si satisfacción ≥8/10, preguntar: '¿Le importaría dejarnos una reseña rápida en Google? Realmente ayuda a que otras familias nos encuentren.' Enviar enlace directo de reseña por WhatsApp." data-he="אם שביעות רצון ≥8/10, בקשו: 'תוכלו להשאיר לנו ביקורת קצרה בגוגל? זה באמת עוזר למשפחות אחרות למצוא אותנו.' שלחו קישור ישיר לביקורת דרך וואטסאפ.">If satisfaction ≥8/10, ask: &#39;Would you mind leaving us a quick review on Google? It really helps other families find us.&#39; Send direct review link via WhatsApp.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <h4 data-en="💡 Pro Tip: The Best Time to Ask" data-es="💡 Consejo Pro: El Mejor Momento para Preguntar" data-he="💡 טיפ מקצועי: הזמן הטוב ביותר לבקש">💡 Pro Tip: The Best Time to Ask</h4>
+            <p data-en="Ask for referrals and reviews when the client sees their first ENSA bill with solar credits. That 'wow' moment is when they're most likely to share. Send their before/after bill comparison via WhatsApp." data-es="Pida referencias y reseñas cuando el cliente vea su primera factura de ENSA con créditos solares. Ese momento 'wow' es cuando es más probable que compartan. Envíe la comparación antes/después de su factura por WhatsApp." data-he="בקשו הפניות וביקורות כשהלקוח רואה את חשבון ENSA הראשון עם זיכויי סולאר. רגע ה-'וואו' הזה הוא כשהסיכוי הגבוה ביותר שישתפו. שלחו השוואת לפני/אחרי דרך וואטסאפ.">Ask for referrals and reviews when the client sees their first ENSA bill with solar credits. That &#39;wow&#39; moment is when they&#39;re most likely to share. Send their before/after bill comparison via WhatsApp.</p>
+        </div>
+    </section>
+
+    <!-- Client Handover Package -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Client Handover Package" data-es="Paquete de Entrega al Cliente" data-he="חבילת מסירה ללקוח">Client Handover Package</h2>
+        <p class="section-subtitle" data-en="Complete folder of documents delivered to client (digital + printed)" data-es="Carpeta completa de documentos entregada al cliente (digital + impresa)" data-he="תיקיית מסמכים מלאה הנמסרת ללקוח (דיגיטלית + מודפסת)">Complete folder of documents delivered to client (digital + printed)</p>
+
+        <div class="card">
+            <div class="card-body">
+                <ul class="handover-list">
+                    <li>
+                        <span class="doc-icon">📄</span>
+                        <span data-en="Signed contract with all amendments" data-es="Contrato firmado con todas las enmiendas" data-he="חוזה חתום עם כל התיקונים">Signed contract with all amendments</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">📐</span>
+                        <span data-en="System design: layout drawing + single-line diagram" data-es="Diseño del sistema: plano de distribución + diagrama unifilar" data-he="עיצוב מערכת: שרטוט פריסה + תרשים חד-קווי">System design: layout drawing + single-line diagram</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">📋</span>
+                        <span data-en="ENSA interconnection approval and permit copies" data-es="Aprobación de interconexión de ENSA y copias de permisos" data-he="אישור חיבור ENSA והעתקי היתרים">ENSA interconnection approval and permit copies</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">🏷️</span>
+                        <span data-en="Warranty cards: panels, inverter, and installation" data-es="Tarjetas de garantía: paneles, inversor e instalación" data-he="כרטיסי אחריות: פאנלים, ממיר והתקנה">Warranty cards: panels, inverter, and installation</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">📱</span>
+                        <span data-en="Monitoring access: app login credentials + quick-start guide" data-es="Acceso de monitoreo: credenciales de inicio de sesión + guía de inicio rápido" data-he="גישת ניטור: פרטי התחברות לאפליקציה + מדריך התחלה מהירה">Monitoring access: app login credentials + quick-start guide</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">📸</span>
+                        <span data-en="Completion photos: before, during, and after installation" data-es="Fotos de finalización: antes, durante y después de la instalación" data-he="תמונות סיום: לפני, במהלך ואחרי ההתקנה">Completion photos: before, during, and after installation</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">🔧</span>
+                        <span data-en="Maintenance schedule card with contact information" data-es="Tarjeta de calendario de mantenimiento con información de contacto" data-he="כרטיס לוח תחזוקה עם פרטי קשר">Maintenance schedule card with contact information</span>
+                    </li>
+                    <li>
+                        <span class="doc-icon">💰</span>
+                        <span data-en="Ley 417 tax benefit documentation and filing instructions" data-es="Documentación de beneficios fiscales de Ley 417 e instrucciones de presentación" data-he="תיעוד הטבת מס חוק 417 והוראות הגשה">Ley 417 tax benefit documentation and filing instructions</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-step9-installation.html">
+            ← <span data-en="Prev: Installation" data-es="Anterior: Instalación" data-he="קודם: התקנה">Prev: Installation</span>
+        </a>
+        <a href="crm-value-chain.html" class="back">
+            <span data-en="Back to CRM Pipeline" data-es="Volver al Pipeline CRM" data-he="חזרה לצינור CRM">Back to CRM Pipeline</span> →
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="crm-value-chain.html" data-en="Back to CRM Pipeline" data-es="Volver al Pipeline CRM" data-he="חזרה לצינור CRM">Back to CRM Pipeline</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const val = el.getAttribute('data-' + lang);
+                if (val.includes('<')) {
+                    el.innerHTML = val;
+                } else {
+                    el.textContent = val;
+                }
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>
