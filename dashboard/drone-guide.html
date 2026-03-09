@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Survey Guide — Solaris Energy Panama</title>
+    <meta name="description" content="Complete drone survey guide for solar site assessment in Panama. Flight protocols, regulations, and deliverables.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        [lang="he"] { direction: rtl; text-align: right; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== BACK NAV ===== */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--green);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            box-shadow: var(--shadow-elevated);
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        /* ===== HERO ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 50%, #1A6B4A 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero .icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .page-hero p {
+            color: rgba(255,255,255,0.75);
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* ===== SECTION ===== */
+        .section-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            background: rgba(212,168,67,0.1);
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-sub {
+            color: var(--slate);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--mist);
+            margin: 4rem 0;
+        }
+
+        /* ===== ADVANTAGE CARDS ===== */
+        .advantage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .advantage-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .advantage-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+        }
+
+        .advantage-card .adv-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .advantage-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .advantage-card p {
+            color: var(--slate);
+            font-size: 0.9rem;
+        }
+
+        .advantage-card .stat {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+            margin-top: 0.75rem;
+        }
+
+        /* ===== DRONE COMPARISON TABLE ===== */
+        .drone-table-wrap {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .drone-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .drone-table thead {
+            background: var(--green);
+            color: white;
+        }
+
+        .drone-table th {
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+        }
+
+        .drone-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .drone-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .drone-table .model-name {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .drone-table .price {
+            font-weight: 700;
+            color: var(--gold-aged);
+        }
+
+        .drone-table .recommended {
+            background: rgba(212,168,67,0.08);
+        }
+
+        .rec-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: white;
+            background: var(--gold);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            margin-left: 6px;
+        }
+
+        /* ===== CHECKLIST / PROTOCOL ===== */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .checklist-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .checklist-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green);
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checklist-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--cloud);
+            color: var(--slate);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .checklist-card li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-card li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ===== PROTOCOL STEPS ===== */
+        .protocol-steps {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .protocol-step {
+            display: flex;
+            gap: 1.5rem;
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+        }
+
+        .protocol-step:hover {
+            box-shadow: var(--shadow-card);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--green);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--slate);
+            font-size: 0.9rem;
+        }
+
+        .step-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .step-spec {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            background: var(--sand);
+            color: var(--green);
+        }
+
+        /* ===== PHOTO REQUIREMENTS ===== */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .photo-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .photo-card .photo-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .photo-card h4 {
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .photo-card .photo-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0.5rem 0;
+        }
+
+        .photo-card p {
+            color: var(--ash);
+            font-size: 0.82rem;
+        }
+
+        /* ===== REGULATION PANEL ===== */
+        .reg-panel {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            color: white;
+            margin: 2rem 0;
+        }
+
+        .reg-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reg-panel .reg-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .reg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .reg-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .reg-item h4 {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reg-item p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* ===== REPORT TEMPLATE ===== */
+        .report-section {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        .report-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-section > p {
+            color: var(--slate);
+            margin-bottom: 2rem;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .report-card .report-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .report-card h4 {
+            color: var(--green);
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .report-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .report-card li {
+            color: var(--slate);
+            font-size: 0.85rem;
+            padding: 0.25rem 0;
+        }
+
+        .report-card li::before {
+            content: '→ ';
+            color: var(--gold);
+        }
+
+        /* ===== MEASUREMENT CARD ===== */
+        .measure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .measure-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .measure-card h3 {
+            color: var(--green);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .measure-card p {
+            color: var(--slate);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .measure-card .formula {
+            background: var(--sand);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            color: var(--green);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* ===== FOOTER ===== */
+        .page-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--green);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+        }
+
+        .page-footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== REVEAL ANIMATION ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .advantage-grid { grid-template-columns: 1fr; }
+            .checklist-grid { grid-template-columns: 1fr; }
+            .protocol-step { flex-direction: column; gap: 1rem; }
+            .container { padding: 3rem 1.2rem; }
+            .back-nav a { padding: 6px 12px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .page-hero { padding: 6rem 1.2rem 3rem; }
+            .photo-grid { grid-template-columns: 1fr 1fr; }
+            .reg-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+    <span class="icon">🛸</span>
+    <h1 data-en="Drone Survey Guide" data-es="Guía de Inspección con Drones" data-he="מדריך סקר רחפנים">Drone Survey Guide</h1>
+    <p data-en="Complete protocol for aerial solar site assessment in Panama. From pre-flight checks to deliverable reports." data-es="Protocolo completo para evaluación aérea de sitios solares en Panamá. Desde verificaciones pre-vuelo hasta informes entregables." data-he="פרוטוקול מלא להערכה אווירית של אתרי סולאר בפנמה. מבדיקות טרום-טיסה ועד דוחות מסירה.">Complete protocol for aerial solar site assessment in Panama. From pre-flight checks to deliverable reports.</p>
+</div>
+
+<!-- WHY DRONES -->
+<div class="container">
+    <div class="section-badge" data-en="WHY DRONES" data-es="POR QUÉ DRONES" data-he="למה רחפנים">WHY DRONES</div>
+    <h2 class="section-title reveal" data-en="The Drone Advantage" data-es="La Ventaja de los Drones" data-he="יתרון הרחפנים">The Drone Advantage</h2>
+    <p class="section-sub reveal" data-en="Drones transform solar site assessment from a dangerous, time-consuming task into a precise, efficient operation." data-es="Los drones transforman la evaluación de sitios solares de una tarea peligrosa y lenta en una operación precisa y eficiente." data-he="רחפנים הופכים הערכת אתרי סולאר ממשימה מסוכנת וממושכת לפעולה מדויקת ויעילה.">Drones transform solar site assessment from a dangerous, time-consuming task into a precise, efficient operation.</p>
+
+    <div class="advantage-grid reveal">
+        <div class="advantage-card">
+            <div class="adv-icon">🛡️</div>
+            <h3 data-en="Safety" data-es="Seguridad" data-he="בטיחות">Safety</h3>
+            <p data-en="No climbing on rooftops. No ladder risks. Survey from a safe distance with better results." data-es="Sin subir a techos. Sin riesgos de escaleras. Inspección a distancia segura con mejores resultados." data-he="בלי לטפס על גגות. בלי סיכוני סולמות. סקירה ממרחק בטוח עם תוצאות טובות יותר.">No climbing on rooftops. No ladder risks. Survey from a safe distance with better results.</p>
+            <span class="stat" data-en="Zero Risk" data-es="Riesgo Cero" data-he="סיכון אפס">Zero Risk</span>
+        </div>
+        <div class="advantage-card">
+            <div class="adv-icon">🎯</div>
+            <h3 data-en="Accuracy" data-es="Precisión" data-he="דיוק">Accuracy</h3>
+            <p data-en="Photogrammetry delivers measurements accurate to ±2cm. Far better than manual tape measurements." data-es="La fotogrametría ofrece mediciones con precisión de ±2cm. Mucho mejor que mediciones manuales con cinta." data-he="פוטוגרמטריה מספקת מדידות בדיוק של ±2 ס״מ. הרבה יותר טוב ממדידה ידנית.">Photogrammetry delivers measurements accurate to ±2cm. Far better than manual tape measurements.</p>
+            <span class="stat">±2cm</span>
+        </div>
+        <div class="advantage-card">
+            <div class="adv-icon">⚡</div>
+            <h3 data-en="Speed" data-es="Velocidad" data-he="מהירות">Speed</h3>
+            <p data-en="Complete a full site survey in 30 minutes instead of 3+ hours manually. 6x faster." data-es="Complete una inspección completa en 30 minutos en lugar de 3+ horas manualmente. 6x más rápido." data-he="השלמת סקר אתר מלא ב-30 דקות במקום 3+ שעות ידנית. מהיר פי 6.">Complete a full site survey in 30 minutes instead of 3+ hours manually. 6x faster.</p>
+            <span class="stat" data-en="30 min" data-es="30 min" data-he="30 דק׳">30 min</span>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- RECOMMENDED DRONES -->
+    <div class="section-badge" data-en="EQUIPMENT" data-es="EQUIPAMIENTO" data-he="ציוד">EQUIPMENT</div>
+    <h2 class="section-title reveal" data-en="Recommended Drones" data-es="Drones Recomendados" data-he="רחפנים מומלצים">Recommended Drones</h2>
+    <p class="section-sub reveal" data-en="Three DJI models suited for solar site assessment. Choose based on your budget and project scale." data-es="Tres modelos DJI adecuados para evaluación de sitios solares. Elija según su presupuesto y escala del proyecto." data-he="שלושה דגמי DJI המתאימים להערכת אתרי סולאר. בחרו לפי תקציב וגודל פרויקט.">Three DJI models suited for solar site assessment. Choose based on your budget and project scale.</p>
+
+    <div class="drone-table-wrap reveal">
+        <table class="drone-table">
+            <thead>
+                <tr>
+                    <th data-en="Specification" data-es="Especificación" data-he="מפרט">Specification</th>
+                    <th data-en="DJI Mini 4 Pro" data-es="DJI Mini 4 Pro" data-he="DJI Mini 4 Pro">DJI Mini 4 Pro</th>
+                    <th data-en="DJI Air 3" data-es="DJI Air 3" data-he="DJI Air 3">DJI Air 3</th>
+                    <th data-en="DJI Mavic 3" data-es="DJI Mavic 3" data-he="DJI Mavic 3">DJI Mavic 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-en="Price" data-es="Precio" data-he="מחיר"><strong>Price</strong></td>
+                    <td class="price">$760</td>
+                    <td class="price recommended">$1,100 <span class="rec-badge" data-en="BEST VALUE" data-es="MEJOR VALOR" data-he="הכי משתלם">BEST VALUE</span></td>
+                    <td class="price">$2,050</td>
+                </tr>
+                <tr>
+                    <td data-en="Weight" data-es="Peso" data-he="משקל">Weight</td>
+                    <td>249g</td>
+                    <td class="recommended">720g</td>
+                    <td>895g</td>
+                </tr>
+                <tr>
+                    <td data-en="Camera Sensor" data-es="Sensor Cámara" data-he="חיישן מצלמה">Camera Sensor</td>
+                    <td>1/1.3" CMOS</td>
+                    <td class="recommended">1/1.3" Dual CMOS</td>
+                    <td>4/3" CMOS (Hasselblad)</td>
+                </tr>
+                <tr>
+                    <td data-en="Max Photo Resolution" data-es="Resolución Máx. Foto" data-he="רזולוציית צילום מקס׳">Max Photo Resolution</td>
+                    <td>48 MP</td>
+                    <td class="recommended">48 MP (dual lens)</td>
+                    <td>20 MP (main) + 12 MP tele</td>
+                </tr>
+                <tr>
+                    <td data-en="Flight Time" data-es="Tiempo de Vuelo" data-he="זמן טיסה">Flight Time</td>
+                    <td>34 min</td>
+                    <td class="recommended">46 min</td>
+                    <td>46 min</td>
+                </tr>
+                <tr>
+                    <td data-en="Max Wind Resistance" data-es="Resistencia Máx. Viento" data-he="עמידות רוח מקס׳">Max Wind Resistance</td>
+                    <td>10.7 m/s</td>
+                    <td class="recommended">12 m/s</td>
+                    <td>12 m/s</td>
+                </tr>
+                <tr>
+                    <td data-en="Obstacle Avoidance" data-es="Evasión de Obstáculos" data-he="מניעת מכשולים">Obstacle Avoidance</td>
+                    <td data-en="Omnidirectional" data-es="Omnidireccional" data-he="רב-כיווני">Omnidirectional</td>
+                    <td class="recommended" data-en="Omnidirectional" data-es="Omnidireccional" data-he="רב-כיווני">Omnidirectional</td>
+                    <td data-en="Omnidirectional (APAS 5.0)" data-es="Omnidireccional (APAS 5.0)" data-he="רב-כיווני (APAS 5.0)">Omnidirectional (APAS 5.0)</td>
+                </tr>
+                <tr>
+                    <td data-en="Transmission Range" data-es="Rango Transmisión" data-he="טווח שידור">Transmission Range</td>
+                    <td>20 km</td>
+                    <td class="recommended">20 km</td>
+                    <td>30 km</td>
+                </tr>
+                <tr>
+                    <td data-en="Best For" data-es="Ideal Para" data-he="הכי מתאים ל">Best For</td>
+                    <td data-en="Residential rooftops, budget-friendly" data-es="Techos residenciales, económico" data-he="גגות מגורים, חסכוני">Residential rooftops, budget-friendly</td>
+                    <td class="recommended" data-en="All-around solar surveys" data-es="Inspecciones solares versátiles" data-he="סקרי סולאר כלליים">All-around solar surveys</td>
+                    <td data-en="Large commercial, precision mapping" data-es="Comercial grande, mapeo de precisión" data-he="מסחרי גדול, מיפוי מדויק">Large commercial, precision mapping</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- PRE-FLIGHT CHECKLIST -->
+    <div class="section-badge" data-en="PRE-FLIGHT" data-es="PRE-VUELO" data-he="טרום-טיסה">PRE-FLIGHT</div>
+    <h2 class="section-title reveal" data-en="Pre-Flight Checklist" data-es="Lista de Verificación Pre-Vuelo" data-he="רשימת בדיקות טרום-טיסה">Pre-Flight Checklist</h2>
+    <p class="section-sub reveal" data-en="Complete every item before launch. In Panama's tropical conditions, preparation prevents costly re-surveys." data-es="Complete cada punto antes del lanzamiento. En las condiciones tropicales de Panamá, la preparación previene re-inspecciones costosas." data-he="השלימו כל פריט לפני ההמראה. בתנאים הטרופיים של פנמה, הכנה מונעת סקרים חוזרים יקרים.">Complete every item before launch. In Panama's tropical conditions, preparation prevents costly re-surveys.</p>
+
+    <div class="checklist-grid reveal">
+        <div class="checklist-card">
+            <h3>🌤️ <span data-en="Weather Conditions" data-es="Condiciones Climáticas" data-he="תנאי מזג אוויר">Weather Conditions</span></h3>
+            <ul>
+                <li data-en="No rain — clear or partly cloudy ideal" data-es="Sin lluvia — despejado o parcialmente nublado ideal" data-he="בלי גשם — בהיר או מעונן חלקית אידיאלי">No rain — clear or partly cloudy ideal</li>
+                <li data-en="Wind speed < 25 km/h (check windguru.com)" data-es="Velocidad del viento < 25 km/h (verificar windguru.com)" data-he="מהירות רוח < 25 קמ״ש (בדקו windguru.com)">Wind speed &lt; 25 km/h (check windguru.com)</li>
+                <li data-en="Best hours: 7-10 AM or 3-5 PM (soft shadows)" data-es="Mejores horas: 7-10 AM o 3-5 PM (sombras suaves)" data-he="שעות מומלצות: 7-10 בוקר או 3-5 אחה״צ (צללים רכים)">Best hours: 7-10 AM or 3-5 PM (soft shadows)</li>
+                <li data-en="Avoid midday — harsh shadows hide obstacles" data-es="Evitar mediodía — sombras duras ocultan obstáculos" data-he="הימנעו מצהריים — צללים חזקים מסתירים מכשולים">Avoid midday — harsh shadows hide obstacles</li>
+                <li data-en="Check for rainy season patterns (May-Dec)" data-es="Verificar patrones de temporada lluviosa (May-Dic)" data-he="בדקו דפוסי עונת גשמים (מאי-דצמבר)">Check for rainy season patterns (May-Dec)</li>
+            </ul>
+        </div>
+        <div class="checklist-card">
+            <h3>🔋 <span data-en="Equipment Check" data-es="Verificación de Equipos" data-he="בדיקת ציוד">Equipment Check</span></h3>
+            <ul>
+                <li data-en="All batteries fully charged (min. 2 batteries)" data-es="Todas las baterías completamente cargadas (mín. 2 baterías)" data-he="כל הסוללות טעונות במלואן (מינימום 2 סוללות)">All batteries fully charged (min. 2 batteries)</li>
+                <li data-en="SD card formatted and inserted (min. 64GB)" data-es="Tarjeta SD formateada e insertada (mín. 64GB)" data-he="כרטיס SD מפורמט ומוכנס (מינימום 64GB)">SD card formatted and inserted (min. 64GB)</li>
+                <li data-en="Propellers inspected for damage" data-es="Hélices inspeccionadas por daños" data-he="בדיקת מדחפים לנזקים">Propellers inspected for damage</li>
+                <li data-en="Controller/phone charged and paired" data-es="Controlador/teléfono cargado y emparejado" data-he="שלט/טלפון טעון ומותאם">Controller/phone charged and paired</li>
+                <li data-en="GPS lock confirmed (min. 10 satellites)" data-es="Bloqueo GPS confirmado (mín. 10 satélites)" data-he="נעילת GPS אושרה (מינימום 10 לוויינים)">GPS lock confirmed (min. 10 satellites)</li>
+                <li data-en="Firmware updated to latest version" data-es="Firmware actualizado a la última versión" data-he="קושחה מעודכנת לגרסה אחרונה">Firmware updated to latest version</li>
+            </ul>
+        </div>
+        <div class="checklist-card">
+            <h3>📋 <span data-en="Site Preparation" data-es="Preparación del Sitio" data-he="הכנת האתר">Site Preparation</span></h3>
+            <ul>
+                <li data-en="Homeowner/client informed and permission obtained" data-es="Propietario/cliente informado y permiso obtenido" data-he="בעל הבית/לקוח מיודע ואישור התקבל">Homeowner/client informed and permission obtained</li>
+                <li data-en="Identify launch/landing zone (flat, clear area)" data-es="Identificar zona de lanzamiento/aterrizaje (área plana y despejada)" data-he="זיהוי אזור המראה/נחיתה (שטח שטוח ופנוי)">Identify launch/landing zone (flat, clear area)</li>
+                <li data-en="Note power lines, trees, antennas on site" data-es="Anotar líneas eléctricas, árboles, antenas en sitio" data-he="סימון קווי חשמל, עצים, אנטנות באתר">Note power lines, trees, antennas on site</li>
+                <li data-en="Check for nearby no-fly zones (airports, military)" data-es="Verificar zonas de vuelo prohibido cercanas (aeropuertos, militar)" data-he="בדיקת אזורי אסור-טיסה סמוכים (שדות תעופה, צבא)">Check for nearby no-fly zones (airports, military)</li>
+                <li data-en="Bring reference object for scale (1m ruler)" data-es="Llevar objeto de referencia para escala (regla de 1m)" data-he="הביאו אובייקט ייחוס לקנה מידה (סרגל 1 מ׳)">Bring reference object for scale (1m ruler)</li>
+            </ul>
+        </div>
+        <div class="checklist-card">
+            <h3>📐 <span data-en="Data Preparation" data-es="Preparación de Datos" data-he="הכנת נתונים">Data Preparation</span></h3>
+            <ul>
+                <li data-en="Record client address and GPS coordinates" data-es="Registrar dirección del cliente y coordenadas GPS" data-he="רשמו כתובת לקוח וקואורדינטות GPS">Record client address and GPS coordinates</li>
+                <li data-en="Note existing roof material (concrete, metal, tile)" data-es="Anotar material de techo existente (concreto, metal, teja)" data-he="ציינו חומר גג קיים (בטון, מתכת, אריחים)">Note existing roof material (concrete, metal, tile)</li>
+                <li data-en="Approximate roof area from Google Maps" data-es="Área aproximada del techo desde Google Maps" data-he="שטח גג משוער מ-Google Maps">Approximate roof area from Google Maps</li>
+                <li data-en="Know electric bill kWh (ask client beforehand)" data-es="Conocer kWh de factura eléctrica (preguntar al cliente)" data-he="דעו צריכת kWh (שאלו לקוח מראש)">Know electric bill kWh (ask client beforehand)</li>
+                <li data-en="Camera set to highest resolution (RAW + JPEG)" data-es="Cámara configurada en máxima resolución (RAW + JPEG)" data-he="מצלמה בהגדרת רזולוציה מקסימלית (RAW + JPEG)">Camera set to highest resolution (RAW + JPEG)</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- FLIGHT PROTOCOL -->
+    <div class="section-badge" data-en="FLIGHT PROTOCOL" data-es="PROTOCOLO DE VUELO" data-he="פרוטוקול טיסה">FLIGHT PROTOCOL</div>
+    <h2 class="section-title reveal" data-en="Flight Protocol" data-es="Protocolo de Vuelo" data-he="פרוטוקול טיסה">Flight Protocol</h2>
+    <p class="section-sub reveal" data-en="Follow these four passes to capture all necessary data for accurate solar design." data-es="Siga estas cuatro pasadas para capturar todos los datos necesarios para un diseño solar preciso." data-he="עקבו אחרי ארבע המעברים האלה כדי לתעד את כל הנתונים הנדרשים לתכנון סולארי מדויק.">Follow these four passes to capture all necessary data for accurate solar design.</p>
+
+    <div class="protocol-steps reveal">
+        <div class="protocol-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3 data-en="Overhead Nadir Shots" data-es="Tomas Nadir desde Arriba" data-he="צילומי נאדיר מלמעלה">Overhead Nadir Shots</h3>
+                <p data-en="Fly directly above the roof at 30m altitude. Camera pointing straight down (90°). Capture systematic grid pattern covering the entire roof area. These shots are used for accurate area measurements and panel layout planning." data-es="Vuele directamente sobre el techo a 30m de altitud. Cámara apuntando directamente hacia abajo (90°). Capture un patrón de cuadrícula sistemático cubriendo toda el área del techo. Estas tomas se usan para mediciones precisas y planificación del diseño." data-he="טוסו ישירות מעל הגג בגובה 30 מ׳. מצלמה מכוונת ישירות למטה (90°). תעדו דפוס רשת שיטתי המכסה את כל שטח הגג. צילומים אלה משמשים למדידות שטח מדויקות ותכנון פריסת פאנלים.">Fly directly above the roof at 30m altitude. Camera pointing straight down (90°). Capture systematic grid pattern covering the entire roof area.</p>
+                <div class="step-specs">
+                    <span class="step-spec" data-en="Altitude: 30m" data-es="Altitud: 30m" data-he="גובה: 30 מ׳">Altitude: 30m</span>
+                    <span class="step-spec" data-en="Angle: 90° (straight down)" data-es="Ángulo: 90° (recto abajo)" data-he="זווית: 90° (ישירות למטה)">Angle: 90° (straight down)</span>
+                    <span class="step-spec" data-en="Overlap: 70%" data-es="Superposición: 70%" data-he="חפיפה: 70%">Overlap: 70%</span>
+                    <span class="step-spec" data-en="~15-20 photos" data-es="~15-20 fotos" data-he="~15-20 תמונות">~15-20 photos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="protocol-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3 data-en="Oblique Angle Shots" data-es="Tomas en Ángulo Oblicuo" data-he="צילומים בזווית אלכסונית">Oblique Angle Shots</h3>
+                <p data-en="Lower to 20m and tilt camera to 45°. Circle the roof from all four cardinal directions (N, E, S, W). These reveal roof pitch, edge conditions, and shading from nearby structures." data-es="Baje a 20m e incline la cámara a 45°. Circule el techo desde las cuatro direcciones cardinales (N, E, S, O). Estas revelan inclinación del techo, condiciones de bordes y sombras de estructuras cercanas." data-he="ירדו ל-20 מ׳ והטו מצלמה ל-45°. הקיפו את הגג מארבע כיוונים ראשיים (צ, מ, ד, מע). אלה חושפים שיפוע גג, תנאי קצוות והצללה ממבנים סמוכים.">Lower to 20m and tilt camera to 45°. Circle the roof from all four cardinal directions.</p>
+                <div class="step-specs">
+                    <span class="step-spec" data-en="Altitude: 20m" data-es="Altitud: 20m" data-he="גובה: 20 מ׳">Altitude: 20m</span>
+                    <span class="step-spec" data-en="Angle: 45°" data-es="Ángulo: 45°" data-he="זווית: 45°">Angle: 45°</span>
+                    <span class="step-spec" data-en="4 directions (N/E/S/W)" data-es="4 direcciones (N/E/S/O)" data-he="4 כיוונים (צ/מ/ד/מע)">4 directions (N/E/S/W)</span>
+                    <span class="step-spec" data-en="~12-16 photos" data-es="~12-16 fotos" data-he="~12-16 תמונות">~12-16 photos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="protocol-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3 data-en="Obstacle Panorama" data-es="Panorama de Obstáculos" data-he="פנורמת מכשולים">Obstacle Panorama</h3>
+                <p data-en="From 25m altitude, capture a 360° panorama showing the surroundings. Document all shading sources: trees, neighboring buildings, water tanks, antennas. This is critical for shading analysis." data-es="Desde 25m de altitud, capture un panorama de 360° mostrando los alrededores. Documente todas las fuentes de sombra: árboles, edificios vecinos, tanques de agua, antenas. Esto es crítico para el análisis de sombras." data-he="מגובה 25 מ׳, צלמו פנורמה של 360° המציגה את הסביבה. תעדו את כל מקורות ההצללה: עצים, מבנים שכנים, מכלי מים, אנטנות. קריטי לניתוח הצללה.">From 25m altitude, capture a 360° panorama showing all shading sources around the site.</p>
+                <div class="step-specs">
+                    <span class="step-spec" data-en="Altitude: 25m" data-es="Altitud: 25m" data-he="גובה: 25 מ׳">Altitude: 25m</span>
+                    <span class="step-spec" data-en="360° coverage" data-es="Cobertura 360°" data-he="כיסוי 360°">360° coverage</span>
+                    <span class="step-spec" data-en="Panorama mode" data-es="Modo panorama" data-he="מצב פנורמה">Panorama mode</span>
+                    <span class="step-spec" data-en="Note all obstructions" data-es="Anotar todas las obstrucciones" data-he="סימון כל המכשולים">Note all obstructions</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="protocol-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3 data-en="Detail & Context Shots" data-es="Tomas de Detalle y Contexto" data-he="צילומי פרט והקשר">Detail & Context Shots</h3>
+                <p data-en="Capture close-ups of: electrical panel location, meter box, existing wiring entry point, roof surface condition, and any structural concerns. Also capture a wide shot showing the property in context." data-es="Capture primeros planos de: ubicación del panel eléctrico, caja del medidor, punto de entrada del cableado existente, condición de la superficie del techo, y cualquier preocupación estructural. También capture una toma amplia mostrando la propiedad en contexto." data-he="צלמו תקריבים של: מיקום לוח חשמל, ארון מונה, נקודת כניסת חיווט קיים, מצב משטח הגג וכל חשש מבני. צלמו גם תמונה רחבה של הנכס בהקשר.">Capture close-ups of electrical panel, meter box, roof condition, and a wide context shot of the property.</p>
+                <div class="step-specs">
+                    <span class="step-spec" data-en="Various altitudes" data-es="Altitudes varias" data-he="גבהים שונים">Various altitudes</span>
+                    <span class="step-spec" data-en="Close-up + wide" data-es="Primer plano + amplio" data-he="תקריב + רחב">Close-up + wide</span>
+                    <span class="step-spec" data-en="~8-12 photos" data-es="~8-12 fotos" data-he="~8-12 תמונות">~8-12 photos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- PHOTO REQUIREMENTS -->
+    <div class="section-badge" data-en="PHOTO SPECS" data-es="ESPECIFICACIONES FOTO" data-he="מפרט צילום">PHOTO SPECS</div>
+    <h2 class="section-title reveal" data-en="Photo Requirements" data-es="Requisitos de Fotos" data-he="דרישות צילום">Photo Requirements</h2>
+    <p class="section-sub reveal" data-en="Ensure every image meets these minimum specifications for accurate post-processing and measurements." data-es="Asegúrese de que cada imagen cumpla estas especificaciones mínimas para procesamiento y mediciones precisas." data-he="ודאו שכל תמונה עומדת במפרט המינימלי הזה לעיבוד ומדידות מדויקים.">Ensure every image meets these minimum specifications for accurate post-processing and measurements.</p>
+
+    <div class="photo-grid reveal">
+        <div class="photo-card">
+            <div class="photo-icon">📸</div>
+            <h4 data-en="Image Overlap" data-es="Superposición" data-he="חפיפת תמונות">Image Overlap</h4>
+            <div class="photo-val">70%</div>
+            <p data-en="Minimum overlap between consecutive shots for stitching" data-es="Superposición mínima entre tomas consecutivas para unión" data-he="חפיפה מינימלית בין צילומים עוקבים לתפירה">Minimum overlap between consecutive shots</p>
+        </div>
+        <div class="photo-card">
+            <div class="photo-icon">🔍</div>
+            <h4 data-en="Ground Resolution" data-es="Resolución Terreno" data-he="רזולוציית קרקע">Ground Resolution</h4>
+            <div class="photo-val">&gt;5cm/px</div>
+            <p data-en="Ground Sample Distance — each pixel covers max 5cm" data-es="Distancia de Muestra al Suelo — cada píxel cubre máx 5cm" data-he="מרחק דגימת קרקע — כל פיקסל מכסה מקס׳ 5 ס״מ">Ground Sample Distance for measurement accuracy</p>
+        </div>
+        <div class="photo-card">
+            <div class="photo-icon">🧭</div>
+            <h4 data-en="Compass Data" data-es="Datos de Brújula" data-he="נתוני מצפן">Compass Data</h4>
+            <div class="photo-val">EXIF</div>
+            <p data-en="GPS + compass embedded in every photo EXIF" data-es="GPS + brújula incrustados en cada foto EXIF" data-he="GPS + מצפן מוטמעים בכל EXIF של תמונה">GPS + compass embedded in every photo</p>
+        </div>
+        <div class="photo-card">
+            <div class="photo-icon">📁</div>
+            <h4 data-en="File Format" data-es="Formato de Archivo" data-he="פורמט קובץ">File Format</h4>
+            <div class="photo-val">RAW+JPG</div>
+            <p data-en="RAW for processing, JPEG for quick review" data-es="RAW para procesamiento, JPEG para revisión rápida" data-he="RAW לעיבוד, JPEG לסקירה מהירה">RAW for processing, JPEG for quick review</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- MEASUREMENT FROM IMAGES -->
+    <div class="section-badge" data-en="MEASUREMENTS" data-es="MEDICIONES" data-he="מדידות">MEASUREMENTS</div>
+    <h2 class="section-title reveal" data-en="Measurement from Images" data-es="Mediciones desde Imágenes" data-he="מדידות מתמונות">Measurement from Images</h2>
+    <p class="section-sub reveal" data-en="Extract accurate roof dimensions, orientation, and tilt from drone imagery using these techniques." data-es="Extraiga dimensiones precisas del techo, orientación e inclinación de las imágenes del dron usando estas técnicas." data-he="חלצו מידות גג מדויקות, כיוון ושיפוע מתמונות הרחפן באמצעות הטכניקות האלה.">Extract accurate roof dimensions, orientation, and tilt from drone imagery.</p>
+
+    <div class="measure-grid reveal">
+        <div class="measure-card">
+            <h3>📏 <span data-en="Roof Dimensions" data-es="Dimensiones del Techo" data-he="מידות גג">Roof Dimensions</span></h3>
+            <p data-en="Use nadir photos with known reference object (1m ruler placed on roof). Software like DroneDeploy or Pix4D auto-generates measurements. Manual method: count pixels between known points and extrapolate." data-es="Use fotos nadir con objeto de referencia conocido (regla de 1m colocada en techo). Software como DroneDeploy o Pix4D genera mediciones automáticamente. Método manual: contar píxeles entre puntos conocidos y extrapolar." data-he="השתמשו בתמונות נאדיר עם אובייקט ייחוס ידוע (סרגל 1 מ׳ על הגג). תוכנות כמו DroneDeploy או Pix4D מייצרות מדידות אוטומטית. שיטה ידנית: ספרו פיקסלים בין נקודות ידועות.">Use nadir photos with known reference. Software auto-generates measurements.</p>
+            <div class="formula">Area = L × W (from calibrated pixel count)</div>
+        </div>
+        <div class="measure-card">
+            <h3>🧭 <span data-en="Azimuth (Orientation)" data-es="Azimut (Orientación)" data-he="אזימוט (כיוון)">Azimuth (Orientation)</span></h3>
+            <p data-en="Extract from EXIF compass data in nadir shots. Align roof edges with North reference. In Panama (8°N latitude), optimal azimuth is 180° (true south) for maximum annual yield. East/West ±30° is acceptable." data-es="Extraer de datos de brújula EXIF en tomas nadir. Alinear bordes del techo con referencia Norte. En Panamá (latitud 8°N), azimut óptimo es 180° (sur verdadero) para máximo rendimiento anual." data-he="חלצו מנתוני מצפן EXIF בצילומי נאדיר. ישרו קצוות גג עם ייחוס צפון. בפנמה (קו רוחב 8° צפון), אזימוט אופטימלי הוא 180° (דרום אמיתי).">Extract from EXIF compass data. Panama optimal: 180° (true south).</p>
+            <div class="formula">Optimal Azimuth (Panama): 180° ± 30°</div>
+        </div>
+        <div class="measure-card">
+            <h3>📐 <span data-en="Tilt Estimation" data-es="Estimación de Inclinación" data-he="הערכת שיפוע">Tilt Estimation</span></h3>
+            <p data-en="Compare oblique shots from opposite sides. Measure shadow lengths at known time. Use trigonometry: tilt = arctan(height_difference / horizontal_distance). Typical Panama residential roofs: 10-25° pitch." data-es="Compare tomas oblicuas desde lados opuestos. Mida longitud de sombras a hora conocida. Use trigonometría: inclinación = arctan(diferencia_altura / distancia_horizontal). Techos residenciales típicos en Panamá: 10-25° de inclinación." data-he="השוו צילומים אלכסוניים מצדדים מנוגדים. מדדו אורכי צללים בזמן ידוע. טריגונומטריה: שיפוע = arctan(הפרש_גובה / מרחק_אופקי). גגות מגורים טיפוסיים בפנמה: 10-25°.">Compare oblique shots from opposite sides. Typical Panama roofs: 10-25°.</p>
+            <div class="formula">Tilt = arctan(Δh / d) → Optimal: 8-15° for Panama</div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- PANAMA REGULATIONS -->
+    <div class="reg-panel reveal">
+        <h2 data-en="Panama Drone Regulations" data-es="Regulaciones de Drones en Panamá" data-he="תקנות רחפנים בפנמה">Panama Drone Regulations</h2>
+        <p class="reg-sub" data-en="DGAC — Dirección General de Aeronáutica Civil de Panamá governs all drone operations." data-es="DGAC — Dirección General de Aeronáutica Civil de Panamá gobierna todas las operaciones con drones." data-he="DGAC — המנהל הכללי לתעופה אזרחית של פנמה מפקח על כל פעולות הרחפנים.">DGAC — Dirección General de Aeronáutica Civil de Panamá governs all drone operations.</p>
+
+        <div class="reg-grid">
+            <div class="reg-item">
+                <h4 data-en="Registration" data-es="Registro" data-he="רישום">Registration</h4>
+                <p data-en="Commercial drone use requires DGAC registration. Submit: drone specs, pilot ID, insurance proof, intended use description. Processing: 15-30 business days." data-es="Uso comercial de drones requiere registro DGAC. Presentar: especificaciones del dron, ID del piloto, prueba de seguro, descripción del uso previsto. Procesamiento: 15-30 días hábiles." data-he="שימוש מסחרי ברחפן דורש רישום DGAC. הגישו: מפרט רחפן, תעודת זהות טייס, אישור ביטוח, תיאור שימוש מיועד. עיבוד: 15-30 ימי עסקים.">Commercial use requires DGAC registration. Submit specs, ID, insurance. 15-30 business days.</p>
+            </div>
+            <div class="reg-item">
+                <h4 data-en="Max Altitude" data-es="Altitud Máxima" data-he="גובה מרבי">Max Altitude</h4>
+                <p data-en="Maximum flight altitude: 120 meters (400 feet) AGL. For solar surveys, you'll typically fly at 20-30m — well within limits." data-es="Altitud máxima de vuelo: 120 metros (400 pies) AGL. Para inspecciones solares, típicamente volará a 20-30m — bien dentro de los límites." data-he="גובה טיסה מרבי: 120 מטר (400 רגל) מעל פני הקרקע. לסקרי סולאר, בדרך כלל תטוסו ב-20-30 מ׳ — בתוך הגבולות.">120m (400ft) AGL maximum. Solar surveys at 20-30m are well within limits.</p>
+            </div>
+            <div class="reg-item">
+                <h4 data-en="No-Fly Zones" data-es="Zonas Prohibidas" data-he="אזורי אסור-טיסה">No-Fly Zones</h4>
+                <p data-en="No flights within 5km of airports (Tocumen, Albrook, David). No flights over crowds, government buildings, or military installations. Check airmap.com before every flight." data-es="Sin vuelos dentro de 5km de aeropuertos (Tocumen, Albrook, David). Sin vuelos sobre multitudes, edificios gubernamentales o instalaciones militares. Verificar airmap.com antes de cada vuelo." data-he="אסור לטוס ברדיוס 5 ק״מ משדות תעופה (טוקומן, אלברוק, דויד). אסור לטוס מעל קהל, מבני ממשלה או מתקנים צבאיים. בדקו airmap.com לפני כל טיסה.">5km from airports (Tocumen, Albrook, David). No crowds, government, military areas.</p>
+            </div>
+            <div class="reg-item">
+                <h4 data-en="Visual Line of Sight" data-es="Línea Visual de Vista" data-he="קו ראייה חזותי">Visual Line of Sight</h4>
+                <p data-en="Pilot must maintain visual line of sight (VLOS) at all times. No autonomous beyond-visual flights without special authorization." data-es="El piloto debe mantener línea visual de vista (VLOS) en todo momento. Sin vuelos autónomos fuera de vista visual sin autorización especial." data-he="הטייס חייב לשמור על קו ראייה חזותי (VLOS) בכל עת. אין טיסות אוטונומיות מעבר לקו הראייה ללא אישור מיוחד.">Maintain VLOS at all times. No autonomous beyond-visual flights without authorization.</p>
+            </div>
+            <div class="reg-item">
+                <h4 data-en="Insurance" data-es="Seguro" data-he="ביטוח">Insurance</h4>
+                <p data-en="Liability insurance required for commercial operations. Minimum coverage: $50,000 for third-party damage. Local providers: ASSA, Mapfre Panama." data-es="Seguro de responsabilidad requerido para operaciones comerciales. Cobertura mínima: $50,000 para daños a terceros. Proveedores locales: ASSA, Mapfre Panamá." data-he="ביטוח אחריות נדרש לפעילות מסחרית. כיסוי מינימלי: $50,000 לנזק צד שלישי. ספקים מקומיים: ASSA, Mapfre Panama.">Liability insurance required. Min $50K coverage. Local: ASSA, Mapfre Panama.</p>
+            </div>
+            <div class="reg-item">
+                <h4 data-en="Daylight Only" data-es="Solo Luz Diurna" data-he="אור יום בלבד">Daylight Only</h4>
+                <p data-en="Flights permitted only during daylight hours. Panama sunrise ~6:00 AM, sunset ~6:30 PM year-round (near equator). Plan surveys accordingly." data-es="Vuelos permitidos solo durante horas de luz. Amanecer en Panamá ~6:00 AM, atardecer ~6:30 PM todo el año (cerca del ecuador). Planifique inspecciones acorde." data-he="טיסות מותרות רק בשעות אור יום. זריחה בפנמה ~6:00, שקיעה ~6:30 כל השנה (קרוב לקו המשווה). תכננו סקרים בהתאם.">Daylight only. Panama: sunrise ~6 AM, sunset ~6:30 PM year-round.</p>
+            </div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- REPORT TEMPLATE -->
+    <div class="report-section reveal">
+        <h2 data-en="Survey Report Template" data-es="Plantilla de Informe de Inspección" data-he="תבנית דוח סקר">Survey Report Template</h2>
+        <p data-en="Every drone survey should produce a professional report with these deliverables:" data-es="Cada inspección con dron debe producir un informe profesional con estos entregables:" data-he="כל סקר רחפן צריך לייצר דוח מקצועי עם המסירות האלה:">Every drone survey should produce a professional report with these deliverables:</p>
+
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="report-num">01</div>
+                <h4 data-en="Annotated Photos" data-es="Fotos Anotadas" data-he="תמונות מסומנות">Annotated Photos</h4>
+                <ul>
+                    <li data-en="Labeled roof sections with dimensions" data-es="Secciones de techo etiquetadas con dimensiones" data-he="חלקי גג מתויגים עם מידות">Labeled roof sections with dimensions</li>
+                    <li data-en="Marked obstacles and shading objects" data-es="Obstáculos y objetos de sombra marcados" data-he="מכשולים ואובייקטי הצללה מסומנים">Marked obstacles and shading objects</li>
+                    <li data-en="Electrical entry points highlighted" data-es="Puntos de entrada eléctrica resaltados" data-he="נקודות כניסה חשמליות מסומנות">Electrical entry points highlighted</li>
+                    <li data-en="Compass bearing on each image" data-es="Rumbo de brújula en cada imagen" data-he="כיוון מצפן על כל תמונה">Compass bearing on each image</li>
+                </ul>
+            </div>
+            <div class="report-card">
+                <div class="report-num">02</div>
+                <h4 data-en="Measurements" data-es="Mediciones" data-he="מדידות">Measurements</h4>
+                <ul>
+                    <li data-en="Total usable roof area (m²)" data-es="Área total utilizable del techo (m²)" data-he="שטח גג שימושי כולל (מ״ר)">Total usable roof area (m²)</li>
+                    <li data-en="Each roof plane: L × W × pitch" data-es="Cada plano: L × A × inclinación" data-he="כל מישור: א × ר × שיפוע">Each roof plane: L × W × pitch</li>
+                    <li data-en="Azimuth per roof section" data-es="Azimut por sección de techo" data-he="אזימוט לכל חלק גג">Azimuth per roof section</li>
+                    <li data-en="Setback distances from edges" data-es="Distancias de retiro desde bordes" data-he="מרחקי נסיגה מקצוות">Setback distances from edges</li>
+                </ul>
+            </div>
+            <div class="report-card">
+                <div class="report-num">03</div>
+                <h4 data-en="Shading Analysis" data-es="Análisis de Sombras" data-he="ניתוח הצללה">Shading Analysis</h4>
+                <ul>
+                    <li data-en="Shadow map at 9AM, 12PM, 3PM" data-es="Mapa de sombras a 9AM, 12PM, 3PM" data-he="מפת צללים ב-9:00, 12:00, 15:00">Shadow map at 9AM, 12PM, 3PM</li>
+                    <li data-en="Identified shading sources + height" data-es="Fuentes de sombra identificadas + altura" data-he="מקורות הצללה מזוהים + גובה">Identified shading sources + height</li>
+                    <li data-en="Annual shading loss estimate (%)" data-es="Estimación de pérdida anual por sombras (%)" data-he="הערכת אובדן הצללה שנתי (%)">Annual shading loss estimate (%)</li>
+                    <li data-en="Recommended panel placement zones" data-es="Zonas recomendadas para colocación de paneles" data-he="אזורים מומלצים למיקום פאנלים">Recommended panel placement zones</li>
+                </ul>
+            </div>
+            <div class="report-card">
+                <div class="report-num">04</div>
+                <h4 data-en="Recommendation" data-es="Recomendación" data-he="המלצה">Recommendation</h4>
+                <ul>
+                    <li data-en="Recommended system size (kWp)" data-es="Tamaño de sistema recomendado (kWp)" data-he="גודל מערכת מומלץ (kWp)">Recommended system size (kWp)</li>
+                    <li data-en="Estimated panel count and layout" data-es="Cantidad estimada de paneles y disposición" data-he="כמות פאנלים משוערת ופריסה">Estimated panel count and layout</li>
+                    <li data-en="Structural concerns (if any)" data-es="Preocupaciones estructurales (si las hay)" data-he="חששות מבניים (אם ישנם)">Structural concerns (if any)</li>
+                    <li data-en="Go / No-Go assessment with rationale" data-es="Evaluación Avanzar/No Avanzar con justificación" data-he="הערכת כן/לא עם נימוק">Go / No-Go assessment with rationale</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+    <p>Solaris Energy Panama © 2025 — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+</div>
+
+<script>
+    // Language Toggle
+    let currentLang = 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.trim() === lang.toUpperCase());
+        });
+
+        document.documentElement.lang = lang;
+        if (lang === 'he') {
+            document.body.style.direction = 'rtl';
+            document.body.style.textAlign = 'right';
+        } else {
+            document.body.style.direction = 'ltr';
+            document.body.style.textAlign = '';
+        }
+
+        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+            el.textContent = el.getAttribute('data-' + lang);
+        });
+    }
+
+    // Reveal on Scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Trigger initial reveals
+    setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight) {
+                el.classList.add('visible');
+            }
+        });
+    }, 100);
+</script>
+
+</body>
+</html>
