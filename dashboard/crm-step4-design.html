@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 4: System Design — Solaris Energy Panama</title>
+    <meta name="description" content="Solar system design process for Panama. Panel layout, string sizing, simulation, and standard packages for the Azuero Peninsula.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        [lang-he] { direction: rtl; text-align: right; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green);
+            border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== BACK NAV ===== */
+        .back-nav {
+            padding: 20px 40px; background: var(--green);
+        }
+        .back-nav a {
+            color: var(--gold); text-decoration: none; font-size: 14px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
+            transition: opacity 0.3s;
+        }
+        .back-nav a:hover { opacity: 0.8; }
+
+        /* ===== HERO ===== */
+        .step-hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 80px 40px 60px; text-align: center;
+        }
+        .step-badge {
+            display: inline-block; background: rgba(212,168,67,0.15);
+            color: var(--gold); padding: 8px 24px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 24px;
+        }
+        .step-hero h1 {
+            font-family: 'Playfair Display', serif; color: var(--pearl);
+            font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .step-hero p {
+            color: rgba(255,255,255,0.7); font-size: 18px;
+            max-width: 640px; margin: 0 auto;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            display: flex; justify-content: center; gap: 8px;
+            padding: 24px 40px; background: var(--sand);
+            flex-wrap: wrap;
+        }
+        .progress-dot {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            background: var(--mist); color: var(--ash);
+            transition: all 0.3s;
+        }
+        .progress-dot.completed { background: var(--green); color: var(--pearl); }
+        .progress-dot.active { background: var(--gold); color: var(--green); transform: scale(1.15); }
+        .progress-connector {
+            width: 24px; height: 2px; background: var(--mist);
+            align-self: center;
+        }
+        .progress-connector.completed { background: var(--green); }
+
+        /* ===== CONTENT ===== */
+        .content { max-width: 960px; margin: 0 auto; padding: 60px 24px 80px; }
+        .section { margin-bottom: 56px; }
+        .section h2 {
+            font-family: 'Playfair Display', serif; font-size: 28px;
+            color: var(--green); margin-bottom: 20px;
+            padding-bottom: 12px; border-bottom: 2px solid var(--gold);
+        }
+        .section h3 {
+            font-size: 18px; font-weight: 700; color: var(--green-canopy);
+            margin: 24px 0 12px;
+        }
+        .section p, .section li {
+            color: var(--slate); font-size: 15px; line-height: 1.75;
+        }
+        .section ul, .section ol {
+            padding-left: 24px; margin: 12px 0;
+        }
+        .section li { margin-bottom: 8px; }
+
+        /* ===== CARDS ===== */
+        .card-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; margin: 24px 0;
+        }
+        .card {
+            background: var(--cloud); border-radius: var(--radius-card);
+            padding: 28px; box-shadow: var(--shadow-card);
+            border-left: 4px solid var(--gold);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
+        .card h4 {
+            font-family: 'Playfair Display', serif; font-size: 17px;
+            color: var(--green); margin-bottom: 10px;
+        }
+        .card p { font-size: 14px; color: var(--slate); line-height: 1.6; }
+
+        /* ===== TABLE ===== */
+        .data-table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            font-size: 14px; background: white; border-radius: var(--radius-card);
+            overflow: hidden; box-shadow: var(--shadow-card);
+        }
+        .data-table th {
+            background: var(--green); color: var(--pearl); padding: 14px 16px;
+            text-align: left; font-weight: 700; font-size: 13px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .data-table td {
+            padding: 12px 16px; border-bottom: 1px solid var(--mist);
+            color: var(--slate);
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: var(--sand); }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            background: rgba(212,168,67,0.08); border: 1px solid rgba(212,168,67,0.3);
+            border-radius: var(--radius-card); padding: 24px; margin: 20px 0;
+        }
+        .info-box.green {
+            background: rgba(11,61,46,0.05); border-color: rgba(11,61,46,0.2);
+        }
+        .info-box h4 { color: var(--green); font-size: 16px; margin-bottom: 8px; }
+        .info-box p { font-size: 14px; color: var(--slate); }
+
+        .warning-box {
+            background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2);
+            border-radius: var(--radius-card); padding: 24px; margin: 20px 0;
+        }
+        .warning-box h4 { color: #c0392b; font-size: 16px; margin-bottom: 8px; }
+        .warning-box p { font-size: 14px; color: var(--slate); }
+
+        /* ===== STEP NAV ===== */
+        .step-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 40px 0; border-top: 2px solid var(--mist); margin-top: 60px;
+            flex-wrap: wrap; gap: 16px;
+        }
+        .step-nav a {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 28px; border-radius: var(--radius-btn);
+            text-decoration: none; font-weight: 700; font-size: 15px;
+            transition: all 0.3s;
+        }
+        .step-nav .prev {
+            background: var(--sand); color: var(--green);
+        }
+        .step-nav .prev:hover { background: var(--mist); }
+        .step-nav .next {
+            background: var(--gold); color: var(--green);
+        }
+        .step-nav .next:hover { background: var(--gold-aged); }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--green); padding: 40px; text-align: center;
+        }
+        footer p { color: rgba(255,255,255,0.5); font-size: 13px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .back-nav { padding: 16px 20px; }
+            .step-hero { padding: 60px 20px 40px; }
+            .content { padding: 40px 16px 60px; }
+            .section h2 { font-size: 24px; }
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 10px 8px; }
+            .step-nav { flex-direction: column; }
+            .step-nav a { width: 100%; justify-content: center; }
+        }
+
+        /* ===== HIDDEN LANG ===== */
+        [data-lang] { display: none; }
+        [data-lang="en"] { display: block; }
+        span[data-lang="en"], a[data-lang="en"] { display: inline; }
+        td[data-lang="en"], th[data-lang="en"] { display: table-cell; }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Back Navigation -->
+    <nav class="back-nav">
+        <a href="crm-value-chain.html">
+            <span data-lang="en">&#8592; Back to CRM Value Chain</span>
+            <span data-lang="es">&#8592; Volver a la Cadena CRM</span>
+            <span data-lang="he">&#8592; חזרה לשרשרת CRM</span>
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="step-hero">
+        <div class="step-badge">
+            <span data-lang="en">Step 4 of 10</span>
+            <span data-lang="es">Paso 4 de 10</span>
+            <span data-lang="he">שלב 4 מתוך 10</span>
+        </div>
+        <h1>
+            <span data-lang="en">System Design</span>
+            <span data-lang="es">Diseño del Sistema</span>
+            <span data-lang="he">תכנון המערכת</span>
+        </h1>
+        <p>
+            <span data-lang="en">Engineering the optimal solar solution for Panama's tropical climate — panel layout, string sizing, simulation, and deliverables.</span>
+            <span data-lang="es">Ingeniería de la solución solar óptima para el clima tropical de Panamá — distribución de paneles, dimensionamiento de strings, simulación y entregables.</span>
+            <span data-lang="he">תכנון מערכת סולארית אופטימלית לאקלים הטרופי של פנמה — פריסת פאנלים, מימוד סטרינגים, סימולציה ותוצרים.</span>
+        </p>
+    </section>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-dot completed">1</div><div class="progress-connector completed"></div>
+        <div class="progress-dot completed">2</div><div class="progress-connector completed"></div>
+        <div class="progress-dot completed">3</div><div class="progress-connector completed"></div>
+        <div class="progress-dot active">4</div><div class="progress-connector"></div>
+        <div class="progress-dot">5</div><div class="progress-connector"></div>
+        <div class="progress-dot">6</div><div class="progress-connector"></div>
+        <div class="progress-dot">7</div><div class="progress-connector"></div>
+        <div class="progress-dot">8</div><div class="progress-connector"></div>
+        <div class="progress-dot">9</div><div class="progress-connector"></div>
+        <div class="progress-dot">10</div>
+    </div>
+
+    <!-- Content -->
+    <main class="content">
+
+        <!-- SECTION 1: Design Inputs -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">Design Inputs</span>
+                <span data-lang="es">Datos de Entrada para el Diseño</span>
+                <span data-lang="he">נתוני קלט לתכנון</span>
+            </h2>
+            <p>
+                <span data-lang="en">A quality system design starts with accurate data collection. Every installation in Panama's Azuero Peninsula must account for unique tropical conditions that differ from temperate-climate designs.</span>
+                <span data-lang="es">Un diseño de sistema de calidad comienza con la recolección precisa de datos. Cada instalación en la Península de Azuero de Panamá debe considerar las condiciones tropicales únicas que difieren de los diseños de climas templados.</span>
+                <span data-lang="he">תכנון מערכת איכותי מתחיל באיסוף נתונים מדויק. כל התקנה בחצי האי אסוארו בפנמה חייבת להביא בחשבון את התנאים הטרופיים הייחודיים.</span>
+            </p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">&#9633; Roof Area & Structure</span>
+                        <span data-lang="es">&#9633; Área y Estructura del Techo</span>
+                        <span data-lang="he">&#9633; שטח וסוג גג</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Measure total available roof area in m². Identify roof type (concrete slab, metal sheet, tile), structural load capacity (minimum 15 kg/m²), and any obstructions (vents, antennas, water tanks). Document roof age and condition.</span>
+                        <span data-lang="es">Medir el área total disponible del techo en m². Identificar tipo de techo (losa de concreto, lámina metálica, teja), capacidad de carga estructural (mínimo 15 kg/m²), y cualquier obstrucción (ventilaciones, antenas, tanques de agua).</span>
+                        <span data-lang="he">מדידת שטח גג זמין במ"ר. זיהוי סוג גג (בטון, פח, רעפים), יכולת נשיאה (מינימום 15 ק"ג/מ"ר), ומכשולים (פתחי אוורור, אנטנות, מיכלי מים).</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">&#9633; Orientation & Tilt</span>
+                        <span data-lang="es">&#9633; Orientación e Inclinación</span>
+                        <span data-lang="he">&#9633; כיוון ושיפוע</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Panama sits at ~8°N latitude. Optimal tilt is 8-12°. Azimuth: due south preferred but east/west splits acceptable with <5% loss. Use compass + inclinometer. Near-equatorial location means minimal seasonal variation.</span>
+                        <span data-lang="es">Panamá se encuentra a ~8°N de latitud. Inclinación óptima es 8-12°. Azimut: preferiblemente al sur pero divisiones este/oeste aceptables con <5% de pérdida. Usar brújula + inclinómetro.</span>
+                        <span data-lang="he">פנמה נמצאת בקו רוחב 8° צפון. שיפוע אופטימלי 8-12°. אזימוט: דרום מועדף אך מזרח/מערב מקובלים עם הפסד של פחות מ-5%.</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">&#9633; Energy Consumption</span>
+                        <span data-lang="es">&#9633; Consumo de Energía</span>
+                        <span data-lang="he">&#9633; צריכת חשמל</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Collect 12 months of electricity bills. Calculate average monthly kWh. Identify peak consumption months (dry season AC usage). Note tariff rate (ENSA/Naturgy) and connection type (monofásico/trifásico). Typical residential: 400-1200 kWh/month.</span>
+                        <span data-lang="es">Recopilar 12 meses de facturas de electricidad. Calcular promedio mensual de kWh. Identificar meses de consumo pico (uso de AC en temporada seca). Notar tarifa (ENSA/Naturgy) y tipo de conexión.</span>
+                        <span data-lang="he">איסוף 12 חודשי חשבונות חשמל. חישוב ממוצע חודשי kWh. זיהוי חודשי שיא (שימוש במזגן בעונה היבשה). תעריף ENSA/Naturgy וסוג חיבור.</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">&#9633; Budget & Goals</span>
+                        <span data-lang="es">&#9633; Presupuesto y Objetivos</span>
+                        <span data-lang="he">&#9633; תקציב ויעדים</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Define client budget range. Determine goal: 100% offset, partial offset, or maximum ROI. Discuss Ley 417 tax benefits (available for systems up to 500 kWp). Clarify financing needs — cash purchase vs. payment plan.</span>
+                        <span data-lang="es">Definir rango de presupuesto del cliente. Determinar objetivo: compensación 100%, parcial, o máximo ROI. Discutir beneficios fiscales de Ley 417. Aclarar necesidades de financiamiento.</span>
+                        <span data-lang="he">הגדרת טווח תקציב. קביעת יעד: קיזוז מלא, חלקי, או ROI מקסימלי. דיון בהטבות מס חוק 417. בירור מימון — רכישה במזומן מול תשלומים.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Panel Layout -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">Panel Layout for Tropical Climate</span>
+                <span data-lang="es">Distribución de Paneles para Clima Tropical</span>
+                <span data-lang="he">פריסת פאנלים לאקלים טרופי</span>
+            </h2>
+            <p>
+                <span data-lang="en">Panama's tropical climate demands specific layout considerations that differ significantly from temperate installations. Heat management and ventilation are critical design factors.</span>
+                <span data-lang="es">El clima tropical de Panamá exige consideraciones de distribución específicas que difieren significativamente de las instalaciones en climas templados. La gestión del calor y la ventilación son factores de diseño críticos.</span>
+                <span data-lang="he">האקלים הטרופי של פנמה מחייב שיקולי פריסה ספציפיים. ניהול חום ואוורור הם גורמי תכנון קריטיים.</span>
+            </p>
+
+            <h3>
+                <span data-lang="en">Landscape vs. Portrait Orientation</span>
+                <span data-lang="es">Orientación Horizontal vs. Vertical</span>
+                <span data-lang="he">פריסה אופקית מול אנכית</span>
+            </h3>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">Landscape (Recommended)</span>
+                        <span data-lang="es">Horizontal (Recomendado)</span>
+                        <span data-lang="he">אופקי (מומלץ)</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en"><strong>Pros:</strong> Better airflow beneath panels, lower wind uplift, easier cable management. Each row has wider spacing allowing natural convection cooling. Reduced hot-spot risk. <strong>Cons:</strong> Requires slightly more roof width. <strong>Use when:</strong> Concrete slab roofs, metal roofs with adequate width.</span>
+                        <span data-lang="es"><strong>Pros:</strong> Mejor flujo de aire bajo paneles, menor elevación por viento, gestión de cables más fácil. <strong>Contras:</strong> Requiere un poco más de ancho de techo.</span>
+                        <span data-lang="he"><strong>יתרונות:</strong> זרימת אוויר טובה יותר, עמידות לרוח, ניהול כבלים קל. <strong>חסרונות:</strong> דורש רוחב גג גדול יותר.</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">Portrait</span>
+                        <span data-lang="es">Vertical</span>
+                        <span data-lang="he">אנכי</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en"><strong>Pros:</strong> Maximizes panel count on narrow roofs, works well with rail-based mounting. <strong>Cons:</strong> Reduced airflow between rows, higher operating temperatures (2-4°C more), requires careful string design to handle partial shading on bottom cells. <strong>Use when:</strong> Narrow roof sections only.</span>
+                        <span data-lang="es"><strong>Pros:</strong> Maximiza cantidad de paneles en techos angostos. <strong>Contras:</strong> Flujo de aire reducido, temperaturas operativas más altas (2-4°C más).</span>
+                        <span data-lang="he"><strong>יתרונות:</strong> מקסום פאנלים בגגות צרים. <strong>חסרונות:</strong> אוורור מופחת, טמפרטורות גבוהות יותר (2-4°C).</span>
+                    </p>
+                </div>
+            </div>
+
+            <h3>
+                <span data-lang="en">Ventilation Spacing (Tropical Requirements)</span>
+                <span data-lang="es">Espaciado de Ventilación (Requisitos Tropicales)</span>
+                <span data-lang="he">מרווחי אוורור (דרישות טרופיות)</span>
+            </h3>
+
+            <div class="info-box">
+                <h4>
+                    <span data-lang="en">Critical: Heat Management in Panama</span>
+                    <span data-lang="es">Crítico: Gestión del Calor en Panamá</span>
+                    <span data-lang="he">קריטי: ניהול חום בפנמה</span>
+                </h4>
+                <p>
+                    <span data-lang="en">Ambient temperatures of 30-38°C mean panel cell temperatures can reach 65-75°C. Every 1°C above 25°C STC costs ~0.35% efficiency loss. Proper spacing is not optional — it directly impacts system revenue.</span>
+                    <span data-lang="es">Temperaturas ambientales de 30-38°C significan que las temperaturas de las celdas pueden alcanzar 65-75°C. Cada 1°C por encima de 25°C STC cuesta ~0.35% de pérdida de eficiencia.</span>
+                    <span data-lang="he">טמפרטורות סביבה של 30-38°C מביאות את טמפרטורת התאים ל-65-75°C. כל מעלה מעל 25°C STC עולה ~0.35% הפסד יעילות.</span>
+                </p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><span data-lang="en">Parameter</span><span data-lang="es">Parámetro</span><span data-lang="he">פרמטר</span></th>
+                        <th><span data-lang="en">Minimum</span><span data-lang="es">Mínimo</span><span data-lang="he">מינימום</span></th>
+                        <th><span data-lang="en">Recommended</span><span data-lang="es">Recomendado</span><span data-lang="he">מומלץ</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span data-lang="en">Panel-to-roof gap</span><span data-lang="es">Espacio panel-techo</span><span data-lang="he">מרווח פאנל-גג</span></td>
+                        <td>100 mm</td>
+                        <td>150-200 mm</td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Row-to-row spacing</span><span data-lang="es">Espacio entre filas</span><span data-lang="he">מרווח שורה-שורה</span></td>
+                        <td>200 mm</td>
+                        <td>300-400 mm</td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Edge setback (wind zone)</span><span data-lang="es">Retiro de bordes (zona de viento)</span><span data-lang="he">נסיגה מקצה (אזור רוח)</span></td>
+                        <td>500 mm</td>
+                        <td>600-800 mm</td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Tilt angle for flat roofs</span><span data-lang="es">Ángulo de inclinación techos planos</span><span data-lang="he">זווית שיפוע לגגות שטוחים</span></td>
+                        <td>5°</td>
+                        <td>8-12°</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION 3: String Sizing -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">String Sizing — Huawei SUN2000 MPPT</span>
+                <span data-lang="es">Dimensionamiento de Strings — Huawei SUN2000 MPPT</span>
+                <span data-lang="he">מימוד סטרינגים — Huawei SUN2000 MPPT</span>
+            </h2>
+            <p>
+                <span data-lang="en">Proper string sizing ensures the inverter operates within its Maximum Power Point Tracking (MPPT) voltage window. In Panama, high temperatures reduce Voc, while cool mornings can push Voc above the standard rating.</span>
+                <span data-lang="es">El dimensionamiento adecuado de strings asegura que el inversor opere dentro de su ventana de voltaje MPPT. En Panamá, las altas temperaturas reducen el Voc.</span>
+                <span data-lang="he">מימוד סטרינגים נכון מבטיח שהממיר פועל בטווח מעקב נקודת הספק מרבי (MPPT). בפנמה, טמפרטורות גבוהות מורידות Voc.</span>
+            </p>
+
+            <h3>
+                <span data-lang="en">Huawei SUN2000 MPPT Voltage Ranges</span>
+                <span data-lang="es">Rangos de Voltaje MPPT del Huawei SUN2000</span>
+                <span data-lang="he">טווחי מתח MPPT של Huawei SUN2000</span>
+            </h3>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><span data-lang="en">Inverter Model</span><span data-lang="es">Modelo</span><span data-lang="he">דגם ממיר</span></th>
+                        <th><span data-lang="en">MPPT Range</span><span data-lang="es">Rango MPPT</span><span data-lang="he">טווח MPPT</span></th>
+                        <th><span data-lang="en">Max Voc</span><span data-lang="es">Voc Máx</span><span data-lang="he">Voc מקסימלי</span></th>
+                        <th><span data-lang="en">MPPTs / Strings</span><span data-lang="es">MPPTs / Strings</span><span data-lang="he">MPPTs / סטרינגים</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>SUN2000-3KTL-L1</td><td>140-600V</td><td>600V</td><td>2 / 2</td></tr>
+                    <tr><td>SUN2000-5KTL-L1</td><td>140-600V</td><td>600V</td><td>2 / 2</td></tr>
+                    <tr><td>SUN2000-8KTL-M1</td><td>160-950V</td><td>1080V</td><td>2 / 4</td></tr>
+                    <tr><td>SUN2000-10KTL-M1</td><td>160-950V</td><td>1080V</td><td>2 / 4</td></tr>
+                    <tr><td>SUN2000-15KTL-M2</td><td>200-1000V</td><td>1100V</td><td>4 / 4</td></tr>
+                    <tr><td>SUN2000-30KTL-M3</td><td>200-1000V</td><td>1100V</td><td>4 / 8</td></tr>
+                    <tr><td>SUN2000-50KTL-M3</td><td>200-1000V</td><td>1100V</td><td>6 / 12</td></tr>
+                    <tr><td>SUN2000-100KTL-M1</td><td>200-1000V</td><td>1100V</td><td>10 / 20</td></tr>
+                </tbody>
+            </table>
+
+            <h3>
+                <span data-lang="en">Temperature Derating at 35°C+</span>
+                <span data-lang="es">Reducción por Temperatura a 35°C+</span>
+                <span data-lang="he">הפחתת ביצועים בטמפרטורה מעל 35°C</span>
+            </h3>
+
+            <div class="warning-box">
+                <h4>
+                    <span data-lang="en">Temperature Derating Calculations</span>
+                    <span data-lang="es">Cálculos de Reducción por Temperatura</span>
+                    <span data-lang="he">חישובי הפחתת טמפרטורה</span>
+                </h4>
+                <p>
+                    <span data-lang="en">For a typical 550W panel (Voc = 49.65V, temp coefficient = -0.28%/°C):<br><br>
+                    <strong>At 35°C ambient (cell temp ~60°C):</strong><br>
+                    Voc_adj = 49.65 × (1 + (-0.0028 × (60 - 25))) = 49.65 × 0.902 = <strong>44.78V</strong><br><br>
+                    <strong>At minimum morning temp 20°C (cell temp ~35°C):</strong><br>
+                    Voc_adj = 49.65 × (1 + (-0.0028 × (35 - 25))) = 49.65 × 0.972 = <strong>48.26V</strong><br><br>
+                    Always calculate string voltage at <u>both extremes</u> — hot afternoon minimum and cool morning maximum — to ensure MPPT range compliance year-round.</span>
+                    <span data-lang="es">Para un panel típico de 550W (Voc = 49.65V, coef. temp = -0.28%/°C):<br><br>
+                    <strong>A 35°C ambiente (temp celda ~60°C):</strong> Voc_adj = <strong>44.78V</strong><br>
+                    <strong>A 20°C mínimo mañana (temp celda ~35°C):</strong> Voc_adj = <strong>48.26V</strong><br><br>
+                    Siempre calcule el voltaje del string en ambos extremos.</span>
+                    <span data-lang="he">לפאנל טיפוסי 550W (Voc = 49.65V, מקדם טמפ' = -0.28%/°C):<br><br>
+                    <strong>ב-35°C סביבה (טמפ' תא ~60°C):</strong> Voc_adj = <strong>44.78V</strong><br>
+                    <strong>ב-20°C בוקר (טמפ' תא ~35°C):</strong> Voc_adj = <strong>48.26V</strong><br><br>
+                    תמיד לחשב מתח סטרינג בשני הקצוות.</span>
+                </p>
+            </div>
+
+            <h3>
+                <span data-lang="en">String Sizing Rules of Thumb</span>
+                <span data-lang="es">Reglas Generales para Dimensionamiento</span>
+                <span data-lang="he">כללי אצבע למימוד סטרינגים</span>
+            </h3>
+            <ul>
+                <li><span data-lang="en">Calculate Voc at coldest expected cell temperature (morning) — must stay <strong>below</strong> inverter Max Voc</span><span data-lang="es">Calcular Voc a la temperatura de celda más fría — debe estar por debajo del Voc máximo del inversor</span><span data-lang="he">חישוב Voc בטמפרטורת תא הנמוכה ביותר — חייב להישאר מתחת ל-Voc מקסימלי של הממיר</span></li>
+                <li><span data-lang="en">Calculate Vmpp at hottest cell temperature (afternoon) — must stay <strong>above</strong> MPPT minimum voltage</span><span data-lang="es">Calcular Vmpp a la temperatura de celda más alta — debe estar por encima del voltaje mínimo MPPT</span><span data-lang="he">חישוב Vmpp בטמפרטורת תא הגבוהה ביותר — חייב להישאר מעל מתח מינימום MPPT</span></li>
+                <li><span data-lang="en">For 600V systems: typically 10-12 panels per string (550W panels)</span><span data-lang="es">Para sistemas de 600V: típicamente 10-12 paneles por string</span><span data-lang="he">למערכות 600V: בדרך כלל 10-12 פאנלים לסטרינג</span></li>
+                <li><span data-lang="en">For 1000V systems: typically 18-22 panels per string (550W panels)</span><span data-lang="es">Para sistemas de 1000V: típicamente 18-22 paneles por string</span><span data-lang="he">למערכות 1000V: בדרך כלל 18-22 פאנלים לסטרינג</span></li>
+                <li><span data-lang="en">Never mix panel orientations (portrait/landscape) within the same string</span><span data-lang="es">Nunca mezclar orientaciones de paneles dentro del mismo string</span><span data-lang="he">לעולם לא לערבב כיווני פאנלים באותו סטרינג</span></li>
+                <li><span data-lang="en">Apply 1.05-1.10 DC/AC ratio for optimal inverter loading in Panama</span><span data-lang="es">Aplicar relación DC/AC de 1.05-1.10 para carga óptima del inversor</span><span data-lang="he">יחס DC/AC של 1.05-1.10 לעומס ממיר אופטימלי בפנמה</span></li>
+            </ul>
+        </div>
+
+        <!-- SECTION 4: Simulation -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">Energy Simulation — Azuero Peninsula</span>
+                <span data-lang="es">Simulación de Energía — Península de Azuero</span>
+                <span data-lang="he">סימולציית אנרגיה — חצי האי אסוארו</span>
+            </h2>
+            <p>
+                <span data-lang="en">Use PVsyst or Helioscope to generate bankable energy yield simulations. The Azuero Peninsula has excellent solar resources but requires careful loss modeling for tropical conditions.</span>
+                <span data-lang="es">Usar PVsyst o Helioscope para generar simulaciones bancables de rendimiento energético. La Península de Azuero tiene excelentes recursos solares.</span>
+                <span data-lang="he">שימוש ב-PVsyst או Helioscope ליצירת סימולציות תשואה. לחצי האי אסוארו משאב סולארי מצוין.</span>
+            </p>
+
+            <div class="info-box green">
+                <h4>
+                    <span data-lang="en">Azuero Peninsula Solar Resource</span>
+                    <span data-lang="es">Recurso Solar de la Península de Azuero</span>
+                    <span data-lang="he">משאב סולארי באסוארו</span>
+                </h4>
+                <p>
+                    <span data-lang="en"><strong>Peak Sun Hours (PSH):</strong> 5.3 hours/day average (annual)<br>
+                    <strong>Global Horizontal Irradiance (GHI):</strong> 1,800-1,950 kWh/m²/year<br>
+                    <strong>Performance Ratio (PR):</strong> 78-82% (accounts for temperature, soiling, wiring, mismatch)<br>
+                    <strong>Specific Yield:</strong> 1,400-1,600 kWh/kWp/year<br>
+                    <strong>Degradation:</strong> 0.5%/year (Tier 1 panels)</span>
+                    <span data-lang="es"><strong>Horas Solares Pico:</strong> 5.3 horas/día promedio<br>
+                    <strong>Irradiancia:</strong> 1,800-1,950 kWh/m²/año<br>
+                    <strong>Ratio de Rendimiento:</strong> 78-82%<br>
+                    <strong>Rendimiento Específico:</strong> 1,400-1,600 kWh/kWp/año</span>
+                    <span data-lang="he"><strong>שעות שמש שיא:</strong> 5.3 שעות/יום ממוצע<br>
+                    <strong>הקרנה:</strong> 1,800-1,950 kWh/m²/שנה<br>
+                    <strong>יחס ביצועים:</strong> 78-82%<br>
+                    <strong>תשואה ספציפית:</strong> 1,400-1,600 kWh/kWp/שנה</span>
+                </p>
+            </div>
+
+            <h3>
+                <span data-lang="en">Loss Factors to Model</span>
+                <span data-lang="es">Factores de Pérdida a Modelar</span>
+                <span data-lang="he">גורמי הפסד למידול</span>
+            </h3>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><span data-lang="en">Loss Category</span><span data-lang="es">Categoría</span><span data-lang="he">קטגוריה</span></th>
+                        <th><span data-lang="en">Typical %</span><span data-lang="es">% Típico</span><span data-lang="he">% טיפוסי</span></th>
+                        <th><span data-lang="en">Panama Notes</span><span data-lang="es">Notas Panamá</span><span data-lang="he">הערות לפנמה</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span data-lang="en">Temperature losses</span><span data-lang="es">Pérdidas por temperatura</span><span data-lang="he">הפסדי טמפרטורה</span></td>
+                        <td>8-12%</td>
+                        <td><span data-lang="en">Higher than temperate — use NOCT + 15°C</span><span data-lang="es">Mayor que templado</span><span data-lang="he">גבוה מאקלים ממוזג</span></td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Soiling losses</span><span data-lang="es">Pérdidas por suciedad</span><span data-lang="he">הפסדי לכלוך</span></td>
+                        <td>2-4%</td>
+                        <td><span data-lang="en">Rainy season self-cleans; dry season dust</span><span data-lang="es">Temporada lluviosa auto-limpia</span><span data-lang="he">גשם מנקה; אבק בעונה יבשה</span></td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Wiring / DC losses</span><span data-lang="es">Pérdidas de cableado</span><span data-lang="he">הפסדי חיווט</span></td>
+                        <td>1-2%</td>
+                        <td><span data-lang="en">Minimize cable runs</span><span data-lang="es">Minimizar tendidos</span><span data-lang="he">מזעור אורכי כבלים</span></td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Inverter efficiency</span><span data-lang="es">Eficiencia del inversor</span><span data-lang="he">יעילות ממיר</span></td>
+                        <td>2-3%</td>
+                        <td><span data-lang="en">Huawei SUN2000: 98.6% peak</span><span data-lang="es">Huawei SUN2000: 98.6% pico</span><span data-lang="he">Huawei SUN2000: 98.6% שיא</span></td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Mismatch losses</span><span data-lang="es">Pérdidas por desajuste</span><span data-lang="he">הפסדי אי-התאמה</span></td>
+                        <td>1-2%</td>
+                        <td><span data-lang="en">Reduced with half-cut cell panels</span><span data-lang="es">Reducido con paneles half-cut</span><span data-lang="he">מופחת עם פאנלי half-cut</span></td>
+                    </tr>
+                    <tr>
+                        <td><span data-lang="en">Shading</span><span data-lang="es">Sombras</span><span data-lang="he">הצללה</span></td>
+                        <td>0-5%</td>
+                        <td><span data-lang="en">Site-specific; model in Helioscope</span><span data-lang="es">Específico del sitio</span><span data-lang="he">ספציפי לאתר</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION 5: Design Deliverables -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">Design Deliverables</span>
+                <span data-lang="es">Entregables del Diseño</span>
+                <span data-lang="he">תוצרי תכנון</span>
+            </h2>
+            <p>
+                <span data-lang="en">Every system design must produce the following deliverables before proceeding to the proposal stage. These documents serve both the client presentation and ASEP regulatory submission.</span>
+                <span data-lang="es">Cada diseño de sistema debe producir los siguientes entregables antes de proceder a la etapa de propuesta.</span>
+                <span data-lang="he">כל תכנון מערכת חייב לייצר את התוצרים הבאים לפני המעבר לשלב ההצעה.</span>
+            </p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">1. Panel Layout Drawing</span>
+                        <span data-lang="es">1. Plano de Distribución</span>
+                        <span data-lang="he">1. תרשים פריסת פאנלים</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Aerial view showing panel placement, orientation, spacing, and string assignments. Include dimensions, setbacks, and obstruction zones. Generated from Helioscope or AutoCAD. Must show north arrow and scale.</span>
+                        <span data-lang="es">Vista aérea mostrando ubicación de paneles, orientación, espaciado y asignación de strings.</span>
+                        <span data-lang="he">מבט עילי המציג מיקום פאנלים, כיוון, מרווחים ושיוך סטרינגים.</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">2. Single-Line Diagram (SLD)</span>
+                        <span data-lang="es">2. Diagrama Unifilar (SLD)</span>
+                        <span data-lang="he">2. תרשים חד-קווי (SLD)</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Electrical schematic showing panels → strings → inverter → AC distribution → meter → grid. Includes all protection devices, wire gauges, and breaker ratings. Required by ASEP for grid connection approval. See Step 5 for details.</span>
+                        <span data-lang="es">Esquema eléctrico que muestra paneles → strings → inversor → distribución AC → medidor → red.</span>
+                        <span data-lang="he">סכמה חשמלית: פאנלים → סטרינגים → ממיר → לוח AC → מונה → רשת. נדרש ע"י ASEP.</span>
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>
+                        <span data-lang="en">3. Bill of Materials (BOM)</span>
+                        <span data-lang="es">3. Lista de Materiales (BOM)</span>
+                        <span data-lang="he">3. רשימת חומרים (BOM)</span>
+                    </h4>
+                    <p>
+                        <span data-lang="en">Complete itemized list: panels (model, qty, wattage), inverter(s), mounting structure (rails, clamps, bolts), cabling (DC/AC with gauge), protection devices (DC disconnect, AC breaker, surge protectors), grounding materials, monitoring equipment.</span>
+                        <span data-lang="es">Lista completa detallada: paneles, inversores, estructura de montaje, cableado, dispositivos de protección, materiales de puesta a tierra, equipos de monitoreo.</span>
+                        <span data-lang="he">רשימה מפורטת: פאנלים, ממירים, מבנה הרכבה, כבלים, התקני הגנה, הארקה, ניטור.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: Standard Packages -->
+        <div class="section">
+            <h2>
+                <span data-lang="en">Standard System Packages</span>
+                <span data-lang="es">Paquetes Estándar de Sistemas</span>
+                <span data-lang="he">חבילות מערכת סטנדרטיות</span>
+            </h2>
+            <p>
+                <span data-lang="en">Solaris Energy offers standardized packages that simplify the sales process while maintaining design flexibility. Each package is pre-engineered for Panama's conditions with Huawei inverters and Tier 1 panels.</span>
+                <span data-lang="es">Solaris Energy ofrece paquetes estandarizados que simplifican el proceso de venta manteniendo flexibilidad de diseño.</span>
+                <span data-lang="he">סולאריס אנרגיה מציעה חבילות סטנדרטיות שמפשטות את תהליך המכירה תוך שמירה על גמישות תכנון.</span>
+            </p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><span data-lang="en">Package</span><span data-lang="es">Paquete</span><span data-lang="he">חבילה</span></th>
+                        <th><span data-lang="en">Panels</span><span data-lang="es">Paneles</span><span data-lang="he">פאנלים</span></th>
+                        <th><span data-lang="en">Inverter</span><span data-lang="es">Inversor</span><span data-lang="he">ממיר</span></th>
+                        <th><span data-lang="en">Annual Yield</span><span data-lang="es">Producción Anual</span><span data-lang="he">תשואה שנתית</span></th>
+                        <th><span data-lang="en">Best For</span><span data-lang="es">Ideal Para</span><span data-lang="he">מתאים ל</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>3 kWp</strong></td>
+                        <td>6 × 550W</td>
+                        <td>SUN2000-3KTL</td>
+                        <td>4,200-4,800 kWh</td>
+                        <td><span data-lang="en">Small apartment</span><span data-lang="es">Apartamento pequeño</span><span data-lang="he">דירה קטנה</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5 kWp</strong></td>
+                        <td>9 × 550W</td>
+                        <td>SUN2000-5KTL</td>
+                        <td>7,000-8,000 kWh</td>
+                        <td><span data-lang="en">Average home</span><span data-lang="es">Casa promedio</span><span data-lang="he">בית ממוצע</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>8 kWp</strong></td>
+                        <td>15 × 550W</td>
+                        <td>SUN2000-8KTL</td>
+                        <td>11,200-12,800 kWh</td>
+                        <td><span data-lang="en">Large home / AC-heavy</span><span data-lang="es">Casa grande / mucho AC</span><span data-lang="he">בית גדול / מזגנים</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>10 kWp</strong></td>
+                        <td>18 × 550W</td>
+                        <td>SUN2000-10KTL</td>
+                        <td>14,000-16,000 kWh</td>
+                        <td><span data-lang="en">Premium home / pool</span><span data-lang="es">Casa premium / piscina</span><span data-lang="he">בית פרימיום / בריכה</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>15 kWp</strong></td>
+                        <td>27 × 550W</td>
+                        <td>SUN2000-15KTL</td>
+                        <td>21,000-24,000 kWh</td>
+                        <td><span data-lang="en">Small business</span><span data-lang="es">Pequeño negocio</span><span data-lang="he">עסק קטן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>30 kWp</strong></td>
+                        <td>55 × 550W</td>
+                        <td>SUN2000-30KTL</td>
+                        <td>42,000-48,000 kWh</td>
+                        <td><span data-lang="en">Medium business</span><span data-lang="es">Negocio mediano</span><span data-lang="he">עסק בינוני</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>50 kWp</strong></td>
+                        <td>91 × 550W</td>
+                        <td>SUN2000-50KTL</td>
+                        <td>70,000-80,000 kWh</td>
+                        <td><span data-lang="en">Commercial</span><span data-lang="es">Comercial</span><span data-lang="he">מסחרי</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>100 kWp</strong></td>
+                        <td>182 × 550W</td>
+                        <td>SUN2000-100KTL</td>
+                        <td>140,000-160,000 kWh</td>
+                        <td><span data-lang="en">Industrial / large commercial</span><span data-lang="es">Industrial / gran comercial</span><span data-lang="he">תעשייתי / מסחרי גדול</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <h4>
+                    <span data-lang="en">Custom Sizing</span>
+                    <span data-lang="es">Dimensionamiento Personalizado</span>
+                    <span data-lang="he">מימוד מותאם אישית</span>
+                </h4>
+                <p>
+                    <span data-lang="en">Standard packages serve as starting points. Every installation is custom-designed based on actual roof dimensions, consumption patterns, and budget. Packages between standard sizes are common (e.g., 12 kWp, 22 kWp, 75 kWp).</span>
+                    <span data-lang="es">Los paquetes estándar sirven como punto de partida. Cada instalación se diseña según dimensiones reales del techo, patrones de consumo y presupuesto.</span>
+                    <span data-lang="he">חבילות סטנדרטיות משמשות כנקודת התחלה. כל התקנה מתוכננת לפי מידות גג, דפוסי צריכה ותקציב.</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Step Navigation -->
+        <nav class="step-nav">
+            <a href="crm-step3-site-survey.html" class="prev">
+                <span data-lang="en">&#8592; Step 3: Site Survey</span>
+                <span data-lang="es">&#8592; Paso 3: Inspección</span>
+                <span data-lang="he">&#8592; שלב 3: סקר אתר</span>
+            </a>
+            <a href="crm-step5-sld.html" class="next">
+                <span data-lang="en">Step 5: SLD &#8594;</span>
+                <span data-lang="es">Paso 5: Diagrama &#8594;</span>
+                <span data-lang="he">שלב 5: SLD &#8594;</span>
+            </a>
+        </nav>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Solaris Energy Panama. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => {
+                const tag = el.tagName.toLowerCase();
+                if (tag === 'span' || tag === 'a') el.style.display = 'inline';
+                else if (tag === 'td' || tag === 'th') el.style.display = 'table-cell';
+                else el.style.display = 'block';
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+            document.body.removeAttribute('lang-he');
+            if (lang === 'he') document.body.setAttribute('lang-he', '');
+        }
+    </script>
+</body>
+</html>

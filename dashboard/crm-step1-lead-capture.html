@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Lead Capture — Solaris CRM</title>
+    <meta name="description" content="Multi-channel lead capture strategy for Panama solar. Facebook ads, WhatsApp, referrals, qualification and scoring.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+            --hot: #E53935;
+            --warm: #FF9800;
+            --cold: #2196F3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            line-height: 1.6;
+        }
+
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== NAV ===== */
+        .top-nav {
+            background: var(--green);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .top-nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            padding: 100px 40px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            color: white;
+            padding: 8px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            margin-bottom: 24px;
+        }
+
+        .step-badge .num {
+            background: white;
+            color: #1565C0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 52px);
+            color: white;
+            margin-bottom: 16px;
+            line-height: 1.15;
+        }
+
+        .hero h1 span { color: var(--gold); }
+
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            max-width: 640px;
+        }
+
+        /* ===== SECTION STYLES ===== */
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .content-section.alt { background: var(--sand); max-width: 100%; }
+        .content-section.alt .inner { max-width: 1100px; margin: 0 auto; }
+
+        .content-section.dark {
+            background: var(--green);
+            max-width: 100%;
+            color: var(--pearl);
+        }
+        .content-section.dark .inner { max-width: 1100px; margin: 0 auto; }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .content-section.dark .section-title { color: var(--pearl); }
+
+        .section-subtitle {
+            color: var(--ash);
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        .content-section.dark .section-subtitle { color: rgba(255,255,255,0.6); }
+
+        /* ===== LEAD SOURCES ===== */
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .source-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--mist);
+            transition: transform 0.3s;
+        }
+
+        .source-card:hover { transform: translateY(-3px); }
+
+        .source-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .source-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .source-card p {
+            color: var(--ash);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .source-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate);
+            background: var(--sand);
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+        }
+
+        /* ===== FORM FIELDS TABLE ===== */
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .form-table th {
+            background: var(--green);
+            color: var(--pearl);
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: 0.05em;
+        }
+
+        [dir="rtl"] .form-table th { text-align: right; }
+
+        .form-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--mist);
+            font-size: 14px;
+        }
+
+        .form-table tr:last-child td { border-bottom: none; }
+        .form-table tr:hover td { background: var(--cloud); }
+
+        .required-badge {
+            display: inline-block;
+            background: var(--hot);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .optional-badge {
+            display: inline-block;
+            background: var(--mist);
+            color: var(--slate);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        /* ===== QUALIFICATION ===== */
+        .qual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .qual-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-card);
+            padding: 24px;
+        }
+
+        .qual-card h4 {
+            color: var(--gold);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .qual-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .qual-card li {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .qual-card li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .qual-card.disqualify li::before {
+            content: '✗';
+            color: var(--hot);
+        }
+
+        /* ===== WHATSAPP TEMPLATES ===== */
+        .wa-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .wa-card {
+            background: white;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .wa-header {
+            background: #25D366;
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wa-body {
+            padding: 20px;
+            font-size: 14px;
+            color: var(--charcoal);
+            line-height: 1.7;
+            background: #ECE5DD;
+        }
+
+        .wa-bubble {
+            background: #DCF8C6;
+            padding: 12px 16px;
+            border-radius: 8px 8px 8px 0;
+            position: relative;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .wa-bubble .wa-time {
+            text-align: right;
+            font-size: 11px;
+            color: var(--ash);
+            margin-top: 4px;
+        }
+
+        /* ===== LEAD SCORING ===== */
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .scoring-grid { grid-template-columns: 1fr; }
+        }
+
+        .score-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+            border-top: 4px solid;
+            text-align: center;
+        }
+
+        .score-card.hot { border-top-color: var(--hot); }
+        .score-card.warm { border-top-color: var(--warm); }
+        .score-card.cold { border-top-color: var(--cold); }
+
+        .score-temp {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .score-card.hot .score-temp { color: var(--hot); }
+        .score-card.warm .score-temp { color: var(--warm); }
+        .score-card.cold .score-temp { color: var(--cold); }
+
+        .score-range {
+            font-size: 13px;
+            color: var(--ash);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .score-card h4 {
+            color: var(--green);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .score-criteria {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+        }
+
+        [dir="rtl"] .score-criteria { text-align: right; }
+
+        .score-criteria li {
+            padding: 4px 0;
+            font-size: 13px;
+            color: var(--slate);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .score-criteria li::before {
+            content: '•';
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .score-action {
+            margin-top: 16px;
+            padding: 10px 16px;
+            border-radius: var(--radius-btn);
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .score-card.hot .score-action { background: rgba(229,57,53,0.1); color: var(--hot); }
+        .score-card.warm .score-action { background: rgba(255,152,0,0.1); color: var(--warm); }
+        .score-card.cold .score-action { background: rgba(33,150,243,0.1); color: var(--cold); }
+
+        /* ===== CRM FLOW ===== */
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .flow-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .flow-step p {
+            font-size: 14px;
+            color: var(--slate);
+        }
+
+        .flow-step strong {
+            color: var(--green);
+        }
+
+        .flow-arrow-down {
+            text-align: center;
+            color: var(--mist);
+            font-size: 24px;
+        }
+
+        /* ===== STEP NAV ===== */
+        .step-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px;
+            background: var(--sand);
+            border-top: 1px solid var(--mist);
+        }
+
+        .step-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--green);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            transition: background 0.3s;
+        }
+
+        .step-nav a:hover {
+            background: rgba(11,61,46,0.06);
+        }
+
+        .step-nav .next {
+            background: var(--green);
+            color: var(--pearl);
+        }
+
+        .step-nav .next:hover {
+            background: var(--green-canopy);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--charcoal);
+            padding: 40px;
+            text-align: center;
+            color: var(--ash);
+            font-size: 13px;
+        }
+
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero { padding: 80px 20px 60px; }
+            .top-nav { padding: 12px 20px; }
+            .content-section { padding: 60px 20px; }
+            .content-section.alt, .content-section.dark { padding: 60px 20px; }
+            .sources-grid { grid-template-columns: 1fr; }
+            .wa-templates { grid-template-columns: 1fr; }
+            .step-nav { padding: 24px 20px; flex-direction: column; gap: 12px; }
+            .form-table { font-size: 13px; }
+            .form-table th, .form-table td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</a>
+        <span class="sep">›</span>
+        <a href="crm-value-chain.html" data-en="CRM Value Chain" data-es="Cadena de Valor" data-he="שרשרת ערך">CRM Value Chain</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 1: Lead Capture" data-es="Paso 1: Captura de Leads" data-he="שלב 1: לכידת לידים">Step 1: Lead Capture</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="step-badge">
+            <span class="num">1</span>
+            <span data-en="ACQUIRE PHASE" data-es="FASE DE ADQUISICIÓN" data-he="שלב רכישה">ACQUIRE PHASE</span>
+        </div>
+        <h1>
+            <span data-en="Lead " data-es="Captura de " data-he="לכידת ">Lead </span>
+            <span data-en="Capture" data-es="Leads" data-he="לידים">Capture</span>
+        </h1>
+        <p data-en="Multi-channel lead acquisition optimized for the Panama solar market. From first touch to qualified opportunity in under 48 hours."
+           data-es="Adquisición multicanal optimizada para el mercado solar de Panamá. Del primer contacto a oportunidad calificada en menos de 48 horas."
+           data-he="רכישת לידים רב-ערוצית מותאמת לשוק הסולארי בפנמה. ממגע ראשון להזדמנות מוסמכת תוך פחות מ-48 שעות.">
+            Multi-channel lead acquisition optimized for the Panama solar market. From first touch to qualified opportunity in under 48 hours.
+        </p>
+    </section>
+
+    <!-- Lead Sources -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="Lead Sources" data-es="Fuentes de Leads" data-he="מקורות לידים">Lead Sources</h2>
+        <p class="section-subtitle" data-en="Six primary channels driving qualified solar leads in the Azuero Peninsula and Panama City"
+           data-es="Seis canales principales generando leads calificados en la Península de Azuero y Ciudad de Panamá"
+           data-he="שישה ערוצים עיקריים שמניעים לידים סולאריים מוסמכים בחצי האי אזוארו ובעיר פנמה">
+            Six primary channels driving qualified solar leads in the Azuero Peninsula and Panama City
+        </p>
+
+        <div class="sources-grid">
+            <!-- Facebook/Instagram -->
+            <div class="source-card">
+                <span class="source-icon">📱</span>
+                <h3 data-en="Facebook & Instagram Ads" data-es="Anuncios Facebook e Instagram" data-he="פרסום פייסבוק ואינסטגרם">Facebook & Instagram Ads</h3>
+                <p data-en="Targeted campaigns in Herrera, Los Santos, Veraguas, and Panama City. Spanish-language creative showcasing local installations and savings testimonials."
+                   data-es="Campañas segmentadas en Herrera, Los Santos, Veraguas y Ciudad de Panamá. Creativos en español con instalaciones locales y testimonios de ahorro."
+                   data-he="קמפיינים ממוקדים בהררה, לוס סנטוס, וראגואס ועיר פנמה. קריאייטיב בספרדית עם התקנות מקומיות ועדויות חיסכון.">
+                    Targeted campaigns in Herrera, Los Santos, Veraguas, and Panama City. Spanish creative with local installations and savings testimonials.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: $8-15/lead" data-es="Costo: $8-15/lead" data-he="עלות: $8-15/ליד">Cost: $8-15/lead</span>
+                    <span class="meta-tag" data-en="Volume: High" data-es="Volumen: Alto" data-he="נפח: גבוה">Volume: High</span>
+                </div>
+            </div>
+
+            <!-- Google Business -->
+            <div class="source-card">
+                <span class="source-icon">🔍</span>
+                <h3 data-en="Google Business Profile" data-es="Perfil de Google Business" data-he="פרופיל Google Business">Google Business Profile</h3>
+                <p data-en="Optimized listing for 'paneles solares Panama', 'energía solar Chitré'. Reviews, photos of installations, Q&A. Maps visibility for local searches."
+                   data-es="Listado optimizado para 'paneles solares Panamá', 'energía solar Chitré'. Reseñas, fotos, Q&A. Visibilidad en Maps para búsquedas locales."
+                   data-he="רישום מותאם עבור 'פאנלים סולאריים פנמה'. ביקורות, תמונות התקנות. נראות במפות לחיפושים מקומיים.">
+                    Optimized listing for 'paneles solares Panama'. Reviews, installation photos, Q&A. Maps visibility for local searches.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: Free (organic)" data-es="Costo: Gratis (orgánico)" data-he="עלות: חינם (אורגני)">Cost: Free (organic)</span>
+                    <span class="meta-tag" data-en="Quality: Very High" data-es="Calidad: Muy Alta" data-he="איכות: גבוהה מאוד">Quality: Very High</span>
+                </div>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="source-card">
+                <span class="source-icon">💬</span>
+                <h3 data-en="WhatsApp Business" data-es="WhatsApp Business" data-he="WhatsApp Business">WhatsApp Business</h3>
+                <p data-en="Direct inquiry channel — Panama's preferred communication method. WhatsApp Business API with automated greeting and quick replies. Click-to-WhatsApp ads integration."
+                   data-es="Canal de consulta directa — el método de comunicación preferido en Panamá. API de WhatsApp Business con saludo automático y respuestas rápidas."
+                   data-he="ערוץ פנייה ישיר — אמצעי התקשורת המועדף בפנמה. WhatsApp Business API עם ברכה אוטומטית ותגובות מהירות.">
+                    Direct inquiry channel — Panama's preferred communication. WhatsApp Business API with auto greeting and quick replies.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: Free" data-es="Costo: Gratis" data-he="עלות: חינם">Cost: Free</span>
+                    <span class="meta-tag" data-en="Response: Instant" data-es="Respuesta: Instantánea" data-he="תגובה: מיידית">Response: Instant</span>
+                </div>
+            </div>
+
+            <!-- Referrals -->
+            <div class="source-card">
+                <span class="source-icon">🤝</span>
+                <h3 data-en="Customer Referrals" data-es="Referidos de Clientes" data-he="הפניות לקוחות">Customer Referrals</h3>
+                <p data-en="Existing customers recommend Solaris to neighbors and friends. Incentive: $200 credit on next maintenance or cash bonus per closed referral."
+                   data-es="Clientes existentes recomiendan Solaris a vecinos y amigos. Incentivo: $200 en crédito de mantenimiento o bono por referido cerrado."
+                   data-he="לקוחות קיימים ממליצים על סולאריס לשכנים וחברים. תמריץ: $200 זיכוי תחזוקה או בונוס מזומן.">
+                    Existing customers recommend Solaris. Incentive: $200 credit on maintenance or cash bonus per closed referral.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: $200/referral" data-es="Costo: $200/referido" data-he="עלות: $200/הפנייה">Cost: $200/referral</span>
+                    <span class="meta-tag" data-en="Conv. Rate: 40%+" data-es="Tasa Conv.: 40%+" data-he="המרה: 40%+">Conv. Rate: 40%+</span>
+                </div>
+            </div>
+
+            <!-- Events -->
+            <div class="source-card">
+                <span class="source-icon">🎪</span>
+                <h3 data-en="Events & Fairs" data-es="Eventos y Ferias" data-he="אירועים ותערוכות">Events & Fairs</h3>
+                <p data-en="Local ferias (Azuero carnival, agricultural fairs), home improvement expos, chamber of commerce events. Display booth with live demo panel."
+                   data-es="Ferias locales (carnaval de Azuero, ferias agrícolas), expos de mejoras del hogar, eventos de cámara de comercio. Stand con panel de demostración."
+                   data-he="ירידים מקומיים (קרנבל אזוארו, ירידי חקלאות), תערוכות שיפוץ, אירועי לשכת מסחר. דוכן עם פאנל הדגמה.">
+                    Local ferias, home improvement expos, chamber of commerce events. Display booth with live demo panel.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: $500-1K/event" data-es="Costo: $500-1K/evento" data-he="עלות: $500-1K/אירוע">Cost: $500-1K/event</span>
+                    <span class="meta-tag" data-en="Leads: 15-30/event" data-es="Leads: 15-30/evento" data-he="לידים: 15-30/אירוע">Leads: 15-30/event</span>
+                </div>
+            </div>
+
+            <!-- Website -->
+            <div class="source-card">
+                <span class="source-icon">🌐</span>
+                <h3 data-en="Website & SEO" data-es="Sitio Web y SEO" data-he="אתר אינטרנט ו-SEO">Website & SEO</h3>
+                <p data-en="solarispanama.com — Solar calculator, savings estimator, blog content targeting 'cuánto cuesta paneles solares en Panamá'. Organic traffic growth strategy."
+                   data-es="solarispanama.com — Calculadora solar, estimador de ahorro, blog con contenido SEO para 'cuánto cuesta paneles solares en Panamá'."
+                   data-he="solarispanama.com — מחשבון סולארי, אומדן חיסכון, בלוג עם תוכן SEO ממוקד.">
+                    solarispanama.com — Solar calculator, savings estimator, SEO blog content. Organic traffic growth.
+                </p>
+                <div class="source-meta">
+                    <span class="meta-tag" data-en="Cost: $50/mo hosting" data-es="Costo: $50/mes hosting" data-he="עלות: $50/חודש אחסון">Cost: $50/mo hosting</span>
+                    <span class="meta-tag" data-en="Growth: Long-term" data-es="Crecimiento: Largo plazo" data-he="צמיחה: ארוך טווח">Growth: Long-term</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Form Fields -->
+    <section class="content-section alt">
+        <div class="inner">
+            <h2 class="section-title" data-en="Lead Capture Form Fields" data-es="Campos del Formulario de Captura" data-he="שדות טופס לכידת ליד">Lead Capture Form Fields</h2>
+            <p class="section-subtitle" data-en="Information collected at first contact — keep it short to maximize conversion"
+               data-es="Información recopilada en el primer contacto — breve para maximizar conversión"
+               data-he="מידע שנאסף במגע ראשון — קצר למקסום המרה">
+                Information collected at first contact — keep it short to maximize conversion
+            </p>
+
+            <table class="form-table">
+                <thead>
+                    <tr>
+                        <th data-en="Field" data-es="Campo" data-he="שדה">Field</th>
+                        <th data-en="Type" data-es="Tipo" data-he="סוג">Type</th>
+                        <th data-en="Required" data-es="Requerido" data-he="חובה">Required</th>
+                        <th data-en="Notes" data-es="Notas" data-he="הערות">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong data-en="Full Name" data-es="Nombre Completo" data-he="שם מלא">Full Name</strong></td>
+                        <td>Text</td>
+                        <td><span class="required-badge">Required</span></td>
+                        <td data-en="First and last name" data-es="Nombre y apellido" data-he="שם פרטי ומשפחה">First and last name</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Phone (WhatsApp)" data-es="Teléfono (WhatsApp)" data-he="טלפון (WhatsApp)">Phone (WhatsApp)</strong></td>
+                        <td>Tel</td>
+                        <td><span class="required-badge">Required</span></td>
+                        <td data-en="Primary contact method in Panama" data-es="Método de contacto principal en Panamá" data-he="אמצעי תקשורת ראשי בפנמה">Primary contact method</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>Email</td>
+                        <td><span class="optional-badge">Optional</span></td>
+                        <td data-en="For proposals and documentation" data-es="Para propuestas y documentación" data-he="להצעות ותיעוד">For proposals and docs</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Location / City" data-es="Ubicación / Ciudad" data-he="מיקום / עיר">Location / City</strong></td>
+                        <td>Dropdown</td>
+                        <td><span class="required-badge">Required</span></td>
+                        <td data-en="Chitré, Las Tablas, Santiago, Panama City, Other" data-es="Chitré, Las Tablas, Santiago, Ciudad de Panamá, Otro" data-he="צ'יטרה, לאס טבלאס, סנטיאגו, פנמה סיטי, אחר">Chitré, Las Tablas, Santiago, Panama City, Other</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Roof Type" data-es="Tipo de Techo" data-he="סוג גג">Roof Type</strong></td>
+                        <td>Dropdown</td>
+                        <td><span class="optional-badge">Optional</span></td>
+                        <td data-en="Metal / Concrete / Tile / Don't know" data-es="Metal / Concreto / Teja / No sé" data-he="מתכת / בטון / רעפים / לא יודע">Metal / Concrete / Tile / Don't know</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Monthly Electric Bill" data-es="Factura Mensual de Luz" data-he="חשבון חשמל חודשי">Monthly Electric Bill</strong></td>
+                        <td>Dropdown</td>
+                        <td><span class="required-badge">Required</span></td>
+                        <td data-en="<$100 / $100-200 / $200-500 / $500+ / Don't know" data-es="<$100 / $100-200 / $200-500 / $500+ / No sé" data-he="<$100 / $100-200 / $200-500 / $500+ / לא יודע">&lt;$100 / $100-200 / $200-500 / $500+ / Don't know</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Qualification Criteria -->
+    <section class="content-section dark">
+        <div class="inner">
+            <h2 class="section-title" data-en="Qualification Criteria" data-es="Criterios de Calificación" data-he="קריטריוני סיווג">Qualification Criteria</h2>
+            <p class="section-subtitle" data-en="Quick-qualify leads within 5 minutes of first contact"
+               data-es="Califique leads en 5 minutos desde el primer contacto"
+               data-he="סיווג מהיר של לידים תוך 5 דקות ממגע ראשון">
+                Quick-qualify leads within 5 minutes of first contact
+            </p>
+
+            <div class="qual-grid">
+                <div class="qual-card">
+                    <h4 data-en="Must Have (Qualify)" data-es="Debe Tener (Califica)" data-he="חובה (עובר)">Must Have (Qualify)</h4>
+                    <ul>
+                        <li data-en="Monthly bill > $100/month" data-es="Factura mensual > $100/mes" data-he="חשבון חודשי > $100">Monthly bill > $100/month</li>
+                        <li data-en="Owns the property (or long-term lease)" data-es="Dueño de la propiedad (o contrato largo)" data-he="בעלים על הנכס (או שכירות ארוכה)">Owns property (or long-term lease)</li>
+                        <li data-en="No major shading issues (>80% sun)" data-es="Sin problemas de sombra (>80% sol)" data-he="ללא הצללה משמעותית (>80% שמש)">No major shading (>80% sun exposure)</li>
+                        <li data-en="Roof in acceptable condition" data-es="Techo en condición aceptable" data-he="גג במצב תקין">Roof in acceptable condition</li>
+                        <li data-en="ENSA service active" data-es="Servicio ENSA activo" data-he="שירות ENSA פעיל">ENSA service active</li>
+                    </ul>
+                </div>
+
+                <div class="qual-card">
+                    <h4 data-en="Nice to Have (Priority)" data-es="Deseable (Prioridad)" data-he="רצוי (עדיפות)">Nice to Have (Priority)</h4>
+                    <ul>
+                        <li data-en="Bill > $200/month (higher ROI)" data-es="Factura > $200/mes (mayor ROI)" data-he="חשבון > $200 (ROI גבוה יותר)">Bill > $200/month (higher ROI)</li>
+                        <li data-en="Metal roof (easiest install)" data-es="Techo de metal (instalación fácil)" data-he="גג מתכת (התקנה קלה)">Metal roof (easiest install)</li>
+                        <li data-en="Decision-maker available" data-es="Tomador de decisión disponible" data-he="מקבל החלטות זמין">Decision-maker available</li>
+                        <li data-en="Timeline: within 3 months" data-es="Plazo: dentro de 3 meses" data-he="לוח זמנים: עד 3 חודשים">Timeline: within 3 months</li>
+                        <li data-en="Referral from existing customer" data-es="Referido de cliente existente" data-he="הפנייה מלקוח קיים">Referral from existing customer</li>
+                    </ul>
+                </div>
+
+                <div class="qual-card disqualify">
+                    <h4 data-en="Disqualifiers" data-es="Descalificantes" data-he="פוסלים">Disqualifiers</h4>
+                    <ul>
+                        <li data-en="Bill < $80/month (ROI too low)" data-es="Factura < $80/mes (ROI muy bajo)" data-he="חשבון < $80 (ROI נמוך מדי)">Bill &lt; $80/month (ROI too low)</li>
+                        <li data-en="Renter without owner permission" data-es="Inquilino sin permiso del dueño" data-he="שוכר ללא אישור בעלים">Renter without owner permission</li>
+                        <li data-en="Roof needs replacement" data-es="Techo necesita reemplazo" data-he="גג דורש החלפה">Roof needs replacement</li>
+                        <li data-en="Heavy shading (trees/buildings)" data-es="Sombra fuerte (árboles/edificios)" data-he="הצללה כבדה (עצים/מבנים)">Heavy shading (trees/buildings)</li>
+                        <li data-en="No ENSA meter / illegal connection" data-es="Sin medidor ENSA / conexión ilegal" data-he="ללא מונה ENSA / חיבור לא חוקי">No ENSA meter / illegal connection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Templates -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="WhatsApp Auto-Response Templates" data-es="Plantillas de Respuesta Automática WhatsApp" data-he="תבניות תגובה אוטומטית WhatsApp">WhatsApp Auto-Response Templates</h2>
+        <p class="section-subtitle" data-en="Spanish-language templates for immediate lead engagement"
+           data-es="Plantillas en español para engagement inmediato con leads"
+           data-he="תבניות בספרדית למעורבות מיידית עם לידים">
+            Spanish-language templates for immediate lead engagement
+        </p>
+
+        <div class="wa-templates">
+            <!-- Initial Greeting -->
+            <div class="wa-card">
+                <div class="wa-header">💬 <span data-en="Initial Auto-Greeting" data-es="Saludo Automático Inicial" data-he="ברכה אוטומטית ראשונית">Initial Auto-Greeting</span></div>
+                <div class="wa-body">
+                    <div class="wa-bubble">
+                        ¡Hola! 👋 Gracias por contactar a <strong>Solaris Energy Panama</strong>.<br><br>
+                        Somos expertos en energía solar en la Península de Azuero. ☀️<br><br>
+                        Para darle una cotización personalizada, ¿podría decirnos:<br>
+                        1️⃣ ¿Cuánto paga mensualmente de luz?<br>
+                        2️⃣ ¿En qué ciudad se encuentra?<br>
+                        3️⃣ ¿Es propietario del inmueble?<br><br>
+                        Un asesor le responderá en menos de 2 horas. 🙌
+                        <div class="wa-time">10:30 AM ✓✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Follow-up -->
+            <div class="wa-card">
+                <div class="wa-header">📋 <span data-en="Follow-up (24h)" data-es="Seguimiento (24h)" data-he="מעקב (24 שעות)">Follow-up (24h)</span></div>
+                <div class="wa-body">
+                    <div class="wa-bubble">
+                        ¡Hola [NOMBRE]! Soy [ASESOR] de Solaris Energy. 🌞<br><br>
+                        Vi que está interesado en paneles solares. Con una factura de $[MONTO]/mes, podría ahorrar hasta <strong>$[AHORRO]/año</strong>.<br><br>
+                        ¿Le gustaría que agendemos una visita gratuita a su propiedad? Solo toma 30 minutos y le damos un presupuesto exacto sin compromiso. 📊<br><br>
+                        ¿Qué día le conviene esta semana?
+                        <div class="wa-time">2:15 PM ✓✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Info -->
+            <div class="wa-card">
+                <div class="wa-header">⚡ <span data-en="Quick Value Pitch" data-es="Propuesta de Valor Rápida" data-he="הצעת ערך מהירה">Quick Value Pitch</span></div>
+                <div class="wa-body">
+                    <div class="wa-bubble">
+                        🔋 ¿Sabía que con la <strong>Ley 417</strong> de Panamá puede:<br><br>
+                        ✅ Eliminar hasta el 100% de su factura de luz<br>
+                        ✅ Deducir la inversión de sus impuestos<br>
+                        ✅ Recuperar su inversión en 2.5-3.5 años<br>
+                        ✅ Aumentar el valor de su propiedad<br><br>
+                        Nuestros sistemas incluyen garantía de 25 años en paneles y monitoreo 24/7. 📱<br><br>
+                        ¿Le interesa saber cuánto puede ahorrar?
+                        <div class="wa-time">4:45 PM ✓✓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Scoring -->
+    <section class="content-section alt">
+        <div class="inner">
+            <h2 class="section-title" data-en="Lead Scoring System" data-es="Sistema de Puntuación de Leads" data-he="מערכת ניקוד לידים">Lead Scoring System</h2>
+            <p class="section-subtitle" data-en="Categorize every lead for appropriate follow-up cadence"
+               data-es="Categorice cada lead para el seguimiento apropiado"
+               data-he="סווגו כל ליד לקצב מעקב מתאים">
+                Categorize every lead for appropriate follow-up cadence
+            </p>
+
+            <div class="scoring-grid">
+                <!-- Hot -->
+                <div class="score-card hot">
+                    <div class="score-temp">🔥 HOT</div>
+                    <div class="score-range" data-en="Score: 80-100 points" data-es="Puntaje: 80-100 puntos" data-he="ניקוד: 80-100 נקודות">Score: 80-100 points</div>
+                    <h4 data-en="Ready to Buy" data-es="Listo para Comprar" data-he="מוכן לקנות">Ready to Buy</h4>
+                    <ul class="score-criteria">
+                        <li data-en="Monthly bill > $200" data-es="Factura mensual > $200" data-he="חשבון חודשי > $200">Monthly bill > $200</li>
+                        <li data-en="Owns property, ready now" data-es="Propietario, listo ahora" data-he="בעלים, מוכן עכשיו">Owns property, ready now</li>
+                        <li data-en="Decision-maker engaged" data-es="Tomador de decisión involucrado" data-he="מקבל החלטות מעורב">Decision-maker engaged</li>
+                        <li data-en="Asked about pricing/timeline" data-es="Preguntó precio/plazo" data-he="שאל על מחיר/לוח זמנים">Asked about pricing/timeline</li>
+                        <li data-en="Referral from existing client" data-es="Referido de cliente" data-he="הפנייה מלקוח קיים">Referral from existing client</li>
+                    </ul>
+                    <div class="score-action" data-en="Action: Call within 2 hours" data-es="Acción: Llamar en 2 horas" data-he="פעולה: התקשר תוך שעתיים">Action: Call within 2 hours</div>
+                </div>
+
+                <!-- Warm -->
+                <div class="score-card warm">
+                    <div class="score-temp">🌤 WARM</div>
+                    <div class="score-range" data-en="Score: 40-79 points" data-es="Puntaje: 40-79 puntos" data-he="ניקוד: 40-79 נקודות">Score: 40-79 points</div>
+                    <h4 data-en="Interested, Needs Nurturing" data-es="Interesado, Necesita Seguimiento" data-he="מעוניין, דורש טיפוח">Interested, Needs Nurturing</h4>
+                    <ul class="score-criteria">
+                        <li data-en="Monthly bill $100-200" data-es="Factura mensual $100-200" data-he="חשבון חודשי $100-200">Monthly bill $100-200</li>
+                        <li data-en="Interested but not urgent" data-es="Interesado pero no urgente" data-he="מעוניין אך לא דחוף">Interested but not urgent</li>
+                        <li data-en="Needs to discuss with spouse" data-es="Necesita hablar con cónyuge" data-he="צריך להתייעץ עם בן/בת זוג">Needs to discuss with spouse</li>
+                        <li data-en="Comparing options" data-es="Comparando opciones" data-he="משווה אפשרויות">Comparing options</li>
+                        <li data-en="Timeline: 3-6 months" data-es="Plazo: 3-6 meses" data-he="לוח זמנים: 3-6 חודשים">Timeline: 3-6 months</li>
+                    </ul>
+                    <div class="score-action" data-en="Action: WhatsApp within 24h" data-es="Acción: WhatsApp en 24h" data-he="פעולה: WhatsApp תוך 24 שעות">Action: WhatsApp within 24h</div>
+                </div>
+
+                <!-- Cold -->
+                <div class="score-card cold">
+                    <div class="score-temp">❄️ COLD</div>
+                    <div class="score-range" data-en="Score: 0-39 points" data-es="Puntaje: 0-39 puntos" data-he="ניקוד: 0-39 נקודות">Score: 0-39 points</div>
+                    <h4 data-en="Just Browsing" data-es="Solo Mirando" data-he="רק מסתכל">Just Browsing</h4>
+                    <ul class="score-criteria">
+                        <li data-en="Monthly bill < $100" data-es="Factura mensual < $100" data-he="חשבון חודשי < $100">Monthly bill &lt; $100</li>
+                        <li data-en="Renter or uncertain ownership" data-es="Inquilino o propiedad incierta" data-he="שוכר או בעלות לא ברורה">Renter or uncertain ownership</li>
+                        <li data-en="No clear timeline" data-es="Sin plazo claro" data-he="ללא לוח זמנים ברור">No clear timeline</li>
+                        <li data-en="Just gathering information" data-es="Solo recopilando información" data-he="רק אוסף מידע">Just gathering information</li>
+                        <li data-en="Price-shopping only" data-es="Solo comparando precios" data-he="רק משווה מחירים">Price-shopping only</li>
+                    </ul>
+                    <div class="score-action" data-en="Action: Add to email nurture" data-es="Acción: Agregar a emails" data-he="פעולה: הוסף לטיפוח מייל">Action: Add to email nurture</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CRM Integration Flow -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="CRM Integration Flow" data-es="Flujo de Integración CRM" data-he="תהליך שילוב CRM">CRM Integration Flow</h2>
+        <p class="section-subtitle" data-en="How leads flow into and through the Solaris CRM system"
+           data-es="Cómo los leads fluyen al sistema CRM de Solaris"
+           data-he="איך לידים זורמים למערכת ה-CRM של סולאריס">
+            How leads flow into and through the Solaris CRM system
+        </p>
+
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="flow-num">1</div>
+                <p><strong data-en="Lead enters via any channel" data-es="Lead entra por cualquier canal" data-he="ליד נכנס מכל ערוץ">Lead enters via any channel</strong> — <span data-en="Form submission, WhatsApp message, referral, or event sign-up automatically creates CRM record" data-es="Formulario, mensaje WhatsApp, referido o registro en evento crea registro CRM automáticamente" data-he="שליחת טופס, הודעת WhatsApp, הפנייה או הרשמה באירוע יוצרים רשומת CRM אוטומטית">Form, WhatsApp, referral, or event sign-up auto-creates CRM record</span></p>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+                <div class="flow-num">2</div>
+                <p><strong data-en="Auto-assign & notify" data-es="Asignar y notificar automáticamente" data-he="שיוך והתראה אוטומטיים">Auto-assign & notify</strong> — <span data-en="Lead assigned to sales rep based on location. WhatsApp notification to rep with lead details." data-es="Lead asignado al representante por ubicación. Notificación WhatsApp al rep con detalles." data-he="ליד מוקצה לנציג לפי מיקום. התראת WhatsApp לנציג עם פרטים.">Assigned to rep by location. WhatsApp alert with details.</span></p>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+                <div class="flow-num">3</div>
+                <p><strong data-en="Auto-response fires" data-es="Respuesta automática se envía" data-he="תגובה אוטומטית נשלחת">Auto-response fires</strong> — <span data-en="WhatsApp greeting template sent within 60 seconds. Lead receives confirmation and next steps." data-es="Plantilla de saludo WhatsApp enviada en 60 segundos. Lead recibe confirmación y próximos pasos." data-he="תבנית ברכה ב-WhatsApp נשלחת תוך 60 שניות. ליד מקבל אישור ושלבים הבאים.">WhatsApp greeting sent within 60 seconds. Confirmation and next steps.</span></p>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+                <div class="flow-num">4</div>
+                <p><strong data-en="Score & qualify" data-es="Puntuar y calificar" data-he="ניקוד וסיווג">Score & qualify</strong> — <span data-en="Lead scored automatically based on bill amount, location, property ownership. Hot/Warm/Cold tag applied." data-es="Lead puntuado automáticamente según factura, ubicación, propiedad. Etiqueta Hot/Warm/Cold aplicada." data-he="ליד מנוקד אוטומטית לפי סכום חשבון, מיקום, בעלות. תגית Hot/Warm/Cold מוחלת.">Auto-scored by bill, location, ownership. Hot/Warm/Cold tagged.</span></p>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+                <div class="flow-num">5</div>
+                <p><strong data-en="Follow-up sequence begins" data-es="Comienza secuencia de seguimiento" data-he="מתחילה סדרת מעקב">Follow-up sequence begins</strong> — <span data-en="Hot: personal call within 2h. Warm: WhatsApp within 24h. Cold: email nurture campaign. All tracked in CRM." data-es="Hot: llamada en 2h. Warm: WhatsApp en 24h. Cold: campaña de emails. Todo registrado en CRM." data-he="Hot: שיחה תוך שעתיים. Warm: WhatsApp תוך 24 שעות. Cold: קמפיין מייל. הכל מתועד ב-CRM.">Hot: call 2h. Warm: WhatsApp 24h. Cold: email nurture. All tracked.</span></p>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+                <div class="flow-num">6</div>
+                <p><strong data-en="Move to Step 2: Site Survey" data-es="Pasar a Paso 2: Inspección" data-he="מעבר לשלב 2: סקר אתר">Move to Step 2: Site Survey</strong> — <span data-en="Qualified lead schedules site visit. CRM status updated to 'Survey Scheduled'. Calendar invite sent." data-es="Lead calificado agenda visita. Estado CRM actualizado a 'Inspección Agendada'. Invitación de calendario enviada." data-he="ליד מוסמך מתאם ביקור. סטטוס CRM מתעדכן ל'סקר מתואם'. הזמנת יומן נשלחת.">Qualified lead schedules visit. CRM → 'Survey Scheduled'. Calendar invite sent.</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-value-chain.html">
+            ← <span data-en="Back to Pipeline" data-es="Volver al Pipeline" data-he="חזרה לצינור">Back to Pipeline</span>
+        </a>
+        <a href="crm-step2-site-survey.html" class="next">
+            <span data-en="Next: Site Survey" data-es="Siguiente: Inspección" data-he="הבא: סקר אתר">Next: Site Survey</span> →
+        </a>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>

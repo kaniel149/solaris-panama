@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Value Chain — Solaris Energy Panama</title>
+    <meta name="description" content="Complete 10-step CRM pipeline for Solaris Energy Panama solar installations. From lead capture to referral program.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== NAV BAR ===== */
+        .top-nav {
+            background: var(--green);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .top-nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 100px 40px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(212,168,67,0.15);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 56px);
+            color: var(--pearl);
+            margin-bottom: 16px;
+            line-height: 1.15;
+        }
+
+        .hero h1 span { color: var(--gold); }
+
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            max-width: 680px;
+            margin: 0 auto 40px;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* ===== PIPELINE VISUAL ===== */
+        .pipeline-section {
+            padding: 80px 40px;
+            background: var(--pearl);
+        }
+
+        .pipeline-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .pipeline-subtitle {
+            text-align: center;
+            color: var(--ash);
+            font-size: 16px;
+            margin-bottom: 48px;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            max-width: 1200px;
+            margin: 0 auto 64px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .pipeline-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+            position: relative;
+        }
+
+        .pipeline-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+
+        .pipeline-dot:hover { transform: scale(1.15); }
+
+        .pipeline-stage-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--slate);
+            margin-top: 8px;
+            text-align: center;
+            max-width: 80px;
+            line-height: 1.3;
+        }
+
+        .pipeline-arrow {
+            width: 32px;
+            height: 2px;
+            background: var(--mist);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .pipeline-arrow::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid var(--mist);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        /* Stage colors */
+        .stage-acquire .pipeline-dot { background: #2196F3; }
+        .stage-evaluate .pipeline-dot { background: #FF9800; }
+        .stage-propose .pipeline-dot { background: var(--gold); }
+        .stage-deliver .pipeline-dot { background: var(--green); }
+        .stage-retain .pipeline-dot { background: #9C27B0; }
+
+        /* ===== PHASE LABELS ===== */
+        .phases {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 64px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .phase-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate);
+        }
+
+        .phase-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* ===== STEP CARDS GRID ===== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 0 80px;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--mist);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--radius-card) var(--radius-card) 0 0;
+        }
+
+        .step-card.phase-acquire::before { background: #2196F3; }
+        .step-card.phase-evaluate::before { background: #FF9800; }
+        .step-card.phase-propose::before { background: var(--gold); }
+        .step-card.phase-deliver::before { background: var(--green); }
+        .step-card.phase-retain::before { background: #9C27B0; }
+
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--sand);
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .step-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .step-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            color: var(--ash);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .step-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .step-link::after {
+            content: '→';
+            transition: transform 0.3s;
+        }
+
+        .step-card:hover .step-link::after {
+            transform: translateX(4px);
+        }
+
+        /* ===== CONVERSION FUNNEL ===== */
+        .funnel-section {
+            background: var(--sand);
+            padding: 80px 40px;
+        }
+
+        .funnel-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .funnel-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .funnel-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .funnel-bar {
+            height: 52px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .funnel-bar:hover { transform: scaleX(1.02); }
+
+        .funnel-bar .funnel-pct {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline-section {
+            padding: 80px 40px;
+            background: var(--pearl);
+        }
+
+        .timeline-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--mist);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) { flex-direction: row; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 20px 24px;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .timeline-content h4 {
+            color: var(--green);
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            color: var(--ash);
+            font-size: 13px;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 3px solid var(--pearl);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .timeline-spacer { width: 45%; }
+
+        /* ===== KPI TARGETS ===== */
+        .kpi-section {
+            background: var(--green);
+            padding: 80px 40px;
+        }
+
+        .kpi-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--pearl);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .kpi-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .kpi-card .kpi-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .kpi-card .kpi-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--charcoal);
+            padding: 40px;
+            text-align: center;
+            color: var(--ash);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero { padding: 80px 20px 60px; }
+            .top-nav { padding: 12px 20px; flex-wrap: wrap; }
+            .stats-bar { gap: 24px; }
+            .pipeline-flow { justify-content: flex-start; padding: 20px; }
+            .steps-grid { grid-template-columns: 1fr; padding: 0 0 40px; }
+            .pipeline-section, .funnel-section, .timeline-section, .kpi-section { padding: 60px 20px; }
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 48px; }
+            .timeline-content { width: 100%; }
+            .timeline-dot { left: 20px; }
+            .timeline-spacer { display: none; }
+            .funnel-bar { font-size: 12px; padding: 0 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="CRM Value Chain" data-es="Cadena de Valor CRM" data-he="שרשרת ערך CRM">CRM Value Chain</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge" data-en="COMPLETE SALES PIPELINE" data-es="PIPELINE DE VENTAS COMPLETO" data-he="צינור מכירות מלא">COMPLETE SALES PIPELINE</div>
+        <h1>
+            <span data-en="CRM " data-es="Cadena de " data-he="שרשרת ">CRM </span>
+            <span data-en="Value Chain" data-es="Valor CRM" data-he="ערך CRM" style="color: var(--gold);">Value Chain</span>
+        </h1>
+        <p data-en="The complete 10-step journey from first contact to lifetime customer. Every step optimized for the Panama solar market."
+           data-es="El viaje completo de 10 pasos desde el primer contacto hasta cliente de por vida. Cada paso optimizado para el mercado solar de Panamá."
+           data-he="המסע המלא ב-10 שלבים מהמגע הראשון ועד לקוח לכל החיים. כל שלב מותאם לשוק הסולארי בפנמה.">
+            The complete 10-step journey from first contact to lifetime customer. Every step optimized for the Panama solar market.
+        </p>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">10</div>
+                <div class="stat-label" data-en="Pipeline Steps" data-es="Pasos del Pipeline" data-he="שלבי צינור">Pipeline Steps</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4-8</div>
+                <div class="stat-label" data-en="Weeks Lead-to-Close" data-es="Semanas hasta Cierre" data-he="שבועות עד סגירה">Weeks Lead-to-Close</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">25%</div>
+                <div class="stat-label" data-en="Target Conversion" data-es="Conversión Objetivo" data-he="יעד המרה">Target Conversion</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$18K</div>
+                <div class="stat-label" data-en="Avg Deal Size" data-es="Tamaño Promedio" data-he="גודל עסקה ממוצע">Avg Deal Size</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pipeline Visualization -->
+    <section class="pipeline-section">
+        <h2 data-en="Pipeline Overview" data-es="Vista del Pipeline" data-he="סקירת צינור">Pipeline Overview</h2>
+        <p class="pipeline-subtitle" data-en="From lead capture to referral — a complete value chain" data-es="Desde captura de leads hasta referidos — cadena de valor completa" data-he="מלכידת ליד ועד הפניות — שרשרת ערך מלאה">From lead capture to referral — a complete value chain</p>
+
+        <!-- Phase Legend -->
+        <div class="phases">
+            <div class="phase-tag"><div class="phase-color" style="background:#2196F3"></div><span data-en="Acquire" data-es="Adquirir" data-he="רכישה">Acquire</span></div>
+            <div class="phase-tag"><div class="phase-color" style="background:#FF9800"></div><span data-en="Evaluate" data-es="Evaluar" data-he="הערכה">Evaluate</span></div>
+            <div class="phase-tag"><div class="phase-color" style="background:var(--gold)"></div><span data-en="Propose" data-es="Proponer" data-he="הצעה">Propose</span></div>
+            <div class="phase-tag"><div class="phase-color" style="background:var(--green)"></div><span data-en="Deliver" data-es="Entregar" data-he="ביצוע">Deliver</span></div>
+            <div class="phase-tag"><div class="phase-color" style="background:#9C27B0"></div><span data-en="Retain" data-es="Retener" data-he="שימור">Retain</span></div>
+        </div>
+
+        <!-- Pipeline Flow -->
+        <div class="pipeline-flow">
+            <div class="pipeline-stage stage-acquire">
+                <div class="pipeline-dot">1</div>
+                <div class="pipeline-stage-label" data-en="Lead Capture" data-es="Captura" data-he="לכידת ליד">Lead Capture</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-evaluate">
+                <div class="pipeline-dot">2</div>
+                <div class="pipeline-stage-label" data-en="Site Survey" data-es="Inspección" data-he="סקר אתר">Site Survey</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-evaluate">
+                <div class="pipeline-dot">3</div>
+                <div class="pipeline-stage-label" data-en="Bill Analysis" data-es="Análisis" data-he="ניתוח חשבון">Bill Analysis</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-propose">
+                <div class="pipeline-dot">4</div>
+                <div class="pipeline-stage-label" data-en="System Design" data-es="Diseño" data-he="תכנון מערכת">System Design</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-propose">
+                <div class="pipeline-dot">5</div>
+                <div class="pipeline-stage-label" data-en="Proposal" data-es="Propuesta" data-he="הצעת מחיר">Proposal</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-propose">
+                <div class="pipeline-dot">6</div>
+                <div class="pipeline-stage-label" data-en="Contract" data-es="Contrato" data-he="חוזה">Contract</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-deliver">
+                <div class="pipeline-dot">7</div>
+                <div class="pipeline-stage-label" data-en="Permitting" data-es="Permisos" data-he="רישוי">Permitting</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-deliver">
+                <div class="pipeline-dot">8</div>
+                <div class="pipeline-stage-label" data-en="Installation" data-es="Instalación" data-he="התקנה">Installation</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-deliver">
+                <div class="pipeline-dot">9</div>
+                <div class="pipeline-stage-label" data-en="Activation" data-es="Activación" data-he="הפעלה">Activation</div>
+            </div>
+            <div class="pipeline-arrow"></div>
+            <div class="pipeline-stage stage-retain">
+                <div class="pipeline-dot">10</div>
+                <div class="pipeline-stage-label" data-en="Referral" data-es="Referidos" data-he="הפניות">Referral</div>
+            </div>
+        </div>
+
+        <!-- Step Cards -->
+        <div class="steps-grid">
+            <!-- Step 1 -->
+            <a href="crm-step1-lead-capture.html" class="step-card phase-acquire">
+                <span class="step-number">1</span>
+                <span class="step-icon">📥</span>
+                <h3 data-en="Lead Capture" data-es="Captura de Leads" data-he="לכידת לידים">Lead Capture</h3>
+                <p data-en="Multi-channel lead acquisition: Facebook ads, Google Business, WhatsApp, referrals, and events. Automated qualification and scoring."
+                   data-es="Adquisición multicanal: anuncios Facebook, Google Business, WhatsApp, referidos y eventos. Calificación y puntuación automatizada."
+                   data-he="רכישת לידים רב-ערוצית: פרסום פייסבוק, Google Business, וואטסאפ, הפניות ואירועים. סיווג וניקוד אוטומטי.">
+                    Multi-channel lead acquisition: Facebook ads, Google Business, WhatsApp, referrals, and events. Automated qualification and scoring.
+                </p>
+                <span class="step-link" data-en="Explore Step" data-es="Explorar Paso" data-he="לשלב">Explore Step</span>
+            </a>
+
+            <!-- Step 2 -->
+            <a href="crm-step2-site-survey.html" class="step-card phase-evaluate">
+                <span class="step-number">2</span>
+                <span class="step-icon">📐</span>
+                <h3 data-en="Site Survey" data-es="Inspección del Sitio" data-he="סקר אתר">Site Survey</h3>
+                <p data-en="On-site evaluation: roof measurements, shading analysis, structural assessment, electrical panel review. Complete documentation with photos and drone imagery."
+                   data-es="Evaluación en sitio: mediciones del techo, análisis de sombras, evaluación estructural, revisión del panel eléctrico. Documentación completa con fotos y dron."
+                   data-he="הערכה באתר: מדידות גג, ניתוח הצללה, הערכת מבנה, בדיקת לוח חשמל. תיעוד מלא עם תמונות ודרון.">
+                    On-site evaluation: roof measurements, shading analysis, structural assessment, electrical panel review. Complete documentation.
+                </p>
+                <span class="step-link" data-en="Explore Step" data-es="Explorar Paso" data-he="לשלב">Explore Step</span>
+            </a>
+
+            <!-- Step 3 -->
+            <a href="crm-step3-electricity.html" class="step-card phase-evaluate">
+                <span class="step-number">3</span>
+                <span class="step-icon">⚡</span>
+                <h3 data-en="Electricity Analysis" data-es="Análisis Eléctrico" data-he="ניתוח חשבון חשמל">Electricity Analysis</h3>
+                <p data-en="ENSA bill breakdown, consumption profiling, seasonal patterns, rate tier analysis. System sizing calculations and savings projections for Panama."
+                   data-es="Desglose de factura ENSA, perfil de consumo, patrones estacionales, análisis de tarifas. Cálculos de dimensionamiento y proyecciones de ahorro."
+                   data-he="פירוט חשבון ENSA, פרופיל צריכה, דפוסים עונתיים, ניתוח תעריפים. חישובי מערכת ותחזיות חיסכון.">
+                    ENSA bill breakdown, consumption profiling, seasonal patterns, rate tier analysis. System sizing and savings projections.
+                </p>
+                <span class="step-link" data-en="Explore Step" data-es="Explorar Paso" data-he="לשלב">Explore Step</span>
+            </a>
+
+            <!-- Step 4 -->
+            <div class="step-card phase-propose" style="cursor: default;">
+                <span class="step-number">4</span>
+                <span class="step-icon">🔧</span>
+                <h3 data-en="System Design" data-es="Diseño del Sistema" data-he="תכנון מערכת">System Design</h3>
+                <p data-en="Engineering design: panel layout, inverter selection, string sizing, mounting system. Optimized for Panama climate and roof types."
+                   data-es="Diseño de ingeniería: disposición de paneles, selección de inversor, dimensionamiento de strings, sistema de montaje."
+                   data-he="תכנון הנדסי: מיקום פאנלים, בחירת ממיר, מערכת הרכבה. מותאם לאקלים ולגגות בפנמה.">
+                    Engineering design: panel layout, inverter selection, string sizing, mounting system. Optimized for Panama.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-card phase-propose" style="cursor: default;">
+                <span class="step-number">5</span>
+                <span class="step-icon">📋</span>
+                <h3 data-en="Proposal & Pricing" data-es="Propuesta y Precio" data-he="הצעת מחיר">Proposal & Pricing</h3>
+                <p data-en="Custom proposal generation: ROI analysis, financing options, Law 417 tax benefits, equipment specs. Professional PDF delivery."
+                   data-es="Generación de propuesta: análisis ROI, opciones de financiamiento, beneficios Ley 417, especificaciones. Entrega PDF profesional."
+                   data-he="הפקת הצעה מותאמת: ניתוח ROI, אפשרויות מימון, הטבות חוק 417, מפרטי ציוד.">
+                    Custom proposal: ROI analysis, financing options, Law 417 tax benefits. Professional PDF delivery.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step-card phase-propose" style="cursor: default;">
+                <span class="step-number">6</span>
+                <span class="step-icon">✍️</span>
+                <h3 data-en="Contract & Payment" data-es="Contrato y Pago" data-he="חוזה ותשלום">Contract & Payment</h3>
+                <p data-en="Contract execution: scope of work, payment schedule (50/30/20), warranties, interconnection rights. Digital signature flow."
+                   data-es="Ejecución del contrato: alcance, calendario de pagos (50/30/20), garantías, derechos de interconexión. Firma digital."
+                   data-he="חתימת חוזה: היקף עבודה, לוח תשלומים (50/30/20), אחריות, זכויות חיבור לרשת.">
+                    Contract execution: payment schedule (50/30/20), warranties, interconnection rights. Digital signature.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="step-card phase-deliver" style="cursor: default;">
+                <span class="step-number">7</span>
+                <span class="step-icon">📄</span>
+                <h3 data-en="Permitting" data-es="Permisos" data-he="רישוי">Permitting</h3>
+                <p data-en="ASEP/ENSA permit application, interconnection agreement, municipality permits. Timeline management and status tracking."
+                   data-es="Solicitud de permisos ASEP/ENSA, acuerdo de interconexión, permisos municipales. Gestión de plazos y seguimiento."
+                   data-he="בקשת היתרים ASEP/ENSA, הסכם חיבור, היתרי עירייה. ניהול לוחות זמנים ומעקב.">
+                    ASEP/ENSA permit application, interconnection agreement, municipality permits. Timeline tracking.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 8 -->
+            <div class="step-card phase-deliver" style="cursor: default;">
+                <span class="step-number">8</span>
+                <span class="step-icon">🔨</span>
+                <h3 data-en="Installation" data-es="Instalación" data-he="התקנה">Installation</h3>
+                <p data-en="Professional installation: mounting, wiring, inverter setup, grounding. Quality checks at every stage. Typical 2-3 day residential install."
+                   data-es="Instalación profesional: montaje, cableado, inversor, puesta a tierra. Controles de calidad. Instalación residencial típica 2-3 días."
+                   data-he="התקנה מקצועית: הרכבה, חיווט, ממיר, הארקה. בדיקות איכות. התקנה ביתית טיפוסית 2-3 ימים.">
+                    Professional installation: mounting, wiring, inverter, grounding. Quality checks. 2-3 day residential install.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 9 -->
+            <div class="step-card phase-deliver" style="cursor: default;">
+                <span class="step-number">9</span>
+                <span class="step-icon">🟢</span>
+                <h3 data-en="Activation & Handoff" data-es="Activación y Entrega" data-he="הפעלה ומסירה">Activation & Handoff</h3>
+                <p data-en="System commissioning, ENSA meter swap, monitoring setup, client training. Welcome kit and maintenance schedule handoff."
+                   data-es="Puesta en marcha, cambio de medidor ENSA, configuración de monitoreo, capacitación del cliente. Kit de bienvenida."
+                   data-he="הפעלת מערכת, החלפת מונה ENSA, הגדרת ניטור, הדרכת לקוח. ערכת פתיחה ולוח תחזוקה.">
+                    System commissioning, ENSA meter swap, monitoring setup, client training. Welcome kit handoff.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+
+            <!-- Step 10 -->
+            <div class="step-card phase-retain" style="cursor: default;">
+                <span class="step-number">10</span>
+                <span class="step-icon">🤝</span>
+                <h3 data-en="Referral Program" data-es="Programa de Referidos" data-he="תוכנית הפניות">Referral Program</h3>
+                <p data-en="Post-install relationship: monitoring check-ins, annual maintenance, referral incentives. Turn every customer into a brand ambassador."
+                   data-es="Relación post-instalación: monitoreo, mantenimiento anual, incentivos de referidos. Cada cliente un embajador de marca."
+                   data-he="יחסי לקוח: מעקב ניטור, תחזוקה שנתית, תמריצי הפניות. כל לקוח שגריר מותג.">
+                    Post-install relationship: monitoring, annual maintenance, referral incentives. Every customer a brand ambassador.
+                </p>
+                <span class="step-link" style="opacity:0.4;" data-en="Coming Soon" data-es="Próximamente" data-he="בקרוב">Coming Soon</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conversion Funnel -->
+    <section class="funnel-section">
+        <h2 data-en="Conversion Funnel Targets" data-es="Objetivos del Embudo de Conversión" data-he="יעדי משפך המרה">Conversion Funnel Targets</h2>
+        <div class="funnel-container">
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:100%; background:#2196F3;">
+                    <span data-en="Leads Captured" data-es="Leads Capturados" data-he="לידים נלכדים">Leads Captured</span>
+                    <span class="funnel-pct">100%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:85%; background:#1976D2;">
+                    <span data-en="Qualified (bill >$100)" data-es="Calificados (factura >$100)" data-he="מתאימים (חשבון >$100)">Qualified (bill >$100)</span>
+                    <span class="funnel-pct">85%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:60%; background:#FF9800;">
+                    <span data-en="Site Survey Completed" data-es="Inspección Completada" data-he="סקר אתר הושלם">Site Survey Completed</span>
+                    <span class="funnel-pct">60%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:50%; background:var(--gold-aged);">
+                    <span data-en="Proposal Sent" data-es="Propuesta Enviada" data-he="הצעה נשלחה">Proposal Sent</span>
+                    <span class="funnel-pct">50%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:35%; background:var(--gold);">
+                    <span data-en="Contract Signed" data-es="Contrato Firmado" data-he="חוזה נחתם">Contract Signed</span>
+                    <span class="funnel-pct">35%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:25%; background:var(--green);">
+                    <span data-en="Installed & Active" data-es="Instalado y Activo" data-he="מותקן ופעיל">Installed & Active</span>
+                    <span class="funnel-pct">25%</span>
+                </div>
+            </div>
+            <div class="funnel-row">
+                <div class="funnel-bar" style="width:18%; background:#9C27B0;">
+                    <span data-en="Referral Generated" data-es="Referido Generado" data-he="הפנייה נוצרה">Referral Generated</span>
+                    <span class="funnel-pct">18%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="timeline-section">
+        <h2 data-en="Typical Timeline: Lead to Installation" data-es="Línea de Tiempo: Lead a Instalación" data-he="ציר זמן: מליד להתקנה">Typical Timeline: Lead to Installation</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4 data-en="Week 1: First Contact" data-es="Semana 1: Primer Contacto" data-he="שבוע 1: מגע ראשון">Week 1: First Contact</h4>
+                    <p data-en="Lead capture, qualification, initial WhatsApp contact, schedule site survey" data-es="Captura de lead, calificación, contacto WhatsApp, agendar inspección" data-he="לכידת ליד, סיווג, יצירת קשר בוואטסאפ, תיאום סקר">Lead capture, qualification, WhatsApp contact, schedule survey</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4 data-en="Week 2: Evaluation" data-es="Semana 2: Evaluación" data-he="שבוע 2: הערכה">Week 2: Evaluation</h4>
+                    <p data-en="Site survey, bill analysis, system design, proposal preparation" data-es="Inspección, análisis de factura, diseño del sistema, preparación de propuesta" data-he="סקר אתר, ניתוח חשבון, תכנון מערכת, הכנת הצעה">Site survey, bill analysis, system design, proposal prep</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4 data-en="Week 3: Proposal & Close" data-es="Semana 3: Propuesta y Cierre" data-he="שבוע 3: הצעה וסגירה">Week 3: Proposal & Close</h4>
+                    <p data-en="Present proposal, handle objections, negotiate, sign contract, collect deposit" data-es="Presentar propuesta, manejar objeciones, negociar, firmar contrato, cobrar depósito" data-he="הצגת הצעה, טיפול בהתנגדויות, משא ומתן, חתימה, גביית מקדמה">Present proposal, negotiate, sign contract, collect deposit</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4 data-en="Weeks 4-5: Permitting" data-es="Semanas 4-5: Permisos" data-he="שבועות 4-5: רישוי">Weeks 4-5: Permitting</h4>
+                    <p data-en="ASEP application, ENSA interconnection, equipment procurement, schedule installation" data-es="Solicitud ASEP, interconexión ENSA, adquisición de equipos, agendar instalación" data-he="בקשת ASEP, חיבור ENSA, רכש ציוד, תיאום התקנה">ASEP application, ENSA interconnection, equipment procurement</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4 data-en="Weeks 6-8: Install & Activate" data-es="Semanas 6-8: Instalar y Activar" data-he="שבועות 6-8: התקנה והפעלה">Weeks 6-8: Install & Activate</h4>
+                    <p data-en="Installation (2-3 days), inspection, ENSA meter swap, system activation, client handoff" data-es="Instalación (2-3 días), inspección, cambio de medidor, activación, entrega al cliente" data-he="התקנה (2-3 ימים), בדיקה, החלפת מונה, הפעלה, מסירה ללקוח">Installation, inspection, meter swap, activation, client handoff</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KPI Targets -->
+    <section class="kpi-section">
+        <h2 data-en="Monthly KPI Targets" data-es="Objetivos KPI Mensuales" data-he="יעדי KPI חודשיים">Monthly KPI Targets</h2>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-value">40+</div>
+                <div class="kpi-label" data-en="New Leads / Month" data-es="Nuevos Leads / Mes" data-he="לידים חדשים / חודש">New Leads / Month</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">15</div>
+                <div class="kpi-label" data-en="Site Surveys / Month" data-es="Inspecciones / Mes" data-he="סקרי אתר / חודש">Site Surveys / Month</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">12</div>
+                <div class="kpi-label" data-en="Proposals Sent" data-es="Propuestas Enviadas" data-he="הצעות שנשלחו">Proposals Sent</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">4-6</div>
+                <div class="kpi-label" data-en="Contracts Signed" data-es="Contratos Firmados" data-he="חוזים שנחתמו">Contracts Signed</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">$72K+</div>
+                <div class="kpi-label" data-en="Monthly Revenue Target" data-es="Objetivo de Ingreso Mensual" data-he="יעד הכנסות חודשי">Monthly Revenue Target</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">30%+</div>
+                <div class="kpi-label" data-en="Gross Margin" data-es="Margen Bruto" data-he="מרווח גולמי">Gross Margin</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">&lt;48h</div>
+                <div class="kpi-label" data-en="Lead Response Time" data-es="Tiempo de Respuesta" data-he="זמן תגובה לליד">Lead Response Time</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">4.8★</div>
+                <div class="kpi-label" data-en="Customer Rating" data-es="Calificación del Cliente" data-he="דירוג לקוחות">Customer Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        // Restore saved language
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>

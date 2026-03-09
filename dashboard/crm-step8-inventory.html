@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 8: Inventory & Procurement — Solaris CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+        [data-lang] { display: none; }
+        [data-lang].active { display: block; }
+        span[data-lang] { display: none; }
+        span[data-lang].active { display: inline; }
+
+        /* ===== NAV BAR ===== */
+        .top-nav { background: var(--green); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .top-nav a { color: var(--gold); text-decoration: none; font-weight: 600; font-size: 14px; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 0.8; }
+        .nav-brand { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--pearl); }
+
+        /* ===== HERO ===== */
+        .page-hero { background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%); padding: 80px 32px 60px; text-align: center; }
+        .page-hero .step-badge { display: inline-block; background: var(--gold); color: var(--green); font-weight: 700; font-size: 13px; padding: 6px 20px; border-radius: var(--radius-pill); letter-spacing: 0.1em; margin-bottom: 16px; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; color: var(--pearl); font-size: clamp(28px, 5vw, 44px); margin-bottom: 12px; }
+        .page-hero p { color: rgba(255,255,255,0.7); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+        /* ===== CONTENT ===== */
+        .content { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+        .section { margin-bottom: 48px; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--green); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gold); }
+        .card { background: white; border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 28px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
+        .card h3 { font-size: 17px; color: var(--green); margin-bottom: 10px; }
+        .card p, .card li { font-size: 14px; color: var(--slate); line-height: 1.7; }
+        .card ul { padding-left: 20px; }
+        .card li { margin-bottom: 6px; }
+
+        /* ===== WORKFLOW ===== */
+        .workflow { display: flex; flex-wrap: wrap; gap: 0; margin: 24px 0; justify-content: center; align-items: center; }
+        .workflow-step { background: var(--sand); border-radius: var(--radius-card); padding: 18px 22px; text-align: center; flex: 1; min-width: 140px; max-width: 200px; }
+        .workflow-step .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; background: var(--green); color: var(--pearl); border-radius: 50%; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+        .workflow-step .label { font-size: 13px; font-weight: 600; color: var(--green); }
+        .workflow-arrow { font-size: 24px; color: var(--gold); padding: 0 8px; font-weight: 700; }
+
+        /* ===== TABLE ===== */
+        .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+        .data-table thead { background: var(--green); color: var(--pearl); }
+        .data-table th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 13px; letter-spacing: 0.04em; }
+        .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--mist); }
+        .data-table tbody tr:hover { background: var(--cloud); }
+        .data-table tbody tr:nth-child(even) { background: var(--sand); }
+
+        /* ===== CHECKLIST ===== */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 10px 16px; margin-bottom: 6px; background: var(--cloud); border-radius: var(--radius-btn); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+        .checklist li::before { content: '☐'; color: var(--gold); font-size: 18px; flex-shrink: 0; }
+
+        /* ===== ALERT ===== */
+        .alert { background: linear-gradient(135deg, #FFF8E1, #FFF3CD); border-left: 4px solid var(--gold); border-radius: var(--radius-btn); padding: 18px 22px; margin: 16px 0; }
+        .alert-title { font-weight: 700; color: var(--green); margin-bottom: 4px; }
+        .alert p { font-size: 13px; color: var(--slate); }
+        .alert-green { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-left-color: var(--green); }
+
+        /* ===== NAV FOOTER ===== */
+        .step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 48px; padding-top: 32px; border-top: 2px solid var(--mist); flex-wrap: wrap; gap: 16px; }
+        .step-nav a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--green); color: var(--pearl); text-decoration: none; border-radius: var(--radius-btn); font-weight: 600; font-size: 14px; transition: all 0.3s; }
+        .step-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); box-shadow: var(--shadow-elevated); }
+        .step-nav a.outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+        .step-nav a.outline:hover { background: var(--green); color: var(--pearl); }
+
+        .footer { background: var(--green); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; }
+        [dir="rtl"] { direction: rtl; text-align: right; }
+        [dir="rtl"] .card { border-left: none; border-right: 4px solid var(--gold); }
+        [dir="rtl"] .alert { border-left: none; border-right: 4px solid var(--gold); }
+        [dir="rtl"] .alert-green { border-right-color: var(--green); }
+        [dir="rtl"] .data-table th { text-align: right; }
+
+        @media (max-width: 768px) {
+            .workflow { flex-direction: column; align-items: center; }
+            .workflow-arrow { transform: rotate(90deg); }
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 8px 10px; }
+            .step-nav { flex-direction: column; }
+            .step-nav a { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">עב</button>
+    </div>
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <span class="nav-brand">Solaris Energy</span>
+        <div style="display:flex;gap:20px;">
+            <a href="crm-value-chain.html"><span data-lang="en" class="active">CRM Pipeline</span><span data-lang="es">Pipeline CRM</span><span data-lang="he">שרשרת CRM</span></a>
+            <a href="index.html"><span data-lang="en" class="active">Dashboard</span><span data-lang="es">Panel</span><span data-lang="he">לוח בקרה</span></a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="page-hero">
+        <div class="step-badge">STEP 8 / PASO 8</div>
+        <h1>
+            <span data-lang="en" class="active">Inventory & Procurement</span>
+            <span data-lang="es">Inventario y Adquisiciones</span>
+            <span data-lang="he">מלאי ורכש</span>
+        </h1>
+        <p>
+            <span data-lang="en" class="active">From approved design to delivered equipment — manage every component with precision.</span>
+            <span data-lang="es">Del diseño aprobado al equipo entregado — gestione cada componente con precisión.</span>
+            <span data-lang="he">מעיצוב מאושר ועד ציוד שהגיע — ניהול כל רכיב בדיוק מלא.</span>
+        </p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- ORDERING WORKFLOW -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Equipment Ordering Workflow</span>
+                <span data-lang="es">Flujo de Pedido de Equipos</span>
+                <span data-lang="he">תהליך הזמנת ציוד</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="workflow">
+                    <div class="workflow-step"><div class="num">1</div><div class="label">Design Approved</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">2</div><div class="label">BOM Finalized</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">3</div><div class="label">PO Created</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">4</div><div class="label">Track Delivery</div></div>
+                </div>
+
+                <div class="card">
+                    <h3>1. Design Approval Triggers Procurement</h3>
+                    <p>Once the engineering design is client-approved and the deposit is received, the Bill of Materials (BOM) is automatically generated from the system design tool. This includes:</p>
+                    <ul>
+                        <li>Exact panel count, model, and wattage (e.g., 40× Jinko Tiger Neo 580W)</li>
+                        <li>Inverter specification and quantity (e.g., 2× Huawei SUN2000-10KTL)</li>
+                        <li>Mounting system type and quantity (K2 S-Dome or D-Dome)</li>
+                        <li>DC/AC cable lengths calculated from layout</li>
+                        <li>Protection equipment: surge arresters, disconnects, combiner boxes</li>
+                        <li>Monitoring gateway and CT sensors</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>2. BOM Review & Finalization</h3>
+                    <p>Before creating Purchase Orders, the BOM undergoes a technical review:</p>
+                    <ul>
+                        <li>Verify inverter-to-panel string sizing (Voc, Isc within limits)</li>
+                        <li>Confirm mounting compatibility with roof type (metal sheet, concrete, tile)</li>
+                        <li>Check cable gauge against distance and current requirements</li>
+                        <li>Add 5% overage for cables and connectors (field adjustments)</li>
+                        <li>Validate protection sizing against NEC/local code requirements</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>3. Purchase Order Creation</h3>
+                    <p>POs are generated per supplier with the following details:</p>
+                    <ul>
+                        <li>Project reference number and client name</li>
+                        <li>Exact quantities, model numbers, and unit prices</li>
+                        <li>Requested delivery date aligned with installation schedule</li>
+                        <li>Delivery address: warehouse or direct to site</li>
+                        <li>Payment terms: typically 50% deposit, 50% on delivery</li>
+                        <li>Ley 417 exemption certificate attached for tax-free import</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>4. Delivery Tracking</h3>
+                    <p>Each PO is tracked through the following statuses:</p>
+                    <ul>
+                        <li><strong>Ordered</strong> — PO sent to supplier, awaiting confirmation</li>
+                        <li><strong>Confirmed</strong> — Supplier confirmed availability and ETA</li>
+                        <li><strong>In Transit</strong> — Shipment dispatched, tracking number received</li>
+                        <li><strong>At Customs</strong> — Arrived at Colón Free Zone or Tocumen</li>
+                        <li><strong>Cleared</strong> — Customs cleared, en route to warehouse</li>
+                        <li><strong>Delivered</strong> — At warehouse, pending quality inspection</li>
+                        <li><strong>Inspected</strong> — QC passed, ready for installation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="workflow">
+                    <div class="workflow-step"><div class="num">1</div><div class="label">Diseño Aprobado</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">2</div><div class="label">BOM Finalizado</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">3</div><div class="label">OC Creada</div></div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step"><div class="num">4</div><div class="label">Seguimiento</div></div>
+                </div>
+
+                <div class="card">
+                    <h3>1. La Aprobación del Diseño Activa el Proceso de Adquisiciones</h3>
+                    <p>Una vez que el diseño de ingeniería es aprobado por el cliente y se recibe el anticipo, la Lista de Materiales (BOM) se genera automáticamente. Incluye:</p>
+                    <ul>
+                        <li>Cantidad exacta de paneles, modelo y potencia (ej: 40× Jinko Tiger Neo 580W)</li>
+                        <li>Especificación y cantidad de inversores (ej: 2× Huawei SUN2000-10KTL)</li>
+                        <li>Tipo y cantidad de sistema de montaje (K2 S-Dome o D-Dome)</li>
+                        <li>Longitudes de cable DC/AC calculadas desde el diseño</li>
+                        <li>Equipos de protección: supresores de sobretensión, desconectores, cajas combinadoras</li>
+                        <li>Gateway de monitoreo y sensores CT</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>2. Revisión y Finalización del BOM</h3>
+                    <p>Antes de crear Órdenes de Compra, el BOM se somete a revisión técnica:</p>
+                    <ul>
+                        <li>Verificar dimensionamiento de strings inversor-panel (Voc, Isc dentro de límites)</li>
+                        <li>Confirmar compatibilidad del montaje con tipo de techo</li>
+                        <li>Verificar calibre de cable según distancia y corriente</li>
+                        <li>Agregar 5% de excedente para cables y conectores</li>
+                        <li>Validar dimensionamiento de protección según código local</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>3. Creación de Orden de Compra</h3>
+                    <p>Las OC se generan por proveedor con los siguientes detalles:</p>
+                    <ul>
+                        <li>Número de referencia del proyecto y nombre del cliente</li>
+                        <li>Cantidades exactas, números de modelo y precios unitarios</li>
+                        <li>Fecha de entrega solicitada según cronograma de instalación</li>
+                        <li>Dirección de entrega: bodega o directamente al sitio</li>
+                        <li>Términos de pago: 50% anticipo, 50% contra entrega</li>
+                        <li>Certificado de exención Ley 417 adjunto para importación libre de impuestos</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>4. Seguimiento de Entregas</h3>
+                    <p>Cada OC se rastrea con los siguientes estados:</p>
+                    <ul>
+                        <li><strong>Ordenado</strong> — OC enviada, esperando confirmación</li>
+                        <li><strong>Confirmado</strong> — Proveedor confirmó disponibilidad y ETA</li>
+                        <li><strong>En Tránsito</strong> — Envío despachado, número de rastreo recibido</li>
+                        <li><strong>En Aduana</strong> — Llegó a Zona Libre de Colón o Tocumen</li>
+                        <li><strong>Liberado</strong> — Aduana liberada, en camino a bodega</li>
+                        <li><strong>Entregado</strong> — En bodega, pendiente inspección</li>
+                        <li><strong>Inspeccionado</strong> — QC aprobado, listo para instalación</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="workflow">
+                    <div class="workflow-step"><div class="num">1</div><div class="label">עיצוב מאושר</div></div>
+                    <div class="workflow-arrow">←</div>
+                    <div class="workflow-step"><div class="num">2</div><div class="label">BOM סופי</div></div>
+                    <div class="workflow-arrow">←</div>
+                    <div class="workflow-step"><div class="num">3</div><div class="label">הזמנה נוצרה</div></div>
+                    <div class="workflow-arrow">←</div>
+                    <div class="workflow-step"><div class="num">4</div><div class="label">מעקב משלוח</div></div>
+                </div>
+
+                <div class="card">
+                    <h3>1. אישור עיצוב מפעיל את הרכש</h3>
+                    <p>ברגע שהעיצוב ההנדסי מאושר על ידי הלקוח והמקדמה התקבלה, רשימת החומרים (BOM) נוצרת אוטומטית. כולל:</p>
+                    <ul>
+                        <li>מספר פאנלים מדויק, דגם והספק (לדוגמה: 40× Jinko Tiger Neo 580W)</li>
+                        <li>מפרט וכמות ממירים (לדוגמה: 2× Huawei SUN2000-10KTL)</li>
+                        <li>סוג וכמות מערכת הרכבה (K2 S-Dome או D-Dome)</li>
+                        <li>אורכי כבלים DC/AC מחושבים מהתכנון</li>
+                        <li>ציוד הגנה: מגני ברקים, מנתקים, קופסאות שילוב</li>
+                        <li>שער ניטור וחיישני CT</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>2. סקירה וסיום BOM</h3>
+                    <p>לפני יצירת הזמנות רכש, ה-BOM עובר סקירה טכנית:</p>
+                    <ul>
+                        <li>אימות גודל מחרוזות ממיר-פאנל (Voc, Isc בגבולות)</li>
+                        <li>אישור תאימות הרכבה לסוג הגג</li>
+                        <li>בדיקת עובי כבל מול מרחק וזרם</li>
+                        <li>הוספת 5% עודף לכבלים ומחברים</li>
+                        <li>אימות גודל הגנה מול דרישות תקן מקומי</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>3. יצירת הזמנת רכש</h3>
+                    <p>הזמנות נוצרות לכל ספק עם הפרטים הבאים:</p>
+                    <ul>
+                        <li>מספר הפרויקט ושם הלקוח</li>
+                        <li>כמויות מדויקות, מספרי דגם ומחירים</li>
+                        <li>תאריך אספקה מבוקש בהתאם ללוח הזמנים</li>
+                        <li>כתובת אספקה: מחסן או ישירות לאתר</li>
+                        <li>תנאי תשלום: 50% מקדמה, 50% באספקה</li>
+                        <li>תעודת פטור חוק 417 מצורפת לייבוא ללא מס</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>4. מעקב אספקות</h3>
+                    <p>כל הזמנה מנוטרת בסטטוסים הבאים:</p>
+                    <ul>
+                        <li><strong>הוזמן</strong> — הזמנה נשלחה, ממתינים לאישור</li>
+                        <li><strong>אושר</strong> — ספק אישר זמינות ו-ETA</li>
+                        <li><strong>במשלוח</strong> — נשלח, מספר מעקב התקבל</li>
+                        <li><strong>במכס</strong> — הגיע לאזור החופשי של קולון או טוקומן</li>
+                        <li><strong>שוחרר</strong> — מכס שוחרר, בדרך למחסן</li>
+                        <li><strong>נמסר</strong> — במחסן, ממתין לבדיקת איכות</li>
+                        <li><strong>נבדק</strong> — QC עבר, מוכן להתקנה</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVENTORY TRACKING -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Inventory Tracking by Category</span>
+                <span data-lang="es">Seguimiento de Inventario por Categoría</span>
+                <span data-lang="he">מעקב מלאי לפי קטגוריה</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Category</th><th>Key Items</th><th>Unit</th><th>Min. Stock</th><th>Storage Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Solar Panels</strong></td><td>Jinko Tiger Neo 580W, 440W</td><td>Units</td><td>40</td><td>Keep dry, elevated on pallets, no stacking >2 pallets</td></tr>
+                        <tr><td><strong>Inverters</strong></td><td>Huawei SUN2000 5-25KTL, LUNA battery</td><td>Units</td><td>4</td><td>Climate-controlled, original packaging until install</td></tr>
+                        <tr><td><strong>Mounting</strong></td><td>K2 S-Dome, D-Dome, rails, clamps</td><td>Sets</td><td>10 sets</td><td>Sorted by roof type, labeled by project</td></tr>
+                        <tr><td><strong>DC Cables</strong></td><td>PV wire 10AWG, 6mm² solar cable</td><td>Meters</td><td>500m</td><td>UV-rated spools, keep covered from direct sun</td></tr>
+                        <tr><td><strong>AC Cables</strong></td><td>THHN 8/10/12 AWG, conduit</td><td>Meters</td><td>300m</td><td>Standard electrical storage</td></tr>
+                        <tr><td><strong>Protection</strong></td><td>SPD Type II, DC disconnect, breakers</td><td>Units</td><td>10 each</td><td>Organized by amperage rating</td></tr>
+                        <tr><td><strong>Connectors</strong></td><td>MC4, MC4 branch, cable glands</td><td>Pairs</td><td>100 pairs</td><td>Keep sealed until use, check crimping tool calibration</td></tr>
+                        <tr><td><strong>Monitoring</strong></td><td>Huawei SmartDongle, CT sensors</td><td>Units</td><td>5</td><td>Firmware pre-loaded before dispatch</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div data-lang="es">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Categoría</th><th>Artículos Clave</th><th>Unidad</th><th>Stock Mín.</th><th>Notas de Almacenamiento</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Paneles Solares</strong></td><td>Jinko Tiger Neo 580W, 440W</td><td>Unidades</td><td>40</td><td>Mantener seco, elevado en pallets, no apilar >2</td></tr>
+                        <tr><td><strong>Inversores</strong></td><td>Huawei SUN2000 5-25KTL, LUNA batería</td><td>Unidades</td><td>4</td><td>Clima controlado, empaque original hasta instalación</td></tr>
+                        <tr><td><strong>Montaje</strong></td><td>K2 S-Dome, D-Dome, rieles, abrazaderas</td><td>Juegos</td><td>10</td><td>Ordenados por tipo de techo, etiquetados por proyecto</td></tr>
+                        <tr><td><strong>Cables DC</strong></td><td>Cable PV 10AWG, cable solar 6mm²</td><td>Metros</td><td>500m</td><td>Carretes UV, cubiertos del sol directo</td></tr>
+                        <tr><td><strong>Cables AC</strong></td><td>THHN 8/10/12 AWG, conduit</td><td>Metros</td><td>300m</td><td>Almacenamiento eléctrico estándar</td></tr>
+                        <tr><td><strong>Protección</strong></td><td>SPD Tipo II, desconector DC, breakers</td><td>Unidades</td><td>10 c/u</td><td>Organizados por amperaje</td></tr>
+                        <tr><td><strong>Conectores</strong></td><td>MC4, MC4 derivación, prensacables</td><td>Pares</td><td>100 pares</td><td>Sellados hasta uso, calibrar herramienta de crimpado</td></tr>
+                        <tr><td><strong>Monitoreo</strong></td><td>Huawei SmartDongle, sensores CT</td><td>Unidades</td><td>5</td><td>Firmware precargado antes del despacho</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>קטגוריה</th><th>פריטים עיקריים</th><th>יחידה</th><th>מלאי מינ.</th><th>הערות אחסון</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>פאנלים סולאריים</strong></td><td>Jinko Tiger Neo 580W, 440W</td><td>יחידות</td><td>40</td><td>שמור יבש, מורם על משטחים, לא לערום מעל 2</td></tr>
+                        <tr><td><strong>ממירים</strong></td><td>Huawei SUN2000 5-25KTL, סוללת LUNA</td><td>יחידות</td><td>4</td><td>אקלים מבוקר, אריזה מקורית עד התקנה</td></tr>
+                        <tr><td><strong>הרכבה</strong></td><td>K2 S-Dome, D-Dome, מסילות, מלחצים</td><td>סטים</td><td>10</td><td>ממוינים לפי סוג גג, מתויגים לפי פרויקט</td></tr>
+                        <tr><td><strong>כבלי DC</strong></td><td>כבל PV 10AWG, כבל סולארי 6mm²</td><td>מטרים</td><td>500 מ'</td><td>סלילי UV, מכוסים משמש ישירה</td></tr>
+                        <tr><td><strong>כבלי AC</strong></td><td>THHN 8/10/12 AWG, צנרת</td><td>מטרים</td><td>300 מ'</td><td>אחסון חשמלי סטנדרטי</td></tr>
+                        <tr><td><strong>הגנה</strong></td><td>SPD סוג II, מנתק DC, מפסקים</td><td>יחידות</td><td>10 כ"א</td><td>מאורגנים לפי דירוג אמפר</td></tr>
+                        <tr><td><strong>מחברים</strong></td><td>MC4, MC4 ענף, אטמי כבל</td><td>זוגות</td><td>100 זוגות</td><td>אטומים עד שימוש, בדוק כיול כלי חיבור</td></tr>
+                        <tr><td><strong>ניטור</strong></td><td>Huawei SmartDongle, חיישני CT</td><td>יחידות</td><td>5</td><td>קושחה נטענת מראש לפני שליחה</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PREFERRED SUPPLIERS -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Preferred Suppliers & Lead Times</span>
+                <span data-lang="es">Proveedores Preferidos y Tiempos de Entrega</span>
+                <span data-lang="he">ספקים מועדפים וזמני אספקה</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Supplier</th><th>Products</th><th>Lead Time</th><th>Payment Terms</th><th>Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Jinko Solar</strong></td><td>Panels (Tiger Neo N-type)</td><td>2–4 weeks</td><td>30% advance, 70% B/L</td><td>Container direct from China to Colón FTZ. Min order 1 container (600+ panels)</td></tr>
+                        <tr><td><strong>Huawei FusionSolar</strong></td><td>Inverters, batteries, monitoring</td><td>1–2 weeks</td><td>50/50</td><td>Regional distributor in Panama City. Stock available for common models</td></tr>
+                        <tr><td><strong>K2 Systems</strong></td><td>Mounting structures</td><td>1 week</td><td>Net 30</td><td>Latin America distributor. Fast delivery from Costa Rica warehouse</td></tr>
+                        <tr><td><strong>Helukabel</strong></td><td>Solar cables, DC cables</td><td>1–2 weeks</td><td>Net 30</td><td>Panama stock for standard gauges</td></tr>
+                        <tr><td><strong>ABB / Schneider</strong></td><td>Protection, breakers, SPDs</td><td>1 week</td><td>Net 15</td><td>Local electrical distributors in David and Panama City</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">Pro Tip: Batch Ordering</div>
+                    <p>For projects under 20kWp, batch panel orders across 2-3 projects to meet container minimums. This reduces per-panel shipping cost by ~15% and lead time by 1 week (shared container vs partial).</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Proveedor</th><th>Productos</th><th>Plazo</th><th>Términos de Pago</th><th>Notas</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Jinko Solar</strong></td><td>Paneles (Tiger Neo N-type)</td><td>2–4 semanas</td><td>30% anticipo, 70% B/L</td><td>Contenedor directo de China a ZLC. Pedido mín. 1 contenedor (600+ paneles)</td></tr>
+                        <tr><td><strong>Huawei FusionSolar</strong></td><td>Inversores, baterías, monitoreo</td><td>1–2 semanas</td><td>50/50</td><td>Distribuidor regional en Ciudad de Panamá</td></tr>
+                        <tr><td><strong>K2 Systems</strong></td><td>Estructuras de montaje</td><td>1 semana</td><td>Neto 30</td><td>Distribuidor LATAM. Entrega rápida desde bodega Costa Rica</td></tr>
+                        <tr><td><strong>Helukabel</strong></td><td>Cables solares, cables DC</td><td>1–2 semanas</td><td>Neto 30</td><td>Stock en Panamá para calibres estándar</td></tr>
+                        <tr><td><strong>ABB / Schneider</strong></td><td>Protección, breakers, SPDs</td><td>1 semana</td><td>Neto 15</td><td>Distribuidores eléctricos locales en David y Panamá</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">Consejo: Pedidos por Lotes</div>
+                    <p>Para proyectos menores a 20kWp, agrupar pedidos de paneles entre 2-3 proyectos para alcanzar mínimos de contenedor. Reduce costo de envío por panel ~15%.</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>ספק</th><th>מוצרים</th><th>זמן אספקה</th><th>תנאי תשלום</th><th>הערות</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Jinko Solar</strong></td><td>פאנלים (Tiger Neo N-type)</td><td>2–4 שבועות</td><td>30% מקדמה, 70% B/L</td><td>מכולה ישירה מסין לאזור חופשי קולון. מינימום מכולה (600+ פאנלים)</td></tr>
+                        <tr><td><strong>Huawei FusionSolar</strong></td><td>ממירים, סוללות, ניטור</td><td>1–2 שבועות</td><td>50/50</td><td>מפיץ אזורי בעיר פנמה. מלאי לדגמים נפוצים</td></tr>
+                        <tr><td><strong>K2 Systems</strong></td><td>מבני הרכבה</td><td>שבוע</td><td>נטו 30</td><td>מפיץ LATAM. אספקה מהירה ממחסן קוסטה ריקה</td></tr>
+                        <tr><td><strong>Helukabel</strong></td><td>כבלים סולאריים, כבלי DC</td><td>1–2 שבועות</td><td>נטו 30</td><td>מלאי בפנמה לעוביים סטנדרטיים</td></tr>
+                        <tr><td><strong>ABB / Schneider</strong></td><td>הגנה, מפסקים, SPDs</td><td>שבוע</td><td>נטו 15</td><td>מפיצים חשמליים מקומיים בדוד ופנמה סיטי</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">טיפ: הזמנות מרוכזות</div>
+                    <p>לפרויקטים מתחת ל-20kWp, רכז הזמנות פאנלים מ-2-3 פרויקטים כדי להגיע למינימום מכולה. מפחית עלות משלוח לפאנל ב-~15%.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- WAREHOUSE & STORAGE -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Warehouse & Storage Requirements</span>
+                <span data-lang="es">Bodega y Requisitos de Almacenamiento</span>
+                <span data-lang="he">מחסן ודרישות אחסון</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Panel Storage Guidelines</h3>
+                    <ul>
+                        <li><strong>Environment:</strong> Dry, covered area. Avoid direct sunlight on stored panels</li>
+                        <li><strong>Elevation:</strong> Panels must be stored on wooden pallets, minimum 10cm above ground</li>
+                        <li><strong>Stacking:</strong> Maximum 2 pallets high. Never stand panels on edge unsupported</li>
+                        <li><strong>Orientation:</strong> Store flat, glass-side up, in original packaging</li>
+                        <li><strong>Humidity:</strong> Panama humidity is 80-90%. Use desiccant packs if long-term storage</li>
+                        <li><strong>Handling:</strong> Always carry with 2 people minimum. Never drag or slide panels</li>
+                        <li><strong>Duration:</strong> Use within 30 days of receipt. FIFO (first in, first out)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Inverter & Electronics Storage</h3>
+                    <ul>
+                        <li>Climate-controlled area preferred (avoid temperatures above 40°C)</li>
+                        <li>Keep in original packaging with foam protection until installation day</li>
+                        <li>Store firmware update dongles with matching inverter serial numbers</li>
+                        <li>Battery storage: maintain 30-50% SOC, check monthly if stored >30 days</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Warehouse Organization</h3>
+                    <ul>
+                        <li><strong>Zone A:</strong> Panels — largest area, near loading dock</li>
+                        <li><strong>Zone B:</strong> Inverters & electronics — climate-controlled section</li>
+                        <li><strong>Zone C:</strong> Mounting structures — can be outdoor under roof cover</li>
+                        <li><strong>Zone D:</strong> Cables & small parts — shelved, labeled by gauge/type</li>
+                        <li><strong>Zone E:</strong> Tools & safety equipment — secured cabinet</li>
+                        <li>Label all items with project name + PO number</li>
+                        <li>Weekly inventory count against project schedule</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Guía de Almacenamiento de Paneles</h3>
+                    <ul>
+                        <li><strong>Ambiente:</strong> Área seca y cubierta. Evitar luz solar directa</li>
+                        <li><strong>Elevación:</strong> Almacenar sobre pallets de madera, mínimo 10cm del suelo</li>
+                        <li><strong>Apilamiento:</strong> Máximo 2 pallets de alto. Nunca parar paneles de canto</li>
+                        <li><strong>Orientación:</strong> Almacenar plano, vidrio hacia arriba, en empaque original</li>
+                        <li><strong>Humedad:</strong> Panamá tiene 80-90%. Usar desecantes para almacenamiento prolongado</li>
+                        <li><strong>Manejo:</strong> Siempre cargar con mínimo 2 personas. Nunca arrastrar paneles</li>
+                        <li><strong>Duración:</strong> Usar dentro de 30 días. FIFO (primero en entrar, primero en salir)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Almacenamiento de Inversores y Electrónicos</h3>
+                    <ul>
+                        <li>Área climatizada preferida (evitar temperaturas superiores a 40°C)</li>
+                        <li>Mantener en empaque original con protección de espuma hasta instalación</li>
+                        <li>Almacenar dongles de firmware con números de serie correspondientes</li>
+                        <li>Baterías: mantener 30-50% SOC, verificar mensualmente si almacenadas >30 días</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Organización de Bodega</h3>
+                    <ul>
+                        <li><strong>Zona A:</strong> Paneles — área más grande, cerca del muelle de carga</li>
+                        <li><strong>Zona B:</strong> Inversores y electrónicos — sección climatizada</li>
+                        <li><strong>Zona C:</strong> Estructuras de montaje — exterior bajo techo</li>
+                        <li><strong>Zona D:</strong> Cables y partes pequeñas — estantes, etiquetados</li>
+                        <li><strong>Zona E:</strong> Herramientas y equipo de seguridad — gabinete asegurado</li>
+                        <li>Etiquetar todo con nombre del proyecto + número de OC</li>
+                        <li>Conteo de inventario semanal contra cronograma</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>הנחיות אחסון פאנלים</h3>
+                    <ul>
+                        <li><strong>סביבה:</strong> אזור יבש ומקורה. להימנע משמש ישירה</li>
+                        <li><strong>הגבהה:</strong> לאחסן על משטחי עץ, מינימום 10 ס"מ מהרצפה</li>
+                        <li><strong>ערימה:</strong> מקסימום 2 משטחים גובה. לעולם לא להעמיד פאנלים על הצד</li>
+                        <li><strong>כיוון:</strong> לאחסן שטוח, זכוכית למעלה, באריזה מקורית</li>
+                        <li><strong>לחות:</strong> פנמה 80-90%. להשתמש בחומרי ייבוש לאחסון ממושך</li>
+                        <li><strong>טיפול:</strong> תמיד לשאת עם מינימום 2 אנשים. לעולם לא לגרור</li>
+                        <li><strong>משך:</strong> להשתמש תוך 30 יום מקבלה. FIFO</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>אחסון ממירים ואלקטרוניקה</h3>
+                    <ul>
+                        <li>אזור מאוורר מועדף (להימנע מטמפרטורות מעל 40°C)</li>
+                        <li>לשמור באריזה מקורית עם הגנת קצף עד יום ההתקנה</li>
+                        <li>לאחסן דונגלים של קושחה עם מספרי סריאליים תואמים</li>
+                        <li>סוללות: לשמור 30-50% SOC, לבדוק חודשית אם מאוחסנות מעל 30 יום</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>ארגון מחסן</h3>
+                    <ul>
+                        <li><strong>אזור A:</strong> פאנלים — השטח הגדול, ליד רמפת פריקה</li>
+                        <li><strong>אזור B:</strong> ממירים ואלקטרוניקה — חלק מאוורר</li>
+                        <li><strong>אזור C:</strong> מבני הרכבה — חיצוני תחת גג</li>
+                        <li><strong>אזור D:</strong> כבלים וחלקים קטנים — מדפים, מתויגים</li>
+                        <li><strong>אזור E:</strong> כלים וציוד בטיחות — ארון נעול</li>
+                        <li>לתייג הכל עם שם פרויקט + מספר הזמנה</li>
+                        <li>ספירת מלאי שבועית מול לוח זמנים</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLÓN FREE ZONE IMPORT -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Colón Free Zone Import Process</span>
+                <span data-lang="es">Proceso de Importación — Zona Libre de Colón</span>
+                <span data-lang="he">תהליך יבוא — אזור חופשי קולון</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Ley 417 Tax Exemption for Solar Equipment</h3>
+                    <p>Panama's Law 417 (2013) provides tax exemptions for renewable energy equipment imports. This is a critical cost advantage for Solaris projects.</p>
+                    <ul>
+                        <li><strong>What's exempt:</strong> Solar panels, inverters, batteries, mounting structures, cables specifically for PV systems</li>
+                        <li><strong>Tax savings:</strong> 7% ITBMS (sales tax) + import duties waived</li>
+                        <li><strong>Typical savings:</strong> $3,500–$8,000 per residential project, $15,000–$50,000+ per commercial</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Required Documentation for Ley 417 Exemption</h3>
+                    <ul>
+                        <li>ASEP-issued renewable energy project registration</li>
+                        <li>Technical project design with equipment specifications</li>
+                        <li>Detailed equipment list matching commercial invoice</li>
+                        <li>Ley 417 exemption request form (submitted to ASEP)</li>
+                        <li>Commercial invoice from supplier</li>
+                        <li>Packing list</li>
+                        <li>Bill of Lading (B/L) or Air Waybill</li>
+                        <li>Certificate of Origin (for preferential tariff countries)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Import Process Steps</h3>
+                    <ul>
+                        <li><strong>Step 1:</strong> Submit Ley 417 exemption request to ASEP (allow 5-10 business days)</li>
+                        <li><strong>Step 2:</strong> Receive ASEP approval letter with exemption certificate</li>
+                        <li><strong>Step 3:</strong> Supplier ships to Colón Free Zone (CFZ) — direct or via broker</li>
+                        <li><strong>Step 4:</strong> Customs broker handles nationalization paperwork with ASEP exemption</li>
+                        <li><strong>Step 5:</strong> Customs inspection (if selected — random or first-time importers)</li>
+                        <li><strong>Step 6:</strong> Release from CFZ, transport to warehouse in Panama City or project site</li>
+                        <li><strong>Step 7:</strong> File import declaration for company records and project auditing</li>
+                    </ul>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">Key Contacts</div>
+                    <p>Customs Broker: [To be assigned] | ASEP Registration: www.asep.gob.pa | Colón Free Zone: www.zonalibredecolon.com.pa</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Exención Fiscal Ley 417 para Equipos Solares</h3>
+                    <p>La Ley 417 (2013) de Panamá otorga exenciones fiscales para la importación de equipos de energía renovable. Es una ventaja crítica de costos para los proyectos de Solaris.</p>
+                    <ul>
+                        <li><strong>Qué está exento:</strong> Paneles solares, inversores, baterías, estructuras de montaje, cables específicos para sistemas FV</li>
+                        <li><strong>Ahorro fiscal:</strong> 7% ITBMS (impuesto de venta) + aranceles de importación exentos</li>
+                        <li><strong>Ahorro típico:</strong> $3,500–$8,000 por proyecto residencial, $15,000–$50,000+ por comercial</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Documentación Requerida para Exención Ley 417</h3>
+                    <ul>
+                        <li>Registro de proyecto de energía renovable emitido por ASEP</li>
+                        <li>Diseño técnico del proyecto con especificaciones de equipo</li>
+                        <li>Lista detallada de equipos que coincida con factura comercial</li>
+                        <li>Formulario de solicitud de exención Ley 417 (presentado a ASEP)</li>
+                        <li>Factura comercial del proveedor</li>
+                        <li>Lista de empaque</li>
+                        <li>Conocimiento de Embarque (B/L) o Guía Aérea</li>
+                        <li>Certificado de Origen (para países con tarifa preferencial)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Pasos del Proceso de Importación</h3>
+                    <ul>
+                        <li><strong>Paso 1:</strong> Presentar solicitud de exención Ley 417 a ASEP (5-10 días hábiles)</li>
+                        <li><strong>Paso 2:</strong> Recibir carta de aprobación con certificado de exención</li>
+                        <li><strong>Paso 3:</strong> Proveedor envía a Zona Libre de Colón (ZLC)</li>
+                        <li><strong>Paso 4:</strong> Agente de aduanas maneja nacionalización con exención ASEP</li>
+                        <li><strong>Paso 5:</strong> Inspección aduanera (si se selecciona)</li>
+                        <li><strong>Paso 6:</strong> Liberación de ZLC, transporte a bodega o sitio del proyecto</li>
+                        <li><strong>Paso 7:</strong> Archivar declaración de importación para registros</li>
+                    </ul>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">Contactos Clave</div>
+                    <p>Agente de Aduanas: [Por asignar] | Registro ASEP: www.asep.gob.pa | Zona Libre de Colón: www.zonalibredecolon.com.pa</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>פטור מס חוק 417 לציוד סולארי</h3>
+                    <p>חוק 417 (2013) של פנמה מעניק פטורי מס ליבוא ציוד אנרגיה מתחדשת. זהו יתרון עלות קריטי לפרויקטי סולאריס.</p>
+                    <ul>
+                        <li><strong>מה פטור:</strong> פאנלים, ממירים, סוללות, מבני הרכבה, כבלים ספציפיים למערכות PV</li>
+                        <li><strong>חיסכון מס:</strong> 7% ITBMS (מס מכירה) + מכסי יבוא מבוטלים</li>
+                        <li><strong>חיסכון טיפוסי:</strong> $3,500–$8,000 לפרויקט ביתי, $15,000–$50,000+ למסחרי</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>מסמכים נדרשים לפטור חוק 417</h3>
+                    <ul>
+                        <li>רישום פרויקט אנרגיה מתחדשת מ-ASEP</li>
+                        <li>עיצוב טכני עם מפרטי ציוד</li>
+                        <li>רשימת ציוד מפורטת התואמת לחשבונית</li>
+                        <li>טופס בקשת פטור חוק 417 (מוגש ל-ASEP)</li>
+                        <li>חשבונית מסחרית מהספק</li>
+                        <li>רשימת אריזה</li>
+                        <li>שטר מטען (B/L) או שטר מטען אווירי</li>
+                        <li>תעודת מקור (למדינות עם תעריף מועדף)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>שלבי תהליך היבוא</h3>
+                    <ul>
+                        <li><strong>שלב 1:</strong> הגשת בקשת פטור חוק 417 ל-ASEP (5-10 ימי עסקים)</li>
+                        <li><strong>שלב 2:</strong> קבלת מכתב אישור עם תעודת פטור</li>
+                        <li><strong>שלב 3:</strong> ספק שולח לאזור החופשי של קולון</li>
+                        <li><strong>שלב 4:</strong> סוכן מכס מטפל בהלאמה עם פטור ASEP</li>
+                        <li><strong>שלב 5:</strong> בדיקת מכס (אם נבחר)</li>
+                        <li><strong>שלב 6:</strong> שחרור מ-CFZ, הובלה למחסן או לאתר</li>
+                        <li><strong>שלב 7:</strong> הגשת הצהרת יבוא לרשומות</li>
+                    </ul>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">אנשי קשר מרכזיים</div>
+                    <p>סוכן מכס: [לשיבוץ] | רישום ASEP: www.asep.gob.pa | אזור חופשי קולון: www.zonalibredecolon.com.pa</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUALITY CHECK -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Quality Check on Delivery</span>
+                <span data-lang="es">Control de Calidad en Entrega</span>
+                <span data-lang="he">בדיקת איכות בקבלה</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Visual Inspection Checklist</h3>
+                    <ul class="checklist">
+                        <li>Check packaging for damage during transport (dents, tears, water exposure)</li>
+                        <li>Verify correct model numbers on labels match PO</li>
+                        <li>Count units against packing list — report discrepancies immediately</li>
+                        <li>Inspect panel glass for micro-cracks (tilt at 45° in sunlight)</li>
+                        <li>Check inverter housing for dents or loose parts</li>
+                        <li>Verify serial numbers match warranty registration documents</li>
+                        <li>Photo-document any damage within 24 hours for insurance claims</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Label Verification</h3>
+                    <ul>
+                        <li>Panel nameplate: confirm Wp rating, Voc, Isc, Vmp, Imp match datasheet</li>
+                        <li>Inverter label: model, input/output specs, certifications (UL, IEC)</li>
+                        <li>All equipment must show CE marking and/or UL listing</li>
+                        <li>Cables: verify gauge, voltage rating, and UV resistance certification</li>
+                        <li>Record all serial numbers in project equipment log</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Functional Testing (Pre-Installation)</h3>
+                    <ul>
+                        <li><strong>Panels:</strong> Random sample 3-5 panels — measure Voc with multimeter in sunlight. Should be within ±3% of nameplate</li>
+                        <li><strong>Inverter:</strong> Power-on test at warehouse (if feasible) — verify display, WiFi/dongle connectivity</li>
+                        <li><strong>MC4 Connectors:</strong> Check crimping quality on pre-assembled cables with pull test (≥15 lbs)</li>
+                        <li><strong>Mounting:</strong> Verify all hardware present per set, test clamp fit with sample panel</li>
+                    </ul>
+                </div>
+
+                <div class="alert">
+                    <div class="alert-title">Rejection Protocol</div>
+                    <p>If more than 2% of panels show defects, or any inverter fails power-on test: quarantine the batch, photo-document all issues, contact supplier within 48 hours. Do NOT install questionable equipment.</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Lista de Inspección Visual</h3>
+                    <ul class="checklist">
+                        <li>Verificar empaque por daños de transporte (abolladuras, rasgaduras, exposición al agua)</li>
+                        <li>Verificar números de modelo en etiquetas contra OC</li>
+                        <li>Contar unidades contra lista de empaque — reportar discrepancias inmediatamente</li>
+                        <li>Inspeccionar vidrio de paneles para microfisuras (inclinar 45° bajo luz solar)</li>
+                        <li>Verificar carcasa de inversor por abolladuras o partes sueltas</li>
+                        <li>Verificar números de serie contra documentos de garantía</li>
+                        <li>Foto-documentar cualquier daño dentro de 24 horas para reclamos de seguro</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Verificación de Etiquetas</h3>
+                    <ul>
+                        <li>Placa de panel: confirmar Wp, Voc, Isc, Vmp, Imp contra ficha técnica</li>
+                        <li>Etiqueta de inversor: modelo, especificaciones entrada/salida, certificaciones</li>
+                        <li>Todo equipo debe mostrar marcado CE y/o listado UL</li>
+                        <li>Cables: verificar calibre, voltaje nominal, certificación UV</li>
+                        <li>Registrar todos los números de serie en bitácora del proyecto</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Pruebas Funcionales (Pre-Instalación)</h3>
+                    <ul>
+                        <li><strong>Paneles:</strong> Muestra aleatoria 3-5 — medir Voc con multímetro. Debe estar dentro de ±3%</li>
+                        <li><strong>Inversor:</strong> Prueba de encendido en bodega — verificar pantalla y conectividad WiFi</li>
+                        <li><strong>Conectores MC4:</strong> Verificar calidad de crimpado con prueba de tracción (≥15 lbs)</li>
+                        <li><strong>Montaje:</strong> Verificar hardware completo, probar ajuste de abrazadera con panel de muestra</li>
+                    </ul>
+                </div>
+
+                <div class="alert">
+                    <div class="alert-title">Protocolo de Rechazo</div>
+                    <p>Si más del 2% de paneles muestran defectos, o algún inversor falla la prueba de encendido: cuarentenar el lote, foto-documentar, contactar proveedor dentro de 48 horas. NO instalar equipo cuestionable.</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>רשימת בדיקה חזותית</h3>
+                    <ul class="checklist">
+                        <li>בדוק אריזה לנזק הובלה (שקעים, קרעים, חשיפה למים)</li>
+                        <li>ודא מספרי דגם על תוויות תואמים להזמנה</li>
+                        <li>ספור יחידות מול רשימת אריזה — דווח אי-התאמות מיד</li>
+                        <li>בדוק זכוכית פאנלים לסדקים זעירים (הטה ב-45° באור שמש)</li>
+                        <li>בדוק מארז ממיר לשקעים או חלקים רופפים</li>
+                        <li>ודא מספרים סריאליים תואמים למסמכי אחריות</li>
+                        <li>צלם-תעד כל נזק תוך 24 שעות לתביעות ביטוח</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>אימות תוויות</h3>
+                    <ul>
+                        <li>שלט פאנל: אשר Wp, Voc, Isc, Vmp, Imp מול גיליון נתונים</li>
+                        <li>תווית ממיר: דגם, מפרטי כניסה/יציאה, אישורים</li>
+                        <li>כל הציוד חייב להציג סימון CE ו/או רישום UL</li>
+                        <li>כבלים: ודא עובי, דירוג מתח, אישור עמידות UV</li>
+                        <li>רשום כל מספרים סריאליים ביומן ציוד הפרויקט</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>בדיקות תפקוד (טרום-התקנה)</h3>
+                    <ul>
+                        <li><strong>פאנלים:</strong> דגימה אקראית 3-5 — מדוד Voc עם מולטימטר. צריך להיות בטווח ±3%</li>
+                        <li><strong>ממיר:</strong> בדיקת הפעלה במחסן — ודא מסך, קישוריות WiFi</li>
+                        <li><strong>מחברי MC4:</strong> בדוק איכות חיבור עם מבחן משיכה (≥15 lbs)</li>
+                        <li><strong>הרכבה:</strong> ודא חומרה מלאה לכל סט, בדוק התאמת מלחץ עם פאנל לדוגמה</li>
+                    </ul>
+                </div>
+
+                <div class="alert">
+                    <div class="alert-title">פרוטוקול דחייה</div>
+                    <p>אם מעל 2% מהפאנלים מראים פגמים, או ממיר כלשהו נכשל בבדיקת הפעלה: בידוד המנה, צילום-תיעוד, יצירת קשר עם ספק תוך 48 שעות. לא להתקין ציוד מפוקפק.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="step-nav">
+            <a href="crm-value-chain.html" class="outline">
+                <span data-lang="en" class="active">← Step 7: Financing</span>
+                <span data-lang="es">← Paso 7: Financiamiento</span>
+                <span data-lang="he">שלב 7: מימון →</span>
+            </a>
+            <a href="crm-value-chain.html">
+                <span data-lang="en" class="active">CRM Pipeline</span>
+                <span data-lang="es">Pipeline CRM</span>
+                <span data-lang="he">שרשרת CRM</span>
+            </a>
+            <a href="crm-step9-installation.html">
+                <span data-lang="en" class="active">Step 9: Installation →</span>
+                <span data-lang="es">Paso 9: Instalación →</span>
+                <span data-lang="he">← שלב 9: התקנה</span>
+            </a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2025 Solaris Energy Panama — Internal Operations Dashboard
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => el.classList.add('active'));
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.lang-btn[onclick*="' + lang + '"]').classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+        }
+    </script>
+</body>
+</html>
