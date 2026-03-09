@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 7: Contract Signing — Solaris CRM</title>
+    <meta name="description" content="Contract signing process for Panama solar installations. Payment milestones, legal requirements, digital signatures, and contract templates.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em;
+        }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav {
+            background: var(--green); padding: 16px 40px;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .top-nav a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.8; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 100px 40px 80px; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -30%; right: -10%;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+        }
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.12); color: white;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px;
+        }
+        .step-number {
+            background: var(--gold); color: var(--green);
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+        }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); color: white; margin-bottom: 16px; line-height: 1.15; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 680px; }
+        .hero-stats { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; }
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--gold); font-weight: 700; }
+        .hero-stat .label { font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+        .content-section {
+            padding: 60px 40px; max-width: 1100px; margin: 0 auto;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green);
+            margin-bottom: 8px;
+        }
+        .section-subtitle {
+            color: var(--ash); font-size: 15px; margin-bottom: 32px;
+        }
+
+        .card {
+            background: white; border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card); margin-bottom: 24px;
+            overflow: hidden; border: 1px solid var(--mist);
+        }
+        .card-header {
+            background: var(--sand); padding: 20px 28px;
+            border-bottom: 1px solid var(--mist);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .card-header .icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--green); color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .card-header h3 {
+            font-family: 'Playfair Display', serif; font-size: 18px; color: var(--green);
+        }
+        .card-header p { font-size: 13px; color: var(--ash); margin-top: 2px; }
+        .card-body { padding: 24px 28px; }
+        .card-body p { font-size: 14px; color: var(--slate); margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        .checklist { list-style: none; }
+        .checklist li {
+            display: flex; gap: 12px; padding: 14px 0;
+            border-bottom: 1px solid var(--cloud); align-items: flex-start;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .check-box {
+            width: 20px; height: 20px; border: 2px solid var(--mist);
+            border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+        }
+        .checklist .text { font-size: 14px; color: var(--charcoal); }
+        .checklist .text small { display: block; color: var(--ash); font-size: 12px; margin-top: 2px; }
+
+        .milestone-track {
+            display: flex; gap: 0; margin: 24px 0; position: relative;
+        }
+        .milestone {
+            flex: 1; text-align: center; position: relative; padding: 0 8px;
+        }
+        .milestone::before {
+            content: ''; position: absolute; top: 20px; left: 0; right: 0;
+            height: 3px; background: var(--mist);
+        }
+        .milestone:first-child::before { left: 50%; }
+        .milestone:last-child::before { right: 50%; }
+        .milestone .dot {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--green); color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; margin: 0 auto 12px;
+            position: relative; z-index: 1;
+        }
+        .milestone .pct {
+            font-family: 'Playfair Display', serif; font-size: 24px;
+            color: var(--green); font-weight: 700;
+        }
+        .milestone .desc { font-size: 12px; color: var(--ash); margin-top: 4px; }
+
+        .legal-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; margin-top: 16px;
+        }
+        .legal-card {
+            background: var(--cloud); border-radius: var(--radius-card);
+            padding: 24px; border-left: 4px solid var(--gold);
+        }
+        .legal-card h4 { font-size: 15px; color: var(--green); margin-bottom: 8px; font-weight: 600; }
+        .legal-card p { font-size: 13px; color: var(--slate); }
+
+        .cancel-table {
+            width: 100%; border-collapse: collapse; margin-top: 16px;
+        }
+        .cancel-table th {
+            background: var(--green); color: var(--pearl); padding: 12px 16px;
+            text-align: left; font-size: 13px; font-weight: 600;
+        }
+        .cancel-table td {
+            padding: 12px 16px; border-bottom: 1px solid var(--cloud);
+            font-size: 14px; color: var(--slate);
+        }
+        .cancel-table tr:nth-child(even) td { background: var(--cloud); }
+        .cancel-table .refund-good { color: #2D8B4E; font-weight: 600; }
+        .cancel-table .refund-mid { color: var(--gold-aged); font-weight: 600; }
+        .cancel-table .refund-bad { color: #C0392B; font-weight: 600; }
+
+        [dir="rtl"] .cancel-table th,
+        [dir="rtl"] .cancel-table td { text-align: right; }
+        [dir="rtl"] .legal-card { border-left: none; border-right: 4px solid var(--gold); }
+
+        .sig-options {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-top: 16px;
+        }
+        .sig-option {
+            background: white; border: 2px solid var(--mist); border-radius: var(--radius-card);
+            padding: 20px; text-align: center; transition: all 0.3s;
+        }
+        .sig-option:hover { border-color: var(--gold); transform: translateY(-2px); }
+        .sig-option .icon { font-size: 28px; margin-bottom: 8px; }
+        .sig-option h4 { font-size: 14px; color: var(--green); margin-bottom: 4px; }
+        .sig-option p { font-size: 12px; color: var(--ash); }
+        .sig-option .rec {
+            display: inline-block; background: var(--gold); color: var(--green);
+            font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-pill);
+            margin-top: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .contract-preview {
+            background: var(--cloud); border-radius: var(--radius-card);
+            padding: 32px; margin-top: 24px; font-family: 'DM Sans', serif;
+            border: 1px solid var(--mist);
+        }
+        .contract-preview .clause-title {
+            font-weight: 700; color: var(--green); font-size: 14px;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-top: 20px; margin-bottom: 8px;
+        }
+        .contract-preview .clause-title:first-child { margin-top: 0; }
+        .contract-preview p {
+            font-size: 13px; color: var(--slate); line-height: 1.8;
+            font-style: italic;
+        }
+        .contract-preview .contract-heading {
+            font-family: 'Playfair Display', serif; font-size: 20px;
+            color: var(--green); text-align: center; margin-bottom: 24px;
+        }
+
+        .insurance-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px; margin-top: 16px;
+        }
+        .insurance-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 20px; box-shadow: var(--shadow-card); text-align: center;
+            border-top: 3px solid var(--green);
+        }
+        .insurance-card .icon { font-size: 24px; margin-bottom: 8px; }
+        .insurance-card h4 { font-size: 14px; color: var(--green); margin-bottom: 4px; }
+        .insurance-card p { font-size: 12px; color: var(--ash); }
+
+        .change-order-flow {
+            display: flex; align-items: center; gap: 0; margin: 24px 0; flex-wrap: wrap; justify-content: center;
+        }
+        .co-step {
+            background: var(--sand); border-radius: var(--radius-card);
+            padding: 16px 20px; text-align: center; min-width: 160px;
+        }
+        .co-step .num {
+            width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--gold);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; margin-bottom: 8px;
+        }
+        .co-step h4 { font-size: 13px; color: var(--green); }
+        .co-step p { font-size: 11px; color: var(--ash); margin-top: 2px; }
+        .co-arrow { font-size: 20px; color: var(--gold); padding: 0 8px; }
+
+        .tip-box {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card); padding: 24px 28px;
+            color: white; margin-top: 24px;
+        }
+        .tip-box h4 { color: var(--gold); font-size: 14px; margin-bottom: 8px; }
+        .tip-box p { font-size: 13px; color: rgba(255,255,255,0.8); }
+
+        .step-nav {
+            display: flex; justify-content: space-between; padding: 32px 40px;
+            background: var(--cloud); border-top: 1px solid var(--mist);
+        }
+        .step-nav a { color: var(--green); text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
+        .step-nav a:hover { color: var(--gold); }
+        .step-nav a.next { color: var(--gold); }
+        .step-nav a.next:hover { color: var(--gold-aged); }
+
+        .footer {
+            text-align: center; padding: 32px 40px; background: var(--green);
+            color: rgba(255,255,255,0.5); font-size: 13px;
+        }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .top-nav, .content-section, .step-nav { padding-left: 20px; padding-right: 20px; }
+            .hero { padding: 80px 20px 60px; }
+            .hero-stats { gap: 24px; }
+            .milestone-track { flex-direction: column; gap: 16px; }
+            .milestone::before { display: none; }
+            .change-order-flow { flex-direction: column; }
+            .co-arrow { transform: rotate(90deg); }
+            .contract-preview { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</a>
+        <span class="sep">›</span>
+        <a href="crm-value-chain.html" data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 7: Contract" data-es="Paso 7: Contrato" data-he="שלב 7: חוזה">Step 7: Contract</span>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="step-badge">
+            <span class="step-number">7</span>
+            <span data-en="CONTRACT SIGNING" data-es="FIRMA DE CONTRATO" data-he="חתימת חוזה">CONTRACT SIGNING</span>
+        </div>
+        <h1 data-en="Seal the Deal with a <span>Solid Contract</span>" data-es="Cierra el Trato con un <span>Contrato Sólido</span>" data-he="סגור את העסקה עם <span>חוזה מוצק</span>">Seal the Deal with a <span>Solid Contract</span></h1>
+        <p data-en="Professional contracts protect both parties. Cover system specs, payment milestones, warranties, and Panama-specific legal requirements." data-es="Los contratos profesionales protegen a ambas partes. Incluya especificaciones del sistema, hitos de pago, garantías y requisitos legales de Panamá." data-he="חוזים מקצועיים מגנים על שני הצדדים. כיסוי מפרטי מערכת, אבני דרך תשלום, אחריות ודרישות משפטיות פנמיות.">Professional contracts protect both parties. Cover system specs, payment milestones, warranties, and Panama-specific legal requirements.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="val" data-en="50/40/10" data-es="50/40/10" data-he="50/40/10">50/40/10</div>
+                <div class="label" data-en="Payment Split" data-es="División de Pago" data-he="חלוקת תשלום">Payment Split</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val" data-en="6" data-es="6" data-he="6">6</div>
+                <div class="label" data-en="Key Clauses" data-es="Cláusulas Clave" data-he="סעיפים מרכזיים">Key Clauses</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val" data-en="3" data-es="3" data-he="3">3</div>
+                <div class="label" data-en="Signature Options" data-es="Opciones de Firma" data-he="אפשרויות חתימה">Signature Options</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contract Checklist -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="Contract Checklist" data-es="Lista de Verificación del Contrato" data-he="רשימת בדיקה לחוזה">Contract Checklist</h2>
+        <p class="section-subtitle" data-en="Ensure every contract includes these essential elements before signing" data-es="Asegúrese de que cada contrato incluya estos elementos esenciales antes de firmar" data-he="וודאו שכל חוזה כולל את האלמנטים החיוניים הבאים לפני החתימה">Ensure every contract includes these essential elements before signing</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon">✓</div>
+                <div>
+                    <h3 data-en="Essential Contract Elements" data-es="Elementos Esenciales del Contrato" data-he="אלמנטים חיוניים בחוזה">Essential Contract Elements</h3>
+                    <p data-en="All items must be verified before client signs" data-es="Todos los elementos deben verificarse antes de la firma del cliente" data-he="כל הפריטים חייבים להיבדק לפני חתימת הלקוח">All items must be verified before client signs</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="checklist">
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="System specifications: panel count, wattage, inverter model, mounting type<small>e.g., 12x 550W JA Solar + 6kW Huawei inverter, roof-mount</small>" data-es="Especificaciones del sistema: cantidad de paneles, vatios, modelo de inversor, tipo de montaje<small>ej., 12x 550W JA Solar + inversor Huawei 6kW, montaje en techo</small>" data-he="מפרט מערכת: מספר פאנלים, הספק, דגם ממיר, סוג התקנה<small>לדוגמה, 12x 550W JA Solar + ממיר Huawei 6kW, הרכבה על גג</small>">System specifications: panel count, wattage, inverter model, mounting type<small>e.g., 12x 550W JA Solar + 6kW Huawei inverter, roof-mount</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Total price clearly stated in USD<small>Include breakdown: equipment, labor, permits, ENSA connection</small>" data-es="Precio total claramente indicado en USD<small>Incluir desglose: equipos, mano de obra, permisos, conexión ENSA</small>" data-he="מחיר כולל מצוין בבירור בדולר<small>כולל פירוט: ציוד, עבודה, היתרים, חיבור ENSA</small>">Total price clearly stated in USD<small>Include breakdown: equipment, labor, permits, ENSA connection</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Payment schedule: 50% / 40% / 10% milestones<small>Signing → Equipment delivery → Commissioning complete</small>" data-es="Calendario de pagos: 50% / 40% / 10% hitos<small>Firma → Entrega de equipos → Puesta en marcha completa</small>" data-he="לוח תשלומים: 50% / 40% / 10% אבני דרך<small>חתימה → אספקת ציוד → השלמת הפעלה</small>">Payment schedule: 50% / 40% / 10% milestones<small>Signing → Equipment delivery → Commissioning complete</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Project timeline with estimated start and completion dates<small>Include weather contingency clause (rainy season May-Nov)</small>" data-es="Cronograma del proyecto con fechas estimadas de inicio y finalización<small>Incluir cláusula de contingencia climática (temporada de lluvias mayo-nov)</small>" data-he="לוח זמנים עם תאריכי התחלה וסיום משוערים<small>כולל סעיף מזג אוויר (עונת גשמים מאי-נוב)</small>">Project timeline with estimated start and completion dates<small>Include weather contingency clause (rainy season May-Nov)</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Warranty terms: 25yr panels, 10yr inverter, 5yr workmanship<small>Specify what voids warranty (unauthorized modifications, negligence)</small>" data-es="Términos de garantía: 25 años paneles, 10 años inversor, 5 años mano de obra<small>Especificar qué anula la garantía (modificaciones no autorizadas, negligencia)</small>" data-he="תנאי אחריות: 25 שנה פאנלים, 10 שנים ממיר, 5 שנים עבודה<small>לפרט מה מבטל אחריות (שינויים לא מורשים, רשלנות)</small>">Warranty terms: 25yr panels, 10yr inverter, 5yr workmanship<small>Specify what voids warranty (unauthorized modifications, negligence)</small></span>
+                    </li>
+                    <li>
+                        <span class="check-box"></span>
+                        <span class="text" data-en="Liability limitations and force majeure clause<small>Natural disasters, supply chain delays, regulatory changes</small>" data-es="Limitaciones de responsabilidad y cláusula de fuerza mayor<small>Desastres naturales, retrasos en la cadena de suministro, cambios regulatorios</small>" data-he="מגבלות אחריות וסעיף כוח עליון<small>אסונות טבע, עיכובי שרשרת אספקה, שינויים רגולטוריים</small>">Liability limitations and force majeure clause<small>Natural disasters, supply chain delays, regulatory changes</small></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panama Legal Requirements -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Panama Legal Requirements" data-es="Requisitos Legales de Panamá" data-he="דרישות משפטיות בפנמה">Panama Legal Requirements</h2>
+        <p class="section-subtitle" data-en="Key legal considerations for solar contracts in Panama" data-es="Consideraciones legales clave para contratos solares en Panamá" data-he="שיקולים משפטיים מרכזיים לחוזי סולאר בפנמה">Key legal considerations for solar contracts in Panama</p>
+
+        <div class="legal-grid">
+            <div class="legal-card">
+                <h4 data-en="Individual Clients (Cédula)" data-es="Clientes Individuales (Cédula)" data-he="לקוחות פרטיים (Cédula)">Individual Clients (Cédula)</h4>
+                <p data-en="Individuals must provide their cédula (national ID) number. Both Panamanian citizens and residents with cédula E (extranjero) are eligible. Copy of cédula must be attached to contract." data-es="Las personas deben proporcionar su número de cédula. Tanto ciudadanos panameños como residentes con cédula E (extranjero) son elegibles. Se debe adjuntar copia de la cédula al contrato." data-he="אנשים פרטיים חייבים לספק מספר cédula (תעודת זהות). אזרחי פנמה ותושבים עם cédula E (זרים) כשירים. יש לצרף העתק cédula לחוזה.">Individuals must provide their cédula (national ID) number. Both Panamanian citizens and residents with cédula E (extranjero) are eligible. Copy of cédula must be attached to contract.</p>
+            </div>
+            <div class="legal-card">
+                <h4 data-en="Business Clients (RUC)" data-es="Clientes Comerciales (RUC)" data-he="לקוחות עסקיים (RUC)">Business Clients (RUC)</h4>
+                <p data-en="Companies must provide their RUC (Registro Único de Contribuyente) number. Contract must be signed by authorized representative. Attach corporate resolution (Acta de Junta Directiva) authorizing the purchase." data-es="Las empresas deben proporcionar su número de RUC (Registro Único de Contribuyente). El contrato debe ser firmado por un representante autorizado. Adjuntar resolución corporativa (Acta de Junta Directiva) autorizando la compra." data-he="חברות חייבות לספק מספר RUC (מספר עוסק). החוזה חייב להיחתם על ידי מורשה חתימה. יש לצרף החלטת דירקטוריון המאשרת את הרכישה.">Companies must provide their RUC (Registro Único de Contribuyente) number. Contract must be signed by authorized representative. Attach corporate resolution (Acta de Junta Directiva) authorizing the purchase.</p>
+            </div>
+            <div class="legal-card">
+                <h4 data-en="Notarization" data-es="Notarización" data-he="נוטריזציה">Notarization</h4>
+                <p data-en="Notarization is optional but recommended for contracts exceeding $10,000. Cost: approximately $50-100. Adds legal weight and simplifies dispute resolution. Can be done at any Notaría Pública." data-es="La notarización es opcional pero recomendada para contratos que excedan $10,000. Costo: aproximadamente $50-100. Agrega peso legal y simplifica la resolución de disputas. Se puede hacer en cualquier Notaría Pública." data-he="נוטריזציה אופציונלית אך מומלצת לחוזים מעל $10,000. עלות: כ-$50-100. מוסיפה משקל משפטי ומפשטת יישוב סכסוכים. ניתן לבצע בכל נוטריון ציבורי.">Notarization is optional but recommended for contracts exceeding $10,000. Cost: approximately $50-100. Adds legal weight and simplifies dispute resolution. Can be done at any Notaría Pública.</p>
+            </div>
+            <div class="legal-card">
+                <h4 data-en="Governing Law" data-es="Ley Aplicable" data-he="חוק חל">Governing Law</h4>
+                <p data-en="Contract governed by laws of the Republic of Panama. Disputes resolved via mediation first, then arbitration at CECAP (Centro de Conciliación y Arbitraje de Panamá). Include Ley 417 reference for tax benefits." data-es="Contrato regido por las leyes de la República de Panamá. Disputas resueltas primero por mediación, luego por arbitraje en CECAP (Centro de Conciliación y Arbitraje de Panamá). Incluir referencia a la Ley 417 para beneficios fiscales." data-he="החוזה כפוף לחוקי הרפובליקה של פנמה. סכסוכים נפתרים דרך גישור תחילה, ואז בוררות ב-CECAP. יש לכלול הפנייה לחוק 417 להטבות מס.">Contract governed by laws of the Republic of Panama. Disputes resolved via mediation first, then arbitration at CECAP (Centro de Conciliación y Arbitraje de Panamá). Include Ley 417 reference for tax benefits.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Milestones -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Payment Milestones" data-es="Hitos de Pago" data-he="אבני דרך תשלום">Payment Milestones</h2>
+        <p class="section-subtitle" data-en="Standard 50/40/10 payment structure tied to project progress" data-es="Estructura de pago estándar 50/40/10 vinculada al progreso del proyecto" data-he="מבנה תשלום סטנדרטי 50/40/10 המקושר להתקדמות הפרויקט">Standard 50/40/10 payment structure tied to project progress</p>
+
+        <div class="milestone-track">
+            <div class="milestone">
+                <div class="dot">1</div>
+                <div class="pct" data-en="50%" data-es="50%" data-he="50%">50%</div>
+                <div class="desc" data-en="Contract Signing<br>Triggers equipment order" data-es="Firma de Contrato<br>Inicia orden de equipos" data-he="חתימת חוזה<br>מפעיל הזמנת ציוד">Contract Signing<br>Triggers equipment order</div>
+            </div>
+            <div class="milestone">
+                <div class="dot">2</div>
+                <div class="pct" data-en="40%" data-es="40%" data-he="40%">40%</div>
+                <div class="desc" data-en="Equipment Delivery<br>Material arrives on-site" data-es="Entrega de Equipos<br>Material llega al sitio" data-he="אספקת ציוד<br>חומרים מגיעים לאתר">Equipment Delivery<br>Material arrives on-site</div>
+            </div>
+            <div class="milestone">
+                <div class="dot">3</div>
+                <div class="pct" data-en="10%" data-es="10%" data-he="10%">10%</div>
+                <div class="desc" data-en="Commissioning Complete<br>System tested & online" data-es="Puesta en Marcha<br>Sistema probado y en línea" data-he="סיום הפעלה<br>מערכת נבדקה ומחוברת">Commissioning Complete<br>System tested & online</div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <h4 data-en="💡 Payment Tip" data-es="💡 Consejo de Pago" data-he="💡 טיפ תשלום">💡 Payment Tip</h4>
+            <p data-en="Accept bank transfer (ACH), cash, or Yappy (Panama's mobile payment). For amounts over $5,000, bank transfer is preferred for documentation. Always issue a recibo (receipt) for cash payments." data-es="Acepte transferencia bancaria (ACH), efectivo o Yappy (pago móvil de Panamá). Para montos superiores a $5,000, se prefiere transferencia bancaria para documentación. Siempre emita un recibo para pagos en efectivo." data-he="קבלו העברה בנקאית (ACH), מזומן, או Yappy (תשלום נייד בפנמה). לסכומים מעל $5,000, העברה בנקאית מועדפת לתיעוד. תמיד הנפיקו קבלה לתשלומי מזומן.">Accept bank transfer (ACH), cash, or Yappy (Panama's mobile payment). For amounts over $5,000, bank transfer is preferred for documentation. Always issue a recibo (receipt) for cash payments.</p>
+        </div>
+    </section>
+
+    <!-- Change Order Process -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Change Order Process" data-es="Proceso de Orden de Cambio" data-he="תהליך שינוי הזמנה">Change Order Process</h2>
+        <p class="section-subtitle" data-en="When the client wants to modify the agreed scope after signing" data-es="Cuando el cliente desea modificar el alcance acordado después de firmar" data-he="כאשר הלקוח רוצה לשנות את ההיקף המוסכם לאחר החתימה">When the client wants to modify the agreed scope after signing</p>
+
+        <div class="change-order-flow">
+            <div class="co-step">
+                <div class="num">1</div>
+                <h4 data-en="Written Request" data-es="Solicitud Escrita" data-he="בקשה בכתב">Written Request</h4>
+                <p data-en="Client submits change in writing (email or WhatsApp)" data-es="Cliente envía cambio por escrito (email o WhatsApp)" data-he="הלקוח מגיש שינוי בכתב (מייל או וואטסאפ)">Client submits change in writing (email or WhatsApp)</p>
+            </div>
+            <span class="co-arrow">→</span>
+            <div class="co-step">
+                <div class="num">2</div>
+                <h4 data-en="Cost Adjustment" data-es="Ajuste de Costo" data-he="התאמת עלות">Cost Adjustment</h4>
+                <p data-en="Revised quote within 48 hours" data-es="Cotización revisada dentro de 48 horas" data-he="הצעת מחיר מעודכנת תוך 48 שעות">Revised quote within 48 hours</p>
+            </div>
+            <span class="co-arrow">→</span>
+            <div class="co-step">
+                <div class="num">3</div>
+                <h4 data-en="Timeline Impact" data-es="Impacto en Cronograma" data-he="השפעה על לוח זמנים">Timeline Impact</h4>
+                <p data-en="Updated delivery estimate" data-es="Estimación de entrega actualizada" data-he="הערכת אספקה מעודכנת">Updated delivery estimate</p>
+            </div>
+            <span class="co-arrow">→</span>
+            <div class="co-step">
+                <div class="num">4</div>
+                <h4 data-en="Both Parties Sign" data-es="Ambas Partes Firman" data-he="שני הצדדים חותמים">Both Parties Sign</h4>
+                <p data-en="Addendum attached to original contract" data-es="Adenda adjunta al contrato original" data-he="נספח מצורף לחוזה המקורי">Addendum attached to original contract</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cancellation Terms -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Cancellation Terms" data-es="Términos de Cancelación" data-he="תנאי ביטול">Cancellation Terms</h2>
+        <p class="section-subtitle" data-en="Clear refund policy protects both parties" data-es="Una política de reembolso clara protege a ambas partes" data-he="מדיניות החזר ברורה מגנה על שני הצדדים">Clear refund policy protects both parties</p>
+
+        <div class="card">
+            <div class="card-body" style="padding: 0; overflow-x: auto;">
+                <table class="cancel-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Cancellation Stage" data-es="Etapa de Cancelación" data-he="שלב ביטול">Cancellation Stage</th>
+                            <th data-en="Refund" data-es="Reembolso" data-he="החזר">Refund</th>
+                            <th data-en="Details" data-es="Detalles" data-he="פרטים">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-en="Before equipment order" data-es="Antes del pedido de equipos" data-he="לפני הזמנת ציוד">Before equipment order</td>
+                            <td class="refund-good" data-en="90% refund" data-es="90% reembolso" data-he="90% החזר">90% refund</td>
+                            <td data-en="10% retained for admin, design work, and site survey costs" data-es="10% retenido para costos de administración, diseño y estudio del sitio" data-he="10% נשמר לעלויות ניהול, עיצוב וסקר אתר">10% retained for admin, design work, and site survey costs</td>
+                        </tr>
+                        <tr>
+                            <td data-en="After equipment ordered" data-es="Después de pedido de equipos" data-he="לאחר הזמנת ציוד">After equipment ordered</td>
+                            <td class="refund-mid" data-en="50% refund" data-es="50% reembolso" data-he="50% החזר">50% refund</td>
+                            <td data-en="Equipment costs are non-recoverable once ordered from supplier" data-es="Los costos de equipo no son recuperables una vez ordenados al proveedor" data-he="עלויות ציוד אינן ניתנות להחזר לאחר הזמנה מהספק">Equipment costs are non-recoverable once ordered from supplier</td>
+                        </tr>
+                        <tr>
+                            <td data-en="During installation" data-es="Durante la instalación" data-he="במהלך ההתקנה">During installation</td>
+                            <td class="refund-bad" data-en="0% refund" data-es="0% reembolso" data-he="0% החזר">0% refund</td>
+                            <td data-en="All materials committed and labor deployed. Completion is mandatory." data-es="Todos los materiales comprometidos y mano de obra desplegada. La finalización es obligatoria." data-he="כל החומרים הוקצו וכוח העבודה פרוס. השלמה חובה.">All materials committed and labor deployed. Completion is mandatory.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Insurance Requirements -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Insurance Coverage" data-es="Cobertura de Seguros" data-he="כיסוי ביטוחי">Insurance Coverage</h2>
+        <p class="section-subtitle" data-en="Required insurance for every solar installation project" data-es="Seguros requeridos para cada proyecto de instalación solar" data-he="ביטוח נדרש לכל פרויקט התקנת סולאר">Required insurance for every solar installation project</p>
+
+        <div class="insurance-grid">
+            <div class="insurance-card">
+                <div class="icon">🛡️</div>
+                <h4 data-en="Contractor Liability" data-es="Responsabilidad del Contratista" data-he="אחריות קבלן">Contractor Liability</h4>
+                <p data-en="General liability coverage for damages caused during installation. Minimum $50,000 coverage recommended." data-es="Cobertura de responsabilidad general por daños causados durante la instalación. Cobertura mínima recomendada de $50,000." data-he="כיסוי אחריות כללית לנזקים שנגרמו במהלך ההתקנה. כיסוי מינימלי מומלץ $50,000.">General liability coverage for damages caused during installation. Minimum $50,000 coverage recommended.</p>
+            </div>
+            <div class="insurance-card">
+                <div class="icon">🏠</div>
+                <h4 data-en="Property Damage" data-es="Daños a la Propiedad" data-he="נזקי רכוש">Property Damage</h4>
+                <p data-en="Coverage for damage to client's roof, structure, or electrical system during work. Document existing conditions with photos before starting." data-es="Cobertura por daños al techo, estructura o sistema eléctrico del cliente durante el trabajo. Documentar condiciones existentes con fotos antes de comenzar." data-he="כיסוי לנזקים לגג הלקוח, מבנה או מערכת חשמל במהלך העבודה. לתעד מצב קיים בתמונות לפני התחלה.">Coverage for damage to client's roof, structure, or electrical system during work. Document existing conditions with photos before starting.</p>
+            </div>
+            <div class="insurance-card">
+                <div class="icon">👷</div>
+                <h4 data-en="Worker's Compensation" data-es="Compensación de Trabajadores" data-he="פיצוי עובדים">Worker's Compensation</h4>
+                <p data-en="CSS (Caja de Seguro Social) coverage for all workers on-site. Verify subcontractor compliance. Required by Panama labor law." data-es="Cobertura CSS (Caja de Seguro Social) para todos los trabajadores en el sitio. Verificar cumplimiento de subcontratistas. Requerido por ley laboral panameña." data-he="כיסוי CSS (ביטוח לאומי) לכל העובדים באתר. אמתו עמידת קבלני משנה. נדרש על פי חוק העבודה הפנמי.">CSS (Caja de Seguro Social) coverage for all workers on-site. Verify subcontractor compliance. Required by Panama labor law.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital Signature Options -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Digital Signature Options" data-es="Opciones de Firma Digital" data-he="אפשרויות חתימה דיגיטלית">Digital Signature Options</h2>
+        <p class="section-subtitle" data-en="Choose the signing method that works best for each client" data-es="Elija el método de firma que mejor funcione para cada cliente" data-he="בחרו את שיטת החתימה המתאימה ביותר לכל לקוח">Choose the signing method that works best for each client</p>
+
+        <div class="sig-options">
+            <div class="sig-option">
+                <div class="icon">📝</div>
+                <h4>DocuSign</h4>
+                <p data-en="Professional e-signature. Legally binding in Panama. Best for high-value contracts and corporate clients." data-es="Firma electrónica profesional. Legalmente vinculante en Panamá. Ideal para contratos de alto valor y clientes corporativos." data-he="חתימה אלקטרונית מקצועית. מחייבת משפטית בפנמה. מתאימה לחוזים בשווי גבוה ולקוחות עסקיים.">Professional e-signature. Legally binding in Panama. Best for high-value contracts and corporate clients.</p>
+                <span class="rec" data-en="RECOMMENDED" data-es="RECOMENDADO" data-he="מומלץ">RECOMMENDED</span>
+            </div>
+            <div class="sig-option">
+                <div class="icon">✍️</div>
+                <h4>HelloSign</h4>
+                <p data-en="Free tier available (3 docs/month). Good for startups and residential clients. Simple interface." data-es="Nivel gratuito disponible (3 docs/mes). Bueno para startups y clientes residenciales. Interfaz simple." data-he="שכבה חינמית זמינה (3 מסמכים/חודש). טוב לסטארטאפים ולקוחות פרטיים. ממשק פשוט.">Free tier available (3 docs/month). Good for startups and residential clients. Simple interface.</p>
+            </div>
+            <div class="sig-option">
+                <div class="icon">📱</div>
+                <h4>WhatsApp Photo</h4>
+                <p data-en="Client prints, signs, and sends photo via WhatsApp. Acceptable for residential ≤$10K. Save chat as backup proof." data-es="El cliente imprime, firma y envía foto por WhatsApp. Aceptable para residencial ≤$10K. Guarde el chat como prueba de respaldo." data-he="הלקוח מדפיס, חותם ושולח תמונה דרך וואטסאפ. מתאים למגורים עד $10K. שמרו את הצ'אט כגיבוי.">Client prints, signs, and sends photo via WhatsApp. Acceptable for residential ≤$10K. Save chat as backup proof.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contract Template Preview -->
+    <section class="content-section" style="padding-top: 0;">
+        <h2 class="section-title" data-en="Contract Template Preview" data-es="Vista Previa de Plantilla de Contrato" data-he="תצוגה מקדימה של תבנית חוזה">Contract Template Preview</h2>
+        <p class="section-subtitle" data-en="Key clauses in Spanish — the language of record for Panama contracts" data-es="Cláusulas clave en español — el idioma oficial para contratos en Panamá" data-he="סעיפים מרכזיים בספרדית — שפת הרשומות לחוזים בפנמה">Key clauses in Spanish — the language of record for Panama contracts</p>
+
+        <div class="contract-preview">
+            <div class="contract-heading">CONTRATO DE INSTALACIÓN DE SISTEMA SOLAR FOTOVOLTAICO</div>
+
+            <div class="clause-title">CLÁUSULA PRIMERA — PARTES</div>
+            <p>Entre SOLARIS ENERGY PANAMA, S.A., con RUC __________, representada por __________, en adelante "EL CONTRATISTA", y __________, con cédula/RUC No. __________, en adelante "EL CLIENTE", se conviene celebrar el presente contrato de instalación de sistema solar fotovoltaico.</p>
+
+            <div class="clause-title">CLÁUSULA SEGUNDA — OBJETO DEL CONTRATO</div>
+            <p>EL CONTRATISTA se compromete a diseñar, suministrar e instalar un sistema solar fotovoltaico de _____ kWp, compuesto por _____ paneles de _____ W marca __________, inversor __________ de _____ kW, y estructura de montaje tipo __________, en la propiedad ubicada en __________.</p>
+
+            <div class="clause-title">CLÁUSULA TERCERA — PRECIO Y FORMA DE PAGO</div>
+            <p>El precio total del sistema es de USD $__________ (__________ dólares americanos), pagaderos de la siguiente manera: (a) 50% a la firma del presente contrato; (b) 40% contra entrega de equipos en sitio; (c) 10% a la puesta en marcha y conexión con ENSA.</p>
+
+            <div class="clause-title">CLÁUSULA CUARTA — GARANTÍAS</div>
+            <p>EL CONTRATISTA garantiza: (a) Paneles solares: 25 años de rendimiento (mínimo 80% de capacidad nominal al año 25); (b) Inversor: 10 años de garantía del fabricante; (c) Mano de obra e instalación: 5 años contra defectos de instalación.</p>
+
+            <div class="clause-title">CLÁUSULA QUINTA — PLAZO DE EJECUCIÓN</div>
+            <p>El plazo para la ejecución completa del proyecto es de _____ días calendario a partir de la recepción del primer pago, sujeto a condiciones climáticas, disponibilidad de equipos y aprobaciones de ENSA.</p>
+
+            <div class="clause-title">CLÁUSULA SEXTA — LEY 417 DE 2015</div>
+            <p>EL CONTRATISTA asistirá al CLIENTE en la tramitación de los beneficios fiscales establecidos por la Ley 417 de 2015 (Incentivos para el Fomento de la Instalación de Sistemas de Generación de Energía con Fuentes Renovables), incluyendo el crédito fiscal del 100% del costo del sistema.</p>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-step6-proposal.html">
+            ← <span data-en="Prev: Proposal Creation" data-es="Anterior: Creación de Propuesta" data-he="קודם: יצירת הצעה">Prev: Proposal Creation</span>
+        </a>
+        <a href="crm-step8-inventory.html" class="next">
+            <span data-en="Next: Inventory & Procurement" data-es="Siguiente: Inventario y Compras" data-he="הבא: מלאי ורכש">Next: Inventory & Procurement</span> →
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="crm-value-chain.html" data-en="Back to CRM Pipeline" data-es="Volver al Pipeline CRM" data-he="חזרה לצינור CRM">Back to CRM Pipeline</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const val = el.getAttribute('data-' + lang);
+                if (val.includes('<')) {
+                    el.innerHTML = val;
+                } else {
+                    el.textContent = val;
+                }
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>
