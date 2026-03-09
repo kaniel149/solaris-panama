@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 3: Electricity Analysis — Solaris CRM</title>
+    <meta name="description" content="Electricity bill analysis for Panama solar installations. ENSA bill reading, consumption profiles, system sizing, and 25-year savings projections.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            line-height: 1.6;
+        }
+
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav {
+            background: var(--green); padding: 16px 40px;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+
+        .top-nav a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.8; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        .hero {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            padding: 100px 40px 80px; position: relative; overflow: hidden;
+        }
+
+        .hero::before {
+            content: ''; position: absolute; top: -30%; right: -10%;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+        }
+
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.12); color: white;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; margin-bottom: 24px;
+        }
+
+        .step-number {
+            background: var(--gold); color: var(--green);
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 52px);
+            color: white; margin-bottom: 16px; line-height: 1.15;
+        }
+
+        .hero h1 span { color: var(--gold); }
+
+        .hero p {
+            color: rgba(255,255,255,0.7); font-size: 18px;
+            max-width: 680px; margin: 0 auto;
+        }
+
+        .hero-stats {
+            display: flex; justify-content: center; gap: 48px;
+            flex-wrap: wrap; margin-top: 40px;
+        }
+
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); }
+        .hero-stat .lbl { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 4px; font-weight: 500; }
+
+        /* ===== SECTIONS ===== */
+        .content-section {
+            padding: 80px 40px; max-width: 1100px; margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center; margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px; color: var(--green); margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--ash); font-size: 16px; max-width: 600px; margin: 0 auto;
+        }
+
+        .alt-bg { background: var(--sand); }
+
+        /* ===== BILL DIAGRAM ===== */
+        .bill-diagram {
+            background: white;
+            border: 2px solid var(--mist);
+            border-radius: var(--radius-card);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .bill-header {
+            background: #1A237E;
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bill-header .ensa-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .bill-header .bill-period {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .bill-body { padding: 24px; }
+
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bill-row:hover {
+            background: var(--cloud);
+        }
+
+        .bill-row .field-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+
+        .bill-row .field-value {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--green);
+        }
+
+        .bill-row.highlight {
+            background: rgba(212,168,67,0.1);
+            border-left: 4px solid var(--gold);
+        }
+
+        .bill-row .callout {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: help;
+        }
+
+        .bill-row .callout-num {
+            position: absolute;
+            right: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gold);
+            color: var(--green);
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700;
+        }
+
+        .bill-total {
+            border-top: 2px solid var(--mist);
+            padding-top: 16px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bill-total .total-label {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .bill-total .total-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #C62828;
+            font-weight: 700;
+        }
+
+        /* ===== CALLOUT LEGEND ===== */
+        .callout-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .callout-item {
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+
+        .callout-item .num {
+            background: var(--gold); color: var(--green);
+            min-width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; margin-top: 2px;
+        }
+
+        .callout-item .desc {
+            font-size: 13px; color: var(--slate); line-height: 1.5;
+        }
+
+        .callout-item .desc strong {
+            color: var(--charcoal);
+        }
+
+        /* ===== KEY DATA CARDS ===== */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            border-top: 4px solid var(--gold);
+        }
+
+        .data-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px; color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .data-card p {
+            font-size: 13px; color: var(--slate); line-height: 1.6;
+        }
+
+        .data-card .big-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px; color: var(--gold);
+            margin: 12px 0 4px;
+        }
+
+        .data-card .unit {
+            font-size: 13px; color: var(--ash); font-weight: 500;
+        }
+
+        /* ===== SEASONAL CHART ===== */
+        .season-chart {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 200px;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .month-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .month-bar .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 20px;
+        }
+
+        .month-bar .bar:hover { opacity: 0.8; }
+
+        .month-bar .bar .tooltip {
+            display: none;
+            position: absolute;
+            top: -32px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--charcoal);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .month-bar .bar:hover .tooltip { display: block; }
+
+        .month-bar .label {
+            font-size: 11px;
+            color: var(--ash);
+            font-weight: 600;
+        }
+
+        .dry-bar { background: var(--gold); }
+        .rainy-bar { background: #1565C0; }
+
+        .season-legend {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 16px;
+        }
+
+        .season-legend span {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: var(--slate);
+        }
+
+        .season-legend .dot {
+            width: 12px; height: 12px; border-radius: 3px;
+        }
+
+        /* ===== CONSUMPTION PROFILES ===== */
+        .profile-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+        }
+
+        .profile-card.residential::before { background: #4CAF50; }
+        .profile-card.small-commercial::before { background: #FF9800; }
+        .profile-card.large-commercial::before { background: #F44336; }
+
+        .profile-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .profile-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px; color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .profile-card .range {
+            font-size: 28px;
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin: 12px 0;
+        }
+
+        .profile-card .range small {
+            font-size: 14px; color: var(--ash);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .profile-detail {
+            display: flex; justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--cloud);
+            font-size: 13px;
+        }
+
+        .profile-detail:last-child { border-bottom: none; }
+        .profile-detail .label { color: var(--ash); }
+        .profile-detail .value { font-weight: 600; color: var(--charcoal); }
+
+        /* ===== RATE TABLE ===== */
+        .rate-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .rate-table thead {
+            background: var(--green);
+        }
+
+        .rate-table th {
+            padding: 14px 20px;
+            color: var(--pearl);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: 0.05em;
+        }
+
+        .rate-table td {
+            padding: 14px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--cloud);
+        }
+
+        .rate-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .rate-table .rate-highlight {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* ===== SIZING FORMULA ===== */
+        .formula-box {
+            background: var(--green);
+            border-radius: var(--radius-card);
+            padding: 48px;
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .formula-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px; margin-bottom: 24px;
+        }
+
+        .formula {
+            font-family: 'DM Sans', monospace;
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--gold);
+            background: rgba(255,255,255,0.08);
+            padding: 24px 32px;
+            border-radius: 8px;
+            margin: 16px 0 32px;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+
+        .formula-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            text-align: left;
+            margin-top: 24px;
+        }
+
+        .formula-item .val {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .formula-item .desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ===== EXAMPLE CALC ===== */
+        .calc-example {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .calc-step {
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .calc-step .step-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+        }
+
+        .calc-step .step-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--gold);
+        }
+
+        .calc-step .step-unit {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+
+        .calc-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            font-size: 24px;
+        }
+
+        /* ===== SAVINGS TABLE ===== */
+        .savings-table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .savings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 600px;
+        }
+
+        .savings-table thead {
+            background: var(--green);
+        }
+
+        .savings-table th {
+            padding: 12px 16px;
+            color: var(--pearl);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: right;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .savings-table th:first-child { text-align: left; }
+
+        .savings-table td {
+            padding: 10px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--cloud);
+            text-align: right;
+        }
+
+        .savings-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .savings-table tbody tr:nth-child(5n) {
+            background: rgba(212,168,67,0.05);
+        }
+
+        .savings-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .savings-table .cumulative {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .savings-table .payback-row {
+            background: rgba(212,168,67,0.15) !important;
+            font-weight: 700;
+        }
+
+        .savings-total {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .savings-total .item {
+            text-align: center;
+        }
+
+        .savings-total .item .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--gold);
+        }
+
+        .savings-total .item .lbl {
+            font-size: 13px;
+            color: var(--ash);
+            margin-top: 4px;
+        }
+
+        /* ===== FET / SUBSIDIES ===== */
+        .subsidy-card {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card);
+            padding: 40px;
+            color: white;
+            margin-top: 32px;
+        }
+
+        .subsidy-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .subsidy-card h3 span { color: var(--gold); }
+
+        .subsidy-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .subsidy-list li {
+            display: flex; gap: 12px; align-items: flex-start;
+            font-size: 14px; line-height: 1.6;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .subsidy-list li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ===== NAV ===== */
+        .step-nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 32px 40px;
+            background: var(--cloud);
+            border-top: 1px solid var(--mist);
+        }
+
+        .step-nav a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .step-nav a:hover { color: var(--gold); }
+        .step-nav a.next { color: var(--gold); }
+        .step-nav a.next:hover { color: var(--gold-aged); }
+
+        .footer {
+            text-align: center;
+            padding: 32px 40px;
+            background: var(--green);
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .top-nav, .content-section, .step-nav { padding-left: 20px; padding-right: 20px; }
+            .hero { padding: 80px 20px 60px; }
+            .hero-stats { gap: 24px; }
+            .formula-box { padding: 32px 20px; }
+            .formula { font-size: 16px; padding: 16px 20px; }
+            .bill-header { flex-direction: column; gap: 8px; }
+            .season-chart { height: 150px; }
+            .calc-arrow { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="crm-value-chain.html" data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 3: Electricity Analysis" data-es="Paso 3: Análisis Eléctrico" data-he="שלב 3: ניתוח חשמל">Step 3: Electricity Analysis</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="step-badge">
+            <span class="step-number">3</span>
+            <span data-en="CRM STEP" data-es="PASO CRM" data-he="שלב CRM">CRM STEP</span>
+        </div>
+        <h1 data-en="Electricity Bill &lt;span&gt;Analysis&lt;/span&gt;" data-es="Análisis de &lt;span&gt;Factura Eléctrica&lt;/span&gt;" data-he="ניתוח &lt;span&gt;חשבון חשמל&lt;/span&gt;">Electricity Bill <span>Analysis</span></h1>
+        <p data-en="Decode ENSA bills, understand consumption patterns, and size the perfect solar system for every Panama client." data-es="Decodifique facturas ENSA, comprenda patrones de consumo y dimensione el sistema solar perfecto para cada cliente en Panamá." data-he="פענוח חשבונות ENSA, הבנת דפוסי צריכה ותכנון מערכת סולארית מושלמת לכל לקוח בפנמה.">Decode ENSA bills, understand consumption patterns, and size the perfect solar system for every Panama client.</p>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="val">$0.18</div>
+                <div class="lbl" data-en="Residential $/kWh" data-es="Residencial $/kWh" data-he="מגורים $/kWh">Residential $/kWh</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">5.3h</div>
+                <div class="lbl" data-en="Peak Sun Hours" data-es="Horas Pico Solar" data-he="שעות שיא שמש">Peak Sun Hours</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">25yr</div>
+                <div class="lbl" data-en="Savings Horizon" data-es="Horizonte de Ahorro" data-he="אופק חיסכון">Savings Horizon</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">80%</div>
+                <div class="lbl" data-en="System Efficiency" data-es="Eficiencia del Sistema" data-he="יעילות מערכת">System Efficiency</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Reading an ENSA Bill -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="How to Read an ENSA Bill" data-es="Cómo Leer una Factura ENSA" data-he="איך לקרוא חשבון ENSA">How to Read an ENSA Bill</h2>
+            <p data-en="Every data point on an ENSA bill matters for solar sizing. Here's what to look for." data-es="Cada dato en una factura ENSA importa para el dimensionamiento solar. Esto es lo que debe buscar." data-he="כל נקודת מידע בחשבון ENSA חשובה לתכנון סולארי. הנה מה לחפש.">Every data point on an ENSA bill matters for solar sizing. Here's what to look for.</p>
+        </div>
+
+        <!-- Visual Bill Diagram -->
+        <div class="bill-diagram">
+            <div class="bill-header">
+                <div class="ensa-logo">ENSA</div>
+                <div class="bill-period" data-en="Billing Period: Jan 15 – Feb 14, 2025" data-es="Período: 15 Ene – 14 Feb, 2025" data-he="תקופת חיוב: 15 ינואר – 14 פברואר 2025">Billing Period: Jan 15 – Feb 14, 2025</div>
+            </div>
+            <div class="bill-body">
+                <div class="bill-row">
+                    <span class="field-name" data-en="Customer Name" data-es="Nombre del Cliente" data-he="שם לקוח">Customer Name</span>
+                    <span class="field-value">Juan Pérez</span>
+                    <span class="callout-num">1</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="NIS (Service Number)" data-es="NIS (Número de Servicio)" data-he="NIS (מספר שירות)">NIS (Service Number)</span>
+                    <span class="field-value">1234567890</span>
+                    <span class="callout-num">2</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="Meter Number" data-es="Número de Medidor" data-he="מספר מונה">Meter Number</span>
+                    <span class="field-value">E-98765432</span>
+                </div>
+                <div class="bill-row highlight">
+                    <span class="field-name" data-en="Energy Consumed (kWh)" data-es="Energía Consumida (kWh)" data-he="צריכת אנרגיה (kWh)">Energy Consumed (kWh)</span>
+                    <span class="field-value">487 kWh</span>
+                    <span class="callout-num">3</span>
+                </div>
+                <div class="bill-row highlight">
+                    <span class="field-name" data-en="Demand (kW)" data-es="Demanda (kW)" data-he="ביקוש (kW)">Demand (kW)</span>
+                    <span class="field-value">3.2 kW</span>
+                    <span class="callout-num">4</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="Rate Tier / Tarifa" data-es="Tarifa / Categoría" data-he="קטגוריית תעריף">Rate Tier / Tarifa</span>
+                    <span class="field-value" data-en="BTS-1 Residential" data-es="BTS-1 Residencial" data-he="BTS-1 מגורים">BTS-1 Residential</span>
+                    <span class="callout-num">5</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="Energy Charge" data-es="Cargo por Energía" data-he="חיוב אנרגיה">Energy Charge</span>
+                    <span class="field-value">$87.66</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="Distribution Charge" data-es="Cargo por Distribución" data-he="חיוב הפצה">Distribution Charge</span>
+                    <span class="field-value">$18.42</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="FET Subsidy Discount" data-es="Descuento Subsidio FET" data-he="הנחת סובסידיית FET">FET Subsidy Discount</span>
+                    <span class="field-value" style="color: #4CAF50;">-$12.30</span>
+                    <span class="callout-num">6</span>
+                </div>
+                <div class="bill-row">
+                    <span class="field-name" data-en="Taxes (ITBMS 7%)" data-es="Impuestos (ITBMS 7%)" data-he="מיסים (ITBMS 7%)">Taxes (ITBMS 7%)</span>
+                    <span class="field-value">$6.56</span>
+                </div>
+                <div class="bill-total">
+                    <span class="total-label" data-en="Total Due" data-es="Total a Pagar" data-he="סה״כ לתשלום">Total Due</span>
+                    <span class="total-value">$100.34</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Callout Legend -->
+        <div class="callout-legend">
+            <div class="callout-item">
+                <span class="num">1</span>
+                <div class="desc" data-en="<strong>Customer Name</strong> — Must match the person signing the solar contract. Verify cedula or RUC." data-es="<strong>Nombre del Cliente</strong> — Debe coincidir con la persona que firma el contrato solar. Verifique cédula o RUC." data-he="<strong>שם הלקוח</strong> — חייב להתאים לחותם על חוזה הסולאר. לאמת תעודת זהות או RUC."><strong>Customer Name</strong> — Must match the person signing the solar contract. Verify cedula or RUC.</div>
+            </div>
+            <div class="callout-item">
+                <span class="num">2</span>
+                <div class="desc" data-en="<strong>NIS Number</strong> — Required for ENSA net metering application. Critical for interconnection." data-es="<strong>Número NIS</strong> — Requerido para la solicitud de medición neta ENSA. Crítico para la interconexión." data-he="<strong>מספר NIS</strong> — נדרש לבקשת מדידה נטו ב-ENSA. קריטי לחיבור."><strong>NIS Number</strong> — Required for ENSA net metering application. Critical for interconnection.</div>
+            </div>
+            <div class="callout-item">
+                <span class="num">3</span>
+                <div class="desc" data-en="<strong>kWh Consumed</strong> — The #1 data point. Request 12 months of bills for accurate sizing." data-es="<strong>kWh Consumido</strong> — El dato #1. Solicite 12 meses de facturas para un dimensionamiento preciso." data-he="<strong>kWh שנצרכו</strong> — נתון מס׳ 1. לבקש 12 חודשי חשבונות לתכנון מדויק."><strong>kWh Consumed</strong> — The #1 data point. Request 12 months of bills for accurate sizing.</div>
+            </div>
+            <div class="callout-item">
+                <span class="num">4</span>
+                <div class="desc" data-en="<strong>Demand (kW)</strong> — Peak power draw. Important for inverter sizing and panel configuration." data-es="<strong>Demanda (kW)</strong> — Consumo pico. Importante para dimensionar el inversor y configurar paneles." data-he="<strong>ביקוש (kW)</strong> — שיא צריכת חשמל. חשוב לגודל ממיר ותצורת פאנלים."><strong>Demand (kW)</strong> — Peak power draw. Important for inverter sizing and panel configuration.</div>
+            </div>
+            <div class="callout-item">
+                <span class="num">5</span>
+                <div class="desc" data-en="<strong>Rate Tier</strong> — BTS-1 = Residential ($0.18/kWh), BTS-2 = Commercial ($0.195/kWh). Determines savings." data-es="<strong>Categoría Tarifaria</strong> — BTS-1 = Residencial ($0.18/kWh), BTS-2 = Comercial ($0.195/kWh). Determina los ahorros." data-he="<strong>קטגוריית תעריף</strong> — BTS-1 = מגורים ($0.18/kWh), BTS-2 = מסחרי ($0.195/kWh). קובע חיסכון."><strong>Rate Tier</strong> — BTS-1 = Residential ($0.18/kWh), BTS-2 = Commercial ($0.195/kWh). Determines savings.</div>
+            </div>
+            <div class="callout-item">
+                <span class="num">6</span>
+                <div class="desc" data-en="<strong>FET Subsidy</strong> — Fondo de Estabilización Tarifaria. Government subsidy that may be reduced/removed. Solar hedges against this risk." data-es="<strong>Subsidio FET</strong> — Fondo de Estabilización Tarifaria. Subsidio gubernamental que puede reducirse/eliminarse. La solar protege contra este riesgo." data-he="<strong>סובסידיית FET</strong> — קרן ייצוב תעריפים ממשלתית. עשויה להיות מצומצמת/מבוטלת. סולאר מגן מפני סיכון זה."><strong>FET Subsidy</strong> — Fondo de Estabilización Tarifaria. Government subsidy that may be reduced/removed. Solar hedges against this risk.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Seasonal Patterns -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="Seasonal Consumption Patterns" data-es="Patrones de Consumo Estacional" data-he="דפוסי צריכה עונתיים">Seasonal Consumption Patterns</h2>
+            <p data-en="Panama has two distinct seasons affecting energy consumption and solar production." data-es="Panamá tiene dos estaciones distintas que afectan el consumo de energía y la producción solar." data-he="לפנמה שתי עונות מובחנות המשפיעות על צריכת אנרגיה וייצור סולארי.">Panama has two distinct seasons affecting energy consumption and solar production.</p>
+        </div>
+
+        <!-- CSS Bar Chart -->
+        <div class="season-chart">
+            <div class="month-bar">
+                <div class="bar dry-bar" style="height: 75%"><span class="tooltip">Jan: 5.8 PSH</span></div>
+                <span class="label">Jan</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar dry-bar" style="height: 82%"><span class="tooltip">Feb: 6.1 PSH</span></div>
+                <span class="label">Feb</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar dry-bar" style="height: 85%"><span class="tooltip">Mar: 6.3 PSH</span></div>
+                <span class="label">Mar</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar dry-bar" style="height: 78%"><span class="tooltip">Apr: 5.9 PSH</span></div>
+                <span class="label">Apr</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 58%"><span class="tooltip">May: 4.7 PSH</span></div>
+                <span class="label">May</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 52%"><span class="tooltip">Jun: 4.4 PSH</span></div>
+                <span class="label">Jun</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 50%"><span class="tooltip">Jul: 4.3 PSH</span></div>
+                <span class="label">Jul</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 48%"><span class="tooltip">Aug: 4.2 PSH</span></div>
+                <span class="label">Aug</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 45%"><span class="tooltip">Sep: 4.0 PSH</span></div>
+                <span class="label">Sep</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 48%"><span class="tooltip">Oct: 4.2 PSH</span></div>
+                <span class="label">Oct</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar rainy-bar" style="height: 55%"><span class="tooltip">Nov: 4.5 PSH</span></div>
+                <span class="label">Nov</span>
+            </div>
+            <div class="month-bar">
+                <div class="bar dry-bar" style="height: 72%"><span class="tooltip">Dec: 5.5 PSH</span></div>
+                <span class="label">Dec</span>
+            </div>
+        </div>
+
+        <div class="season-legend">
+            <span><span class="dot" style="background: var(--gold);"></span> <span data-en="Dry Season (Dec–Apr)" data-es="Temporada Seca (Dic–Abr)" data-he="עונה יבשה (דצמ׳–אפר׳)">Dry Season (Dec–Apr)</span></span>
+            <span><span class="dot" style="background: #1565C0;"></span> <span data-en="Rainy Season (May–Nov)" data-es="Temporada Lluviosa (May–Nov)" data-he="עונת גשמים (מאי–נוב׳)">Rainy Season (May–Nov)</span></span>
+        </div>
+
+        <div class="data-cards">
+            <div class="data-card">
+                <h4 data-en="Dry Season" data-es="Temporada Seca" data-he="עונה יבשה">Dry Season</h4>
+                <div class="big-num">5.3–6.3</div>
+                <div class="unit" data-en="Peak Sun Hours/day" data-es="Horas Pico Solar/día" data-he="שעות שיא שמש/יום">Peak Sun Hours/day</div>
+                <p data-en="December through April. Higher AC usage but excellent solar production. Best months for generation." data-es="Diciembre a abril. Mayor uso de AC pero excelente producción solar. Mejores meses para generación." data-he="דצמבר עד אפריל. שימוש גבוה יותר במזגנים אך ייצור סולארי מצוין. החודשים הטובים ביותר לייצור.">December through April. Higher AC usage but excellent solar production. Best months for generation.</p>
+            </div>
+            <div class="data-card">
+                <h4 data-en="Rainy Season" data-es="Temporada Lluviosa" data-he="עונת גשמים">Rainy Season</h4>
+                <div class="big-num">4.0–4.7</div>
+                <div class="unit" data-en="Peak Sun Hours/day" data-es="Horas Pico Solar/día" data-he="שעות שיא שמש/יום">Peak Sun Hours/day</div>
+                <p data-en="May through November. Cloud cover reduces production by ~25%. Morning sun still strong; rain typically afternoon." data-es="Mayo a noviembre. La nubosidad reduce la producción ~25%. El sol matutino sigue fuerte; lluvia típicamente por la tarde." data-he="מאי עד נובמבר. כיסוי ענן מפחית ייצור ב~25%. שמש בוקר עדיין חזקה; גשם בד״כ אחה״צ.">May through November. Cloud cover reduces production by ~25%. Morning sun still strong; rain typically afternoon.</p>
+            </div>
+            <div class="data-card">
+                <h4 data-en="Annual Average" data-es="Promedio Anual" data-he="ממוצע שנתי">Annual Average</h4>
+                <div class="big-num">5.3</div>
+                <div class="unit" data-en="Peak Sun Hours/day" data-es="Horas Pico Solar/día" data-he="שעות שיא שמש/יום">Peak Sun Hours/day</div>
+                <p data-en="Used in sizing formula. Panama is one of the best solar markets in Central America with consistent year-round irradiance." data-es="Usado en la fórmula de dimensionamiento. Panamá es uno de los mejores mercados solares en Centroamérica con irradiancia constante." data-he="משמש בנוסחת תכנון. פנמה היא אחד משוקי הסולאר הטובים במרכז אמריקה עם קרינה עקבית כל השנה.">Used in sizing formula. Panama is one of the best solar markets in Central America with consistent year-round irradiance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Consumption Profiles -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="Consumption Profiles" data-es="Perfiles de Consumo" data-he="פרופילי צריכה">Consumption Profiles</h2>
+            <p data-en="Know your client segment to recommend the right system size and pricing." data-es="Conozca su segmento de cliente para recomendar el tamaño y precio correcto del sistema." data-he="הכירו את פלח הלקוחות כדי להמליץ על גודל מערכת ותמחור נכונים.">Know your client segment to recommend the right system size and pricing.</p>
+        </div>
+
+        <div class="profile-cards">
+            <!-- Residential -->
+            <div class="profile-card residential">
+                <div class="profile-icon">🏠</div>
+                <h4 data-en="Residential" data-es="Residencial" data-he="מגורים">Residential</h4>
+                <div class="range">200–500 <small>kWh/mo</small></div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Rate" data-es="Tarifa" data-he="תעריף">Rate</span>
+                    <span class="value">$0.18/kWh</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Monthly Bill" data-es="Factura Mensual" data-he="חשבון חודשי">Monthly Bill</span>
+                    <span class="value">$36–$90</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</span>
+                    <span class="value">1.6–3.9 kWp</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Typical Client" data-es="Cliente Típico" data-he="לקוח טיפוסי">Typical Client</span>
+                    <span class="value" data-en="House with 1-2 ACs" data-es="Casa con 1-2 ACs" data-he="בית עם 1-2 מזגנים">House with 1-2 ACs</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Pricing" data-es="Precio" data-he="תמחור">Pricing</span>
+                    <span class="value">$1.10–$1.30/Wp</span>
+                </div>
+            </div>
+
+            <!-- Small Commercial -->
+            <div class="profile-card small-commercial">
+                <div class="profile-icon">🏪</div>
+                <h4 data-en="Small Commercial" data-es="Comercial Pequeño" data-he="מסחרי קטן">Small Commercial</h4>
+                <div class="range">500–2,000 <small>kWh/mo</small></div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Rate" data-es="Tarifa" data-he="תעריף">Rate</span>
+                    <span class="value">$0.195/kWh</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Monthly Bill" data-es="Factura Mensual" data-he="חשבון חודשי">Monthly Bill</span>
+                    <span class="value">$97–$390</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</span>
+                    <span class="value">3.9–15.7 kWp</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Typical Client" data-es="Cliente Típico" data-he="לקוח טיפוסי">Typical Client</span>
+                    <span class="value" data-en="Office, restaurant, clinic" data-es="Oficina, restaurante, clínica" data-he="משרד, מסעדה, מרפאה">Office, restaurant, clinic</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Pricing" data-es="Precio" data-he="תמחור">Pricing</span>
+                    <span class="value">$1.00–$1.20/Wp</span>
+                </div>
+            </div>
+
+            <!-- Large Commercial -->
+            <div class="profile-card large-commercial">
+                <div class="profile-icon">🏭</div>
+                <h4 data-en="Large Commercial / Industrial" data-es="Comercial Grande / Industrial" data-he="מסחרי גדול / תעשייתי">Large Commercial / Industrial</h4>
+                <div class="range">2,000+ <small>kWh/mo</small></div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Rate" data-es="Tarifa" data-he="תעריף">Rate</span>
+                    <span class="value">$0.195/kWh</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Monthly Bill" data-es="Factura Mensual" data-he="חשבון חודשי">Monthly Bill</span>
+                    <span class="value">$390+</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</span>
+                    <span class="value">15.7+ kWp</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Typical Client" data-es="Cliente Típico" data-he="לקוח טיפוסי">Typical Client</span>
+                    <span class="value" data-en="Factory, hotel, warehouse" data-es="Fábrica, hotel, bodega" data-he="מפעל, מלון, מחסן">Factory, hotel, warehouse</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="label" data-en="Pricing" data-es="Precio" data-he="תמחור">Pricing</span>
+                    <span class="value">$1.00–$1.10/Wp</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Rate Structure -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="ENSA Rate Structure" data-es="Estructura Tarifaria ENSA" data-he="מבנה תעריפי ENSA">ENSA Rate Structure</h2>
+            <p data-en="Current electricity rates in Panama by customer category." data-es="Tarifas de electricidad actuales en Panamá por categoría de cliente." data-he="תעריפי חשמל נוכחיים בפנמה לפי קטגוריית לקוח.">Current electricity rates in Panama by customer category.</p>
+        </div>
+
+        <table class="rate-table">
+            <thead>
+                <tr>
+                    <th data-en="Category" data-es="Categoría" data-he="קטגוריה">Category</th>
+                    <th data-en="Tariff Code" data-es="Código Tarifario" data-he="קוד תעריף">Tariff Code</th>
+                    <th data-en="Energy Rate" data-es="Tarifa Energía" data-he="תעריף אנרגיה">Energy Rate</th>
+                    <th data-en="Distribution" data-es="Distribución" data-he="הפצה">Distribution</th>
+                    <th data-en="Effective Rate" data-es="Tarifa Efectiva" data-he="תעריף אפקטיבי">Effective Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-en="Residential (≤300 kWh)" data-es="Residencial (≤300 kWh)" data-he="מגורים (≤300 kWh)">Residential (≤300 kWh)</td>
+                    <td>BTS-1</td>
+                    <td>$0.1200</td>
+                    <td>$0.0380</td>
+                    <td class="rate-highlight">$0.1580/kWh</td>
+                </tr>
+                <tr>
+                    <td data-en="Residential (>300 kWh)" data-es="Residencial (>300 kWh)" data-he="מגורים (>300 kWh)">Residential (>300 kWh)</td>
+                    <td>BTS-1</td>
+                    <td>$0.1420</td>
+                    <td>$0.0380</td>
+                    <td class="rate-highlight">$0.1800/kWh</td>
+                </tr>
+                <tr>
+                    <td data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</td>
+                    <td>BTS-2</td>
+                    <td>$0.1450</td>
+                    <td>$0.0500</td>
+                    <td class="rate-highlight">$0.1950/kWh</td>
+                </tr>
+                <tr>
+                    <td data-en="Industrial" data-es="Industrial" data-he="תעשייתי">Industrial</td>
+                    <td>BTS-3</td>
+                    <td>$0.1350</td>
+                    <td>$0.0550</td>
+                    <td class="rate-highlight">$0.1900/kWh</td>
+                </tr>
+                <tr>
+                    <td data-en="Government" data-es="Gobierno" data-he="ממשלתי">Government</td>
+                    <td>BTS-4</td>
+                    <td>$0.1500</td>
+                    <td>$0.0420</td>
+                    <td class="rate-highlight">$0.1920/kWh</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- FET Subsidy Card -->
+        <div class="subsidy-card">
+            <h3 data-en="FET — Fondo de <span>Estabilización Tarifaria</span>" data-es="FET — Fondo de <span>Estabilización Tarifaria</span>" data-he="FET — קרן <span>ייצוב תעריפים</span>">FET — Fondo de <span>Estabilización Tarifaria</span></h3>
+            <ul class="subsidy-list">
+                <li data-en="Government subsidy that reduces electricity costs for consumers under 500 kWh/month" data-es="Subsidio gubernamental que reduce costos de electricidad para consumidores bajo 500 kWh/mes" data-he="סובסידיה ממשלתית שמפחיתה עלויות חשמל לצרכנים מתחת ל-500 kWh/חודש">Government subsidy that reduces electricity costs for consumers under 500 kWh/month</li>
+                <li data-en="Funded by government budget — can be reduced or eliminated at any time" data-es="Financiado por presupuesto gubernamental — puede reducirse o eliminarse en cualquier momento" data-he="ממומנת מתקציב ממשלתי — יכולה להיות מצומצמת או מבוטלת בכל עת">Funded by government budget — can be reduced or eliminated at any time</li>
+                <li data-en="Solar systems protect clients from FET reduction risk — strong sales argument" data-es="Sistemas solares protegen a clientes del riesgo de reducción del FET — argumento de venta fuerte" data-he="מערכות סולאריות מגנות על לקוחות מסיכון הפחתת FET — טיעון מכירה חזק">Solar systems protect clients from FET reduction risk — strong sales argument</li>
+                <li data-en="Historical trend: FET has been reduced multiple times since 2019" data-es="Tendencia histórica: el FET se ha reducido múltiples veces desde 2019" data-he="מגמה היסטורית: ה-FET צומצם מספר פעמים מאז 2019">Historical trend: FET has been reduced multiple times since 2019</li>
+                <li data-en="When FET is reduced, clients without solar see immediate bill increases" data-es="Cuando el FET se reduce, clientes sin solar ven aumentos inmediatos en la factura" data-he="כאשר ה-FET מצומצם, לקוחות ללא סולאר רואים עלייה מיידית בחשבון">When FET is reduced, clients without solar see immediate bill increases</li>
+                <li data-en="Use this in proposals: 'Your savings grow if electricity rates increase'" data-es="Use esto en propuestas: 'Sus ahorros crecen si las tarifas suben'" data-he="להשתמש בהצעות: 'החיסכון שלך גדל אם תעריפי החשמל עולים'">Use this in proposals: "Your savings grow if electricity rates increase"</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 5: System Sizing Formula -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 data-en="System Sizing Formula" data-es="Fórmula de Dimensionamiento" data-he="נוסחת תכנון מערכת">System Sizing Formula</h2>
+            <p data-en="The core calculation every solar installer in Panama must master." data-es="El cálculo fundamental que todo instalador solar en Panamá debe dominar." data-he="החישוב המרכזי שכל מתקין סולאר בפנמה חייב לשלוט בו.">The core calculation every solar installer in Panama must master.</p>
+        </div>
+
+        <div class="formula-box">
+            <h3 data-en="Panama Solar Sizing" data-es="Dimensionamiento Solar Panamá" data-he="תכנון סולארי פנמה">Panama Solar Sizing</h3>
+            <div class="formula">kWp = Monthly kWh ÷ (5.3 × 30 × 0.80)</div>
+
+            <div class="formula-breakdown">
+                <div class="formula-item">
+                    <div class="val">kWh</div>
+                    <div class="desc" data-en="Monthly consumption from ENSA bill (use 12-month average)" data-es="Consumo mensual de la factura ENSA (usar promedio 12 meses)" data-he="צריכה חודשית מחשבון ENSA (להשתמש בממוצע 12 חודשים)">Monthly consumption from ENSA bill (use 12-month average)</div>
+                </div>
+                <div class="formula-item">
+                    <div class="val">5.3</div>
+                    <div class="desc" data-en="Average Peak Sun Hours per day in Panama" data-es="Horas Pico Solar promedio por día en Panamá" data-he="ממוצע שעות שיא שמש ליום בפנמה">Average Peak Sun Hours per day in Panama</div>
+                </div>
+                <div class="formula-item">
+                    <div class="val">30</div>
+                    <div class="desc" data-en="Days per month (standard)" data-es="Días por mes (estándar)" data-he="ימים בחודש (סטנדרטי)">Days per month (standard)</div>
+                </div>
+                <div class="formula-item">
+                    <div class="val">0.80</div>
+                    <div class="desc" data-en="System efficiency factor (losses: heat, wiring, inverter, soiling)" data-es="Factor de eficiencia del sistema (pérdidas: calor, cableado, inversor, suciedad)" data-he="מקדם יעילות מערכת (הפסדים: חום, כבלים, ממיר, לכלוך)">System efficiency factor (losses: heat, wiring, inverter, soiling)</div>
+                </div>
+            </div>
+
+            <!-- Example Calculation -->
+            <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <h3 data-en="Example: Residential Client" data-es="Ejemplo: Cliente Residencial" data-he="דוגמה: לקוח מגורים" style="margin-bottom: 24px;">Example: Residential Client</h3>
+                <div class="calc-example">
+                    <div class="calc-step">
+                        <div class="step-label" data-en="Monthly Usage" data-es="Consumo Mensual" data-he="צריכה חודשית">Monthly Usage</div>
+                        <div class="step-val">450</div>
+                        <div class="step-unit">kWh/month</div>
+                    </div>
+                    <div class="calc-arrow">→</div>
+                    <div class="calc-step">
+                        <div class="step-label" data-en="Divide by" data-es="Dividir por" data-he="חלק ב">Divide by</div>
+                        <div class="step-val">127.2</div>
+                        <div class="step-unit">(5.3 × 30 × 0.80)</div>
+                    </div>
+                    <div class="calc-arrow">→</div>
+                    <div class="calc-step">
+                        <div class="step-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                        <div class="step-val">3.54</div>
+                        <div class="step-unit">kWp</div>
+                    </div>
+                    <div class="calc-arrow">→</div>
+                    <div class="calc-step">
+                        <div class="step-label" data-en="Panels (550W)" data-es="Paneles (550W)" data-he="פאנלים (550W)">Panels (550W)</div>
+                        <div class="step-val">7</div>
+                        <div class="step-unit" data-en="panels needed" data-es="paneles necesarios" data-he="פאנלים נדרשים">panels needed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: 25-Year Savings Projection -->
+    <section class="content-section alt-bg">
+        <div class="section-header">
+            <h2 data-en="25-Year Savings Projection" data-es="Proyección de Ahorro a 25 Años" data-he="תחזית חיסכון ל-25 שנה">25-Year Savings Projection</h2>
+            <p data-en="Based on a 3.5 kWp residential system at $0.18/kWh with 3% annual rate increase and 0.5% panel degradation." data-es="Basado en un sistema residencial de 3.5 kWp a $0.18/kWh con aumento anual del 3% y degradación de paneles del 0.5%." data-he="מבוסס על מערכת מגורים 3.5 kWp ב-$0.18/kWh עם עלייה שנתית של 3% והתדרדרות פאנלים של 0.5%.">Based on a 3.5 kWp residential system at $0.18/kWh with 3% annual rate increase and 0.5% panel degradation.</p>
+        </div>
+
+        <div class="savings-table-wrap">
+            <table class="savings-table">
+                <thead>
+                    <tr>
+                        <th data-en="Year" data-es="Año" data-he="שנה">Year</th>
+                        <th data-en="Production (kWh)" data-es="Producción (kWh)" data-he="ייצור (kWh)">Production (kWh)</th>
+                        <th data-en="Rate ($/kWh)" data-es="Tarifa ($/kWh)" data-he="תעריף ($/kWh)">Rate ($/kWh)</th>
+                        <th data-en="Annual Savings" data-es="Ahorro Anual" data-he="חיסכון שנתי">Annual Savings</th>
+                        <th data-en="Cumulative Savings" data-es="Ahorro Acumulado" data-he="חיסכון מצטבר">Cumulative Savings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>5,292</td><td>$0.180</td><td>$953</td><td class="cumulative">$953</td></tr>
+                    <tr><td>2</td><td>5,266</td><td>$0.185</td><td>$974</td><td class="cumulative">$1,927</td></tr>
+                    <tr><td>3</td><td>5,239</td><td>$0.191</td><td>$1,001</td><td class="cumulative">$2,928</td></tr>
+                    <tr><td>4</td><td>5,213</td><td>$0.197</td><td>$1,027</td><td class="cumulative">$3,955</td></tr>
+                    <tr class="payback-row"><td>5</td><td>5,187</td><td>$0.203</td><td>$1,053</td><td class="cumulative">$5,008 ★</td></tr>
+                    <tr><td>6</td><td>5,161</td><td>$0.209</td><td>$1,079</td><td class="cumulative">$6,087</td></tr>
+                    <tr><td>7</td><td>5,135</td><td>$0.215</td><td>$1,104</td><td class="cumulative">$7,191</td></tr>
+                    <tr><td>8</td><td>5,109</td><td>$0.221</td><td>$1,129</td><td class="cumulative">$8,320</td></tr>
+                    <tr><td>9</td><td>5,084</td><td>$0.228</td><td>$1,159</td><td class="cumulative">$9,479</td></tr>
+                    <tr><td>10</td><td>5,058</td><td>$0.235</td><td>$1,189</td><td class="cumulative">$10,668</td></tr>
+                    <tr><td>11</td><td>5,033</td><td>$0.242</td><td>$1,218</td><td class="cumulative">$11,886</td></tr>
+                    <tr><td>12</td><td>5,008</td><td>$0.249</td><td>$1,247</td><td class="cumulative">$13,133</td></tr>
+                    <tr><td>13</td><td>4,983</td><td>$0.256</td><td>$1,276</td><td class="cumulative">$14,409</td></tr>
+                    <tr><td>14</td><td>4,958</td><td>$0.264</td><td>$1,309</td><td class="cumulative">$15,718</td></tr>
+                    <tr><td>15</td><td>4,933</td><td>$0.272</td><td>$1,342</td><td class="cumulative">$17,060</td></tr>
+                    <tr><td>16</td><td>4,908</td><td>$0.280</td><td>$1,374</td><td class="cumulative">$18,434</td></tr>
+                    <tr><td>17</td><td>4,884</td><td>$0.289</td><td>$1,411</td><td class="cumulative">$19,845</td></tr>
+                    <tr><td>18</td><td>4,860</td><td>$0.297</td><td>$1,443</td><td class="cumulative">$21,288</td></tr>
+                    <tr><td>19</td><td>4,835</td><td>$0.306</td><td>$1,480</td><td class="cumulative">$22,768</td></tr>
+                    <tr><td>20</td><td>4,811</td><td>$0.315</td><td>$1,516</td><td class="cumulative">$24,284</td></tr>
+                    <tr><td>21</td><td>4,787</td><td>$0.325</td><td>$1,556</td><td class="cumulative">$25,840</td></tr>
+                    <tr><td>22</td><td>4,763</td><td>$0.335</td><td>$1,596</td><td class="cumulative">$27,436</td></tr>
+                    <tr><td>23</td><td>4,739</td><td>$0.345</td><td>$1,635</td><td class="cumulative">$29,071</td></tr>
+                    <tr><td>24</td><td>4,715</td><td>$0.355</td><td>$1,674</td><td class="cumulative">$30,745</td></tr>
+                    <tr><td>25</td><td>4,692</td><td>$0.366</td><td>$1,717</td><td class="cumulative">$32,462</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="savings-total">
+            <div class="item">
+                <div class="val">$32,462</div>
+                <div class="lbl" data-en="Total 25-Year Savings" data-es="Ahorro Total 25 Años" data-he="חיסכון כולל 25 שנה">Total 25-Year Savings</div>
+            </div>
+            <div class="item">
+                <div class="val">~5 yrs</div>
+                <div class="lbl" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+            </div>
+            <div class="item">
+                <div class="val">6.5x</div>
+                <div class="lbl" data-en="Return on Investment" data-es="Retorno de Inversión" data-he="החזר על השקעה">Return on Investment</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-step2-site-survey.html">
+            ← <span data-en="Prev: Site Survey" data-es="Anterior: Inspección" data-he="קודם: סקר שטח">Prev: Site Survey</span>
+        </a>
+        <a href="crm-step4-design.html" class="next">
+            <span data-en="Next: System Design" data-es="Siguiente: Diseño del Sistema" data-he="הבא: תכנון מערכת">Next: System Design</span> →
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="crm-value-chain.html" data-en="Back to CRM Pipeline" data-es="Volver al Pipeline CRM" data-he="חזרה לצינור CRM">Back to CRM Pipeline</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const val = el.getAttribute('data-' + lang);
+                if (val.includes('<')) {
+                    el.innerHTML = val;
+                } else {
+                    el.textContent = val;
+                }
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>
