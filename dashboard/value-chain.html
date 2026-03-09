@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Value Chain — Solaris Energy Panama</title>
+    <meta name="description" content="10-step solar installation value chain for Panama: from lead capture to referral, with timelines, tools, and quality gates.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== TOP NAV ===== */
+        .top-nav {
+            background: var(--green);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--pearl);
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--gold); }
+
+        .nav-back {
+            color: rgba(254,253,251,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-back:hover { color: var(--gold); }
+
+        /* ===== HERO BANNER ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 50%, #1A6B4A 100%);
+            padding: 4rem 2rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: var(--pearl);
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero h1 em { font-style: italic; color: var(--gold); }
+
+        .page-hero p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.7);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ===== CONTENT ===== */
+        .content-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section { margin-bottom: 3.5rem; }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--slate);
+            max-width: 700px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* ===== TIMELINE OVERVIEW ===== */
+        .timeline-overview {
+            background: var(--green);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            color: var(--pearl);
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-overview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -15%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 60%);
+            border-radius: 50%;
+        }
+
+        .tl-stat { text-align: center; position: relative; }
+
+        .tl-stat .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .tl-stat .label {
+            font-size: 0.82rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        /* ===== FLOW DIAGRAM ===== */
+        .flow-container {
+            position: relative;
+        }
+
+        .flow-step {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 1.5rem;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .flow-step:last-child .flow-line { display: none; }
+
+        /* Left Column: Number + Connector */
+        .flow-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .flow-number {
+            width: 56px;
+            height: 56px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            box-shadow: var(--shadow-card);
+        }
+
+        .flow-number.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .flow-line {
+            width: 3px;
+            flex: 1;
+            background: linear-gradient(to bottom, var(--green), var(--mist));
+            min-height: 40px;
+        }
+
+        /* Right Column: Card */
+        .flow-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .flow-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateX(4px);
+        }
+
+        .flow-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .flow-card h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .flow-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .flow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-person { background: rgba(11,61,46,0.1); color: var(--green); }
+        .badge-time { background: rgba(212,168,67,0.2); color: var(--gold-aged); }
+        .badge-gate { background: rgba(200,50,50,0.1); color: #B33; }
+
+        .flow-card p {
+            font-size: 0.92rem;
+            color: var(--slate);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .flow-card p:last-child { margin-bottom: 0; }
+
+        .flow-tools {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-tag {
+            padding: 0.2rem 0.6rem;
+            background: var(--sand);
+            border-radius: var(--radius-btn);
+            font-size: 0.75rem;
+            color: var(--slate);
+            font-weight: 500;
+        }
+
+        /* ===== QUALITY GATE ===== */
+        .quality-gate {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .gate-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gate-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            z-index: 2;
+            box-shadow: var(--shadow-card);
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .gate-line {
+            width: 3px;
+            flex: 1;
+            background: linear-gradient(to bottom, var(--gold), var(--mist));
+            min-height: 20px;
+        }
+
+        .gate-card {
+            background: linear-gradient(135deg, rgba(212,168,67,0.08), rgba(212,168,67,0.02));
+            border: 2px dashed var(--gold);
+            border-radius: var(--radius-card);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gate-card h4 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--gold-aged);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .gate-card p {
+            font-size: 0.85rem;
+            color: var(--slate);
+        }
+
+        /* ===== PANAMA DETAILS ===== */
+        .panama-details {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            margin-top: 1rem;
+        }
+
+        .panama-details h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--green);
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            background: var(--pearl);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .detail-item h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item p {
+            font-size: 0.85rem;
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        /* ===== FOOTER ===== */
+        .page-footer {
+            background: var(--green);
+            color: rgba(254,253,251,0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .page-footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flow-step, .quality-gate {
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out forwards;
+        }
+
+        .flow-step:nth-child(1) { animation-delay: 0.05s; }
+        .flow-step:nth-child(2) { animation-delay: 0.1s; }
+        .flow-step:nth-child(3) { animation-delay: 0.15s; }
+        .flow-step:nth-child(4) { animation-delay: 0.2s; }
+        .flow-step:nth-child(5) { animation-delay: 0.25s; }
+        .flow-step:nth-child(6) { animation-delay: 0.3s; }
+        .flow-step:nth-child(7) { animation-delay: 0.35s; }
+        .flow-step:nth-child(8) { animation-delay: 0.4s; }
+        .flow-step:nth-child(9) { animation-delay: 0.45s; }
+        .flow-step:nth-child(10) { animation-delay: 0.5s; }
+        .flow-step:nth-child(11) { animation-delay: 0.55s; }
+        .flow-step:nth-child(12) { animation-delay: 0.6s; }
+        .flow-step:nth-child(13) { animation-delay: 0.65s; }
+        .flow-step:nth-child(14) { animation-delay: 0.7s; }
+        .flow-step:nth-child(15) { animation-delay: 0.75s; }
+        .quality-gate:nth-child(1) { animation-delay: 0.05s; }
+        .quality-gate:nth-child(2) { animation-delay: 0.1s; }
+        .quality-gate:nth-child(3) { animation-delay: 0.15s; }
+        .quality-gate:nth-child(4) { animation-delay: 0.2s; }
+        .quality-gate:nth-child(5) { animation-delay: 0.25s; }
+        .quality-gate:nth-child(6) { animation-delay: 0.3s; }
+        .quality-gate:nth-child(7) { animation-delay: 0.35s; }
+        .quality-gate:nth-child(8) { animation-delay: 0.4s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .top-nav { padding: 1rem; }
+            .page-hero { padding: 3rem 1.5rem 2rem; }
+            .content-wrap { padding: 2rem 1rem; }
+            .flow-step { grid-template-columns: 50px 1fr; gap: 1rem; }
+            .quality-gate { grid-template-columns: 50px 1fr; gap: 1rem; }
+            .flow-number, .gate-icon { width: 44px; height: 44px; font-size: 1.1rem; }
+            .flow-card { padding: 1.5rem; }
+            .timeline-overview { gap: 2rem; padding: 2rem 1.5rem; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .panama-details { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .flow-card-header { flex-direction: column; }
+            .timeline-overview { gap: 1.5rem; }
+        }
+
+        /* ===== RTL ===== */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .flow-card:hover { transform: translateX(-4px); }
+        [dir="rtl"] .nav-back { flex-direction: row-reverse; }
+        [dir="rtl"] .lang-toggle { right: auto; left: 20px; }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
+        <a href="index.html" class="nav-back">
+            <span>&#8592;</span>
+            <span data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח הבקרה">Back to Dashboard</span>
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <h1 data-en="Installation <em>Value Chain</em>" data-es="Cadena de <em>Valor</em> de Instalación" data-he="שרשרת <em>הערך</em> של ההתקנה">Installation <em>Value Chain</em></h1>
+            <p data-en="Every step from first contact to power-on. A 10-step process refined for Panama's regulatory environment, with quality gates and clear ownership." data-es="Cada paso desde el primer contacto hasta el encendido. Un proceso de 10 pasos refinado para el entorno regulatorio de Panamá." data-he="כל שלב מהקשר הראשון ועד הדלקת המערכת. תהליך בן 10 שלבים מותאם לסביבה הרגולטורית של פנמה.">Every step from first contact to power-on. A 10-step process refined for Panama's regulatory environment, with quality gates and clear ownership.</p>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <div class="content-wrap">
+
+        <!-- Timeline Overview -->
+        <div class="timeline-overview">
+            <div class="tl-stat">
+                <div class="value">10</div>
+                <div class="label" data-en="Process Steps" data-es="Pasos del Proceso" data-he="שלבי התהליך">Process Steps</div>
+            </div>
+            <div class="tl-stat">
+                <div class="value">4–8</div>
+                <div class="label" data-en="Weeks Total" data-es="Semanas en Total" data-he="שבועות סה״כ">Weeks Total</div>
+            </div>
+            <div class="tl-stat">
+                <div class="value">4</div>
+                <div class="label" data-en="Quality Gates" data-es="Puntos de Control" data-he="שערי איכות">Quality Gates</div>
+            </div>
+            <div class="tl-stat">
+                <div class="value">2</div>
+                <div class="label" data-en="Team Members" data-es="Miembros del Equipo" data-he="חברי צוות">Team Members</div>
+            </div>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="section">
+            <div class="section-label" data-en="PROCESS FLOW" data-es="FLUJO DEL PROCESO" data-he="זרימת התהליך">PROCESS FLOW</div>
+            <h2 class="section-title" data-en="Lead to Power-On in 10 Steps" data-es="Del Lead al Encendido en 10 Pasos" data-he="מליד ועד הדלקה ב-10 שלבים">Lead to Power-On in 10 Steps</h2>
+
+            <div class="flow-container">
+
+                <!-- Step 1: Lead Capture -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number active">1</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Lead Capture" data-es="Captación de Leads" data-he="לכידת לידים">Lead Capture</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Day 1" data-es="Día 1" data-he="יום 1">Day 1</span>
+                            </div>
+                        </div>
+                        <p data-en="Inbound leads from Facebook/Instagram ads, Google Business Profile, referrals from hotel network (Ami/Uri), real estate agents, and WhatsApp direct outreach to 300+ mapped leads. Qualify via WhatsApp conversation: property type, electricity bill, timeline." data-es="Leads entrantes de anuncios en Facebook/Instagram, perfil de Google Business, referidos de la red hotelera (Ami/Uri), agentes inmobiliarios y contacto directo por WhatsApp a 300+ leads mapeados. Calificar vía WhatsApp: tipo de propiedad, factura eléctrica, cronograma." data-he="לידים נכנסים מפרסום בפייסבוק/אינסטגרם, Google Business Profile, הפניות מרשת המלונות (עמי/אורי), סוכני נדל״ן, ופנייה ישירה בוואטסאפ ל-300+ לידים ממופים. סינון דרך וואטסאפ: סוג נכס, חשבון חשמל, לוח זמנים.">Inbound leads from Facebook/Instagram ads, Google Business Profile, referrals from hotel network (Ami/Uri), real estate agents, and WhatsApp direct outreach to 300+ mapped leads. Qualify via WhatsApp conversation: property type, electricity bill, timeline.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">WhatsApp</span>
+                            <span class="tool-tag">Meta Ads</span>
+                            <span class="tool-tag">Google Business</span>
+                            <span class="tool-tag">CRM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Site Survey -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">2</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Site Survey" data-es="Visita al Sitio" data-he="סקר אתר">Site Survey</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Omri" data-es="Omri" data-he="עמרי">Omri</span>
+                                <span class="flow-badge badge-time" data-en="Day 2–3" data-es="Día 2–3" data-he="יום 2–3">Day 2–3</span>
+                            </div>
+                        </div>
+                        <p data-en="On-site inspection: roof/ground area measurement, structural assessment, shading analysis, electrical panel evaluation, compass orientation. Photo documentation of every relevant surface. Confirm internet connectivity for monitoring system." data-es="Inspección en sitio: medición de área de techo/suelo, evaluación estructural, análisis de sombras, evaluación del panel eléctrico, orientación de la brújula. Documentación fotográfica de cada superficie relevante." data-he="בדיקה באתר: מדידת שטח גג/קרקע, הערכה מבנית, ניתוח הצללות, הערכת לוח חשמל, כיוון מצפן. תיעוד צילומי של כל משטח רלוונטי. אישור חיבור אינטרנט למערכת ניטור.">On-site inspection: roof/ground area measurement, structural assessment, shading analysis, electrical panel evaluation, compass orientation. Photo documentation of every relevant surface. Confirm internet connectivity for monitoring system.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">Measuring tools</span>
+                            <span class="tool-tag">Camera</span>
+                            <span class="tool-tag">Compass</span>
+                            <span class="tool-tag">Shade analyzer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Bill Analysis -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">3</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Bill Analysis" data-es="Análisis de Factura" data-he="ניתוח חשבון חשמל">Bill Analysis</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Day 2–3" data-es="Día 2–3" data-he="יום 2–3">Day 2–3</span>
+                            </div>
+                        </div>
+                        <p data-en="Collect 12 months of ENSA electricity bills. Analyze consumption patterns: peak/off-peak, seasonal variations. Calculate current cost per kWh ($0.18 residential, $0.195 commercial). Determine optimal system size based on consumption and available space. Generate savings projection." data-es="Recopilar 12 meses de facturas ENSA. Analizar patrones de consumo: pico/fuera de pico, variaciones estacionales. Calcular costo actual por kWh ($0.18 residencial, $0.195 comercial). Determinar tamaño óptimo del sistema." data-he="איסוף 12 חודשי חשבונות חשמל ENSA. ניתוח דפוסי צריכה: שיא/מחוץ לשיא, שינויים עונתיים. חישוב עלות נוכחית ל-kWh ($0.18 ביתי, $0.195 מסחרי). קביעת גודל מערכת אופטימלי.">Collect 12 months of ENSA electricity bills. Analyze consumption patterns: peak/off-peak, seasonal variations. Calculate current cost per kWh ($0.18 residential, $0.195 commercial). Determine optimal system size based on consumption and available space. Generate savings projection.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">ENSA Bills</span>
+                            <span class="tool-tag">Spreadsheet</span>
+                            <span class="tool-tag">Solar OS CRM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Gate 1 -->
+                <div class="quality-gate">
+                    <div class="gate-left">
+                        <div class="gate-icon">QG</div>
+                        <div class="gate-line"></div>
+                    </div>
+                    <div class="gate-card">
+                        <h4 data-en="Quality Gate 1 — Feasibility Check" data-es="Punto de Control 1 — Verificación de Factibilidad" data-he="שער איכות 1 — בדיקת היתכנות">Quality Gate 1 — Feasibility Check</h4>
+                        <p data-en="Confirm: adequate roof/ground space, structural integrity, no critical shading, client bill justifies investment, realistic payback < 4 years. Go/No-Go decision before investing in design." data-es="Confirmar: espacio adecuado, integridad estructural, sin sombreado crítico, factura justifica inversión, retorno < 4 años. Decisión Go/No-Go antes de invertir en diseño." data-he="אישור: שטח מספיק, שלמות מבנית, ללא הצללה קריטית, חשבון מצדיק השקעה, החזר < 4 שנים. החלטת Go/No-Go לפני השקעה בתכנון.">Confirm: adequate roof/ground space, structural integrity, no critical shading, client bill justifies investment, realistic payback &lt; 4 years. Go/No-Go decision before investing in design.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4: System Design -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">4</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="System Design" data-es="Diseño del Sistema" data-he="תכנון המערכת">System Design</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Day 4–7" data-es="Día 4–7" data-he="יום 4–7">Day 4–7</span>
+                            </div>
+                        </div>
+                        <p data-en="Panel layout (LONGi/Jinko Tier-1), inverter selection (Huawei SUN2000), mounting system (K2/Clenergy). Create professional electrical single-line diagram and structural plan. Calculate production estimate using 5.3 kWh/m²/day irradiance. Prepare client proposal with ROI breakdown." data-es="Diseño de paneles (LONGi/Jinko Tier-1), selección de inversor (Huawei SUN2000), sistema de montaje (K2/Clenergy). Crear diagrama unifilar eléctrico profesional y plano estructural. Calcular estimación de producción con 5.3 kWh/m²/día." data-he="תכנון פאנלים (LONGi/Jinko Tier-1), בחירת ממיר (Huawei SUN2000), מערכת הרכבה (K2/Clenergy). יצירת תרשים חד-קווי מקצועי ותוכנית מבנית. חישוב הערכת ייצור עם קרינה 5.3 kWh/m²/יום.">Panel layout (LONGi/Jinko Tier-1), inverter selection (Huawei SUN2000), mounting system (K2/Clenergy). Create professional electrical single-line diagram and structural plan. Calculate production estimate using 5.3 kWh/m²/day irradiance. Prepare client proposal with ROI breakdown.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">PVsyst / Helioscope</span>
+                            <span class="tool-tag">AutoCAD</span>
+                            <span class="tool-tag">Proposal Generator</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: ASEP Permits -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">5</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="ASEP Permits & Ley 417" data-es="Permisos ASEP y Ley 417" data-he="רישיונות ASEP וחוק 417">ASEP Permits & Ley 417</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Week 2–3" data-es="Semana 2–3" data-he="שבוע 2–3">Week 2–3</span>
+                            </div>
+                        </div>
+                        <p data-en="Submit to ASEP for grid-connection license. Apply to Secretaría Nacional de Energía for self-consumption certification. File Ley 417 tax exemption paperwork (import duty, ITBMS, selective tax). Submit net metering application to ENSA with system design + structural cert. Processing cost: $600–$1,200." data-es="Presentar a ASEP para licencia de conexión a la red. Solicitar a la Secretaría Nacional de Energía la certificación de autoconsumo. Tramitar papelería de Ley 417. Solicitar medición neta a ENSA. Costo de trámite: $600–$1,200." data-he="הגשה ל-ASEP לרישיון חיבור לרשת. הגשה למזכירות האנרגיה הלאומית לאישור צריכה עצמית. הגשת ניירת פטור מס חוק 417. הגשת בקשת מדידה נטו ל-ENSA. עלות טיפול: $600–$1,200.">Submit to ASEP for grid-connection license. Apply to Secretaría Nacional de Energía for self-consumption certification. File Ley 417 tax exemption paperwork (import duty, ITBMS, selective tax). Submit net metering application to ENSA with system design + structural cert. Processing cost: $600–$1,200.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">ASEP Portal</span>
+                            <span class="tool-tag">ENSA Application</span>
+                            <span class="tool-tag">Ley 417 Forms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Gate 2 -->
+                <div class="quality-gate">
+                    <div class="gate-left">
+                        <div class="gate-icon">QG</div>
+                        <div class="gate-line"></div>
+                    </div>
+                    <div class="gate-card">
+                        <h4 data-en="Quality Gate 2 — Contract & Payment" data-es="Punto de Control 2 — Contrato y Pago" data-he="שער איכות 2 — חוזה ותשלום">Quality Gate 2 — Contract & Payment</h4>
+                        <p data-en="Client signs contract, 50% deposit received. Permit applications submitted. Final equipment list confirmed. Only proceed to procurement after deposit and signed contract." data-es="Cliente firma contrato, depósito del 50% recibido. Solicitudes de permisos presentadas. Lista final de equipos confirmada. Solo proceder a compras después del depósito." data-he="לקוח חותם חוזה, מקדמה 50% התקבלה. בקשות רישיון הוגשו. רשימת ציוד סופית אושרה. להמשיך לרכש רק אחרי מקדמה וחוזה חתום.">Client signs contract, 50% deposit received. Permit applications submitted. Final equipment list confirmed. Only proceed to procurement after deposit and signed contract.</p>
+                    </div>
+                </div>
+
+                <!-- Step 6: Procurement -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">6</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Procurement" data-es="Adquisición" data-he="רכש">Procurement</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Week 2–4" data-es="Semana 2–4" data-he="שבוע 2–4">Week 2–4</span>
+                            </div>
+                        </div>
+                        <p data-en="Order Tier-1 panels (LONGi/Jinko/Canadian Solar), Huawei SUN2000 inverter, mounting system (K2/Clenergy), cables, and protection equipment. Import via Colón Free Zone or direct. Lead time: 2–4 weeks for standard components. Apply Ley 417 import duty exemption at customs." data-es="Ordenar paneles Tier-1 (LONGi/Jinko/Canadian Solar), inversor Huawei SUN2000, sistema de montaje (K2/Clenergy). Importar vía Zona Libre de Colón. Tiempo de entrega: 2–4 semanas. Aplicar exención Ley 417 en aduanas." data-he="הזמנת פאנלים Tier-1 (LONGi/Jinko/Canadian Solar), ממיר Huawei SUN2000, מערכת הרכבה (K2/Clenergy). יבוא דרך האזור החופשי של קולון. זמן אספקה: 2–4 שבועות. הפעלת פטור מכס חוק 417.">Order Tier-1 panels (LONGi/Jinko/Canadian Solar), Huawei SUN2000 inverter, mounting system (K2/Clenergy), cables, and protection equipment. Import via Colón Free Zone or direct. Lead time: 2–4 weeks for standard components. Apply Ley 417 import duty exemption at customs.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">Supplier portals</span>
+                            <span class="tool-tag">Colón Free Zone</span>
+                            <span class="tool-tag">Customs broker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Installation -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number active">7</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Installation" data-es="Instalación" data-he="התקנה">Installation</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Omri + Crew" data-es="Omri + Equipo" data-he="עמרי + צוות">Omri + Crew</span>
+                                <span class="flow-badge badge-time" data-en="Week 4–5 (2–3 days)" data-es="Semana 4–5 (2–3 días)" data-he="שבוע 4–5 (2–3 ימים)">Week 4–5 (2–3 days)</span>
+                            </div>
+                        </div>
+                        <p data-en="Physical installation: mounting structure assembly, panel placement, inverter mounting, DC/AC wiring, grounding, protection devices. Residential typically 1–2 days, commercial 2–5 days. Safety protocols: fall protection, electrical lockout, weather monitoring. Client walkthrough at completion." data-es="Instalación física: ensamblaje de estructura, colocación de paneles, montaje de inversor, cableado DC/AC, conexión a tierra, dispositivos de protección. Residencial 1–2 días, comercial 2–5 días." data-he="התקנה פיזית: הרכבת מבנה, הנחת פאנלים, התקנת ממיר, חיווט DC/AC, הארקה, אמצעי הגנה. ביתי בדרך כלל 1–2 ימים, מסחרי 2–5 ימים. פרוטוקולי בטיחות: הגנה מנפילה, נעילת חשמל.">Physical installation: mounting structure assembly, panel placement, inverter mounting, DC/AC wiring, grounding, protection devices. Residential typically 1–2 days, commercial 2–5 days. Safety protocols: fall protection, electrical lockout, weather monitoring. Client walkthrough at completion.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">Installation crew</span>
+                            <span class="tool-tag">Safety gear</span>
+                            <span class="tool-tag">Quality checklist</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Gate 3 -->
+                <div class="quality-gate">
+                    <div class="gate-left">
+                        <div class="gate-icon">QG</div>
+                        <div class="gate-line"></div>
+                    </div>
+                    <div class="gate-card">
+                        <h4 data-en="Quality Gate 3 — Installation Inspection" data-es="Punto de Control 3 — Inspección de Instalación" data-he="שער איכות 3 — בדיקת התקנה">Quality Gate 3 — Installation Inspection</h4>
+                        <p data-en="Visual inspection of all components. Electrical testing: insulation resistance, open-circuit voltage, polarity verification. Grounding and protection device testing. Photo documentation of completed installation. Must pass before grid connection." data-es="Inspección visual de todos los componentes. Pruebas eléctricas: resistencia de aislamiento, voltaje de circuito abierto, verificación de polaridad. Debe aprobarse antes de la conexión a la red." data-he="בדיקה חזותית של כל הרכיבים. בדיקות חשמל: התנגדות בידוד, מתח מעגל פתוח, אימות קוטביות. בדיקת הארקה ואמצעי הגנה. חייב לעבור לפני חיבור לרשת.">Visual inspection of all components. Electrical testing: insulation resistance, open-circuit voltage, polarity verification. Grounding and protection device testing. Photo documentation of completed installation. Must pass before grid connection.</p>
+                    </div>
+                </div>
+
+                <!-- Step 8: Commissioning -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">8</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Commissioning" data-es="Puesta en Marcha" data-he="הפעלה">Commissioning</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel + Omri" data-es="Kaniel + Omri" data-he="קניאל + עמרי">Kaniel + Omri</span>
+                                <span class="flow-badge badge-time" data-en="Week 5–6" data-es="Semana 5–6" data-he="שבוע 5–6">Week 5–6</span>
+                            </div>
+                        </div>
+                        <p data-en="ENSA bidirectional meter installation and activation. Grid synchronization test. System startup and performance verification against design specs. Configure Huawei FusionSolar monitoring app. Client training: app usage, basic troubleshooting, emergency shutdown. Remaining 50% payment collected." data-es="Instalación y activación de medidor bidireccional ENSA. Prueba de sincronización con la red. Arranque del sistema y verificación de rendimiento. Configurar app FusionSolar. Capacitación del cliente. Cobro del 50% restante." data-he="התקנת והפעלת מונה דו-כיווני ENSA. בדיקת סנכרון לרשת. הפעלת מערכת ואימות ביצועים מול מפרט. הגדרת אפליקציית FusionSolar. הדרכת לקוח. גביית 50% נותרים.">ENSA bidirectional meter installation and activation. Grid synchronization test. System startup and performance verification against design specs. Configure Huawei FusionSolar monitoring app. Client training: app usage, basic troubleshooting, emergency shutdown. Remaining 50% payment collected.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">ENSA Meter</span>
+                            <span class="tool-tag">FusionSolar</span>
+                            <span class="tool-tag">Multimeter</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 9: Monitoring -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number">9</div>
+                        <div class="flow-line"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Monitoring & Maintenance" data-es="Monitoreo y Mantenimiento" data-he="ניטור ותחזוקה">Monitoring & Maintenance</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Ongoing" data-es="Continuo" data-he="שוטף">Ongoing</span>
+                            </div>
+                        </div>
+                        <p data-en="Remote monitoring via Huawei FusionSolar: real-time production, alerts for underperformance, inverter status. Monthly performance reports to client. Maintenance packages: $50–$200/month. Annual on-site inspection: panel cleaning, connection check, inverter firmware updates." data-es="Monitoreo remoto vía Huawei FusionSolar: producción en tiempo real, alertas de bajo rendimiento. Informes mensuales. Paquetes de mantenimiento: $50–$200/mes. Inspección anual en sitio." data-he="ניטור מרחוק דרך Huawei FusionSolar: ייצור בזמן אמת, התראות על תת-ביצוע. דוחות חודשיים ללקוח. חבילות תחזוקה: $50–$200/חודש. ביקורת שנתית באתר.">Remote monitoring via Huawei FusionSolar: real-time production, alerts for underperformance, inverter status. Monthly performance reports to client. Maintenance packages: $50–$200/month. Annual on-site inspection: panel cleaning, connection check, inverter firmware updates.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">FusionSolar</span>
+                            <span class="tool-tag">Solar OS CRM</span>
+                            <span class="tool-tag">Reporting</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Gate 4 -->
+                <div class="quality-gate">
+                    <div class="gate-left">
+                        <div class="gate-icon">QG</div>
+                        <div class="gate-line"></div>
+                    </div>
+                    <div class="gate-card">
+                        <h4 data-en="Quality Gate 4 — 30-Day Performance Review" data-es="Punto de Control 4 — Revisión de Rendimiento a 30 Días" data-he="שער איכות 4 — סקירת ביצועים 30 יום">Quality Gate 4 — 30-Day Performance Review</h4>
+                        <p data-en="Compare actual production vs. design estimate. Verify client electricity bill reduction meets projection. Address any performance issues. Confirm client satisfaction. Collect testimonial/review for referral pipeline." data-es="Comparar producción real vs. estimación de diseño. Verificar que la reducción en factura cumple proyección. Abordar problemas de rendimiento. Confirmar satisfacción del cliente." data-he="השוואת ייצור בפועל מול הערכת תכנון. אימות שהפחתת חשבון החשמל עומדת בתחזית. טיפול בבעיות ביצוע. אישור שביעות רצון לקוח.">Compare actual production vs. design estimate. Verify client electricity bill reduction meets projection. Address any performance issues. Confirm client satisfaction. Collect testimonial/review for referral pipeline.</p>
+                    </div>
+                </div>
+
+                <!-- Step 10: Referral -->
+                <div class="flow-step">
+                    <div class="flow-left">
+                        <div class="flow-number active">10</div>
+                        <div class="flow-line" style="display:none;"></div>
+                    </div>
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <h3 data-en="Referral & Growth" data-es="Referidos y Crecimiento" data-he="הפניות וצמיחה">Referral & Growth</h3>
+                            <div class="flow-meta">
+                                <span class="flow-badge badge-person" data-en="Kaniel" data-es="Kaniel" data-he="קניאל">Kaniel</span>
+                                <span class="flow-badge badge-time" data-en="Month 2+" data-es="Mes 2+" data-he="חודש 2+">Month 2+</span>
+                            </div>
+                        </div>
+                        <p data-en="Happy clients become ambassadors. Collect Google Business reviews, video testimonials, before/after photos. Activate referral incentive: discount on maintenance or cash bonus for successful referrals. Leverage in Facebook/Instagram ads as social proof. Azuero is tight-knit — one visible installation generates 3–5 neighbor inquiries." data-es="Clientes satisfechos se convierten en embajadores. Recopilar reseñas de Google Business, testimonios en video. Activar incentivo de referidos. Azuero es una comunidad unida — una instalación visible genera 3–5 consultas de vecinos." data-he="לקוחות מרוצים הופכים לשגרירים. איסוף ביקורות Google Business, עדויות וידאו, תמונות לפני/אחרי. הפעלת תמריץ הפניות. אזואורו קהילה הדוקה — התקנה נראית אחת מייצרת 3–5 פניות שכנים.">Happy clients become ambassadors. Collect Google Business reviews, video testimonials, before/after photos. Activate referral incentive: discount on maintenance or cash bonus for successful referrals. Leverage in Facebook/Instagram ads as social proof. Azuero is tight-knit — one visible installation generates 3–5 neighbor inquiries.</p>
+                        <div class="flow-tools">
+                            <span class="tool-tag">Google Reviews</span>
+                            <span class="tool-tag">Video testimonials</span>
+                            <span class="tool-tag">Referral program</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Panama-Specific Details -->
+        <div class="section">
+            <div class="section-label" data-en="PANAMA SPECIFICS" data-es="ESPECÍFICOS DE PANAMÁ" data-he="פרטים ספציפיים לפנמה">PANAMA SPECIFICS</div>
+            <h2 class="section-title" data-en="Regulatory & Local Details" data-es="Detalles Regulatorios y Locales" data-he="פרטים רגולטוריים ומקומיים">Regulatory & Local Details</h2>
+
+            <div class="panama-details">
+                <h3 data-en="Key Panama <em>Requirements</em>" data-es="Requisitos Clave de <em>Panamá</em>" data-he="דרישות מפתח <em>בפנמה</em>">Key Panama Requirements</h3>
+
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <h4 data-en="ENSA Net Metering" data-es="Medición Neta ENSA" data-he="מדידה נטו ENSA">ENSA Net Metering</h4>
+                        <p data-en="Up to 500 kW self-consumption. Bidirectional meter required. Excess energy credited on next bill (not paid out). Apply with system design + structural certification. ENSA covers 46.6% of distributed solar customers nationwide." data-es="Hasta 500 kW de autoconsumo. Medidor bidireccional requerido. Exceso de energía acreditado en siguiente factura. ENSA cubre 46.6% de clientes solares distribuidos." data-he="עד 500 kW צריכה עצמית. מונה דו-כיווני נדרש. עודפי חשמל מזוכים בחשבון הבא (לא משולמים). ENSA מכסה 46.6% מלקוחות הסולאר המבוזר.">Up to 500 kW self-consumption. Bidirectional meter required. Excess energy credited on next bill (not paid out). Apply with system design + structural certification. ENSA covers 46.6% of distributed solar customers nationwide.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4 data-en="ASEP License" data-es="Licencia ASEP" data-he="רישיון ASEP">ASEP License</h4>
+                        <p data-en="ASEP (Autoridad Nacional de los Servicios Públicos) regulates all electricity generation. Required for grid-connected systems. Sets technical standards for connection. Installer must hold valid ASEP credentials." data-es="ASEP regula toda la generación eléctrica. Requerida para sistemas conectados a la red. Establece estándares técnicos de conexión." data-he="ASEP מפקחת על כל ייצור החשמל. נדרש למערכות מחוברות לרשת. קובעת תקנים טכניים לחיבור. למתקין חייב להיות רישוי ASEP תקף.">ASEP (Autoridad Nacional de los Servicios Públicos) regulates all electricity generation. Required for grid-connected systems. Sets technical standards for connection. Installer must hold valid ASEP credentials.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4 data-en="Ley 417 Paperwork" data-es="Trámites Ley 417" data-he="ניירת חוק 417">Ley 417 Paperwork</h4>
+                        <p data-en="File with customs for import duty exemption. Separate filing for ITBMS (7%) waiver. Selective consumption tax (5%) automatically eliminated. Income tax deduction claimed in annual filing. Processing time varies: $600–$1,200 cost." data-es="Presentar en aduanas para exención de aranceles. Presentación separada para exención ITBMS (7%). Impuesto selectivo (5%) eliminado automáticamente. Costo: $600–$1,200." data-he="הגשה למכס לפטור ממכס יבוא. הגשה נפרדת לפטור ITBMS (7%). מס סלקטיבי (5%) מבוטל אוטומטית. ניכוי ממס הכנסה בדוח השנתי. עלות: $600–$1,200.">File with customs for import duty exemption. Separate filing for ITBMS (7%) waiver. Selective consumption tax (5%) automatically eliminated. Income tax deduction claimed in annual filing. Processing time varies: $600–$1,200 cost.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4 data-en="Equipment Supply Chain" data-es="Cadena de Suministro" data-he="שרשרת אספקה">Equipment Supply Chain</h4>
+                        <p data-en="Import via Colón Free Zone or direct from manufacturers. LONGi has 50 MW supply deal with CELTEC in Panama. Standard lead time: 2–4 weeks. Tier-1 panels (LONGi, Jinko, Canadian Solar, Trina) + Huawei, SolarEdge, or Solis inverters." data-es="Importar vía Zona Libre de Colón o directo. LONGi tiene acuerdo de 50 MW con CELTEC en Panamá. Tiempo de entrega: 2–4 semanas." data-he="יבוא דרך האזור החופשי של קולון או ישירות. ל-LONGi הסכם אספקת 50 MW עם CELTEC בפנמה. זמן אספקה: 2–4 שבועות.">Import via Colón Free Zone or direct from manufacturers. LONGi has 50 MW supply deal with CELTEC in Panama. Standard lead time: 2–4 weeks. Tier-1 panels (LONGi, Jinko, Canadian Solar, Trina) + Huawei, SolarEdge, or Solis inverters.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4 data-en="Azuero Solar Conditions" data-es="Condiciones Solares de Azuero" data-he="תנאי סולאר באזואורו">Azuero Solar Conditions</h4>
+                        <p data-en="5.3 kWh/m²/day average irradiance — excellent for solar. 12 months of usable sun (tropical, near-equatorial). Less seasonal variation than temperate zones. Consistent year-round production. Ideal conditions for reliable ROI calculations." data-es="5.3 kWh/m²/día de irradiación promedio — excelente para solar. 12 meses de sol utilizable (tropical, ecuatorial). Producción consistente todo el año." data-he="קרינה ממוצעת 5.3 kWh/m²/יום — מצוין לסולאר. 12 חודשי שמש שמישים (טרופי, קרוב לקו המשווה). פחות שונות עונתית מאזורים ממוזגים. ייצור עקבי כל השנה.">5.3 kWh/m²/day average irradiance — excellent for solar. 12 months of usable sun (tropical, near-equatorial). Less seasonal variation than temperate zones. Consistent year-round production. Ideal conditions for reliable ROI calculations.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4 data-en="Distributor Regions" data-es="Regiones de Distribuidores" data-he="אזורי מפיצים">Distributor Regions</h4>
+                        <p data-en="ENSA (Naturgy) — Panama City, Azuero, most of country. EDEMET — Western Panama City metro. EDECHI — Chiriquí, Bocas del Toro. For Azuero: always ENSA. All net metering applications go through ENSA." data-es="ENSA (Naturgy) — Ciudad de Panamá, Azuero, la mayor parte. EDEMET — oeste metropolitano. EDECHI — Chiriquí, Bocas del Toro. Para Azuero: siempre ENSA." data-he="ENSA (Naturgy) — פנמה סיטי, אזואורו, רוב המדינה. EDEMET — מערב מטרו פנמה סיטי. EDECHI — צ׳יריקי, בוקאס דל טורו. לאזואורו: תמיד ENSA.">ENSA (Naturgy) — Panama City, Azuero, most of country. EDEMET — Western Panama City metro. EDECHI — Chiriquí, Bocas del Toro. For Azuero: always ENSA. All net metering applications go through ENSA.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <p>&copy; 2026 <a href="index.html">Solaris Energy Panama</a> &mdash; <span data-en="Azuero Peninsula's Premium Solar Installer" data-es="Instalador Solar Premium de la Península de Azuero" data-he="מתקין הסולאר המוביל בחצי האי אזואורו">Azuero Peninsula's Premium Solar Installer</span></p>
+    </footer>
+
+    <script>
+    /* ===== LANGUAGE SYSTEM ===== */
+    let currentLang = 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+        const isRTL = lang === 'he';
+        document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+
+        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+            const text = el.getAttribute('data-' + lang);
+            if (el.tagName === 'INPUT' || el.tagName === 'SELECT') return;
+            el.innerHTML = text;
+        });
+    }
+
+    /* ===== SCROLL ANIMATIONS ===== */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.flow-step, .quality-gate').forEach(el => {
+            observer.observe(el);
+        });
+    });
+    </script>
+</body>
+</html>

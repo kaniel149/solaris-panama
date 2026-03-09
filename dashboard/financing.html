@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financing Options — Solaris Energy Panama</title>
+    <meta name="description" content="Solar financing options in Panama: cash purchase, Ley 417 tax benefits, bank loans, and future financing models.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== TOP NAV ===== */
+        .top-nav {
+            background: var(--green);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--pearl);
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--gold); }
+
+        .nav-back {
+            color: rgba(254,253,251,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-back:hover { color: var(--gold); }
+
+        /* ===== HERO BANNER ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 50%, #1A6B4A 100%);
+            padding: 4rem 2rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: var(--pearl);
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero h1 em { font-style: italic; color: var(--gold); }
+
+        .page-hero p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.7);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ===== CONTENT SECTIONS ===== */
+        .content-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section { margin-bottom: 3.5rem; }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--slate);
+            max-width: 700px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* ===== CARDS ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-3px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--sand);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 0.6rem;
+        }
+
+        .card p {
+            font-size: 0.92rem;
+            color: var(--slate);
+            line-height: 1.7;
+        }
+
+        .card-highlight {
+            border-left: 4px solid var(--gold);
+            background: var(--cloud);
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .tag-recommended { background: rgba(11,61,46,0.1); color: var(--green); }
+        .tag-popular { background: rgba(212,168,67,0.2); color: var(--gold-aged); }
+        .tag-future { background: rgba(138,138,138,0.15); color: var(--ash); }
+
+        /* ===== LEY 417 BREAKDOWN ===== */
+        .ley-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .ley-item {
+            background: var(--green);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--pearl);
+        }
+
+        .ley-pct {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .ley-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .ley-desc {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+        }
+
+        .ley-total {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .ley-total .ley-pct { color: var(--green); }
+        .ley-total .ley-label { opacity: 1; font-weight: 700; }
+        .ley-total .ley-desc { opacity: 0.7; }
+
+        /* ===== COMPARISON TABLE ===== */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 2rem;
+        }
+
+        .comparison-table thead th {
+            background: var(--green);
+            color: var(--pearl);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 1rem 1.2rem;
+            text-align: left;
+            letter-spacing: 0.04em;
+        }
+
+        .comparison-table thead th:first-child { border-radius: 0; }
+
+        .comparison-table tbody td {
+            padding: 1rem 1.2rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--mist);
+            color: var(--slate);
+        }
+
+        .comparison-table tbody tr:nth-child(even) { background: var(--cloud); }
+        .comparison-table tbody tr:last-child td { border-bottom: none; }
+
+        .comparison-table .check { color: var(--green); font-weight: 700; }
+        .comparison-table .cross { color: var(--ash); }
+
+        /* ===== ROI CALCULATOR ===== */
+        .calculator {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .calc-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--green);
+        }
+
+        .calc-header p {
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+
+        .calc-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .calc-field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+        }
+
+        .calc-field input, .calc-field select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid var(--mist);
+            border-radius: var(--radius-btn);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            color: var(--charcoal);
+            background: var(--pearl);
+            transition: border-color 0.3s;
+        }
+
+        .calc-field input:focus, .calc-field select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .calc-btn {
+            background: var(--green);
+            color: var(--pearl);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.02em;
+        }
+
+        .calc-btn:hover { background: var(--green-canopy); transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
+
+        .calc-results {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--mist);
+        }
+
+        .calc-results.visible { display: block; animation: fadeUp 0.5s ease-out; }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-card {
+            background: var(--pearl);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .result-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            line-height: 1.1;
+        }
+
+        .result-value.gold { color: var(--gold); }
+
+        .result-label {
+            font-size: 0.78rem;
+            color: var(--ash);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .result-comparison {
+            background: var(--pearl);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .result-comparison h4 {
+            font-size: 0.9rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .comparison-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .bar-label {
+            font-size: 0.8rem;
+            color: var(--slate);
+            min-width: 120px;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: var(--mist);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: var(--radius-pill);
+            transition: width 0.8s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .bar-fill.green { background: var(--green); }
+        .bar-fill.gold { background: var(--gold); color: var(--green); }
+
+        /* ===== DECISION MATRIX ===== */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .matrix-card {
+            background: var(--pearl);
+            border: 2px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+        }
+
+        .matrix-card h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .matrix-list {
+            list-style: none;
+        }
+
+        .matrix-list li {
+            font-size: 0.9rem;
+            color: var(--slate);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--cloud);
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .matrix-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .matrix-list li:last-child { border-bottom: none; }
+
+        /* ===== REAL EXAMPLE ===== */
+        .example-box {
+            background: var(--green);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            color: var(--pearl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-box::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212,168,67,0.15) 0%, transparent 60%);
+            border-radius: 50%;
+        }
+
+        .example-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .example-box h3 em { color: var(--gold); font-style: italic; }
+
+        .example-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .example-metric {
+            text-align: center;
+        }
+
+        .example-metric .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .example-metric .label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        .example-note {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(254,253,251,0.15);
+            font-size: 0.85rem;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        /* ===== FOOTER ===== */
+        .page-footer {
+            background: var(--green);
+            color: rgba(254,253,251,0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .page-footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .matrix-grid { grid-template-columns: 1fr; }
+            .top-nav { padding: 1rem; }
+            .page-hero { padding: 3rem 1.5rem 2rem; }
+            .content-wrap { padding: 2rem 1.5rem; }
+            .calculator { padding: 1.5rem; }
+            .ley-grid { grid-template-columns: 1fr 1fr; }
+            .comparison-table { font-size: 0.82rem; }
+            .comparison-table thead th, .comparison-table tbody td { padding: 0.7rem 0.8rem; }
+            .example-metrics { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .ley-grid { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ===== RTL ===== */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .matrix-list li { padding-left: 0; padding-right: 1.2rem; }
+        [dir="rtl"] .matrix-list li::before { left: auto; right: 0; content: '←'; }
+        [dir="rtl"] .nav-back { flex-direction: row-reverse; }
+        [dir="rtl"] .lang-toggle { right: auto; left: 20px; }
+        [dir="rtl"] .bar-label { text-align: right; }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
+        <a href="index.html" class="nav-back">
+            <span>&#8592;</span>
+            <span data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח הבקרה">Back to Dashboard</span>
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <h1 data-en="Smart <em>Financing</em> for Solar" data-es="Financiamiento <em>Inteligente</em> para Solar" data-he="מימון <em>חכם</em> לסולאר">Smart <em>Financing</em> for Solar</h1>
+            <p data-en="How Panama clients pay for solar — from cash purchases to Ley 417 tax incentives. Your guide to closing every deal." data-es="Cómo los clientes en Panamá pagan por energía solar — desde compra en efectivo hasta incentivos fiscales de la Ley 417." data-he="איך לקוחות בפנמה משלמים על סולאר — מרכישה במזומן ועד הטבות מס של חוק 417.">How Panama clients pay for solar — from cash purchases to Ley 417 tax incentives. Your guide to closing every deal.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content-wrap">
+
+        <!-- Section 1: Financing Options -->
+        <div class="section">
+            <div class="section-label" data-en="FINANCING OPTIONS" data-es="OPCIONES DE FINANCIAMIENTO" data-he="אפשרויות מימון">FINANCING OPTIONS</div>
+            <h2 class="section-title" data-en="How Clients Pay for Solar in Panama" data-es="Cómo los Clientes Pagan por Solar en Panamá" data-he="איך לקוחות משלמים על סולאר בפנמה">How Clients Pay for Solar in Panama</h2>
+            <p class="section-desc" data-en="Panama's solar market is still predominantly cash-based, but the Ley 417 tax incentives create a powerful financial case. Here are all current and emerging options." data-es="El mercado solar de Panamá es predominantemente en efectivo, pero los incentivos fiscales de la Ley 417 crean un caso financiero poderoso." data-he="שוק הסולאר בפנמה עדיין מבוסס בעיקר על מזומן, אבל הטבות המס של חוק 417 יוצרות תמריץ כלכלי חזק.">Panama's solar market is still predominantly cash-based, but the Ley 417 tax incentives create a powerful financial case. Here are all current and emerging options.</p>
+
+            <div class="card-grid">
+                <!-- Cash Purchase -->
+                <div class="card card-highlight">
+                    <div class="card-icon">&#9776;</div>
+                    <span class="card-tag tag-popular" data-en="MOST COMMON" data-es="MÁS COMÚN" data-he="הנפוץ ביותר">MOST COMMON</span>
+                    <h3 data-en="Cash Purchase" data-es="Compra en Efectivo" data-he="רכישה במזומן">Cash Purchase</h3>
+                    <p data-en="The dominant financing method in Panama. Residential systems: $3,000–$15,000. Commercial: $20,000–$80,000. Simple, fast, no interest costs. Combined with Ley 417 tax exemptions, effective cost drops 15–25%." data-es="El método de financiamiento dominante en Panamá. Residencial: $3,000–$15,000. Comercial: $20,000–$80,000. Simple, rápido, sin costos de interés. Con exenciones de Ley 417, el costo efectivo baja 15–25%." data-he="שיטת המימון הדומיננטית בפנמה. מערכות ביתיות: $3,000–$15,000. מסחרי: $20,000–$80,000. פשוט, מהיר, ללא עלויות ריבית. בשילוב פטורי מס חוק 417, העלות יורדת ב-15–25%.">The dominant financing method in Panama. Residential systems: $3,000–$15,000. Commercial: $20,000–$80,000. Simple, fast, no interest costs. Combined with Ley 417 tax exemptions, effective cost drops 15–25%.</p>
+                </div>
+
+                <!-- Ley 417 -->
+                <div class="card card-highlight">
+                    <div class="card-icon">&#9878;</div>
+                    <span class="card-tag tag-recommended" data-en="KEY INCENTIVE" data-es="INCENTIVO CLAVE" data-he="תמריץ מפתח">KEY INCENTIVE</span>
+                    <h3 data-en="Ley 417 Tax Benefits" data-es="Beneficios Fiscales Ley 417" data-he="הטבות מס חוק 417">Ley 417 Tax Benefits</h3>
+                    <p data-en="Enacted December 2023. Eliminates import duties, 7% ITBMS (VAT), and 5% selective consumption tax on all solar equipment. Full investment deductible from income tax. Applies to residential, commercial, and generation." data-es="Promulgada en diciembre 2023. Elimina aranceles, 7% ITBMS (IVA) y 5% impuesto selectivo en equipos solares. Inversión total deducible del impuesto sobre la renta." data-he="נחקק בדצמבר 2023. מבטל מכסי יבוא, 7% ITBMS (מע״מ), ו-5% מס צריכה סלקטיבי על ציוד סולארי. ההשקעה המלאה ניתנת לניכוי ממס הכנסה.">Enacted December 2023. Eliminates import duties, 7% ITBMS (VAT), and 5% selective consumption tax on all solar equipment. Full investment deductible from income tax. Applies to residential, commercial, and generation.</p>
+                </div>
+
+                <!-- Bank Loans -->
+                <div class="card">
+                    <div class="card-icon">&#9733;</div>
+                    <span class="card-tag tag-popular" data-en="AVAILABLE" data-es="DISPONIBLE" data-he="זמין">AVAILABLE</span>
+                    <h3 data-en="Bank Loans" data-es="Préstamos Bancarios" data-he="הלוואות בנקאיות">Bank Loans</h3>
+                    <p data-en="Commercial loans via Banco General and Banistmo. Typical rates: 5–7% interest. Primarily for commercial clients. No dedicated solar loan products yet — structured as general business/equipment loans." data-es="Préstamos comerciales vía Banco General y Banistmo. Tasas típicas: 5–7% interés. Principalmente para clientes comerciales. Sin productos específicos para solar aún." data-he="הלוואות מסחריות דרך Banco General ו-Banistmo. ריבית טיפוסית: 5–7%. בעיקר ללקוחות מסחריים. אין עדיין מוצרי הלוואה ייעודיים לסולאר.">Commercial loans via Banco General and Banistmo. Typical rates: 5–7% interest. Primarily for commercial clients. No dedicated solar loan products yet — structured as general business/equipment loans.</p>
+                </div>
+
+                <!-- IDB Programs -->
+                <div class="card">
+                    <div class="card-icon">&#9679;</div>
+                    <span class="card-tag tag-popular" data-en="RURAL AREAS" data-es="ÁREAS RURALES" data-he="אזורים כפריים">RURAL AREAS</span>
+                    <h3 data-en="IDB Rural Electrification" data-es="Electrificación Rural BID" data-he="חשמול כפרי IDB">IDB Rural Electrification</h3>
+                    <p data-en="$20M Inter-American Development Bank program for remote areas. Low-interest loans for off-grid and rural solar. Relevant for farms, indigenous communities, and remote tourism operations in Azuero." data-es="Programa de $20M del BID para áreas remotas. Préstamos de bajo interés para solar fuera de la red. Relevante para fincas y comunidades indígenas en Azuero." data-he="תוכנית $20M של בנק הפיתוח האמריקאי לאזורים מרוחקים. הלוואות בריבית נמוכה לסולאר מנותק מהרשת. רלוונטי לחוות וקהילות באזואורו.">$20M Inter-American Development Bank program for remote areas. Low-interest loans for off-grid and rural solar. Relevant for farms, indigenous communities, and remote tourism operations in Azuero.</p>
+                </div>
+
+                <!-- Solar Leasing -->
+                <div class="card">
+                    <div class="card-icon">&#9202;</div>
+                    <span class="card-tag tag-future" data-en="COMING SOON" data-es="PRÓXIMAMENTE" data-he="בקרוב">COMING SOON</span>
+                    <h3 data-en="Solar Leasing" data-es="Leasing Solar" data-he="ליסינג סולארי">Solar Leasing</h3>
+                    <p data-en="Not yet available in Panama. Opportunity for Solaris to be first mover — partner with leasing companies to offer $0-down solar. Client pays monthly, owns system after term." data-es="Aún no disponible en Panamá. Oportunidad para Solaris de ser pioneros — asociarse con empresas de leasing para solar sin pago inicial." data-he="עדיין לא זמין בפנמה. הזדמנות לסולאריס להיות ראשונים — שותפות עם חברות ליסינג להצעת סולאר ללא תשלום ראשון.">Not yet available in Panama. Opportunity for Solaris to be first mover — partner with leasing companies to offer $0-down solar. Client pays monthly, owns system after term.</p>
+                </div>
+
+                <!-- PPA -->
+                <div class="card">
+                    <div class="card-icon">&#9889;</div>
+                    <span class="card-tag tag-future" data-en="FUTURE MODEL" data-es="MODELO FUTURO" data-he="מודל עתידי">FUTURE MODEL</span>
+                    <h3 data-en="Power Purchase Agreement (PPA)" data-es="Acuerdo de Compra de Energía (PPA)" data-he="הסכם רכישת חשמל (PPA)">Power Purchase Agreement (PPA)</h3>
+                    <p data-en="Solaris owns the system, client buys electricity at a discount. Zero upfront cost. Ideal for commercial properties and hotels. Requires scale to be profitable — target for Phase 2." data-es="Solaris es dueño del sistema, el cliente compra electricidad con descuento. Costo inicial cero. Ideal para propiedades comerciales y hoteles." data-he="סולאריס הבעלים של המערכת, הלקוח קונה חשמל בהנחה. אפס עלות ראשונית. אידיאלי לנכסים מסחריים ומלונות.">Solaris owns the system, client buys electricity at a discount. Zero upfront cost. Ideal for commercial properties and hotels. Requires scale to be profitable — target for Phase 2.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Ley 417 Breakdown -->
+        <div class="section">
+            <div class="section-label" data-en="LEY 417 BREAKDOWN" data-es="DESGLOSE LEY 417" data-he="פירוט חוק 417">LEY 417 BREAKDOWN</div>
+            <h2 class="section-title" data-en="Tax Savings Under Ley 417" data-es="Ahorros Fiscales Bajo la Ley 417" data-he="חיסכון מס תחת חוק 417">Tax Savings Under Ley 417</h2>
+            <p class="section-desc" data-en="Enacted December 2023, Ley 417 is the most aggressive solar incentive in Central America. Here's the complete breakdown of what your clients save." data-es="Promulgada en diciembre 2023, la Ley 417 es el incentivo solar más agresivo de Centroamérica. Aquí el desglose completo de lo que ahorran sus clientes." data-he="חוק 417 שנחקק בדצמבר 2023 הוא תמריץ הסולאר האגרסיבי ביותר במרכז אמריקה. הנה הפירוט המלא של מה שהלקוחות חוסכים.">Enacted December 2023, Ley 417 is the most aggressive solar incentive in Central America. Here's the complete breakdown of what your clients save.</p>
+
+            <div class="ley-grid">
+                <div class="ley-item">
+                    <div class="ley-pct">100%</div>
+                    <div class="ley-label" data-en="Import Duty Exemption" data-es="Exención de Arancel" data-he="פטור ממכס">Import Duty Exemption</div>
+                    <div class="ley-desc" data-en="Panels, inverters, batteries, mounting, cables" data-es="Paneles, inversores, baterías, montaje, cables" data-he="פאנלים, ממירים, סוללות, מתקנים, כבלים">Panels, inverters, batteries, mounting, cables</div>
+                </div>
+                <div class="ley-item">
+                    <div class="ley-pct">7%</div>
+                    <div class="ley-label" data-en="ITBMS Exemption" data-es="Exención ITBMS" data-he="פטור ITBMS">ITBMS Exemption</div>
+                    <div class="ley-desc" data-en="Panama's VAT equivalent — fully waived" data-es="Equivalente al IVA de Panamá — totalmente eximido" data-he="המקביל למע״מ בפנמה — פטור מלא">Panama's VAT equivalent — fully waived</div>
+                </div>
+                <div class="ley-item">
+                    <div class="ley-pct">5%</div>
+                    <div class="ley-label" data-en="Selective Tax Eliminated" data-es="Impuesto Selectivo Eliminado" data-he="מס סלקטיבי מבוטל">Selective Tax Eliminated</div>
+                    <div class="ley-desc" data-en="New in Ley 417 — consumption tax removed" data-es="Nuevo en Ley 417 — impuesto al consumo eliminado" data-he="חדש בחוק 417 — מס צריכה הוסר">New in Ley 417 — consumption tax removed</div>
+                </div>
+                <div class="ley-item ley-total">
+                    <div class="ley-pct">15–25%</div>
+                    <div class="ley-label" data-en="Total Effective Savings" data-es="Ahorro Efectivo Total" data-he="חיסכון אפקטיבי כולל">Total Effective Savings</div>
+                    <div class="ley-desc" data-en="Equipment cost reduction + income tax deduction" data-es="Reducción de costo de equipo + deducción de impuestos" data-he="הפחתת עלות ציוד + ניכוי ממס הכנסה">Equipment cost reduction + income tax deduction</div>
+                </div>
+            </div>
+
+            <div class="card" style="background: var(--cloud); border: 1px dashed var(--gold);">
+                <h3 data-en="Requirements for Ley 417 Benefits" data-es="Requisitos para Beneficios de Ley 417" data-he="דרישות להטבות חוק 417">Requirements for Ley 417 Benefits</h3>
+                <p data-en="ASEP license (grid-connected generation) • Secretaría Nacional de Energía certification (self-consumption) • Professional electrical and structural plans • Bidirectional meter + ENSA/Naturgy approval for net metering • Self-consumption limit: up to 500 kW • Processing cost: $600–$1,200 depending on province and scale." data-es="Licencia ASEP (generación conectada a la red) • Certificación de la Secretaría Nacional de Energía (autoconsumo) • Planos eléctricos y estructurales profesionales • Medidor bidireccional + aprobación ENSA/Naturgy • Límite autoconsumo: hasta 500 kW • Costo de trámite: $600–$1,200." data-he="רישיון ASEP (ייצור מחובר לרשת) • אישור מזכירות האנרגיה הלאומית (צריכה עצמית) • תוכניות חשמל ומבנה מקצועיות • מונה דו-כיווני + אישור ENSA/Naturgy • מגבלת צריכה עצמית: עד 500 kW • עלות טיפול: $600–$1,200.">ASEP license (grid-connected generation) • Secretaría Nacional de Energía certification (self-consumption) • Professional electrical and structural plans • Bidirectional meter + ENSA/Naturgy approval for net metering • Self-consumption limit: up to 500 kW • Processing cost: $600–$1,200 depending on province and scale.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Comparison Table -->
+        <div class="section">
+            <div class="section-label" data-en="COMPARISON" data-es="COMPARACIÓN" data-he="השוואה">COMPARISON</div>
+            <h2 class="section-title" data-en="Financing Methods Compared" data-es="Métodos de Financiamiento Comparados" data-he="השוואת שיטות מימון">Financing Methods Compared</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th data-en="Feature" data-es="Característica" data-he="תכונה">Feature</th>
+                        <th data-en="Cash + Ley 417" data-es="Efectivo + Ley 417" data-he="מזומן + חוק 417">Cash + Ley 417</th>
+                        <th data-en="Bank Loan" data-es="Préstamo Bancario" data-he="הלוואה בנקאית">Bank Loan</th>
+                        <th data-en="Future PPA" data-es="PPA Futuro" data-he="PPA עתידי">Future PPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-en="Upfront Cost" data-es="Costo Inicial" data-he="עלות ראשונית">Upfront Cost</td>
+                        <td data-en="$3K–$80K (15–25% off)" data-es="$3K–$80K (15–25% desc.)" data-he="$3K–$80K (הנחה 15–25%)">$3K–$80K (15–25% off)</td>
+                        <td data-en="10–30% down payment" data-es="10–30% pago inicial" data-he="10–30% מקדמה">10–30% down payment</td>
+                        <td data-en="$0" data-es="$0" data-he="$0">$0</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Monthly Cost" data-es="Costo Mensual" data-he="עלות חודשית">Monthly Cost</td>
+                        <td data-en="$0" data-es="$0" data-he="$0">$0</td>
+                        <td data-en="Loan payments (5–7%)" data-es="Pagos del préstamo (5–7%)" data-he="תשלומי הלוואה (5–7%)">Loan payments (5–7%)</td>
+                        <td data-en="Discounted rate/kWh" data-es="Tarifa con descuento/kWh" data-he="תעריף מוזל/kWh">Discounted rate/kWh</td>
+                    </tr>
+                    <tr>
+                        <td data-en="System Ownership" data-es="Propiedad del Sistema" data-he="בעלות על המערכת">System Ownership</td>
+                        <td><span class="check" data-en="Immediate" data-es="Inmediata" data-he="מיידית">Immediate</span></td>
+                        <td><span class="check" data-en="After payoff" data-es="Al liquidar" data-he="לאחר פירעון">After payoff</span></td>
+                        <td><span class="cross" data-en="Installer owns" data-es="Propietario: instalador" data-he="בבעלות המתקין">Installer owns</span></td>
+                    </tr>
+                    <tr>
+                        <td data-en="Ley 417 Benefit" data-es="Beneficio Ley 417" data-he="הטבת חוק 417">Ley 417 Benefit</td>
+                        <td><span class="check">&#10003;</span></td>
+                        <td><span class="check">&#10003;</span></td>
+                        <td><span class="cross" data-en="Installer claims" data-es="Lo reclama el instalador" data-he="המתקין מנצל">Installer claims</span></td>
+                    </tr>
+                    <tr>
+                        <td data-en="Best For" data-es="Ideal Para" data-he="מתאים ל">Best For</td>
+                        <td data-en="Most clients, fastest ROI" data-es="Mayoría de clientes, ROI rápido" data-he="רוב הלקוחות, ROI מהיר">Most clients, fastest ROI</td>
+                        <td data-en="Large commercial, capex-averse" data-es="Comercial grande, sin capex" data-he="מסחרי גדול, שונאי השקעה">Large commercial, capex-averse</td>
+                        <td data-en="Hotels, remote properties" data-es="Hoteles, propiedades remotas" data-he="מלונות, נכסים מרוחקים">Hotels, remote properties</td>
+                    </tr>
+                    <tr>
+                        <td data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</td>
+                        <td data-en="2.5–3.5 years" data-es="2.5–3.5 años" data-he="2.5–3.5 שנים">2.5–3.5 years</td>
+                        <td data-en="4–6 years" data-es="4–6 años" data-he="4–6 שנים">4–6 years</td>
+                        <td data-en="N/A (no ownership)" data-es="N/A (sin propiedad)" data-he="לא רלוונטי (אין בעלות)">N/A (no ownership)</td>
+                    </tr>
+                    <tr>
+                        <td data-en="25-Year ROI" data-es="ROI a 25 Años" data-he="ROI ל-25 שנה">25-Year ROI</td>
+                        <td><span class="check" data-en="690–1000%" data-es="690–1000%" data-he="690–1000%">690–1000%</span></td>
+                        <td data-en="500–750%" data-es="500–750%" data-he="500–750%">500–750%</td>
+                        <td data-en="20–30% bill savings" data-es="20–30% ahorro en factura" data-he="20–30% חיסכון בחשבון">20–30% bill savings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 4: ROI Calculator -->
+        <div class="section">
+            <div class="section-label" data-en="INTERACTIVE TOOL" data-es="HERRAMIENTA INTERACTIVA" data-he="כלי אינטראקטיבי">INTERACTIVE TOOL</div>
+            <h2 class="section-title" data-en="Solar ROI Calculator" data-es="Calculadora de ROI Solar" data-he="מחשבון ROI סולארי">Solar ROI Calculator</h2>
+
+            <div class="calculator">
+                <div class="calc-header">
+                    <div>
+                        <h3 data-en="Calculate Your Payback" data-es="Calcule su Retorno" data-he="חשב את ההחזר שלך">Calculate Your Payback</h3>
+                        <p data-en="Enter system details to see ROI with and without Ley 417 benefits." data-es="Ingrese los detalles del sistema para ver el ROI con y sin beneficios de Ley 417." data-he="הזן פרטי מערכת כדי לראות ROI עם ובלי הטבות חוק 417.">Enter system details to see ROI with and without Ley 417 benefits.</p>
+                    </div>
+                </div>
+
+                <div class="calc-inputs">
+                    <div class="calc-field">
+                        <label data-en="System Cost (USD)" data-es="Costo del Sistema (USD)" data-he="עלות מערכת (USD)">System Cost (USD)</label>
+                        <input type="number" id="calcCost" value="11000" min="1000" max="200000" step="500">
+                    </div>
+                    <div class="calc-field">
+                        <label data-en="Monthly Electric Bill (USD)" data-es="Factura Eléctrica Mensual (USD)" data-he="חשבון חשמל חודשי (USD)">Monthly Electric Bill (USD)</label>
+                        <input type="number" id="calcBill" value="300" min="50" max="5000" step="10">
+                    </div>
+                    <div class="calc-field">
+                        <label data-en="Solar Coverage (%)" data-es="Cobertura Solar (%)" data-he="כיסוי סולארי (%)">Solar Coverage (%)</label>
+                        <input type="number" id="calcCoverage" value="100" min="50" max="150" step="5">
+                    </div>
+                    <div class="calc-field">
+                        <label data-en="Client Type" data-es="Tipo de Cliente" data-he="סוג לקוח">Client Type</label>
+                        <select id="calcType">
+                            <option value="residential" data-en="Residential" data-es="Residencial" data-he="ביתי">Residential</option>
+                            <option value="commercial" data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="calc-btn" onclick="calculateROI()" data-en="Calculate ROI" data-es="Calcular ROI" data-he="חשב ROI">Calculate ROI</button>
+
+                <div class="calc-results" id="calcResults">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-value" id="resMonthlySavings">$300</div>
+                            <div class="result-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="resPaybackNoLey">3.1 yr</div>
+                            <div class="result-label" data-en="Payback (No Ley 417)" data-es="Retorno (Sin Ley 417)" data-he="החזר (ללא חוק 417)">Payback (No Ley 417)</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value gold" id="resPaybackLey">2.4 yr</div>
+                            <div class="result-label" data-en="Payback (With Ley 417)" data-es="Retorno (Con Ley 417)" data-he="החזר (עם חוק 417)">Payback (With Ley 417)</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="resLeySavings">$2,200</div>
+                            <div class="result-label" data-en="Ley 417 Savings" data-es="Ahorro Ley 417" data-he="חיסכון חוק 417">Ley 417 Savings</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value gold" id="res25yr">$79,000</div>
+                            <div class="result-label" data-en="25-Year Net Savings" data-es="Ahorro Neto 25 Años" data-he="חיסכון נטו 25 שנה">25-Year Net Savings</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="resROI">718%</div>
+                            <div class="result-label" data-en="25-Year ROI" data-es="ROI 25 Años" data-he="ROI 25 שנה">25-Year ROI</div>
+                        </div>
+                    </div>
+
+                    <div class="result-comparison">
+                        <h4 data-en="Payback Comparison" data-es="Comparación de Retorno" data-he="השוואת החזר">Payback Comparison</h4>
+                        <div class="comparison-bar">
+                            <span class="bar-label" data-en="Without Ley 417" data-es="Sin Ley 417" data-he="ללא חוק 417">Without Ley 417</span>
+                            <div class="bar-track">
+                                <div class="bar-fill green" id="barNoLey" style="width: 60%;">3.1 yr</div>
+                            </div>
+                        </div>
+                        <div class="comparison-bar">
+                            <span class="bar-label" data-en="With Ley 417" data-es="Con Ley 417" data-he="עם חוק 417">With Ley 417</span>
+                            <div class="bar-track">
+                                <div class="bar-fill gold" id="barLey" style="width: 45%;">2.4 yr</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Decision Matrix -->
+        <div class="section">
+            <div class="section-label" data-en="CLIENT GUIDANCE" data-es="GUÍA PARA CLIENTES" data-he="הנחיות ללקוחות">CLIENT GUIDANCE</div>
+            <h2 class="section-title" data-en="When to Pay Cash vs. Finance" data-es="Cuándo Pagar en Efectivo vs. Financiar" data-he="מתי לשלם במזומן מול מימון">When to Pay Cash vs. Finance</h2>
+
+            <div class="matrix-grid">
+                <div class="matrix-card">
+                    <h4>&#9679; <span data-en="Pay Cash When..." data-es="Pagar en Efectivo Cuando..." data-he="לשלם במזומן כאשר...">Pay Cash When...</span></h4>
+                    <ul class="matrix-list">
+                        <li data-en="System under $15,000 (residential)" data-es="Sistema menor a $15,000 (residencial)" data-he="מערכת מתחת ל-$15,000 (ביתי)">System under $15,000 (residential)</li>
+                        <li data-en="Client has available capital" data-es="El cliente tiene capital disponible" data-he="ללקוח יש הון זמין">Client has available capital</li>
+                        <li data-en="Want fastest possible ROI (2.5–3.5 years)" data-es="Quieren el ROI más rápido (2.5–3.5 años)" data-he="רוצים ROI הכי מהיר (2.5–3.5 שנים)">Want fastest possible ROI (2.5–3.5 years)</li>
+                        <li data-en="Business qualifies for full Ley 417 income tax deduction" data-es="Negocio califica para deducción total de Ley 417" data-he="העסק זכאי לניכוי מלא חוק 417">Business qualifies for full Ley 417 income tax deduction</li>
+                        <li data-en="Expat/retiree with savings wanting to reduce bills" data-es="Expatriado/jubilado con ahorros para reducir facturas" data-he="אקספט/גמלאי עם חסכונות שרוצה להפחית חשבונות">Expat/retiree with savings wanting to reduce bills</li>
+                        <li data-en="Want zero ongoing financial commitment" data-es="Quieren cero compromiso financiero continuo" data-he="רוצים אפס מחויבות פיננסית שוטפת">Want zero ongoing financial commitment</li>
+                    </ul>
+                </div>
+                <div class="matrix-card">
+                    <h4>&#9733; <span data-en="Consider Financing When..." data-es="Considerar Financiamiento Cuando..." data-he="לשקול מימון כאשר...">Consider Financing When...</span></h4>
+                    <ul class="matrix-list">
+                        <li data-en="System over $30,000 (large commercial)" data-es="Sistema mayor a $30,000 (comercial grande)" data-he="מערכת מעל $30,000 (מסחרי גדול)">System over $30,000 (large commercial)</li>
+                        <li data-en="Capital better deployed elsewhere in business" data-es="Capital mejor empleado en otros aspectos del negocio" data-he="הון יכול להיות מנוצל טוב יותר בעסק">Capital better deployed elsewhere in business</li>
+                        <li data-en="Hotel/resort wanting $0-down (future PPA)" data-es="Hotel/resort quiere $0 inicial (PPA futuro)" data-he="מלון/נופש רוצה $0 ראשוני (PPA עתידי)">Hotel/resort wanting $0-down (future PPA)</li>
+                        <li data-en="Remote/rural property (IDB program eligible)" data-es="Propiedad remota/rural (elegible programa BID)" data-he="נכס מרוחק/כפרי (זכאי לתוכנית IDB)">Remote/rural property (IDB program eligible)</li>
+                        <li data-en="Multiple properties in portfolio" data-es="Múltiples propiedades en portafolio" data-he="מספר נכסים בתיק">Multiple properties in portfolio</li>
+                        <li data-en="Loan rate (5–7%) << electricity cost increase (2–3%/yr)" data-es="Tasa de préstamo (5–7%) << aumento de electricidad (2–3%/año)" data-he="ריבית הלוואה (5–7%) << עליית עלות חשמל (2–3%/שנה)">Loan rate (5–7%) &lt;&lt; electricity cost increase (2–3%/yr)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Real Example -->
+        <div class="section">
+            <div class="section-label" data-en="REAL EXAMPLE" data-es="EJEMPLO REAL" data-he="דוגמה אמיתית">REAL EXAMPLE</div>
+            <h2 class="section-title" data-en="Case Study: 10 kWp Residential System" data-es="Caso de Estudio: Sistema Residencial 10 kWp" data-he="מקרה בוחן: מערכת ביתית 10 kWp">Case Study: 10 kWp Residential System</h2>
+
+            <div class="example-box">
+                <h3 data-en="A Typical Azuero <em>Homeowner</em>" data-es="Un <em>Propietario</em> Típico de Azuero" data-he="בעל <em>בית</em> טיפוסי באזואורו">A Typical Azuero <em>Homeowner</em></h3>
+
+                <div class="example-metrics">
+                    <div class="example-metric">
+                        <div class="value">10 kWp</div>
+                        <div class="label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל המערכת">System Size</div>
+                    </div>
+                    <div class="example-metric">
+                        <div class="value">$11,000</div>
+                        <div class="label" data-en="Total Cost" data-es="Costo Total" data-he="עלות כוללת">Total Cost</div>
+                    </div>
+                    <div class="example-metric">
+                        <div class="value">$9,350</div>
+                        <div class="label" data-en="After Ley 417 (~15%)" data-es="Después de Ley 417 (~15%)" data-he="אחרי חוק 417 (~15%)">After Ley 417 (~15%)</div>
+                    </div>
+                    <div class="example-metric">
+                        <div class="value">$300/mo</div>
+                        <div class="label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                    </div>
+                    <div class="example-metric">
+                        <div class="value">2.6 yr</div>
+                        <div class="label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                    </div>
+                    <div class="example-metric">
+                        <div class="value">$79,650</div>
+                        <div class="label" data-en="25-Year Net Savings" data-es="Ahorro Neto 25 Años" data-he="חיסכון נטו 25 שנה">25-Year Net Savings</div>
+                    </div>
+                </div>
+
+                <div class="example-note" data-en="Based on $0.18/kWh residential rate (ENSA), 5.3 kWh/m²/day solar irradiance in Azuero, and $1.10/Wp installed cost. Assumes net metering with ENSA and no battery storage. Equipment: Tier-1 panels (LONGi/Jinko) + Huawei SUN2000 inverter. 25-year panel warranty." data-es="Basado en tarifa residencial de $0.18/kWh (ENSA), irradiación solar de 5.3 kWh/m²/día en Azuero, y costo instalado de $1.10/Wp. Asume medición neta con ENSA sin almacenamiento. Equipos: paneles Tier-1 (LONGi/Jinko) + inversor Huawei SUN2000." data-he="מבוסס על תעריף ביתי $0.18/kWh (ENSA), קרינה סולארית 5.3 kWh/m²/יום באזואורו, ועלות מותקנת $1.10/Wp. מניח מדידה נטו עם ENSA ללא אחסון. ציוד: פאנלים Tier-1 (LONGi/Jinko) + ממיר Huawei SUN2000.">Based on $0.18/kWh residential rate (ENSA), 5.3 kWh/m²/day solar irradiance in Azuero, and $1.10/Wp installed cost. Assumes net metering with ENSA and no battery storage. Equipment: Tier-1 panels (LONGi/Jinko) + Huawei SUN2000 inverter. 25-year panel warranty.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <p>&copy; 2026 <a href="index.html">Solaris Energy Panama</a> &mdash; <span data-en="Azuero Peninsula's Premium Solar Installer" data-es="Instalador Solar Premium de la Península de Azuero" data-he="מתקין הסולאר המוביל בחצי האי אזואורו">Azuero Peninsula's Premium Solar Installer</span></p>
+    </footer>
+
+    <script>
+    /* ===== LANGUAGE SYSTEM ===== */
+    let currentLang = 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+        const isRTL = lang === 'he';
+        document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+
+        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+            const text = el.getAttribute('data-' + lang);
+            if (el.tagName === 'INPUT' || el.tagName === 'SELECT') return;
+            el.innerHTML = text;
+        });
+
+        // Translate select options
+        document.querySelectorAll('select option').forEach(opt => {
+            const text = opt.getAttribute('data-' + lang);
+            if (text) opt.textContent = text;
+        });
+    }
+
+    /* ===== ROI CALCULATOR ===== */
+    function calculateROI() {
+        const cost = parseFloat(document.getElementById('calcCost').value) || 11000;
+        const bill = parseFloat(document.getElementById('calcBill').value) || 300;
+        const coverage = parseFloat(document.getElementById('calcCoverage').value) || 100;
+        const type = document.getElementById('calcType').value;
+
+        const monthlySavings = bill * (coverage / 100);
+        const annualSavings = monthlySavings * 12;
+
+        // Ley 417 savings: ~15% residential, ~20% commercial (import duty + ITBMS + selective)
+        const leyRate = type === 'commercial' ? 0.20 : 0.15;
+        const leySavings = cost * leyRate;
+        const effectiveCost = cost - leySavings;
+
+        const paybackNoLey = cost / annualSavings;
+        const paybackLey = effectiveCost / annualSavings;
+
+        // 25-year calculation (assume 0.5% degradation/yr, 2.5% electricity increase/yr)
+        let totalSavings25 = 0;
+        for (let y = 1; y <= 25; y++) {
+            const degradation = Math.pow(0.995, y);
+            const rateIncrease = Math.pow(1.025, y);
+            totalSavings25 += annualSavings * degradation * rateIncrease;
+        }
+        const net25 = totalSavings25 - effectiveCost;
+        const roi25 = ((totalSavings25 - effectiveCost) / effectiveCost * 100);
+
+        // Update display
+        document.getElementById('resMonthlySavings').textContent = '$' + Math.round(monthlySavings).toLocaleString();
+        document.getElementById('resPaybackNoLey').textContent = paybackNoLey.toFixed(1) + ' yr';
+        document.getElementById('resPaybackLey').textContent = paybackLey.toFixed(1) + ' yr';
+        document.getElementById('resLeySavings').textContent = '$' + Math.round(leySavings).toLocaleString();
+        document.getElementById('res25yr').textContent = '$' + Math.round(net25).toLocaleString();
+        document.getElementById('resROI').textContent = Math.round(roi25) + '%';
+
+        // Update bars (scale: 6 years = 100%)
+        const maxYears = 6;
+        const barNoLeyWidth = Math.min((paybackNoLey / maxYears) * 100, 100);
+        const barLeyWidth = Math.min((paybackLey / maxYears) * 100, 100);
+        document.getElementById('barNoLey').style.width = barNoLeyWidth + '%';
+        document.getElementById('barNoLey').textContent = paybackNoLey.toFixed(1) + ' yr';
+        document.getElementById('barLey').style.width = barLeyWidth + '%';
+        document.getElementById('barLey').textContent = paybackLey.toFixed(1) + ' yr';
+
+        // Show results
+        document.getElementById('calcResults').classList.add('visible');
+    }
+
+    // Auto-calculate on load
+    document.addEventListener('DOMContentLoaded', () => {
+        calculateROI();
+    });
+    </script>
+</body>
+</html>
