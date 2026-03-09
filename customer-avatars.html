@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Personas — Solaris Energy Panama</title>
+    <meta name="description" content="Detailed customer personas for Solaris Energy Panama. Expat homeowners, boutique hotels, restaurants, farms, and commercial properties in Azuero.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%);
+            position: relative;
+            padding: 8rem 2rem 5rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 55%);
+            border-radius: 50%;
+            animation: sunGlow 10s ease-in-out infinite;
+        }
+
+        @keyframes sunGlow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--pearl);
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--gold); }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(254,253,251,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a.active-link { color: var(--gold); }
+
+        .nav-cta {
+            background: var(--gold) !important;
+            color: var(--green) !important;
+            padding: 0.7rem 1.8rem;
+            border-radius: var(--radius-pill);
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.04em;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,67,0.4); }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 5;
+            position: relative;
+            animation: fadeUp 1s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(254,253,251,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(254,253,251,0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-pill);
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.06em;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            color: var(--pearl);
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.75);
+            line-height: 1.7;
+            max-width: 580px;
+        }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 5rem 2rem; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            color: var(--green);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-sub {
+            font-size: 1.05rem;
+            color: var(--slate);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 3rem;
+        }
+
+        /* ===== PERSONA CARDS ===== */
+        .persona-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 0;
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .persona-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-4px);
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem 2.5rem;
+            background: var(--green);
+            color: var(--pearl);
+        }
+
+        .persona-avatar {
+            width: 72px;
+            height: 72px;
+            min-width: 72px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .persona-header-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--pearl);
+            margin-bottom: 0.3rem;
+        }
+
+        .persona-header-text .persona-tagline {
+            color: var(--gold);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .persona-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .persona-col {
+            padding: 2rem 2.5rem;
+        }
+
+        .persona-col:first-child {
+            border-right: 1px solid var(--mist);
+        }
+
+        .persona-col h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            color: var(--green);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .persona-col h4 .icon {
+            font-size: 1rem;
+        }
+
+        .persona-col p, .persona-col li {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.7;
+        }
+
+        .persona-col ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .persona-col ul li {
+            position: relative;
+            padding-left: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-col ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .persona-detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--ash);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            margin-top: 1.2rem;
+        }
+
+        .persona-detail-label:first-child {
+            margin-top: 0;
+        }
+
+        .persona-detail-value {
+            font-size: 0.95rem;
+            color: var(--charcoal);
+            font-weight: 600;
+        }
+
+        .persona-footer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem 2.5rem;
+            background: var(--cloud);
+            border-top: 1px solid var(--mist);
+        }
+
+        .persona-stat {
+            text-align: center;
+        }
+
+        .persona-stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+        }
+
+        .persona-stat-label {
+            font-size: 0.75rem;
+            color: var(--ash);
+            font-weight: 500;
+            margin-top: 0.2rem;
+        }
+
+        /* Objection callout */
+        .objection-box {
+            background: rgba(212,168,67,0.08);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .objection-box .objection-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold-aged);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .objection-box .objection-text {
+            font-size: 0.9rem;
+            color: var(--charcoal);
+            font-style: italic;
+        }
+
+        /* Message callout */
+        .message-box {
+            background: rgba(11,61,46,0.05);
+            border-left: 3px solid var(--green);
+            border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .message-box .message-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-box .message-text {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        /* ===== SUMMARY TABLE ===== */
+        .summary-section { background: var(--sand); }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
+
+        .summary-item {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.8rem 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .summary-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .summary-item .emoji {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .summary-item h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item .bill {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--charcoal);
+        }
+
+        .summary-item .system {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 0.3rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--charcoal);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(254,253,251,0.4);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 7rem 1.5rem 3rem; }
+            section { padding: 3.5rem 1.5rem; }
+            .persona-body { grid-template-columns: 1fr; }
+            .persona-col:first-child { border-right: none; border-bottom: 1px solid var(--mist); }
+            .persona-header { padding: 1.5rem; gap: 1rem; }
+            .persona-col { padding: 1.5rem; }
+            .persona-footer { padding: 1.5rem; }
+            .persona-avatar { width: 56px; height: 56px; min-width: 56px; font-size: 1.5rem; }
+            .persona-header-text h3 { font-size: 1.2rem; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .summary-grid .summary-item:last-child { grid-column: span 2; }
+        }
+
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .summary-grid .summary-item:last-child { grid-column: span 1; }
+        }
+
+        /* RTL support */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .persona-col ul li { padding-left: 0; padding-right: 1.2rem; }
+        [dir="rtl"] .persona-col ul li::before { left: auto; right: 0; content: '←'; }
+        [dir="rtl"] .persona-col:first-child { border-right: none; border-left: 1px solid var(--mist); }
+        [dir="rtl"] .objection-box, [dir="rtl"] .message-box { border-left: none; border-right: 3px solid; }
+        [dir="rtl"] .objection-box { border-right-color: var(--gold); }
+        [dir="rtl"] .message-box { border-right-color: var(--green); }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <nav class="hero-nav">
+        <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
+        <div class="nav-links">
+            <a href="index.html" data-en="Home" data-es="Inicio" data-he="בית">Home</a>
+            <a href="brand-kit.html" data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</a>
+            <a href="strategy.html" data-en="Strategy" data-es="Estrategia" data-he="אסטרטגיה">Strategy</a>
+            <a href="customer-avatars.html" class="active-link" data-en="Personas" data-es="Personas" data-he="פרסונות">Personas</a>
+            <a href="https://wa.me/50765831822" class="nav-cta">WhatsApp</a>
+        </div>
+    </nav>
+
+    <div class="hero-content">
+        <div class="hero-badge" data-en="CUSTOMER PERSONAS" data-es="PERSONAS DE CLIENTES" data-he="פרסונות לקוחות">CUSTOMER PERSONAS</div>
+        <h1>
+            <span data-en="Know Your" data-es="Conoce a Tu" data-he="הכר את">Know Your</span><br>
+            <em data-en="Customer" data-es="Cliente" data-he="הלקוח שלך">Customer</em>
+        </h1>
+        <p class="hero-sub" data-en="Five detailed personas for the Azuero Peninsula solar market. Pain points, objections, messaging, and system estimates for each segment." data-es="Cinco personas detalladas para el mercado solar de la Península de Azuero. Puntos de dolor, objeciones, mensajes y estimaciones de sistemas para cada segmento." data-he="חמש פרסונות מפורטות לשוק הסולארי בחצי האי אזוארו. נקודות כאב, התנגדויות, מסרים והערכות מערכת לכל פלח.">Five detailed personas for the Azuero Peninsula solar market. Pain points, objections, messaging, and system estimates for each segment.</p>
+    </div>
+</section>
+
+<!-- PERSONA 1: EXPAT HOMEOWNER -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="PERSONA 1" data-es="PERSONA 1" data-he="פרסונה 1">PERSONA 1</div>
+
+        <div class="persona-card reveal">
+            <div class="persona-header">
+                <div class="persona-avatar">🏡</div>
+                <div class="persona-header-text">
+                    <h3 data-en="The Expat Homeowner" data-es="El Propietario Expatriado" data-he="בעל הבית האקספט">The Expat Homeowner</h3>
+                    <div class="persona-tagline" data-en="American/European retiree in Pedasí or Playa Venao" data-es="Jubilado americano/europeo en Pedasí o Playa Venao" data-he="גמלאי אמריקאי/אירופאי בפדסי או פלאיה וונאו">American/European retiree in Pedasí or Playa Venao</div>
+                </div>
+            </div>
+
+            <div class="persona-body">
+                <div class="persona-col">
+                    <div class="persona-detail-label" data-en="DEMOGRAPHICS" data-es="DEMOGRAFÍA" data-he="דמוגרפיה">DEMOGRAPHICS</div>
+                    <p data-en="Age 55–75. Retired or semi-retired. Relocated from US/Canada/Europe. Owns a $200K–$600K home. Eco-conscious, values independence and quality of life." data-es="Edad 55–75. Jubilado o semi-jubilado. Reubicado desde EE.UU./Canadá/Europa. Propietario de una casa de $200K–$600K. Eco-consciente, valora la independencia y la calidad de vida." data-he="גיל 55-75. גמלאי או חצי-גמלאי. עבר מארה״ב/קנדה/אירופה. בעלים של בית בשווי $200K-$600K. מודע לסביבה, מעריך עצמאות ואיכות חיים.">Age 55–75. Retired or semi-retired. Relocated from US/Canada/Europe. Owns a $200K–$600K home. Eco-conscious, values independence and quality of life.</p>
+
+                    <div class="persona-detail-label" data-en="MONTHLY ELECTRICITY" data-es="ELECTRICIDAD MENSUAL" data-he="חשבון חשמל חודשי">MONTHLY ELECTRICITY</div>
+                    <div class="persona-detail-value">$800 – $2,000</div>
+
+                    <h4 style="margin-top: 1.5rem;"><span class="icon">😩</span> <span data-en="Pain Points" data-es="Puntos de Dolor" data-he="נקודות כאב">Pain Points</span></h4>
+                    <ul>
+                        <li data-en="Electricity bills are 3–5x what they paid back home" data-es="Las facturas de electricidad son 3–5x más de lo que pagaban en su país" data-he="חשבונות חשמל פי 3-5 ממה ששילמו בבית">Electricity bills are 3–5x what they paid back home</li>
+                        <li data-en="Frequent power outages disrupt daily life" data-es="Los cortes frecuentes de energía interrumpen la vida diaria" data-he="הפסקות חשמל תכופות משבשות את היומיום">Frequent power outages disrupt daily life</li>
+                        <li data-en="Running AC nonstop in tropical heat" data-es="Funcionando AC sin parar en el calor tropical" data-he="הפעלת מזגן ללא הפסקה בחום הטרופי">Running AC nonstop in tropical heat</li>
+                        <li data-en="Unfamiliar with local contractors, worried about scams" data-es="No familiarizado con contratistas locales, preocupado por estafas" data-he="לא מכיר קבלנים מקומיים, חושש מעוקצים">Unfamiliar with local contractors, worried about scams</li>
+                    </ul>
+                </div>
+
+                <div class="persona-col">
+                    <div class="objection-box">
+                        <div class="objection-label" data-en="TOP OBJECTION" data-es="OBJECIÓN PRINCIPAL" data-he="התנגדות עיקרית">TOP OBJECTION</div>
+                        <div class="objection-text" data-en="&quot;Will solar actually work here? I've never seen panels in Azuero.&quot;" data-es="&quot;¿Realmente funcionará la energía solar aquí? Nunca he visto paneles en Azuero.&quot;" data-he="&quot;האם סולארי באמת יעבוד פה? מעולם לא ראיתי פאנלים באזוארו.&quot;">"Will solar actually work here? I've never seen panels in Azuero."</div>
+                    </div>
+
+                    <div class="message-box">
+                        <div class="message-label" data-en="WINNING MESSAGE" data-es="MENSAJE GANADOR" data-he="מסר מנצח">WINNING MESSAGE</div>
+                        <div class="message-text" data-en="Azuero has 5.3 peak sun hours — more than most of Florida. Your system pays for itself in 2.5 years, then delivers free electricity for 25+. We handle everything: permits, installation, net metering setup. Professional team with Israeli solar industry experience." data-es="Azuero tiene 5.3 horas sol pico — más que la mayoría de Florida. Tu sistema se paga solo en 2.5 años, luego entrega electricidad gratis por más de 25. Nosotros manejamos todo: permisos, instalación, configuración de medición neta. Equipo profesional con experiencia en la industria solar israelí." data-he="לאזוארו יש 5.3 שעות שיא שמש — יותר מרוב פלורידה. המערכת שלך מחזירה את עצמה תוך 2.5 שנים, ואז מספקת חשמל חינם ל-25+ שנים. אנחנו מטפלים בהכל: היתרים, התקנה, הגדרת מונה נטו. צוות מקצועי עם ניסיון בתעשיית הסולאר הישראלית.">Azuero has 5.3 peak sun hours — more than most of Florida. Your system pays for itself in 2.5 years, then delivers free electricity for 25+. We handle everything: permits, installation, net metering setup. Professional team with Israeli solar industry experience.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-footer">
+                <div class="persona-stat">
+                    <div class="persona-stat-num">8–15 kW</div>
+                    <div class="persona-stat-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$8K–$15K</div>
+                    <div class="persona-stat-label" data-en="Investment" data-es="Inversión" data-he="השקעה">Investment</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$600–$1,500</div>
+                    <div class="persona-stat-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">2.5 yr</div>
+                    <div class="persona-stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PERSONA 2: BOUTIQUE HOTEL -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="PERSONA 2" data-es="PERSONA 2" data-he="פרסונה 2">PERSONA 2</div>
+
+        <div class="persona-card reveal">
+            <div class="persona-header">
+                <div class="persona-avatar">🏨</div>
+                <div class="persona-header-text">
+                    <h3 data-en="The Boutique Hotel Owner" data-es="El Dueño de Hotel Boutique" data-he="בעל המלון הבוטיק">The Boutique Hotel Owner</h3>
+                    <div class="persona-tagline" data-en="Eco-tourism resort, 10–50 rooms in the Azuero coast" data-es="Resort eco-turístico, 10–50 habitaciones en la costa de Azuero" data-he="ריזורט אקו-תיירותי, 10-50 חדרים בחוף אזוארו">Eco-tourism resort, 10–50 rooms in the Azuero coast</div>
+                </div>
+            </div>
+
+            <div class="persona-body">
+                <div class="persona-col">
+                    <div class="persona-detail-label" data-en="DEMOGRAPHICS" data-es="DEMOGRAFÍA" data-he="דמוגרפיה">DEMOGRAPHICS</div>
+                    <p data-en="Age 35–55. Entrepreneur or investor. Often international (European, Israeli, American). Sustainability is a brand value, not just a buzzword. Competes on experience and eco-credentials." data-es="Edad 35–55. Emprendedor o inversor. A menudo internacional (europeo, israelí, americano). La sostenibilidad es un valor de marca, no solo una palabra de moda. Compite por experiencia y credenciales ecológicas." data-he="גיל 35-55. יזם או משקיע. לעיתים קרובות בינלאומי (אירופאי, ישראלי, אמריקאי). קיימות היא ערך מותגי, לא רק באזוורד. מתחרה על חוויה ותעודות ירוקות.">Age 35–55. Entrepreneur or investor. Often international (European, Israeli, American). Sustainability is a brand value, not just a buzzword. Competes on experience and eco-credentials.</p>
+
+                    <div class="persona-detail-label" data-en="MONTHLY ELECTRICITY" data-es="ELECTRICIDAD MENSUAL" data-he="חשבון חשמל חודשי">MONTHLY ELECTRICITY</div>
+                    <div class="persona-detail-value">$2,000 – $8,000</div>
+
+                    <h4 style="margin-top: 1.5rem;"><span class="icon">😩</span> <span data-en="Pain Points" data-es="Puntos de Dolor" data-he="נקודות כאב">Pain Points</span></h4>
+                    <ul>
+                        <li data-en="Electricity is the #1 operating expense" data-es="La electricidad es el gasto operativo #1" data-he="חשמל הוא ההוצאה התפעולית מספר 1">Electricity is the #1 operating expense</li>
+                        <li data-en="Guests expect sustainability, competitors are marketing it" data-es="Los huéspedes esperan sostenibilidad, los competidores la promocionan" data-he="אורחים מצפים לקיימות, המתחרים משווקים את זה">Guests expect sustainability, competitors are marketing it</li>
+                        <li data-en="Power outages = bad reviews on TripAdvisor/Booking" data-es="Cortes de energía = malas reseñas en TripAdvisor/Booking" data-he="הפסקות חשמל = ביקורות רעות בטריפאדוויזר/בוקינג">Power outages = bad reviews on TripAdvisor/Booking</li>
+                        <li data-en="Generators are noisy, expensive, and ruin the vibe" data-es="Los generadores son ruidosos, costosos y arruinan el ambiente" data-he="גנרטורים רועשים, יקרים ופוגעים באווירה">Generators are noisy, expensive, and ruin the vibe</li>
+                    </ul>
+                </div>
+
+                <div class="persona-col">
+                    <div class="objection-box">
+                        <div class="objection-label" data-en="TOP OBJECTION" data-es="OBJECIÓN PRINCIPAL" data-he="התנגדות עיקרית">TOP OBJECTION</div>
+                        <div class="objection-text" data-en="&quot;Will installation disrupt our guests? We can't shut down.&quot;" data-es="&quot;¿La instalación interrumpirá a nuestros huéspedes? No podemos cerrar.&quot;" data-he="&quot;האם ההתקנה תפריע לאורחים? אנחנו לא יכולים לסגור.&quot;">"Will installation disrupt our guests? We can't shut down."</div>
+                    </div>
+
+                    <div class="message-box">
+                        <div class="message-label" data-en="WINNING MESSAGE" data-es="MENSAJE GANADOR" data-he="מסר מנצח">WINNING MESSAGE</div>
+                        <div class="message-text" data-en="We install in 3–5 days with zero downtime for your guests. Roof work happens during checkout hours. Plus — 'Powered by Solar' becomes your marketing advantage on Booking.com. Eco-conscious travelers pay 15–20% more for sustainable stays. Your panels pay for themselves AND attract premium guests." data-es="Instalamos en 3–5 días sin tiempo de inactividad para sus huéspedes. El trabajo en el techo ocurre durante las horas de checkout. Además — 'Impulsado por Energía Solar' se convierte en su ventaja de marketing en Booking.com. Los viajeros eco-conscientes pagan 15–20% más por estadías sostenibles. Sus paneles se pagan solos Y atraen huéspedes premium." data-he="אנחנו מתקינים תוך 3-5 ימים ללא השבתה לאורחים. עבודות גג מתרחשות בשעות הצ׳ק-אאוט. בנוסף — ׳מונע באנרגיה סולארית׳ הופך ליתרון השיווקי שלך ב-Booking.com. מטיילים מודעים לסביבה משלמים 15-20% יותר על שהייה בת-קיימא. הפאנלים שלך מחזירים את עצמם וגם מושכים אורחים פרימיום.">We install in 3–5 days with zero downtime for your guests. Roof work happens during checkout hours. Plus — 'Powered by Solar' becomes your marketing advantage on Booking.com. Eco-conscious travelers pay 15–20% more for sustainable stays. Your panels pay for themselves AND attract premium guests.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-footer">
+                <div class="persona-stat">
+                    <div class="persona-stat-num">30–80 kW</div>
+                    <div class="persona-stat-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$25K–$70K</div>
+                    <div class="persona-stat-label" data-en="Investment" data-es="Inversión" data-he="השקעה">Investment</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$1,500–$6,000</div>
+                    <div class="persona-stat-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">3 yr</div>
+                    <div class="persona-stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PERSONA 3: RESTAURANT/BAR -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="PERSONA 3" data-es="PERSONA 3" data-he="פרסונה 3">PERSONA 3</div>
+
+        <div class="persona-card reveal">
+            <div class="persona-header">
+                <div class="persona-avatar">🍽️</div>
+                <div class="persona-header-text">
+                    <h3 data-en="The Restaurant & Bar Owner" data-es="El Dueño de Restaurante y Bar" data-he="בעל המסעדה/בר">The Restaurant & Bar Owner</h3>
+                    <div class="persona-tagline" data-en="Beach bar, restaurant, or café with heavy AC and refrigeration" data-es="Bar de playa, restaurante o café con mucho AC y refrigeración" data-he="בר חוף, מסעדה או בית קפה עם מזגן וקירור כבד">Beach bar, restaurant, or café with heavy AC and refrigeration</div>
+                </div>
+            </div>
+
+            <div class="persona-body">
+                <div class="persona-col">
+                    <div class="persona-detail-label" data-en="DEMOGRAPHICS" data-es="DEMOGRAFÍA" data-he="דמוגרפיה">DEMOGRAPHICS</div>
+                    <p data-en="Age 30–55. Local Panamanian or expat entrepreneur. Hands-on operator, works 12+ hour days. Tight margins, every dollar counts. Pragmatic — needs proof, not promises." data-es="Edad 30–55. Panameño local o emprendedor expatriado. Operador práctico, trabaja más de 12 horas al día. Márgenes ajustados, cada dólar cuenta. Pragmático — necesita pruebas, no promesas." data-he="גיל 30-55. פנמי מקומי או יזם אקספט. מפעיל שטח, עובד 12+ שעות ביום. שוליים צרים, כל דולר חשוב. פרגמטי — צריך הוכחות, לא הבטחות.">Age 30–55. Local Panamanian or expat entrepreneur. Hands-on operator, works 12+ hour days. Tight margins, every dollar counts. Pragmatic — needs proof, not promises.</p>
+
+                    <div class="persona-detail-label" data-en="MONTHLY ELECTRICITY" data-es="ELECTRICIDAD MENSUAL" data-he="חשבון חשמל חודשי">MONTHLY ELECTRICITY</div>
+                    <div class="persona-detail-value">$500 – $3,000</div>
+
+                    <h4 style="margin-top: 1.5rem;"><span class="icon">😩</span> <span data-en="Pain Points" data-es="Puntos de Dolor" data-he="נקודות כאב">Pain Points</span></h4>
+                    <ul>
+                        <li data-en="Walk-in coolers and AC run 24/7, bills are brutal" data-es="Cámaras frigoríficas y AC funcionan 24/7, las facturas son brutales" data-he="מקררי קירור ומזגנים עובדים 24/7, החשבונות אכזריים">Walk-in coolers and AC run 24/7, bills are brutal</li>
+                        <li data-en="Power outages spoil inventory ($500+ in food loss)" data-es="Cortes de energía echan a perder inventario ($500+ en pérdida de alimentos)" data-he="הפסקות חשמל גורמות להפסד מלאי ($500+ באוכל)">Power outages spoil inventory ($500+ in food loss)</li>
+                        <li data-en="Seasonal revenue swings make fixed costs painful" data-es="Las oscilaciones estacionales de ingresos hacen que los costos fijos duelan" data-he="תנודות עונתיות בהכנסות הופכות עלויות קבועות לכאב">Seasonal revenue swings make fixed costs painful</li>
+                        <li data-en="Cash flow is king — upfront costs feel risky" data-es="El flujo de caja es rey — los costos iniciales se sienten arriesgados" data-he="תזרים מזומנים זה המלך — עלות ראשונית מרגישה מסוכנת">Cash flow is king — upfront costs feel risky</li>
+                    </ul>
+                </div>
+
+                <div class="persona-col">
+                    <div class="objection-box">
+                        <div class="objection-label" data-en="TOP OBJECTION" data-es="OBJECIÓN PRINCIPAL" data-he="התנגדות עיקרית">TOP OBJECTION</div>
+                        <div class="objection-text" data-en="&quot;I can't afford $10K+ upfront right now. Business is seasonal.&quot;" data-es="&quot;No puedo pagar $10K+ por adelantado ahora. El negocio es estacional.&quot;" data-he="&quot;אני לא יכול לשלם $10K+ מראש עכשיו. העסק עונתי.&quot;">"I can't afford $10K+ upfront right now. Business is seasonal."</div>
+                    </div>
+
+                    <div class="message-box">
+                        <div class="message-label" data-en="WINNING MESSAGE" data-es="MENSAJE GANADOR" data-he="מסר מנצח">WINNING MESSAGE</div>
+                        <div class="message-text" data-en="At $2,000/month in electricity, a $12K system pays for itself in 2.5 years. That's $18,000 in savings over just 5 years. Under Ley 417, you deduct the full cost from your business taxes — so you save twice. Plus: no more spoiled inventory during outages. Your coolers stay cold, your margins stay healthy." data-es="Con $2,000/mes en electricidad, un sistema de $12K se paga solo en 2.5 años. Son $18,000 en ahorros en solo 5 años. Bajo la Ley 417, deduce el costo total de sus impuestos comerciales — así que ahorra dos veces. Además: no más inventario echado a perder durante cortes. Sus refrigeradores se mantienen fríos, sus márgenes se mantienen saludables." data-he="ב-$2,000 לחודש חשמל, מערכת של $12K מחזירה את עצמה תוך 2.5 שנים. זה $18,000 חיסכון תוך 5 שנים בלבד. תחת חוק 417, אתה מנכה את העלות המלאה ממס העסק — אז אתה חוסך פעמיים. בנוסף: לא עוד מלאי שנהרס בהפסקות. המקררים שלך נשארים קרים, השוליים שלך נשארים בריאים.">At $2,000/month in electricity, a $12K system pays for itself in 2.5 years. That's $18,000 in savings over just 5 years. Under Ley 417, you deduct the full cost from your business taxes — so you save twice. Plus: no more spoiled inventory during outages. Your coolers stay cold, your margins stay healthy.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-footer">
+                <div class="persona-stat">
+                    <div class="persona-stat-num">5–25 kW</div>
+                    <div class="persona-stat-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$5K–$25K</div>
+                    <div class="persona-stat-label" data-en="Investment" data-es="Inversión" data-he="השקעה">Investment</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$400–$2,300</div>
+                    <div class="persona-stat-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">2.5 yr</div>
+                    <div class="persona-stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PERSONA 4: FARM/RANCH -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="PERSONA 4" data-es="PERSONA 4" data-he="פרסונה 4">PERSONA 4</div>
+
+        <div class="persona-card reveal">
+            <div class="persona-header">
+                <div class="persona-avatar">🐄</div>
+                <div class="persona-header-text">
+                    <h3 data-en="The Farm & Ranch Owner" data-es="El Dueño de Finca y Ganadería" data-he="בעל החווה/ראנצ׳">The Farm & Ranch Owner</h3>
+                    <div class="persona-tagline" data-en="Ganadería — large property with irrigation, pumps, and cold storage" data-es="Ganadería — propiedad grande con irrigación, bombas y almacenamiento en frío" data-he="גנדריה — נחלה גדולה עם השקיה, משאבות ואחסון קר">Ganadería — large property with irrigation, pumps, and cold storage</div>
+                </div>
+            </div>
+
+            <div class="persona-body">
+                <div class="persona-col">
+                    <div class="persona-detail-label" data-en="DEMOGRAPHICS" data-es="DEMOGRAFÍA" data-he="דמוגרפיה">DEMOGRAPHICS</div>
+                    <p data-en="Age 40–70. Multi-generational Panamanian landowner or expat farmer. Practical, traditional values. Respects results over marketing. Often has 10+ hectares with barns, equipment sheds, and processing facilities." data-es="Edad 40–70. Propietario de tierras panameño multigeneracional o agricultor expatriado. Valores prácticos y tradicionales. Respeta los resultados sobre el marketing. A menudo tiene más de 10 hectáreas con graneros, cobertizos de equipos e instalaciones de procesamiento." data-he="גיל 40-70. בעל קרקע פנמי רב-דורי או חקלאי אקספט. ערכים מעשיים ומסורתיים. מעריך תוצאות על פני שיווק. לעיתים קרובות בעלים של 10+ הקטרים עם רפתות, מחסני ציוד ומתקני עיבוד.">Age 40–70. Multi-generational Panamanian landowner or expat farmer. Practical, traditional values. Respects results over marketing. Often has 10+ hectares with barns, equipment sheds, and processing facilities.</p>
+
+                    <div class="persona-detail-label" data-en="MONTHLY ELECTRICITY" data-es="ELECTRICIDAD MENSUAL" data-he="חשבון חשמל חודשי">MONTHLY ELECTRICITY</div>
+                    <div class="persona-detail-value">$300 – $1,500</div>
+
+                    <h4 style="margin-top: 1.5rem;"><span class="icon">😩</span> <span data-en="Pain Points" data-es="Puntos de Dolor" data-he="נקודות כאב">Pain Points</span></h4>
+                    <ul>
+                        <li data-en="Irrigation pumps cost a fortune to run on grid power" data-es="Las bombas de irrigación cuestan una fortuna para funcionar con la red eléctrica" data-he="משאבות השקיה עולות הון להפעלה מהרשת">Irrigation pumps cost a fortune to run on grid power</li>
+                        <li data-en="Remote location = poor grid connection and frequent outages" data-es="Ubicación remota = mala conexión a la red y cortes frecuentes" data-he="מיקום מרוחק = חיבור רשת גרוע והפסקות תכופות">Remote location = poor grid connection and frequent outages</li>
+                        <li data-en="Cold storage for milk/meat/produce is essential but expensive" data-es="El almacenamiento en frío para leche/carne/productos es esencial pero costoso" data-he="אחסון קר לחלב/בשר/תוצרת הכרחי אך יקר">Cold storage for milk/meat/produce is essential but expensive</li>
+                        <li data-en="Diesel generators are the backup — loud, dirty, costly" data-es="Los generadores diésel son el respaldo — ruidosos, sucios, costosos" data-he="גנרטורים דיזל כגיבוי — רועשים, מלוכלכים, יקרים">Diesel generators are the backup — loud, dirty, costly</li>
+                    </ul>
+                </div>
+
+                <div class="persona-col">
+                    <div class="objection-box">
+                        <div class="objection-label" data-en="TOP OBJECTION" data-es="OBJECIÓN PRINCIPAL" data-he="התנגדות עיקרית">TOP OBJECTION</div>
+                        <div class="objection-text" data-en="&quot;Solar doesn't work for farms. My equipment needs too much power.&quot;" data-es="&quot;La energía solar no funciona para fincas. Mi equipo necesita demasiada energía.&quot;" data-he="&quot;סולארי לא עובד לחוות. הציוד שלי צורך יותר מדי חשמל.&quot;">"Solar doesn't work for farms. My equipment needs too much power."</div>
+                    </div>
+
+                    <div class="message-box">
+                        <div class="message-label" data-en="WINNING MESSAGE" data-es="MENSAJE GANADOR" data-he="מסר מנצח">WINNING MESSAGE</div>
+                        <div class="message-text" data-en="You have the biggest advantage of all: roof space. Your barns, sheds, and equipment buildings are perfect for panels. Solar pumps your water during the sunniest hours — exactly when your crops need it most. We've designed systems for Israeli farms with the same needs. Reliable, simple, and it pays for itself while your diesel generator sits unused." data-es="Tiene la mayor ventaja de todas: espacio en el techo. Sus graneros, cobertizos y edificios de equipos son perfectos para paneles. La energía solar bombea su agua durante las horas más soleadas — exactamente cuando sus cultivos más la necesitan. Hemos diseñado sistemas para fincas israelíes con las mismas necesidades. Confiable, simple, y se paga solo mientras su generador diésel queda sin uso." data-he="יש לך את היתרון הגדול ביותר: שטח גג. הרפתות, המחסנים ומבני הציוד שלך מושלמים לפאנלים. סולארי שואב מים בשעות הכי שמשיות — בדיוק כשהגידולים שלך צריכים את זה הכי הרבה. תכננו מערכות לחוות ישראליות עם אותם צרכים. אמין, פשוט, ומחזיר את עצמו בזמן שהגנרטור שלך יושב מבלי שימוש.">You have the biggest advantage of all: roof space. Your barns, sheds, and equipment buildings are perfect for panels. Solar pumps your water during the sunniest hours — exactly when your crops need it most. We've designed systems for Israeli farms with the same needs. Reliable, simple, and it pays for itself while your diesel generator sits unused.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-footer">
+                <div class="persona-stat">
+                    <div class="persona-stat-num">5–20 kW</div>
+                    <div class="persona-stat-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$5K–$20K</div>
+                    <div class="persona-stat-label" data-en="Investment" data-es="Inversión" data-he="השקעה">Investment</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$200–$1,200</div>
+                    <div class="persona-stat-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">3 yr</div>
+                    <div class="persona-stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PERSONA 5: COMMERCIAL PROPERTY -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="PERSONA 5" data-es="PERSONA 5" data-he="פרסונה 5">PERSONA 5</div>
+
+        <div class="persona-card reveal">
+            <div class="persona-header">
+                <div class="persona-avatar">🏢</div>
+                <div class="persona-header-text">
+                    <h3 data-en="The Commercial Property" data-es="La Propiedad Comercial" data-he="הנכס המסחרי">The Commercial Property</h3>
+                    <div class="persona-tagline" data-en="Warehouse, office building, or shopping plaza — ROI-driven decision maker" data-es="Almacén, edificio de oficinas o plaza comercial — tomador de decisiones impulsado por ROI" data-he="מחסן, בניין משרדים או מרכז מסחרי — מקבל החלטות מונע ROI">Warehouse, office building, or shopping plaza — ROI-driven decision maker</div>
+                </div>
+            </div>
+
+            <div class="persona-body">
+                <div class="persona-col">
+                    <div class="persona-detail-label" data-en="DEMOGRAPHICS" data-es="DEMOGRAFÍA" data-he="דמוגרפיה">DEMOGRAPHICS</div>
+                    <p data-en="Age 40–65. Business owner, property manager, or investment group. Data-driven, thinks in spreadsheets and ROI. May require board/partner approval. Values professional documentation and financial projections." data-es="Edad 40–65. Propietario de negocio, administrador de propiedades o grupo de inversión. Impulsado por datos, piensa en hojas de cálculo y ROI. Puede requerir aprobación de la junta/socios. Valora la documentación profesional y las proyecciones financieras." data-he="גיל 40-65. בעל עסק, מנהל נכסים או קבוצת השקעות. מונע נתונים, חושב בגיליונות אלקטרוניים ו-ROI. עשוי לדרוש אישור דירקטוריון/שותפים. מעריך תיעוד מקצועי ותחזיות פיננסיות.">Age 40–65. Business owner, property manager, or investment group. Data-driven, thinks in spreadsheets and ROI. May require board/partner approval. Values professional documentation and financial projections.</p>
+
+                    <div class="persona-detail-label" data-en="MONTHLY ELECTRICITY" data-es="ELECTRICIDAD MENSUAL" data-he="חשבון חשמל חודשי">MONTHLY ELECTRICITY</div>
+                    <div class="persona-detail-value">$3,000 – $15,000</div>
+
+                    <h4 style="margin-top: 1.5rem;"><span class="icon">😩</span> <span data-en="Pain Points" data-es="Puntos de Dolor" data-he="נקודות כאב">Pain Points</span></h4>
+                    <ul>
+                        <li data-en="Electricity is eating into property margins and tenant satisfaction" data-es="La electricidad está reduciendo los márgenes de la propiedad y la satisfacción del inquilino" data-he="חשמל אוכל את השוליים של הנכס ואת שביעות רצון השוכרים">Electricity is eating into property margins and tenant satisfaction</li>
+                        <li data-en="Large flat roofs sitting unused = wasted asset" data-es="Grandes techos planos sin usar = activo desperdiciado" data-he="גגות שטוחים גדולים שלא בשימוש = נכס מבוזבז">Large flat roofs sitting unused = wasted asset</li>
+                        <li data-en="Rising energy costs with no hedge strategy" data-es="Costos de energía en aumento sin estrategia de cobertura" data-he="עלויות אנרגיה עולות ללא אסטרטגיית גידור">Rising energy costs with no hedge strategy</li>
+                        <li data-en="Competing properties are going green to attract tenants" data-es="Las propiedades competidoras están volviéndose verdes para atraer inquilinos" data-he="נכסים מתחרים הופכים ירוקים כדי למשוך שוכרים">Competing properties are going green to attract tenants</li>
+                    </ul>
+                </div>
+
+                <div class="persona-col">
+                    <div class="objection-box">
+                        <div class="objection-label" data-en="TOP OBJECTION" data-es="OBJECIÓN PRINCIPAL" data-he="התנגדות עיקרית">TOP OBJECTION</div>
+                        <div class="objection-text" data-en="&quot;I need board approval. Show me the numbers that will convince my partners.&quot;" data-es="&quot;Necesito la aprobación de la junta. Muéstreme los números que convencerán a mis socios.&quot;" data-he="&quot;אני צריך אישור דירקטוריון. תראה לי את המספרים שישכנעו את השותפים שלי.&quot;">"I need board approval. Show me the numbers that will convince my partners."</div>
+                    </div>
+
+                    <div class="message-box">
+                        <div class="message-label" data-en="WINNING MESSAGE" data-es="MENSAJE GANADOR" data-he="מסר מנצח">WINNING MESSAGE</div>
+                        <div class="message-text" data-en="Here's what your board needs to see: a 300kW system at $250K generates $1.73M in savings over 25 years — that's a 690% ROI. Payback in 3.5 years. Full Ley 417 tax deduction in year one. We provide a complete financial case study with your specific numbers, ready for your next board meeting. Your unused roof becomes your highest-performing asset." data-es="Esto es lo que su junta necesita ver: un sistema de 300kW a $250K genera $1.73M en ahorros en 25 años — eso es un 690% de ROI. Retorno en 3.5 años. Deducción fiscal completa de la Ley 417 en el primer año. Proporcionamos un estudio financiero completo con sus números específicos, listo para su próxima reunión de junta. Su techo sin usar se convierte en su activo de mayor rendimiento." data-he="הנה מה שהדירקטוריון שלך צריך לראות: מערכת 300kW ב-$250K מייצרת $1.73M חיסכון על פני 25 שנים — זה ROI של 690%. החזר תוך 3.5 שנים. ניכוי מס מלא של חוק 417 בשנה הראשונה. אנחנו מספקים תיק פיננסי מלא עם המספרים הספציפיים שלך, מוכן לישיבת הדירקטוריון הבאה. הגג הלא מנוצל שלך הופך לנכס בעל הביצועים הגבוהים ביותר.">Here's what your board needs to see: a 300kW system at $250K generates $1.73M in savings over 25 years — that's a 690% ROI. Payback in 3.5 years. Full Ley 417 tax deduction in year one. We provide a complete financial case study with your specific numbers, ready for your next board meeting. Your unused roof becomes your highest-performing asset.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-footer">
+                <div class="persona-stat">
+                    <div class="persona-stat-num">50–500 kW</div>
+                    <div class="persona-stat-label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$45K–$400K</div>
+                    <div class="persona-stat-label" data-en="Investment" data-es="Inversión" data-he="השקעה">Investment</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">$2,300–$12,000</div>
+                    <div class="persona-stat-label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                </div>
+                <div class="persona-stat">
+                    <div class="persona-stat-num">3.5 yr</div>
+                    <div class="persona-stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="summary-section">
+    <div class="container">
+        <div class="section-badge" data-en="AT A GLANCE" data-es="DE UN VISTAZO" data-he="במבט חטוף">AT A GLANCE</div>
+        <h2 class="section-title reveal" data-en="All Personas" data-es="Todas las Personas" data-he="כל הפרסונות">All Personas</h2>
+        <p class="section-sub reveal" data-en="Quick comparison across all five target segments." data-es="Comparación rápida entre los cinco segmentos objetivo." data-he="השוואה מהירה בין חמשת פלחי היעד.">Quick comparison across all five target segments.</p>
+
+        <div class="summary-grid reveal">
+            <div class="summary-item">
+                <div class="emoji">🏡</div>
+                <h4 data-en="Expat Homeowner" data-es="Propietario Expatriado" data-he="בעל בית אקספט">Expat Homeowner</h4>
+                <div class="bill">$800–$2K/mo</div>
+                <div class="system" data-en="8–15 kW system" data-es="Sistema 8–15 kW" data-he="מערכת 8-15 kW">8–15 kW system</div>
+            </div>
+            <div class="summary-item">
+                <div class="emoji">🏨</div>
+                <h4 data-en="Boutique Hotel" data-es="Hotel Boutique" data-he="מלון בוטיק">Boutique Hotel</h4>
+                <div class="bill">$2K–$8K/mo</div>
+                <div class="system" data-en="30–80 kW system" data-es="Sistema 30–80 kW" data-he="מערכת 30-80 kW">30–80 kW system</div>
+            </div>
+            <div class="summary-item">
+                <div class="emoji">🍽️</div>
+                <h4 data-en="Restaurant/Bar" data-es="Restaurante/Bar" data-he="מסעדה/בר">Restaurant/Bar</h4>
+                <div class="bill">$500–$3K/mo</div>
+                <div class="system" data-en="5–25 kW system" data-es="Sistema 5–25 kW" data-he="מערכת 5-25 kW">5–25 kW system</div>
+            </div>
+            <div class="summary-item">
+                <div class="emoji">🐄</div>
+                <h4 data-en="Farm/Ranch" data-es="Finca/Ganadería" data-he="חווה/ראנצ׳">Farm/Ranch</h4>
+                <div class="bill">$300–$1.5K/mo</div>
+                <div class="system" data-en="5–20 kW system" data-es="Sistema 5–20 kW" data-he="מערכת 5-20 kW">5–20 kW system</div>
+            </div>
+            <div class="summary-item">
+                <div class="emoji">🏢</div>
+                <h4 data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</h4>
+                <div class="bill">$3K–$15K/mo</div>
+                <div class="system" data-en="50–500 kW system" data-es="Sistema 50–500 kW" data-he="מערכת 50-500 kW">50–500 kW system</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+
+// Init language
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

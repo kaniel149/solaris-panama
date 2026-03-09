@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Solaris Energy — Business Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0B3D2E;--green-canopy:#14573F;--gold:#D4A843;--gold-aged:#B8912E;--pearl:#FEFDFB;--sand:#F5EFE0;--charcoal:#1A1A1A;--slate:#4A4A4A;--ash:#8A8A8A;--mist:#E8E4DC;--cloud:#F9F7F3}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--pearl);line-height:1.6;overflow-x:hidden}
+
+.lang-toggle{position:fixed;top:20px;right:20px;z-index:1000;display:flex;background:var(--green);border-radius:100px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.lang-btn{padding:6px 14px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-radius:100px;transition:all .3s;letter-spacing:.08em}
+.lang-btn.active{background:var(--gold);color:var(--green)}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.9)}
+
+.top-nav{background:var(--green);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.top-nav .logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--pearl);letter-spacing:.05em;font-weight:700;text-decoration:none}
+.top-nav .logo span{color:var(--gold)}
+.top-nav a.back{color:var(--gold);text-decoration:none;font-size:.85rem;font-weight:600}
+
+.hero{min-height:35vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:80px 24px 60px;background:linear-gradient(150deg,var(--green),var(--green-canopy));position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(212,168,67,.1),transparent 55%)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--pearl);text-align:center}
+.hero p{color:rgba(254,253,251,.6);font-size:16px;text-align:center;max-width:600px}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+section{padding:64px 0}
+.section-badge{display:inline-block;padding:4px 14px;background:rgba(212,168,67,.12);border-radius:6px;color:var(--gold-aged);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--green);margin-bottom:8px}
+.section-desc{color:var(--slate);font-size:14px;margin-bottom:28px;max-width:700px;line-height:1.7}
+.alt-bg{background:var(--sand)}
+
+/* Stat cards */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;text-align:center;transition:all .3s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--green);letter-spacing:-0.02em}
+.stat-card .label{font-size:12px;color:var(--ash);margin-top:4px;font-weight:500}
+
+/* Info cards */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.info-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:28px;transition:all .3s}
+.info-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.info-card h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green);margin-bottom:12px}
+.info-card p,.info-card li{font-size:13px;color:var(--slate);line-height:1.7}
+.info-card ul{list-style:none;padding:0}
+.info-card li{padding:4px 0}
+.info-card li::before{content:'→ ';color:var(--gold)}
+
+/* Timeline */
+.timeline{position:relative;padding:0 0 0 40px}
+.timeline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;background:var(--mist)}
+.timeline-item{position:relative;margin-bottom:32px}
+.timeline-dot{position:absolute;left:-33px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:3px solid var(--pearl);box-shadow:0 0 0 2px var(--gold)}
+.timeline-item h4{font-size:15px;font-weight:700;color:var(--green);margin-bottom:4px}
+.timeline-item .year{font-size:12px;color:var(--gold-aged);font-weight:700;margin-bottom:8px}
+.timeline-item p{font-size:13px;color:var(--slate);line-height:1.6}
+
+/* Pricing table */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.price-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:28px;transition:all .3s}
+.price-card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.06);border-color:var(--gold)}
+.price-card.featured{border:2px solid var(--gold);position:relative}
+.price-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);border-radius:12px 12px 0 0}
+.price-card h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green);margin-bottom:8px}
+.price-range{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold-aged);margin-bottom:12px}
+.price-card p{font-size:13px;color:var(--slate);line-height:1.7}
+
+/* GTM */
+.gtm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.gtm-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;text-align:center;transition:all .3s}
+.gtm-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.gtm-icon{font-size:2rem;margin-bottom:12px}
+.gtm-card h4{font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px}
+.gtm-card p{font-size:12px;color:var(--slate);line-height:1.6}
+
+.reveal{opacity:0;transform:translateY(24px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+footer{background:var(--charcoal);padding:3rem 2rem;text-align:center}
+footer p{color:rgba(254,253,251,.4);font-size:.85rem}
+footer a{color:var(--gold);text-decoration:none}
+
+@media(max-width:768px){
+    .pricing-grid{grid-template-columns:1fr}
+    .stat-row{grid-template-columns:repeat(2,1fr)}
+    section{padding:48px 0}
+}
+[dir="rtl"]{text-align:right}
+[dir="rtl"] .timeline{padding:0 40px 0 0}
+[dir="rtl"] .timeline::before{left:auto;right:15px}
+[dir="rtl"] .timeline-dot{left:auto;right:-33px}
+[dir="rtl"] .info-card li::before{content:' ←';float:left}
+</style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<nav class="top-nav">
+    <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
+    <a href="index.html" class="back" data-en="← Dashboard" data-es="← Panel" data-he="לוח בקרה →">← Dashboard</a>
+</nav>
+
+<div class="hero">
+    <h1 data-en="Business Strategy" data-es="Estrategia de Negocio" data-he="אסטרטגיה עסקית">Business Strategy</h1>
+    <p data-en="Panama solar market analysis, Law 417 advantages, pricing, and 5-year growth projection" data-es="Análisis del mercado solar de Panamá, ventajas de la Ley 417, precios y proyección de crecimiento a 5 años" data-he="ניתוח שוק סולארי פנמה, יתרונות חוק 417, תמחור ותחזית צמיחה ל-5 שנים">Panama solar market analysis, Law 417 advantages, pricing, and 5-year growth projection</p>
+</div>
+
+<!-- MARKET OVERVIEW -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="MARKET OVERVIEW" data-es="VISIÓN DEL MERCADO" data-he="סקירת שוק">MARKET OVERVIEW</div>
+        <h2 class="section-title reveal" data-en="The Opportunity" data-es="La Oportunidad" data-he="ההזדמנות">The Opportunity</h2>
+        <p class="section-desc reveal" data-en="The Azuero Peninsula is Panama's sunniest region with virtually zero professional solar competition. A $50M+ market with one part-time competitor." data-es="La Península de Azuero es la región más soleada de Panamá con virtualmente cero competencia solar profesional. Un mercado de $50M+ con un competidor de medio tiempo." data-he="חצי האי אזוארו הוא האזור השמשי ביותר בפנמה עם כמעט אפס תחרות סולארית מקצועית. שוק של $50M+ עם מתחרה אחד חלקי.">The Azuero Peninsula is Panama's sunniest region with virtually zero professional solar competition. A $50M+ market with one part-time competitor.</p>
+
+        <div class="stat-row reveal">
+            <div class="stat-card">
+                <div class="num">$50M+</div>
+                <div class="label" data-en="Addressable Market" data-es="Mercado Direccionable" data-he="שוק ניתן לפנייה">Addressable Market</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">5.3h</div>
+                <div class="label" data-en="Peak Sun Hours/Day" data-es="Horas Sol Pico/Día" data-he="שעות שיא שמש/יום">Peak Sun Hours/Day</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">$0.195</div>
+                <div class="label" data-en="Electricity Rate/kWh" data-es="Tarifa Eléctrica/kWh" data-he="תעריף חשמל/kWh">Electricity Rate/kWh</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">1</div>
+                <div class="label" data-en="Active Competitor" data-es="Competidor Activo" data-he="מתחרה פעיל">Active Competitor</div>
+            </div>
+        </div>
+
+        <div class="info-grid reveal">
+            <div class="info-card">
+                <h3 data-en="Competitive Landscape" data-es="Panorama Competitivo" data-he="נוף תחרותי">Competitive Landscape</h3>
+                <ul>
+                    <li data-en="Prodeo Azuero — only direct competitor, small operation" data-es="Prodeo Azuero — único competidor directo, operación pequeña" data-he="Prodeo Azuero — מתחרה ישיר יחיד, פעילות קטנה">Prodeo Azuero — only direct competitor, small operation</li>
+                    <li data-en="enSight — Panama City based, limited Azuero presence" data-es="enSight — basado en Ciudad de Panamá, presencia limitada en Azuero" data-he="enSight — מבוסס בעיר פנמה, נוכחות מוגבלת באזוארו">enSight — Panama City based, limited Azuero presence</li>
+                    <li data-en="Zero digital competition — no SEO, no ads, no online presence" data-es="Cero competencia digital — sin SEO, sin anuncios, sin presencia online" data-he="אפס תחרות דיגיטלית — ללא SEO, פרסום או נוכחות מקוונת">Zero digital competition — no SEO, no ads, no online presence</li>
+                    <li data-en="First-mover advantage in professional solar services" data-es="Ventaja del primer jugador en servicios solares profesionales" data-he="יתרון ראשון לשוק בשירותי סולאר מקצועיים">First-mover advantage in professional solar services</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3 data-en="Why Now" data-es="Por Qué Ahora" data-he="למה עכשיו">Why Now</h3>
+                <ul>
+                    <li data-en="Rising electricity costs ($0.195/kWh and climbing)" data-es="Costos eléctricos en aumento ($0.195/kWh y subiendo)" data-he="עלויות חשמל עולות ($0.195/kWh ועולה)">Rising electricity costs ($0.195/kWh and climbing)</li>
+                    <li data-en="Law 417 incentives at their peak" data-es="Incentivos de la Ley 417 en su punto máximo" data-he="תמריצי חוק 417 בשיא">Law 417 incentives at their peak</li>
+                    <li data-en="Growing expat community in Pedasí/Venao region" data-es="Comunidad expatriada en crecimiento en la región de Pedasí/Venao" data-he="קהילת אקספטים צומחת באזור פדסי/וונאו">Growing expat community in Pedasí/Venao region</li>
+                    <li data-en="Eco-tourism boom driving green energy demand" data-es="Boom de ecoturismo impulsando demanda de energía verde" data-he="בום אקו-תיירות מניע ביקוש לאנרגיה ירוקה">Eco-tourism boom driving green energy demand</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LAW 417 -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="LAW 417" data-es="LEY 417" data-he="חוק 417">LAW 417</div>
+        <h2 class="section-title reveal" data-en="Incentivos para Energía Solar" data-es="Incentivos para Energía Solar" data-he="תמריצים לאנרגיה סולארית">Incentivos para Energía Solar</h2>
+        <p class="section-desc reveal" data-en="Panama's Law 417 is the most aggressive solar incentive in Central America. It fundamentally changes the economics of every sale." data-es="La Ley 417 de Panamá es el incentivo solar más agresivo de Centroamérica. Cambia fundamentalmente la economía de cada venta." data-he="חוק 417 של פנמה הוא התמריץ הסולארי האגרסיבי ביותר במרכז אמריקה. הוא משנה מהותית את הכלכלה של כל מכירה.">Panama's Law 417 is the most aggressive solar incentive in Central America. It fundamentally changes the economics of every sale.</p>
+
+        <div class="info-grid reveal">
+            <div class="info-card" style="border-left:3px solid var(--gold)">
+                <h3 data-en="100% Tax Deduction" data-es="100% Deducción Fiscal" data-he="100% ניכוי מס">100% Tax Deduction</h3>
+                <p data-en="The full cost of solar equipment and installation can be deducted from taxable income. For a commercial client paying $50,000 for solar, that's a $50,000 tax write-off. At Panama's 25% corporate tax rate, this means the government effectively pays 25% of the system." data-es="El costo total del equipo solar y la instalación se puede deducir del ingreso gravable. Para un cliente comercial que paga $50,000 por solar, eso es una deducción de $50,000. Con la tasa corporativa del 25% de Panamá, el gobierno efectivamente paga el 25% del sistema." data-he="העלות המלאה של ציוד סולארי והתקנה ניתנת לניכוי מהכנסה חייבת. ללקוח מסחרי שמשלם $50,000 על סולארי, זה ניכוי מס של $50,000. בשיעור מס חברות של 25% בפנמה, הממשלה למעשה משלמת 25% מהמערכת.">The full cost of solar equipment and installation can be deducted from taxable income. For a commercial client paying $50,000 for solar, that's a $50,000 tax write-off. At Panama's 25% corporate tax rate, this means the government effectively pays 25% of the system.</p>
+            </div>
+            <div class="info-card" style="border-left:3px solid var(--gold)">
+                <h3 data-en="Import Duty Exemption" data-es="Exención de Impuestos de Importación" data-he="פטור ממכס יבוא">Import Duty Exemption</h3>
+                <p data-en="All solar equipment — panels, inverters, mounting systems, cables — enters Panama duty-free under Law 417. This saves 7-15% on equipment costs compared to importing without the exemption, making our pricing even more competitive." data-es="Todo el equipo solar — paneles, inversores, sistemas de montaje, cables — entra a Panamá libre de aranceles bajo la Ley 417. Esto ahorra 7-15% en costos de equipo comparado con importar sin la exención." data-he="כל ציוד סולארי — פאנלים, ממירים, מערכות הרכבה, כבלים — נכנס לפנמה ללא מכס תחת חוק 417. זה חוסך 7-15% בעלויות ציוד בהשוואה ליבוא ללא הפטור.">All solar equipment — panels, inverters, mounting systems, cables — enters Panama duty-free under Law 417. This saves 7-15% on equipment costs compared to importing without the exemption, making our pricing even more competitive.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TARGET SEGMENTS -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="TARGET SEGMENTS" data-es="SEGMENTOS OBJETIVO" data-he="פלחי יעד">TARGET SEGMENTS</div>
+        <h2 class="section-title reveal" data-en="Who We Serve" data-es="A Quién Servimos" data-he="את מי אנחנו משרתים">Who We Serve</h2>
+
+        <div class="info-grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+            <div class="info-card">
+                <h3 data-en="🏠 Expat Homes" data-es="🏠 Casas de Expats" data-he="🏠 בתי אקספטים">🏠 Expat Homes</h3>
+                <p data-en="American & European homeowners in Pedasí, Venao, Cañas. 5-15kW systems. $6K-$20K. Environmentally conscious, high willingness to pay." data-es="Propietarios americanos y europeos en Pedasí, Venao, Cañas. Sistemas de 5-15kW. $6K-$20K. Conscientes ambientalmente, alta disposición a pagar." data-he="בעלי בתים אמריקאים ואירופאים בפדסי, וונאו, קניאס. מערכות 5-15kW. $6K-$20K. מודעים סביבתית, נכונות לשלם גבוהה.">American & European homeowners in Pedasí, Venao, Cañas. 5-15kW systems. $6K-$20K. Environmentally conscious, high willingness to pay.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-en="🏨 Hotels" data-es="🏨 Hoteles" data-he="🏨 מלונות">🏨 Hotels</h3>
+                <p data-en="Boutique eco-hotels and surf resorts. 20-100kW systems. $20K-$120K. Marketing angle: 'powered by solar' attracts eco-tourists." data-es="Eco-hoteles boutique y resorts de surf. Sistemas de 20-100kW. $20K-$120K. Ángulo de marketing: 'impulsado por solar' atrae eco-turistas." data-he="מלונות בוטיק ואקו ואתרי גלישה. מערכות 20-100kW. $20K-$120K. זווית שיווקית: 'מונע בסולארי' מושך אקו-תיירים.">Boutique eco-hotels and surf resorts. 20-100kW systems. $20K-$120K. Marketing angle: "powered by solar" attracts eco-tourists.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-en="🍽️ Restaurants" data-es="🍽️ Restaurantes" data-he="🍽️ מסעדות">🍽️ Restaurants</h3>
+                <p data-en="Bars, restaurants, beach clubs. 10-30kW. $10K-$40K. High electricity use (refrigeration, AC). Quick payback." data-es="Bares, restaurantes, clubs de playa. 10-30kW. $10K-$40K. Alto consumo eléctrico (refrigeración, AC). Retorno rápido." data-he="ברים, מסעדות, מועדוני חוף. 10-30kW. $10K-$40K. צריכת חשמל גבוהה (קירור, מיזוג). החזר מהיר.">Bars, restaurants, beach clubs. 10-30kW. $10K-$40K. High electricity use (refrigeration, AC). Quick payback.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-en="🌾 Farms" data-es="🌾 Fincas" data-he="🌾 חוות">🌾 Farms</h3>
+                <p data-en="Cattle ranches (ganadería), agricultural operations. 15-50kW. $15K-$60K. Water pumping and cold storage loads." data-es="Ranchos ganaderos, operaciones agrícolas. 15-50kW. $15K-$60K. Cargas de bombeo de agua y almacenamiento en frío." data-he="חוות בקר (ganadería), פעילות חקלאית. 15-50kW. $15K-$60K. שאיבת מים ואחסון קר.">Cattle ranches (ganadería), agricultural operations. 15-50kW. $15K-$60K. Water pumping and cold storage loads.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-en="🏢 Commercial" data-es="🏢 Comercial" data-he="🏢 מסחרי">🏢 Commercial</h3>
+                <p data-en="Warehouses, offices, retail. 50-300kW. $50K-$360K. Law 417 tax benefits most impactful here. Longest contracts." data-es="Almacenes, oficinas, retail. 50-300kW. $50K-$360K. Beneficios fiscales de Ley 417 más impactantes aquí. Contratos más largos." data-he="מחסנים, משרדים, קמעונאות. 50-300kW. $50K-$360K. הטבות מס חוק 417 הכי משמעותיות כאן. החוזים הארוכים ביותר.">Warehouses, offices, retail. 50-300kW. $50K-$360K. Law 417 tax benefits most impactful here. Longest contracts.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="PRICING" data-es="PRECIOS" data-he="תמחור">PRICING</div>
+        <h2 class="section-title reveal" data-en="Pricing Strategy" data-es="Estrategia de Precios" data-he="אסטרטגיית תמחור">Pricing Strategy</h2>
+        <p class="section-desc reveal" data-en="Competitive pricing with healthy margins. Position as premium but fair." data-es="Precios competitivos con márgenes saludables. Posición premium pero justa." data-he="תמחור תחרותי עם מרווחים בריאים. מיצוב פרימיום אך הוגן.">Competitive pricing with healthy margins. Position as premium but fair.</p>
+
+        <div class="pricing-grid reveal">
+            <div class="price-card">
+                <h3 data-en="Residential" data-es="Residencial" data-he="מגורים">Residential</h3>
+                <div class="price-range">$1.10 – $1.30<span style="font-size:14px;color:var(--ash)">/Wp</span></div>
+                <p data-en="Typical system: 8kW = $8,800 – $10,400. Includes panels, inverter, mounting, installation, ASEP permitting. Payback: 3–3.5 years at current rates." data-es="Sistema típico: 8kW = $8,800 – $10,400. Incluye paneles, inversor, montaje, instalación, permisos ASEP. Retorno: 3–3.5 años a tarifas actuales." data-he="מערכת טיפוסית: 8kW = $8,800 – $10,400. כולל פאנלים, ממיר, הרכבה, התקנה, היתרי ASEP. החזר: 3-3.5 שנים בתעריפים הנוכחיים.">Typical system: 8kW = $8,800 – $10,400. Includes panels, inverter, mounting, installation, ASEP permitting. Payback: 3–3.5 years at current rates.</p>
+            </div>
+            <div class="price-card featured">
+                <h3 data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</h3>
+                <div class="price-range">$1.00 – $1.20<span style="font-size:14px;color:var(--ash)">/Wp</span></div>
+                <p data-en="Typical system: 50kW = $50,000 – $60,000. Volume pricing. Law 417 tax deduction saves 25% (at corporate rate). Effective cost after tax benefit: $37K-$45K. Payback: 2.5–3 years." data-es="Sistema típico: 50kW = $50,000 – $60,000. Precios por volumen. Ley 417 ahorra 25% (tasa corporativa). Costo efectivo después de beneficio fiscal: $37K-$45K. Retorno: 2.5–3 años." data-he="מערכת טיפוסית: 50kW = $50,000 – $60,000. תמחור כמותי. ניכוי מס חוק 417 חוסך 25% (בשיעור חברות). עלות אפקטיבית אחרי הטבת מס: $37K-$45K. החזר: 2.5-3 שנים.">Typical system: 50kW = $50,000 – $60,000. Volume pricing. Law 417 tax deduction saves 25% (at corporate rate). Effective cost after tax benefit: $37K-$45K. Payback: 2.5–3 years.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GO TO MARKET -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="GO-TO-MARKET" data-es="ESTRATEGIA DE MERCADO" data-he="כניסה לשוק">GO-TO-MARKET</div>
+        <h2 class="section-title reveal" data-en="How We Win" data-es="Cómo Ganamos" data-he="איך אנחנו מנצחים">How We Win</h2>
+
+        <div class="gtm-grid reveal">
+            <div class="gtm-card">
+                <div class="gtm-icon">🤝</div>
+                <h4 data-en="Direct Sales" data-es="Ventas Directas" data-he="מכירות ישירות">Direct Sales</h4>
+                <p data-en="Face-to-face meetings with property owners. Omri on the ground in Azuero. Personal relationships drive trust." data-es="Reuniones cara a cara con propietarios. Omri en terreno en Azuero. Las relaciones personales generan confianza." data-he="פגישות פנים אל פנים עם בעלי נכסים. עומרי בשטח באזוארו. יחסים אישיים בונים אמון.">Face-to-face meetings with property owners. Omri on the ground in Azuero. Personal relationships drive trust.</p>
+            </div>
+            <div class="gtm-card">
+                <div class="gtm-icon">🔗</div>
+                <h4 data-en="Referral Network" data-es="Red de Referidos" data-he="רשת הפניות">Referral Network</h4>
+                <p data-en="Real estate agents, architects, electricians, hotel managers. 5% referral fee. Expat community is tight-knit." data-es="Agentes inmobiliarios, arquitectos, electricistas, gerentes de hotel. 5% comisión de referido. Comunidad expatriada unida." data-he="סוכני נדל״ן, אדריכלים, חשמלאים, מנהלי מלונות. 5% עמלת הפניה. קהילת אקספטים צמודה.">Real estate agents, architects, electricians, hotel managers. 5% referral fee. Expat community is tight-knit.</p>
+            </div>
+            <div class="gtm-card">
+                <div class="gtm-icon">📱</div>
+                <h4 data-en="Digital Marketing" data-es="Marketing Digital" data-he="שיווק דיגיטלי">Digital Marketing</h4>
+                <p data-en="SEO (zero competition), Facebook/Instagram ads, Google Ads. WhatsApp as primary CRM channel. Content marketing." data-es="SEO (cero competencia), anuncios Facebook/Instagram, Google Ads. WhatsApp como canal CRM principal. Marketing de contenido." data-he="SEO (אפס תחרות), פרסומות פייסבוק/אינסטגרם, Google Ads. WhatsApp כערוץ CRM ראשי. שיווק תוכן.">SEO (zero competition), Facebook/Instagram ads, Google Ads. WhatsApp as primary CRM channel. Content marketing.</p>
+            </div>
+            <div class="gtm-card">
+                <div class="gtm-icon">🏗️</div>
+                <h4 data-en="POC Project" data-es="Proyecto POC" data-he="פרויקט POC">POC Project</h4>
+                <p data-en="300kW Tipi installation (Playa Venao). Visible showcase project. Creates case study and word-of-mouth in the community." data-es="Instalación 300kW Tipi (Playa Venao). Proyecto vitrina visible. Crea caso de estudio y boca a boca en la comunidad." data-he="התקנת 300kW טיפי (פלאיה וונאו). פרויקט חלון ראווה נראה. יוצר תיאור מקרה ומפה לאוזן בקהילה.">300kW Tipi installation (Playa Venao). Visible showcase project. Creates case study and word-of-mouth in the community.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5 YEAR PROJECTION -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="5-YEAR PROJECTION" data-es="PROYECCIÓN A 5 AÑOS" data-he="תחזית 5 שנים">5-YEAR PROJECTION</div>
+        <h2 class="section-title reveal" data-en="Growth Trajectory" data-es="Trayectoria de Crecimiento" data-he="מסלול צמיחה">Growth Trajectory</h2>
+        <p class="section-desc reveal" data-en="Conservative projections based on market size, minimal competition, and Law 417 tailwinds." data-es="Proyecciones conservadoras basadas en tamaño de mercado, competencia mínima y vientos a favor de la Ley 417." data-he="תחזיות שמרניות מבוססות על גודל שוק, תחרות מינימלית ורוחות גב של חוק 417.">Conservative projections based on market size, minimal competition, and Law 417 tailwinds.</p>
+
+        <div class="timeline reveal">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="year" data-en="YEAR 1 — Foundation" data-es="AÑO 1 — Fundación" data-he="שנה 1 — ביסוס">YEAR 1 — Foundation</div>
+                <h4 data-en="Revenue: $200K – $350K" data-es="Ingresos: $200K – $350K" data-he="הכנסות: $200K – $350K">Revenue: $200K – $350K</h4>
+                <p data-en="Complete Tipi POC (300kW). 8-12 residential installations. 2-3 small commercial projects. Establish ASEP licensing. Build referral network. Launch website and digital presence." data-es="Completar POC Tipi (300kW). 8-12 instalaciones residenciales. 2-3 proyectos comerciales pequeños. Establecer licencia ASEP. Construir red de referidos. Lanzar sitio web y presencia digital." data-he="השלמת POC טיפי (300kW). 8-12 התקנות מגורים. 2-3 פרויקטים מסחריים קטנים. ביסוס רישוי ASEP. בניית רשת הפניות. השקת אתר ונוכחות דיגיטלית.">Complete Tipi POC (300kW). 8-12 residential installations. 2-3 small commercial projects. Establish ASEP licensing. Build referral network. Launch website and digital presence.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="year" data-en="YEAR 2 — Growth" data-es="AÑO 2 — Crecimiento" data-he="שנה 2 — צמיחה">YEAR 2 — Growth</div>
+                <h4 data-en="Revenue: $500K – $800K" data-es="Ingresos: $500K – $800K" data-he="הכנסות: $500K – $800K">Revenue: $500K – $800K</h4>
+                <p data-en="20-30 residential installations. 5-8 commercial projects. First hotel projects. Hire 2-3 installation crew. Maintenance contracts begin generating MRR. Dominate local SEO." data-es="20-30 instalaciones residenciales. 5-8 proyectos comerciales. Primeros proyectos hoteleros. Contratar 2-3 instaladores. Contratos de mantenimiento generan MRR. Dominar SEO local." data-he="20-30 התקנות מגורים. 5-8 פרויקטים מסחריים. פרויקטי מלונות ראשונים. גיוס 2-3 מתקינים. חוזי תחזוקה מייצרים MRR. שליטה ב-SEO מקומי.">20-30 residential installations. 5-8 commercial projects. First hotel projects. Hire 2-3 installation crew. Maintenance contracts begin generating MRR. Dominate local SEO.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="year" data-en="YEAR 3 — Scale" data-es="AÑO 3 — Escala" data-he="שנה 3 — סקייל">YEAR 3 — Scale</div>
+                <h4 data-en="Revenue: $1M – $1.5M" data-es="Ingresos: $1M – $1.5M" data-he="הכנסות: $1M – $1.5M">Revenue: $1M – $1.5M</h4>
+                <p data-en="Expand beyond Azuero to Chiriquí (Boquete, David). 50+ installations/year. PPA model for commercial clients. Battery storage offerings. 2 installation teams." data-es="Expandir más allá de Azuero a Chiriquí (Boquete, David). 50+ instalaciones/año. Modelo PPA para clientes comerciales. Ofertas de almacenamiento con baterías. 2 equipos de instalación." data-he="הרחבה מעבר לאזוארו לצ׳יריקי (בוקטה, דיוויד). 50+ התקנות/שנה. מודל PPA ללקוחות מסחריים. הצעות אחסון סוללות. 2 צוותי התקנה.">Expand beyond Azuero to Chiriquí (Boquete, David). 50+ installations/year. PPA model for commercial clients. Battery storage offerings. 2 installation teams.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="year" data-en="YEAR 4-5 — Dominance" data-es="AÑO 4-5 — Dominancia" data-he="שנה 4-5 — דומיננטיות">YEAR 4-5 — Dominance</div>
+                <h4 data-en="Revenue: $2M – $3M+" data-es="Ingresos: $2M – $3M+" data-he="הכנסות: $2M – $3M+">Revenue: $2M – $3M+</h4>
+                <p data-en="National presence. 100+ installations/year. Solar + battery + EV charging bundled services. Government/institutional projects. Potential acquisition target or franchise model." data-es="Presencia nacional. 100+ instalaciones/año. Servicios agrupados solar + batería + carga EV. Proyectos gubernamentales/institucionales. Potencial objetivo de adquisición o modelo de franquicia." data-he="נוכחות ארצית. 100+ התקנות/שנה. שירותים משולבים סולארי + סוללה + טעינת EV. פרויקטים ממשלתיים/מוסדיים. יעד רכישה פוטנציאלי או מודל זיכיון.">National presence. 100+ installations/year. Solar + battery + EV charging bundled services. Government/institutional projects. Potential acquisition target or franchise model.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Business Strategy · " data-es="© 2026 Solaris Energy · Estrategia de Negocio · " data-he="© 2026 Solaris Energy · אסטרטגיה עסקית · ">© 2026 Solaris Energy · Business Strategy · </span>
+        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
+    </p>
+</footer>
+
+<script>
+function setLang(lang){
+    localStorage.setItem('solaris-lang',lang);
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir=lang==='he'?'rtl':'ltr';
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-'+lang+']').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});
+}
+const savedLang=localStorage.getItem('solaris-lang')||'en';
+setLang(savedLang);
+const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible')})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
