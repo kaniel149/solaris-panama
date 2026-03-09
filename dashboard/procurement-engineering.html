@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procurement & Engineering — Solaris Energy Panama</title>
+    <meta name="description" content="Solar procurement and engineering guide for Panama. Supply chain, BOMs, standards, and string sizing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        [lang="he"] { direction: rtl; text-align: right; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== BACK NAV ===== */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--green);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            box-shadow: var(--shadow-elevated);
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        /* ===== HERO ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 50%, #1A6B4A 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero .icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .page-hero p {
+            color: rgba(255,255,255,0.75);
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* ===== SECTION ===== */
+        .section-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            background: rgba(212,168,67,0.1);
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-sub {
+            color: var(--slate);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--mist);
+            margin: 4rem 0;
+        }
+
+        /* ===== SUPPLY CHAIN CARDS ===== */
+        .supply-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .supply-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+        }
+
+        .supply-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+        }
+
+        .supply-card .supply-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .supply-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green);
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .supply-card p {
+            color: var(--slate);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .supply-highlight {
+            display: inline-block;
+            background: rgba(212,168,67,0.12);
+            color: var(--gold-aged);
+            font-weight: 700;
+            font-size: 0.82rem;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+        }
+
+        /* ===== SUPPLIER TABLE ===== */
+        .supplier-table-wrap {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .supplier-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .supplier-table thead {
+            background: var(--green);
+            color: white;
+        }
+
+        .supplier-table th {
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+        }
+
+        .supplier-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .supplier-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .supplier-table .brand-name {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .lead-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+        }
+
+        .lead-fast { background: #E8F5E9; color: #2E7D32; }
+        .lead-mid { background: #FFF3E0; color: #E65100; }
+        .lead-slow { background: #FFEBEE; color: #C62828; }
+
+        .preferred-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: white;
+            background: var(--gold);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            margin-left: 6px;
+        }
+
+        /* ===== STANDARDS CARDS ===== */
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .standard-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+        }
+
+        .standard-card:hover {
+            box-shadow: var(--shadow-card);
+        }
+
+        .standard-card .std-code {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .standard-card h4 {
+            color: var(--green);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .standard-card p {
+            color: var(--ash);
+            font-size: 0.82rem;
+        }
+
+        /* ===== DESIGN TOOLS ===== */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .tool-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+        }
+
+        .tool-card .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-card h3 {
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-card .tool-use {
+            color: var(--gold-aged);
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card p {
+            color: var(--slate);
+            font-size: 0.88rem;
+        }
+
+        /* ===== STRING SIZING PANEL ===== */
+        .string-panel {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            color: white;
+            margin: 2rem 0;
+        }
+
+        .string-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .string-panel .string-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .string-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .string-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .string-item h4 {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .string-item p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .string-item .formula {
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            font-family: 'DM Sans', monospace;
+            font-size: 0.82rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* ===== BOM SECTION ===== */
+        .bom-section {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        .bom-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bom-section > p {
+            color: var(--slate);
+            margin-bottom: 2rem;
+        }
+
+        .bom-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .bom-tab {
+            padding: 8px 20px;
+            border: 2px solid var(--mist);
+            background: white;
+            border-radius: var(--radius-pill);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .bom-tab.active {
+            border-color: var(--green);
+            background: var(--green);
+            color: white;
+        }
+
+        .bom-tab:hover:not(.active) {
+            border-color: var(--gold);
+            color: var(--green);
+        }
+
+        .bom-content { display: none; }
+        .bom-content.active { display: block; }
+
+        .bom-table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .bom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.88rem;
+        }
+
+        .bom-table thead {
+            background: var(--green);
+            color: white;
+        }
+
+        .bom-table th {
+            padding: 0.85rem 1rem;
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.82rem;
+            letter-spacing: 0.03em;
+        }
+
+        .bom-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .bom-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .bom-table .item-name {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .bom-total {
+            background: var(--sand) !important;
+            font-weight: 700 !important;
+        }
+
+        .bom-total td {
+            color: var(--green);
+            font-size: 0.95rem;
+        }
+
+        /* ===== COST BREAKDOWN ===== */
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .cost-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+        }
+
+        .cost-card:hover {
+            box-shadow: var(--shadow-card);
+        }
+
+        .cost-card .cost-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-card h4 {
+            color: var(--green);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-card .cost-range {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .cost-card .cost-unit {
+            color: var(--ash);
+            font-size: 0.78rem;
+        }
+
+        .cost-card .cost-note {
+            color: var(--slate);
+            font-size: 0.82rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== TOTAL COST BAR ===== */
+        .total-cost-bar {
+            background: var(--green);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .total-cost-bar h3 {
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+        }
+
+        .total-cost-bar .total-val {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .total-cost-bar .total-note {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.82rem;
+        }
+
+        /* ===== LEAD TIME CARDS ===== */
+        .lead-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .lead-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 1.75rem;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .lead-card .lead-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .lead-card h4 {
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .lead-card .lead-time {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .lead-card p {
+            color: var(--ash);
+            font-size: 0.82rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .page-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--green);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+        }
+
+        .page-footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .supply-grid { grid-template-columns: 1fr; }
+            .standards-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .cost-grid { grid-template-columns: 1fr 1fr; }
+            .lead-grid { grid-template-columns: 1fr; }
+            .container { padding: 3rem 1.2rem; }
+            .back-nav a { padding: 6px 12px; font-size: 12px; }
+            .total-cost-bar { flex-direction: column; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .page-hero { padding: 6rem 1.2rem 3rem; }
+            .cost-grid { grid-template-columns: 1fr; }
+            .string-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+    <span class="icon">🏭</span>
+    <h1 data-en="Procurement & Engineering" data-es="Adquisición e Ingeniería" data-he="רכש והנדסה">Procurement & Engineering</h1>
+    <p data-en="Supply chain, engineering standards, BOM templates, and string sizing for solar projects in Panama." data-es="Cadena de suministro, estándares de ingeniería, plantillas de BOM y dimensionamiento de cadenas para proyectos solares en Panamá." data-he="שרשרת אספקה, תקני הנדסה, תבניות BOM וגודל שרשרות לפרויקטי סולאר בפנמה.">Supply chain, engineering standards, BOM templates, and string sizing for solar projects in Panama.</p>
+</div>
+
+<div class="container">
+
+    <!-- SUPPLY CHAIN -->
+    <div class="section-badge" data-en="SUPPLY CHAIN" data-es="CADENA DE SUMINISTRO" data-he="שרשרת אספקה">SUPPLY CHAIN</div>
+    <h2 class="section-title reveal" data-en="Import Channels" data-es="Canales de Importación" data-he="ערוצי ייבוא">Import Channels</h2>
+    <p class="section-sub reveal" data-en="Panama offers unique advantages for solar equipment procurement through the Colón Free Zone and Ley 417 incentives." data-es="Panamá ofrece ventajas únicas para adquisición de equipos solares a través de la Zona Libre de Colón e incentivos de la Ley 417." data-he="פנמה מציעה יתרונות ייחודיים לרכש ציוד סולארי דרך האזור החופשי של קולון ותמריצי Ley 417.">Panama offers unique advantages for solar equipment procurement through the Colón Free Zone and Ley 417 incentives.</p>
+
+    <div class="supply-grid reveal">
+        <div class="supply-card">
+            <div class="supply-icon">🚢</div>
+            <h3 data-en="Colón Free Zone (ZLC)" data-es="Zona Libre de Colón (ZLC)" data-he="אזור חופשי קולון (ZLC)">Colón Free Zone (ZLC)</h3>
+            <p data-en="The world's second-largest free trade zone after Hong Kong. Solar equipment imported through ZLC benefits from duty-free status under Ley 417 (renewable energy incentive law). Components enter Panama without import taxes, reducing landed cost by 12-18%." data-es="La segunda zona de libre comercio más grande del mundo después de Hong Kong. Equipos solares importados por ZLC se benefician del estatus libre de impuestos bajo la Ley 417. Los componentes entran sin impuestos de importación, reduciendo el costo final un 12-18%." data-he="אזור הסחר החופשי השני בגודלו בעולם אחרי הונג קונג. ציוד סולארי המיובא דרך ZLC נהנה מפטור ממכס תחת Ley 417. רכיבים נכנסים לפנמה ללא מיסי יבוא, מפחיתים עלות ב-12-18%.">The world's second-largest free trade zone. Duty-free under Ley 417 — 12-18% cost reduction.</p>
+            <span class="supply-highlight" data-en="DUTY-FREE (Ley 417)" data-es="LIBRE DE IMPUESTOS (Ley 417)" data-he="פטור ממכס (Ley 417)">DUTY-FREE (Ley 417)</span>
+        </div>
+        <div class="supply-card">
+            <div class="supply-icon">🏭</div>
+            <h3 data-en="Direct Manufacturer" data-es="Fabricante Directo" data-he="ישירות מהיצרן">Direct Manufacturer</h3>
+            <p data-en="For large commercial projects (50kWp+), order directly from manufacturers via their LATAM distributors. MOQ typically 1 container (500-700 panels). Better pricing but longer lead times (6-8 weeks). Requires letter of credit or advance payment." data-es="Para proyectos comerciales grandes (50kWp+), ordene directamente de fabricantes vía sus distribuidores LATAM. MOQ típicamente 1 contenedor (500-700 paneles). Mejor precio pero tiempos de entrega más largos (6-8 semanas)." data-he="לפרויקטים מסחריים גדולים (50kWp+), הזמינו ישירות מיצרנים דרך מפיצי LATAM שלהם. MOQ בדרך כלל מכולה אחת (500-700 פאנלים). מחיר טוב יותר אך זמני אספקה ארוכים יותר (6-8 שבועות).">For 50kWp+ projects, order direct via LATAM distributors. 1 container MOQ, 6-8 weeks.</p>
+            <span class="supply-highlight" data-en="BEST PRICE (50kWp+)" data-es="MEJOR PRECIO (50kWp+)" data-he="מחיר הכי טוב (50kWp+)">BEST PRICE (50kWp+)</span>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- PREFERRED SUPPLIERS -->
+    <div class="section-badge" data-en="SUPPLIERS" data-es="PROVEEDORES" data-he="ספקים">SUPPLIERS</div>
+    <h2 class="section-title reveal" data-en="Preferred Suppliers" data-es="Proveedores Preferidos" data-he="ספקים מועדפים">Preferred Suppliers</h2>
+    <p class="section-sub reveal" data-en="Vetted Tier-1 suppliers with proven track record in Central America and Caribbean markets." data-es="Proveedores Nivel 1 verificados con historial comprobado en mercados de Centroamérica y el Caribe." data-he="ספקים דרגה 1 מאומתים עם רקורד מוכח בשווקי מרכז אמריקה והקריביים.">Vetted Tier-1 suppliers with proven track record in Central America.</p>
+
+    <div class="supplier-table-wrap reveal">
+        <table class="supplier-table">
+            <thead>
+                <tr>
+                    <th data-en="Supplier" data-es="Proveedor" data-he="ספק">Supplier</th>
+                    <th data-en="Component" data-es="Componente" data-he="רכיב">Component</th>
+                    <th data-en="Channel" data-es="Canal" data-he="ערוץ">Channel</th>
+                    <th data-en="Lead Time" data-es="Tiempo Entrega" data-he="זמן אספקה">Lead Time</th>
+                    <th data-en="Notes" data-es="Notas" data-he="הערות">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="brand-name">LONGi</span> <span class="preferred-badge" data-en="PRIMARY" data-es="PRIMARIO" data-he="ראשי">PRIMARY</span></td>
+                    <td data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                    <td data-en="Via CELTEC (LATAM distributor)" data-es="Vía CELTEC (distribuidor LATAM)" data-he="דרך CELTEC (מפיץ LATAM)">Via CELTEC (LATAM distributor)</td>
+                    <td><span class="lead-badge lead-mid" data-en="2-4 weeks" data-es="2-4 semanas" data-he="2-4 שבועות">2-4 weeks</span></td>
+                    <td data-en="Hi-MO 6 series, excellent temp coefficient" data-es="Serie Hi-MO 6, excelente coeficiente de temperatura" data-he="סדרת Hi-MO 6, מקדם טמפרטורה מצוין">Hi-MO 6 series, excellent temp coefficient</td>
+                </tr>
+                <tr>
+                    <td><span class="brand-name">Jinko Solar</span></td>
+                    <td data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                    <td data-en="Direct or via ZLC distributors" data-es="Directo o vía distribuidores ZLC" data-he="ישירות או דרך מפיצי ZLC">Direct or via ZLC distributors</td>
+                    <td><span class="lead-badge lead-mid" data-en="2-4 weeks" data-es="2-4 semanas" data-he="2-4 שבועות">2-4 weeks</span></td>
+                    <td data-en="Tiger Neo N-type, BNEF Tier-1" data-es="Tiger Neo N-type, BNEF Nivel 1" data-he="Tiger Neo N-type, דרגה 1 BNEF">Tiger Neo N-type, BNEF Tier-1</td>
+                </tr>
+                <tr>
+                    <td><span class="brand-name">Canadian Solar</span></td>
+                    <td data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                    <td data-en="Via regional distributors" data-es="Vía distribuidores regionales" data-he="דרך מפיצים אזוריים">Via regional distributors</td>
+                    <td><span class="lead-badge lead-mid" data-en="3-4 weeks" data-es="3-4 semanas" data-he="3-4 שבועות">3-4 weeks</span></td>
+                    <td data-en="HiKu7 mono PERC, strong warranties" data-es="HiKu7 mono PERC, garantías sólidas" data-he="HiKu7 מונו PERC, אחריות חזקה">HiKu7 mono PERC, strong warranties</td>
+                </tr>
+                <tr>
+                    <td><span class="brand-name">Huawei</span> <span class="preferred-badge" data-en="PRIMARY" data-es="PRIMARIO" data-he="ראשי">PRIMARY</span></td>
+                    <td data-en="Inverters" data-es="Inversores" data-he="ממירים">Inverters</td>
+                    <td data-en="Via authorized LATAM dealers" data-es="Vía distribuidores autorizados LATAM" data-he="דרך סוחרים מורשים LATAM">Via authorized LATAM dealers</td>
+                    <td><span class="lead-badge lead-fast" data-en="1-2 weeks" data-es="1-2 semanas" data-he="1-2 שבועות">1-2 weeks</span></td>
+                    <td data-en="SUN2000 series, built-in monitoring, high reliability" data-es="Serie SUN2000, monitoreo integrado, alta confiabilidad" data-he="סדרת SUN2000, ניטור מובנה, אמינות גבוהה">SUN2000 series, built-in monitoring</td>
+                </tr>
+                <tr>
+                    <td><span class="brand-name">K2 Systems</span></td>
+                    <td data-en="Mounting" data-es="Montaje" data-he="הרכבה">Mounting</td>
+                    <td data-en="Via regional partners" data-es="Vía socios regionales" data-he="דרך שותפים אזוריים">Via regional partners</td>
+                    <td><span class="lead-badge lead-fast" data-en="1 week" data-es="1 semana" data-he="שבוע">1 week</span></td>
+                    <td data-en="D-Dome for flat roof, CrossRail for pitched" data-es="D-Dome para techo plano, CrossRail para inclinado" data-he="D-Dome לגג שטוח, CrossRail למשופע">D-Dome flat roof, CrossRail pitched</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- LEAD TIMES -->
+    <div class="lead-grid reveal">
+        <div class="lead-card">
+            <div class="lead-icon">☀️</div>
+            <h4 data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</h4>
+            <div class="lead-time" data-en="2-4 Weeks" data-es="2-4 Semanas" data-he="2-4 שבועות">2-4 Weeks</div>
+            <p data-en="From ZLC warehouse or LATAM distributor stock" data-es="Desde almacén ZLC o stock de distribuidor LATAM" data-he="ממחסן ZLC או מלאי מפיץ LATAM">From ZLC warehouse or LATAM stock</p>
+        </div>
+        <div class="lead-card">
+            <div class="lead-icon">⚡</div>
+            <h4 data-en="Inverters" data-es="Inversores" data-he="ממירים">Inverters</h4>
+            <div class="lead-time" data-en="1-2 Weeks" data-es="1-2 Semanas" data-he="1-2 שבועות">1-2 Weeks</div>
+            <p data-en="Huawei LATAM keeps regional inventory" data-es="Huawei LATAM mantiene inventario regional" data-he="Huawei LATAM שומר מלאי אזורי">Huawei LATAM keeps regional inventory</p>
+        </div>
+        <div class="lead-card">
+            <div class="lead-icon">🔩</div>
+            <h4 data-en="Mounting Systems" data-es="Sistemas Montaje" data-he="מערכות הרכבה">Mounting Systems</h4>
+            <div class="lead-time" data-en="1 Week" data-es="1 Semana" data-he="שבוע">1 Week</div>
+            <p data-en="Aluminum rails and clamps readily available" data-es="Rieles y abrazaderas de aluminio disponibles" data-he="פסי ומהדקי אלומיניום זמינים">Aluminum rails and clamps readily available</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ENGINEERING STANDARDS -->
+    <div class="section-badge" data-en="STANDARDS" data-es="ESTÁNDARES" data-he="תקנים">STANDARDS</div>
+    <h2 class="section-title reveal" data-en="Engineering Standards" data-es="Estándares de Ingeniería" data-he="תקני הנדסה">Engineering Standards</h2>
+    <p class="section-sub reveal" data-en="All Solaris installations comply with international electrical codes and Panama's local requirements." data-es="Todas las instalaciones Solaris cumplen con códigos eléctricos internacionales y requisitos locales de Panamá." data-he="כל ההתקנות של Solaris עומדות בקודים חשמליים בינלאומיים ובדרישות המקומיות של פנמה.">All installations comply with international codes and Panama's local requirements.</p>
+
+    <div class="standards-grid reveal">
+        <div class="standard-card">
+            <div class="std-code">NEC 690</div>
+            <h4 data-en="Solar Photovoltaic Systems" data-es="Sistemas Fotovoltaicos Solares" data-he="מערכות סולאר פוטו-וולטאיות">Solar Photovoltaic Systems</h4>
+            <p data-en="National Electrical Code Article 690 — covers wiring, grounding, disconnects, overcurrent protection for PV systems." data-es="Código Eléctrico Nacional Artículo 690 — cubre cableado, puesta a tierra, desconexiones, protección contra sobrecorriente para sistemas FV." data-he="קוד חשמל לאומי סעיף 690 — מכסה חיווט, הארקה, ניתוקים, הגנת יתר-זרם למערכות PV.">NEC Article 690 — wiring, grounding, disconnects, overcurrent protection.</p>
+        </div>
+        <div class="standard-card">
+            <div class="std-code">IEC 62446</div>
+            <h4 data-en="PV System Testing" data-es="Pruebas de Sistemas FV" data-he="בדיקות מערכת PV">PV System Testing</h4>
+            <p data-en="International standard for commissioning, documentation, and maintenance of grid-connected PV systems." data-es="Estándar internacional para puesta en marcha, documentación y mantenimiento de sistemas FV conectados a la red." data-he="תקן בינלאומי להפעלה, תיעוד ותחזוקה של מערכות PV מחוברות לרשת.">Commissioning, documentation, and maintenance of grid-connected PV.</p>
+        </div>
+        <div class="standard-card">
+            <div class="std-code">ASEP</div>
+            <h4 data-en="Panama Technical Req." data-es="Req. Técnicos Panamá" data-he="דרישות טכניות פנמה">Panama Technical Req.</h4>
+            <p data-en="Autoridad de los Servicios Públicos — Panama's utility authority technical requirements for grid interconnection." data-es="Autoridad de los Servicios Públicos — requisitos técnicos de la autoridad de servicios públicos de Panamá para interconexión a la red." data-he="Autoridad de los Servicios Públicos — דרישות טכניות של רשות השירותים הציבוריים של פנמה לחיבור רשת.">Panama's utility authority requirements for grid interconnection.</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- DESIGN TOOLS -->
+    <div class="section-badge" data-en="DESIGN TOOLS" data-es="HERRAMIENTAS DE DISEÑO" data-he="כלי תכנון">DESIGN TOOLS</div>
+    <h2 class="section-title reveal" data-en="Design Software" data-es="Software de Diseño" data-he="תוכנות תכנון">Design Software</h2>
+    <p class="section-sub reveal" data-en="Professional tools used for system simulation, layout design, and electrical drawings." data-es="Herramientas profesionales utilizadas para simulación de sistemas, diseño de disposición y diagramas eléctricos." data-he="כלים מקצועיים לסימולציית מערכת, תכנון פריסה ושרטוטים חשמליים.">Professional tools for simulation, layout, and electrical drawings.</p>
+
+    <div class="tools-grid reveal">
+        <div class="tool-card">
+            <div class="tool-icon">📊</div>
+            <h3>PVsyst</h3>
+            <div class="tool-use" data-en="System Simulation" data-es="Simulación de Sistema" data-he="סימולציית מערכת">System Simulation</div>
+            <p data-en="Industry-standard for energy yield simulation. Input: location, module specs, inverter specs, shading data. Output: annual kWh production, performance ratio, loss diagram. Uses Panama-specific meteorological data (Meteonorm)." data-es="Estándar de la industria para simulación de rendimiento energético. Entrada: ubicación, especificaciones de módulos e inversores, datos de sombras. Salida: producción anual kWh, ratio de rendimiento, diagrama de pérdidas." data-he="תקן תעשייתי לסימולציית תפוקת אנרגיה. קלט: מיקום, מפרט מודולים וממירים, נתוני הצללה. פלט: ייצור שנתי kWh, יחס ביצועים, תרשים הפסדים.">Industry-standard energy yield simulation with Panama meteorological data.</p>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">🗺️</div>
+            <h3>Helioscope</h3>
+            <div class="tool-use" data-en="Layout Design" data-es="Diseño de Disposición" data-he="תכנון פריסה">Layout Design</div>
+            <p data-en="Web-based solar design tool. Import satellite imagery, draw roof boundaries, auto-fill with panels. Handles setbacks, obstructions, and row spacing. Generates instant production estimates and 3D visualization." data-es="Herramienta de diseño solar basada en web. Importar imágenes satelitales, dibujar límites del techo, auto-rellenar con paneles. Maneja retiros, obstrucciones y espaciado entre filas." data-he="כלי תכנון סולארי מבוסס ווב. ייבוא תמונות לוויין, שרטוט גבולות גג, מילוי אוטומטי בפאנלים. מטפל בנסיגות, מכשולים ומרווחי שורות.">Web-based: satellite import, auto-fill panels, 3D visualization.</p>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">📐</div>
+            <h3>AutoCAD</h3>
+            <div class="tool-use" data-en="Electrical Drawings (SLD)" data-es="Diagramas Eléctricos (SLD)" data-he="שרטוטים חשמליים (SLD)">Electrical Drawings (SLD)</div>
+            <p data-en="For single-line diagrams (SLD), wiring plans, and permit-ready engineering drawings. Required by ASEP for grid interconnection applications. Include: module layout, string diagram, AC/DC disconnects, grounding." data-es="Para diagramas unifilares (SLD), planos de cableado y planos de ingeniería listos para permisos. Requerido por ASEP para aplicaciones de interconexión. Incluir: disposición de módulos, diagrama de cadenas, desconexiones AC/DC, puesta a tierra." data-he="לתרשימי קו יחיד (SLD), תוכניות חיווט ושרטוטי הנדסה מוכנים להיתר. נדרש על ידי ASEP לבקשות חיבור לרשת.">Single-line diagrams, wiring plans, permit-ready drawings for ASEP.</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- STRING SIZING -->
+    <div class="string-panel reveal">
+        <h2 data-en="String Sizing for Panama" data-es="Dimensionamiento de Cadenas para Panamá" data-he="גודל שרשרות לפנמה">String Sizing for Panama</h2>
+        <p class="string-sub" data-en="Panama's tropical climate (8°N latitude, high ambient temps) requires specific derating considerations." data-es="El clima tropical de Panamá (latitud 8°N, altas temperaturas ambientales) requiere consideraciones específicas de reducción." data-he="האקלים הטרופי של פנמה (קו רוחב 8° צפון, טמפרטורות גבוהות) דורש שיקולי דירוג ספציפיים.">Panama's tropical climate requires specific derating considerations for string sizing.</p>
+
+        <div class="string-grid">
+            <div class="string-item">
+                <h4 data-en="Ambient Temperature" data-es="Temperatura Ambiente" data-he="טמפרטורת סביבה">Ambient Temperature</h4>
+                <p data-en="Design for 35°C ambient (can reach 38°C in Azuero dry season). Cell temperature typically 55-65°C under full irradiance." data-es="Diseñar para 35°C ambiente (puede alcanzar 38°C en temporada seca de Azuero). Temperatura de celda típicamente 55-65°C bajo irradiancia total." data-he="תכננו ל-35°C סביבה (יכול להגיע ל-38°C בעונה היבשה של Azuero). טמפרטורת תא בדרך כלל 55-65°C תחת הקרנה מלאה.">Design for 35°C ambient. Cell temp: 55-65°C under full irradiance.</p>
+                <div class="formula">T_cell = T_amb + (NOCT - 20) × G/800</div>
+            </div>
+            <div class="string-item">
+                <h4 data-en="Voltage Derating" data-es="Reducción de Voltaje" data-he="דירוג מתח">Voltage Derating</h4>
+                <p data-en="At high temps, Voc drops. Use temperature coefficient from datasheet. For Jinko 580W: -0.29%/°C. Calculate min/max voltage at extreme temperatures to stay within MPPT range." data-es="A altas temperaturas, Voc baja. Use coeficiente de temperatura de la hoja de datos. Para Jinko 580W: -0.29%/°C. Calcule voltaje mín/máx a temperaturas extremas." data-he="בטמפרטורות גבוהות, Voc יורד. השתמשו במקדם טמפרטורה מגיליון הנתונים. ל-Jinko 580W: -0.29%/°C. חשבו מתח מינ/מקס בטמפרטורות קיצוניות.">Voc drops at high temps. Jinko 580W: -0.29%/°C temp coefficient.</p>
+                <div class="formula">Voc_hot = Voc_STC × [1 + TC × (T_cell - 25)]</div>
+            </div>
+            <div class="string-item">
+                <h4 data-en="MPPT Voltage Range" data-es="Rango de Voltaje MPPT" data-he="טווח מתח MPPT">MPPT Voltage Range</h4>
+                <p data-en="Huawei SUN2000-10KTL: MPPT range 200-850V. Size strings so Vmpp stays within range at both coldest morning (25°C) and hottest afternoon (65°C cell temp)." data-es="Huawei SUN2000-10KTL: rango MPPT 200-850V. Dimensionar cadenas para que Vmpp se mantenga dentro del rango tanto en la mañana más fría (25°C) como en la tarde más caliente (65°C celda)." data-he="Huawei SUN2000-10KTL: טווח MPPT 200-850V. גודלו שרשרות כך ש-Vmpp יישאר בטווח גם בבוקר הכי קר (25°C) וגם באחה״צ הכי חם (65°C תא).">Huawei 10KTL MPPT: 200-850V. Size for 25°C morning to 65°C afternoon.</p>
+                <div class="formula">Strings: 9-13 modules (Jinko 580W + Huawei 10KTL)</div>
+            </div>
+            <div class="string-item">
+                <h4 data-en="Derating Factors" data-es="Factores de Reducción" data-he="מקדמי דירוג">Derating Factors</h4>
+                <p data-en="Apply cumulative derating: Temperature -8%, Soiling -3%, Mismatch -2%, Wiring -1.5%, Inverter -2%. Total system efficiency: ~83-85% in Panama conditions." data-es="Aplicar reducción acumulativa: Temperatura -8%, Suciedad -3%, Desajuste -2%, Cableado -1.5%, Inversor -2%. Eficiencia total del sistema: ~83-85% en condiciones de Panamá." data-he="החילו דירוג מצטבר: טמפרטורה -8%, לכלוך -3%, אי-התאמה -2%, חיווט -1.5%, ממיר -2%. יעילות כוללת: ~83-85% בתנאי פנמה.">Total system efficiency: ~83-85% after all derating in Panama.</p>
+                <div class="formula">η_system = η_temp × η_soil × η_mis × η_wire × η_inv</div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- BOM TEMPLATES -->
+    <div class="bom-section reveal">
+        <h2 data-en="Bill of Materials (BOM)" data-es="Lista de Materiales (BOM)" data-he="רשימת חומרים (BOM)">Bill of Materials (BOM)</h2>
+        <p data-en="Standard BOM templates for residential and commercial projects. All prices are landed cost in Panama (CIF + Ley 417)." data-es="Plantillas BOM estándar para proyectos residenciales y comerciales. Todos los precios son costo puesto en Panamá (CIF + Ley 417)." data-he="תבניות BOM סטנדרטיות לפרויקטים ביתיים ומסחריים. כל המחירים הם עלות נחיתה בפנמה (CIF + Ley 417).">Standard BOM templates. All prices are landed cost in Panama (CIF + Ley 417).</p>
+
+        <div class="bom-tabs">
+            <button class="bom-tab active" onclick="showBOM('residential')" data-en="Residential 10kWp" data-es="Residencial 10kWp" data-he="מגורים 10kWp">Residential 10kWp</button>
+            <button class="bom-tab" onclick="showBOM('commercial')" data-en="Commercial 50kWp" data-es="Comercial 50kWp" data-he="מסחרי 50kWp">Commercial 50kWp</button>
+        </div>
+
+        <!-- RESIDENTIAL BOM -->
+        <div class="bom-content active" id="bom-residential">
+            <div class="bom-table-wrap">
+                <table class="bom-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Item" data-es="Artículo" data-he="פריט">Item</th>
+                            <th data-en="Specification" data-es="Especificación" data-he="מפרט">Specification</th>
+                            <th data-en="Qty" data-es="Cant." data-he="כמות">Qty</th>
+                            <th data-en="Unit Cost" data-es="Costo Unit." data-he="עלות יחידה">Unit Cost</th>
+                            <th data-en="Total" data-es="Total" data-he="סה״כ">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="item-name" data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                            <td>Jinko Tiger Neo 580W</td>
+                            <td>18</td>
+                            <td>$105</td>
+                            <td><strong>$1,890</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Inverter" data-es="Inversor" data-he="ממיר">Inverter</td>
+                            <td>Huawei SUN2000-10KTL-M1</td>
+                            <td>1</td>
+                            <td>$980</td>
+                            <td><strong>$980</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Mounting System" data-es="Sistema Montaje" data-he="מערכת הרכבה">Mounting System</td>
+                            <td>K2 CrossRail (pitched roof)</td>
+                            <td>1 set</td>
+                            <td>$520</td>
+                            <td><strong>$520</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="DC Cable" data-es="Cable DC" data-he="כבל DC">DC Cable</td>
+                            <td>6mm² PV cable (UV-resistant)</td>
+                            <td>80m</td>
+                            <td>$1.80/m</td>
+                            <td><strong>$144</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="AC Cable" data-es="Cable AC" data-he="כבל AC">AC Cable</td>
+                            <td>10mm² THHN</td>
+                            <td>30m</td>
+                            <td>$3.20/m</td>
+                            <td><strong>$96</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="MC4 Connectors" data-es="Conectores MC4" data-he="מחברי MC4">MC4 Connectors</td>
+                            <td>Stäubli (genuine)</td>
+                            <td>20 pairs</td>
+                            <td>$3.50/pair</td>
+                            <td><strong>$70</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="DC Disconnect" data-es="Desconexión DC" data-he="ניתוק DC">DC Disconnect</td>
+                            <td>1000V DC isolator switch</td>
+                            <td>1</td>
+                            <td>$85</td>
+                            <td><strong>$85</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="AC Breaker Panel" data-es="Panel Interruptores AC" data-he="לוח מפסקי AC">AC Breaker Panel</td>
+                            <td>2-pole 40A breaker + SPD</td>
+                            <td>1</td>
+                            <td>$120</td>
+                            <td><strong>$120</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Grounding Kit" data-es="Kit Puesta a Tierra" data-he="ערכת הארקה">Grounding Kit</td>
+                            <td>Copper rod + lugs + wire</td>
+                            <td>1</td>
+                            <td>$95</td>
+                            <td><strong>$95</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td>
+                            <td>Huawei Smart Dongle (WiFi)</td>
+                            <td>1</td>
+                            <td>$45</td>
+                            <td><strong>$45</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Conduit & Misc" data-es="Conducto y Misc." data-he="תעלות ושונות">Conduit & Misc</td>
+                            <td>PVC conduit, cable ties, labels</td>
+                            <td>1 lot</td>
+                            <td>$150</td>
+                            <td><strong>$150</strong></td>
+                        </tr>
+                        <tr class="bom-total">
+                            <td colspan="4" data-en="TOTAL MATERIAL COST (10.44 kWp)" data-es="COSTO TOTAL MATERIAL (10.44 kWp)" data-he="עלות חומרים כוללת (10.44 kWp)">TOTAL MATERIAL COST (10.44 kWp)</td>
+                            <td><strong>$4,195</strong></td>
+                        </tr>
+                        <tr class="bom-total">
+                            <td colspan="4" data-en="Cost per Wp" data-es="Costo por Wp" data-he="עלות ל-Wp">Cost per Wp</td>
+                            <td><strong>$0.40/Wp</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COMMERCIAL BOM -->
+        <div class="bom-content" id="bom-commercial">
+            <div class="bom-table-wrap">
+                <table class="bom-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Item" data-es="Artículo" data-he="פריט">Item</th>
+                            <th data-en="Specification" data-es="Especificación" data-he="מפרט">Specification</th>
+                            <th data-en="Qty" data-es="Cant." data-he="כמות">Qty</th>
+                            <th data-en="Unit Cost" data-es="Costo Unit." data-he="עלות יחידה">Unit Cost</th>
+                            <th data-en="Total" data-es="Total" data-he="סה״כ">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="item-name" data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                            <td>Jinko Tiger Neo 580W</td>
+                            <td>87</td>
+                            <td>$95</td>
+                            <td><strong>$8,265</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Inverter" data-es="Inversor" data-he="ממיר">Inverter</td>
+                            <td>Huawei SUN2000-50KTL-M3</td>
+                            <td>1</td>
+                            <td>$3,200</td>
+                            <td><strong>$3,200</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Mounting System" data-es="Sistema Montaje" data-he="מערכת הרכבה">Mounting System</td>
+                            <td>K2 D-Dome (flat roof / ballast)</td>
+                            <td>1 set</td>
+                            <td>$2,800</td>
+                            <td><strong>$2,800</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="DC Cabling" data-es="Cableado DC" data-he="כבילה DC">DC Cabling</td>
+                            <td>6mm² PV cable + trunk 10mm²</td>
+                            <td>400m</td>
+                            <td>$2.10/m</td>
+                            <td><strong>$840</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="AC Cabling" data-es="Cableado AC" data-he="כבילה AC">AC Cabling</td>
+                            <td>35mm² THHN 3-phase</td>
+                            <td>50m</td>
+                            <td>$8.50/m</td>
+                            <td><strong>$425</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Combiner Box" data-es="Caja Combinadora" data-he="קופסת מאחד">Combiner Box</td>
+                            <td>8-string DC combiner + fuses</td>
+                            <td>2</td>
+                            <td>$280</td>
+                            <td><strong>$560</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="AC Distribution" data-es="Distribución AC" data-he="חלוקת AC">AC Distribution</td>
+                            <td>3-phase breaker panel + SPD + meter</td>
+                            <td>1</td>
+                            <td>$650</td>
+                            <td><strong>$650</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Grounding System" data-es="Sistema Puesta a Tierra" data-he="מערכת הארקה">Grounding System</td>
+                            <td>Ground ring + rods + EGC</td>
+                            <td>1</td>
+                            <td>$350</td>
+                            <td><strong>$350</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td>
+                            <td>Huawei SmartLogger 3000A</td>
+                            <td>1</td>
+                            <td>$380</td>
+                            <td><strong>$380</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="item-name" data-en="BOS & Misc" data-es="BOS y Misc." data-he="BOS ושונות">BOS & Misc</td>
+                            <td>Conduit, labels, cable trays, hardware</td>
+                            <td>1 lot</td>
+                            <td>$780</td>
+                            <td><strong>$780</strong></td>
+                        </tr>
+                        <tr class="bom-total">
+                            <td colspan="4" data-en="TOTAL MATERIAL COST (50.46 kWp)" data-es="COSTO TOTAL MATERIAL (50.46 kWp)" data-he="עלות חומרים כוללת (50.46 kWp)">TOTAL MATERIAL COST (50.46 kWp)</td>
+                            <td><strong>$18,250</strong></td>
+                        </tr>
+                        <tr class="bom-total">
+                            <td colspan="4" data-en="Cost per Wp" data-es="Costo por Wp" data-he="עלות ל-Wp">Cost per Wp</td>
+                            <td><strong>$0.36/Wp</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- COST BREAKDOWN PER WP -->
+    <div class="section-badge" data-en="COST ANALYSIS" data-es="ANÁLISIS DE COSTOS" data-he="ניתוח עלויות">COST ANALYSIS</div>
+    <h2 class="section-title reveal" data-en="Cost Breakdown per Wp" data-es="Desglose de Costos por Wp" data-he="פירוט עלויות ל-Wp">Cost Breakdown per Wp</h2>
+    <p class="section-sub reveal" data-en="Component cost ranges for Panama market (landed cost, Ley 417 duty-free). Prices as of Q1 2025." data-es="Rangos de costos de componentes para el mercado panameño (costo puesto, libre de impuestos Ley 417). Precios a Q1 2025." data-he="טווחי עלות רכיבים לשוק הפנמי (עלות נחיתה, פטור ממכס Ley 417). מחירי רבעון 1 2025.">Component cost ranges for Panama market. Prices as of Q1 2025.</p>
+
+    <div class="cost-grid reveal">
+        <div class="cost-card">
+            <div class="cost-icon">☀️</div>
+            <h4 data-en="Panels" data-es="Paneles" data-he="פאנלים">Panels</h4>
+            <div class="cost-range">$0.18-0.25</div>
+            <div class="cost-unit">/Wp</div>
+            <div class="cost-note" data-en="Tier-1 mono PERC / TOPCon" data-es="Nivel 1 mono PERC / TOPCon" data-he="דרגה 1 מונו PERC / TOPCon">Tier-1 mono PERC / TOPCon</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-icon">⚡</div>
+            <h4 data-en="Inverter" data-es="Inversor" data-he="ממיר">Inverter</h4>
+            <div class="cost-range">$0.05-0.10</div>
+            <div class="cost-unit">/Wp</div>
+            <div class="cost-note" data-en="String inverter (Huawei)" data-es="Inversor de cadena (Huawei)" data-he="ממיר שרשרת (Huawei)">String inverter (Huawei)</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-icon">🔩</div>
+            <h4 data-en="Mounting" data-es="Montaje" data-he="הרכבה">Mounting</h4>
+            <div class="cost-range">$0.05-0.08</div>
+            <div class="cost-unit">/Wp</div>
+            <div class="cost-note" data-en="K2 aluminum rail system" data-es="Sistema de rieles aluminio K2" data-he="מערכת פסי אלומיניום K2">K2 aluminum rail system</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-icon">🔌</div>
+            <h4 data-en="BOS" data-es="BOS" data-he="BOS">BOS</h4>
+            <div class="cost-range">$0.03-0.05</div>
+            <div class="cost-unit">/Wp</div>
+            <div class="cost-note" data-en="Cable, connectors, protection" data-es="Cable, conectores, protección" data-he="כבלים, מחברים, הגנה">Cable, connectors, protection</div>
+        </div>
+    </div>
+
+    <div class="total-cost-bar reveal">
+        <div>
+            <h3 data-en="Total Material Cost" data-es="Costo Total de Material" data-he="עלות חומרים כוללת">Total Material Cost</h3>
+            <div class="total-note" data-en="Landed in Panama, duty-free under Ley 417" data-es="Puesto en Panamá, libre de impuestos bajo Ley 417" data-he="מגיע לפנמה, פטור ממכס תחת Ley 417">Landed in Panama, duty-free under Ley 417</div>
+        </div>
+        <div>
+            <div class="total-val">$0.31-0.48/Wp</div>
+            <div class="total-note" data-en="Depends on project scale and component selection" data-es="Depende de escala del proyecto y selección de componentes" data-he="תלוי בגודל פרויקט ובחירת רכיבים">Depends on scale and component selection</div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+    <p>Solaris Energy Panama © 2025 — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+</div>
+
+<script>
+    // Language Toggle
+    let currentLang = 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.trim() === lang.toUpperCase());
+        });
+
+        document.documentElement.lang = lang;
+        if (lang === 'he') {
+            document.body.style.direction = 'rtl';
+            document.body.style.textAlign = 'right';
+        } else {
+            document.body.style.direction = 'ltr';
+            document.body.style.textAlign = '';
+        }
+
+        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+            el.textContent = el.getAttribute('data-' + lang);
+        });
+    }
+
+    // BOM Tab Switching
+    function showBOM(type) {
+        document.querySelectorAll('.bom-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.bom-content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('bom-' + type).classList.add('active');
+    }
+
+    // Reveal on Scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Trigger initial reveals
+    setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight) {
+                el.classList.add('visible');
+            }
+        });
+    }, 100);
+</script>
+
+</body>
+</html>
