@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Energy Panama — OWN YOUR ENERGY</title>
+    <meta name="description" content="Premium solar installations in the Azuero Peninsula, Panama. Law 417 tax benefits. 2.5-3.5 year payback.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 55%);
+            border-radius: 50%;
+            animation: sunGlow 10s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 50%);
+            border-radius: 50%;
+            animation: sunGlow 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes sunGlow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hero-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--pearl);
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .logo span { color: var(--gold); }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(254,253,251,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+
+        .nav-cta {
+            background: var(--gold) !important;
+            color: var(--green) !important;
+            padding: 0.7rem 1.8rem;
+            border-radius: var(--radius-pill);
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.04em;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,67,0.4); }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 5;
+            animation: fadeUp 1s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(254,253,251,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(254,253,251,0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-pill);
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.06em;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 6.5vw, 5rem);
+            color: var(--pearl);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: 1.15rem;
+            color: rgba(254,253,251,0.75);
+            line-height: 1.7;
+            max-width: 540px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-cta-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--green);
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,168,67,0.4); }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--pearl);
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid rgba(254,253,251,0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover { border-color: var(--pearl); background: rgba(254,253,251,0.1); }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            background: var(--pearl);
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.04);
+        }
+
+        .stat { text-align: center; }
+
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            color: var(--green);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--ash);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 6rem 2rem; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            color: var(--green);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-sub {
+            font-size: 1.05rem;
+            color: var(--slate);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 3rem;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-section { background: var(--sand); }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .about-card {
+            background: var(--pearl);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            transition: all 0.4s;
+            border: 1px solid var(--mist);
+        }
+
+        .about-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .about-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-icon.law { background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05)); }
+        .about-icon.sun { background: linear-gradient(135deg, rgba(20,87,63,0.12), rgba(20,87,63,0.04)); }
+        .about-icon.roi { background: linear-gradient(135deg, rgba(184,145,46,0.15), rgba(184,145,46,0.05)); }
+
+        .about-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: var(--green);
+        }
+
+        .about-card p {
+            color: var(--slate);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* ===== TOOLS GRID ===== */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .tool-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .tool-card-icon.brand { background: linear-gradient(135deg, #0B3D2E15, #14573F08); }
+        .tool-card-icon.assets { background: linear-gradient(135deg, #D4A84315, #B8912E08); }
+        .tool-card-icon.strategy { background: linear-gradient(135deg, #14573F15, #0B3D2E08); }
+        .tool-card-icon.avatars { background: linear-gradient(135deg, #B8912E15, #D4A84308); }
+
+        .tool-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .tool-card p {
+            font-size: 0.9rem;
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        .tool-card .arrow {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            margin-top: auto;
+            transition: transform 0.3s;
+        }
+
+        .tool-card:hover .arrow { transform: translateX(6px); }
+
+        /* ===== TEAM ===== */
+        .team-section { background: var(--green); }
+
+        .team-section .section-title { color: var(--pearl); }
+        .team-section .section-sub { color: rgba(254,253,251,0.6); }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-card {
+            background: rgba(254,253,251,0.06);
+            border: 1px solid rgba(254,253,251,0.1);
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s;
+        }
+
+        .team-card:hover {
+            background: rgba(254,253,251,0.1);
+            transform: translateY(-4px);
+        }
+
+        .team-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--pearl);
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .team-card .role {
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .team-card p {
+            color: rgba(254,253,251,0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--charcoal);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(254,253,251,0.4);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .stats-bar { gap: 2rem; padding: 2rem 1rem; }
+            .stat-num { font-size: 2rem; }
+            section { padding: 4rem 1.5rem; }
+            .hero { padding: 1.5rem; }
+            .hero-cta-row { flex-direction: column; }
+            .btn-primary, .btn-secondary { text-align: center; }
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RTL support for Hebrew */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .hero-cta-row { flex-direction: row-reverse; }
+        [dir="rtl"] .tool-card:hover .arrow { transform: translateX(-6px); }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <nav class="hero-nav">
+        <div class="logo">SOLARIS <span>ENERGY</span></div>
+        <div class="nav-links">
+            <a href="brand-kit.html" data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</a>
+            <a href="assets.html" data-en="Assets" data-es="Recursos" data-he="נכסים">Assets</a>
+            <a href="strategy.html" data-en="Strategy" data-es="Estrategia" data-he="אסטרטגיה">Strategy</a>
+            <a href="customer-avatars.html" data-en="Personas" data-es="Personas" data-he="פרסונות">Personas</a>
+            <a href="https://wa.me/50765831822" class="nav-cta" data-en="WhatsApp" data-es="WhatsApp" data-he="WhatsApp">WhatsApp</a>
+        </div>
+    </nav>
+
+    <div class="hero-content">
+        <div class="hero-badge" data-en="AZUERO PENINSULA, PANAMA" data-es="PENINSULA DE AZUERO, PANAMA" data-he="חצי האי אזוארו, פנמה">AZUERO PENINSULA, PANAMA</div>
+        <h1>
+            <span data-en="Own Your" data-es="Controla Tu" data-he="השתלט על">Own Your</span><br>
+            <em data-en="Energy" data-es="Energía" data-he="האנרגיה שלך">Energy</em>
+        </h1>
+        <p class="hero-sub" data-en="Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition." data-es="Instalaciones solares premium en la región más soleada de Panamá. La Ley 417 ofrece 100% de deducción fiscal. Retorno en 2.5–3.5 años. Cero competencia digital." data-he="התקנות סולאריות פרימיום באזור השמשי ביותר של פנמה. חוק 417 מעניק 100% ניכוי מס. החזר השקעה תוך 2.5-3.5 שנים. אפס תחרות דיגיטלית.">Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition.</p>
+        <div class="hero-cta-row">
+            <a href="strategy.html" class="btn-primary" data-en="View Strategy" data-es="Ver Estrategia" data-he="צפה באסטרטגיה">View Strategy</a>
+            <a href="assets.html" class="btn-secondary" data-en="Explore Assets" data-es="Explorar Recursos" data-he="גלה נכסים">Explore Assets</a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+    <div class="stat">
+        <div class="stat-num">$50M+</div>
+        <div class="stat-label" data-en="Market Opportunity" data-es="Oportunidad de Mercado" data-he="הזדמנות שוק">Market Opportunity</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">5.3h</div>
+        <div class="stat-label" data-en="Peak Sun Hours/Day" data-es="Horas Sol Pico/Día" data-he="שעות שיא שמש/יום">Peak Sun Hours/Day</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label" data-en="Tax Deduction (Law 417)" data-es="Deducción Fiscal (Ley 417)" data-he="ניכוי מס (חוק 417)">Tax Deduction (Law 417)</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">2.5yr</div>
+        <div class="stat-label" data-en="Average Payback" data-es="Retorno Promedio" data-he="החזר השקעה ממוצע">Average Payback</div>
+    </div>
+</div>
+
+<!-- WHY SOLARIS -->
+<section class="about-section">
+    <div class="container">
+        <div class="section-badge" data-en="WHY SOLARIS" data-es="POR QUE SOLARIS" data-he="למה סולאריס">WHY SOLARIS</div>
+        <h2 class="section-title reveal" data-en="The Azuero Advantage" data-es="La Ventaja del Azuero" data-he="היתרון של אזוארו">The Azuero Advantage</h2>
+        <p class="section-sub reveal" data-en="Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula." data-es="La Ley 417 de Panamá convierte la energía solar en la inversión más inteligente de Centroamérica. Somos el primer instalador profesional en la península." data-he="חוק 417 של פנמה הופך סולארי להשקעה החכמה ביותר במרכז אמריקה. אנחנו המתקינים המקצועיים הראשונים בחצי האי.">Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula.</p>
+
+        <div class="about-grid">
+            <div class="about-card reveal">
+                <div class="about-icon law">⚖️</div>
+                <h3 data-en="Law 417 Benefits" data-es="Beneficios Ley 417" data-he="הטבות חוק 417">Law 417 Benefits</h3>
+                <p data-en="100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar." data-es="100% de deducción fiscal en equipos solares más exención total de impuestos de importación. El gobierno literalmente te paga por usar energía solar." data-he="100% ניכוי מס על ציוד סולארי בתוספת פטור מלא ממכס יבוא. הממשלה ממש משלמת לך להתקין סולארי.">100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar.</p>
+            </div>
+            <div class="about-card reveal">
+                <div class="about-icon sun">☀️</div>
+                <h3 data-en="5.3 Peak Sun Hours" data-es="5.3 Horas Sol Pico" data-he="5.3 שעות שיא שמש">5.3 Peak Sun Hours</h3>
+                <p data-en="Azuero is one of the sunniest regions in all of Panama with 5.3 average peak sun hours daily — ideal conditions for maximum solar output." data-es="Azuero es una de las regiones más soleadas de todo Panamá con 5.3 horas sol pico promedio diarias — condiciones ideales para máxima producción solar." data-he="אזוארו הוא אחד האזורים השמשיים ביותר בכל פנמה עם 5.3 שעות שיא שמש ממוצעות ביום — תנאים אידיאליים לתפוקה סולארית מקסימלית.">Azuero is one of the sunniest regions in all of Panama with 5.3 average peak sun hours daily — ideal conditions for maximum solar output.</p>
+            </div>
+            <div class="about-card reveal">
+                <div class="about-icon roi">📈</div>
+                <h3 data-en="2.5–3.5 Year Payback" data-es="Retorno en 2.5–3.5 Años" data-he="החזר השקעה תוך 2.5-3.5 שנים">2.5–3.5 Year Payback</h3>
+                <p data-en="At $0.195/kWh electricity rates, solar systems pay for themselves in under 4 years — then deliver free electricity for 25+ years." data-es="Con tarifas eléctricas de $0.195/kWh, los sistemas solares se pagan solos en menos de 4 años — luego entregan electricidad gratis por más de 25 años." data-he="בתעריפי חשמל של $0.195/kWh, מערכות סולאריות מחזירות את עצמן תוך פחות מ-4 שנים — ואז מספקות חשמל חינם ל-25+ שנים.">At $0.195/kWh electricity rates, solar systems pay for themselves in under 4 years — then deliver free electricity for 25+ years.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DASHBOARD TOOLS -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="DASHBOARD" data-es="PANEL DE CONTROL" data-he="לוח בקרה">DASHBOARD</div>
+        <h2 class="section-title reveal" data-en="Business Tools" data-es="Herramientas de Negocio" data-he="כלי עסק">Business Tools</h2>
+        <p class="section-sub reveal" data-en="Everything you need to build, sell, and scale solar in the Azuero Peninsula." data-es="Todo lo que necesitas para construir, vender y escalar energía solar en la Península de Azuero." data-he="כל מה שצריך כדי לבנות, למכור ולהגדיל סולארי בחצי האי אזוארו.">Everything you need to build, sell, and scale solar in the Azuero Peninsula.</p>
+
+        <div class="tools-grid reveal">
+            <a href="brand-kit.html" class="tool-card">
+                <div class="tool-card-icon brand">🎨</div>
+                <h3 data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</h3>
+                <p data-en="Logo, colors, typography, photography style, tone of voice, and brand guidelines." data-es="Logo, colores, tipografía, estilo fotográfico, tono de voz y guías de marca." data-he="לוגו, צבעים, טיפוגרפיה, סגנון צילום, טון דיבור והנחיות מותג.">Logo, colors, typography, photography style, tone of voice, and brand guidelines.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+            <a href="assets.html" class="tool-card">
+                <div class="tool-card-icon assets">📦</div>
+                <h3 data-en="All Assets" data-es="Todos los Recursos" data-he="כל הנכסים">All Assets</h3>
+                <p data-en="Market research, sales tools, operations docs, financial models, and CRM templates." data-es="Investigación de mercado, herramientas de ventas, documentos operativos, modelos financieros y plantillas CRM." data-he="מחקר שוק, כלי מכירות, מסמכי תפעול, מודלים פיננסיים ותבניות CRM.">Market research, sales tools, operations docs, financial models, and CRM templates.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+            <a href="strategy.html" class="tool-card">
+                <div class="tool-card-icon strategy">🗺️</div>
+                <h3 data-en="Business Strategy" data-es="Estrategia de Negocio" data-he="אסטרטגיה עסקית">Business Strategy</h3>
+                <p data-en="Market analysis, Law 417, target segments, go-to-market plan, pricing, and 5-year projection." data-es="Análisis de mercado, Ley 417, segmentos objetivo, plan go-to-market, precios y proyección a 5 años." data-he="ניתוח שוק, חוק 417, פלחי יעד, תוכנית כניסה לשוק, תמחור ותחזית ל-5 שנים.">Market analysis, Law 417, target segments, go-to-market plan, pricing, and 5-year projection.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+            <a href="customer-avatars.html" class="tool-card">
+                <div class="tool-card-icon avatars">👥</div>
+                <h3 data-en="Customer Personas" data-es="Personas de Clientes" data-he="פרסונות לקוחות">Customer Personas</h3>
+                <p data-en="Detailed profiles: expat homeowners, boutique hotels, restaurants, farms, and commercial properties." data-es="Perfiles detallados: propietarios expatriados, hoteles boutique, restaurantes, fincas y propiedades comerciales." data-he="פרופילים מפורטים: בעלי בתים אקספטים, מלונות בוטיק, מסעדות, חוות ונכסים מסחריים.">Detailed profiles: expat homeowners, boutique hotels, restaurants, farms, and commercial properties.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-badge" style="background: rgba(212,168,67,0.15); color: var(--gold);" data-en="THE TEAM" data-es="EL EQUIPO" data-he="הצוות">THE TEAM</div>
+        <h2 class="section-title reveal" data-en="Built to Scale" data-es="Construido para Escalar" data-he="בנוי לצמיחה">Built to Scale</h2>
+        <p class="section-sub reveal" data-en="Strategy meets ground execution. Two founders, complementary skills, one mission." data-es="La estrategia se encuentra con la ejecución en terreno. Dos fundadores, habilidades complementarias, una misión." data-he="אסטרטגיה פוגשת ביצוע בשטח. שני מייסדים, כישורים משלימים, משימה אחת.">Strategy meets ground execution. Two founders, complementary skills, one mission.</p>
+
+        <div class="team-grid reveal">
+            <div class="team-card">
+                <div class="team-avatar">K</div>
+                <h3>Kaniel Tordjman</h3>
+                <div class="role" data-en="Strategy & Technology" data-es="Estrategia y Tecnología" data-he="אסטרטגיה וטכנולוגיה">Strategy & Technology</div>
+                <p data-en="Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure." data-es="Veterano de la industria solar de Israel (Navitas). Desarrollador full-stack. Maneja estrategia digital, sistemas de ventas e infraestructura tecnológica." data-he="ותיק בתעשיית הסולאר מישראל (נביטס). מפתח פול-סטאק. מנהל אסטרטגיה דיגיטלית, מערכות מכירות ותשתית טכנולוגית.">Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure.</p>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">O</div>
+                <h3>Omri Peretz</h3>
+                <div class="role" data-en="COO — Operations" data-es="COO — Operaciones" data-he="מנכ״ל תפעול">COO — Operations</div>
+                <p data-en="On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero." data-es="En terreno en Panamá. Gestiona instalaciones, relaciones con clientes, alianzas locales y operaciones diarias en Azuero." data-he="בשטח בפנמה. מנהל התקנות, קשרי לקוחות, שותפויות מקומיות ותפעול יומיומי באזוארו.">On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- POC -->
+<section style="background: var(--sand);">
+    <div class="container" style="text-align: center;">
+        <div class="section-badge" data-en="PROOF OF CONCEPT" data-es="PRUEBA DE CONCEPTO" data-he="הוכחת היתכנות">PROOF OF CONCEPT</div>
+        <h2 class="section-title reveal" data-en="300kW on Tipi" data-es="300kW en Tipi" data-he="300kW על טיפי">300kW on Tipi</h2>
+        <p class="section-sub reveal" style="margin: 0.8rem auto 2rem; max-width: 700px;" data-en="Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale before rolling out across the peninsula." data-es="Nuestro primer proyecto: una instalación comercial de 300kW detrás del Resort Playa Venao para los propietarios Ami y Uri. Comprobando el modelo a gran escala antes de expandirse por toda la península." data-he="הפרויקט הראשון שלנו: התקנה מסחרית של 300kW מאחורי ריזורט פלאיה וונאו עבור הבעלים עמי ואורי. מוכיחים את המודל בגדול לפני פריסה בכל חצי האי.">Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale before rolling out across the peninsula.</p>
+
+        <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;" class="reveal">
+            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
+                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">300kW</div>
+                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+            </div>
+            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
+                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">~$300K</div>
+                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="Project Value" data-es="Valor del Proyecto" data-he="שווי פרויקט">Project Value</div>
+            </div>
+            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
+                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">Playa Venao</div>
+                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="Location" data-es="Ubicación" data-he="מיקום">Location</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="https://solaris-panama.com" data-en="solaris-panama.com" data-es="solaris-panama.com" data-he="solaris-panama.com">solaris-panama.com</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+
+// Init language
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
