@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Solaris Energy — Brand Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0B3D2E;--green-canopy:#14573F;--gold:#D4A843;--gold-aged:#B8912E;--pearl:#FEFDFB;--sand:#F5EFE0;--charcoal:#1A1A1A;--slate:#4A4A4A;--ash:#8A8A8A;--mist:#E8E4DC;--cloud:#F9F7F3}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--pearl);line-height:1.6;overflow-x:hidden}
+
+/* Language Toggle */
+.lang-toggle{position:fixed;top:20px;right:20px;z-index:1000;display:flex;background:var(--green);border-radius:100px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.lang-btn{padding:6px 14px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-radius:100px;transition:all .3s;letter-spacing:.08em}
+.lang-btn.active{background:var(--gold);color:var(--green)}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.9)}
+
+/* Nav */
+.top-nav{background:var(--green);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.top-nav .logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--pearl);letter-spacing:.05em;font-weight:700;text-decoration:none}
+.top-nav .logo span{color:var(--gold)}
+.top-nav a.back{color:var(--gold);text-decoration:none;font-size:.85rem;font-weight:600;letter-spacing:.04em}
+
+/* Hero */
+.hero{min-height:35vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:80px 24px 60px;background:linear-gradient(150deg,var(--green) 0%,var(--green-canopy) 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(212,168,67,.1),transparent 55%)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--pearl);text-align:center}
+.hero p{color:rgba(254,253,251,.6);font-size:16px;text-align:center;max-width:600px}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+section{padding:64px 0}
+.section-badge{display:inline-block;padding:4px 14px;background:rgba(212,168,67,.12);border-radius:6px;color:var(--gold-aged);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,36px);font-weight:700;color:var(--green);margin-bottom:8px}
+.section-desc{color:var(--slate);font-size:14px;margin-bottom:32px;max-width:600px}
+.alt-bg{background:var(--sand)}
+
+/* Colors */
+.color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.color-swatch{border-radius:12px;overflow:hidden;border:1px solid var(--mist);background:var(--pearl)}
+.color-swatch-top{height:100px}
+.color-swatch-info{padding:12px}
+.color-swatch-info h4{font-size:13px;font-weight:700;color:var(--charcoal)}
+.color-swatch-info p{font-size:11px;color:var(--ash)}
+.color-swatch-info .hex{font-family:monospace;font-size:12px;color:var(--slate);margin-top:4px}
+
+/* Typography */
+.type-sample{padding:28px;background:var(--pearl);border:1px solid var(--mist);border-radius:12px;margin:12px 0}
+.type-sample h3{margin-bottom:8px;color:var(--green)}
+.type-meta{font-size:12px;color:var(--ash);margin-top:8px}
+
+/* Logo */
+.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.logo-box{padding:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;border:1px solid var(--mist);transition:all .3s}
+.logo-box:hover{box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.logo-box.dark{background:var(--green)}
+.logo-box.light{background:var(--pearl)}
+.logo-box.gold{background:var(--gold)}
+.logo-text{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;letter-spacing:.08em}
+.logo-tagline{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.2em}
+
+/* Rules */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rule{padding:20px;border-radius:12px;font-size:13px;line-height:1.8}
+.rule.do{background:rgba(20,87,63,.06);border:1px solid rgba(20,87,63,.12)}
+.rule.dont{background:rgba(180,60,40,.05);border:1px solid rgba(180,60,40,.1)}
+.rule h4{margin-bottom:8px;font-size:14px}
+.rule h4.green{color:var(--green-canopy)}
+.rule h4.red{color:#B43C28}
+
+/* Photo style */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.photo-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;transition:all .3s}
+.photo-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.photo-card h4{font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px}
+.photo-card p{font-size:13px;color:var(--slate);line-height:1.6}
+
+/* Tone */
+.tone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.tone-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px}
+.tone-card h4{font-size:14px;font-weight:700;color:var(--green);margin-bottom:12px}
+.tone-example{padding:12px;border-radius:8px;font-size:13px;margin:8px 0}
+.tone-example.good{background:rgba(20,87,63,.06);color:var(--green-canopy)}
+.tone-example.bad{background:rgba(180,60,40,.05);color:#B43C28}
+
+/* Spacing table */
+.spacing-table{width:100%;border-collapse:collapse;font-size:13px}
+.spacing-table th{text-align:left;padding:10px 16px;background:var(--sand);color:var(--green);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+.spacing-table td{padding:10px 16px;border-bottom:1px solid var(--mist);color:var(--slate)}
+
+/* Footer */
+footer{background:var(--charcoal);padding:3rem 2rem;text-align:center}
+footer p{color:rgba(254,253,251,.4);font-size:.85rem}
+footer a{color:var(--gold);text-decoration:none}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+    .logo-grid{grid-template-columns:1fr}
+    .rules-grid{grid-template-columns:1fr}
+    section{padding:48px 0}
+    .hero{padding:60px 20px 40px}
+}
+[dir="rtl"]{text-align:right}
+</style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<nav class="top-nav">
+    <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
+    <a href="index.html" class="back" data-en="← Dashboard" data-es="← Panel" data-he="לוח בקרה →">← Dashboard</a>
+</nav>
+
+<div class="hero">
+    <h1 data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</h1>
+    <p data-en="Logo, colors, typography, photography, and tone of voice guidelines for Solaris Energy" data-es="Logo, colores, tipografía, fotografía y guías de tono de voz para Solaris Energy" data-he="לוגו, צבעים, טיפוגרפיה, צילום והנחיות טון דיבור עבור סולאריס אנרג׳י">Logo, colors, typography, photography, and tone of voice guidelines for Solaris Energy</p>
+</div>
+
+<!-- LOGO -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="LOGO" data-es="LOGO" data-he="לוגו">LOGO</div>
+        <h2 class="section-title reveal" data-en="Logo Variations" data-es="Variaciones del Logo" data-he="וריאציות לוגו">Logo Variations</h2>
+        <p class="section-desc reveal" data-en="Sun-over-mountain silhouette in circular badge format. 'SOLARIS' text with 'OWN YOUR ENERGY' tagline." data-es="Silueta de sol sobre montaña en formato de insignia circular. Texto 'SOLARIS' con eslogan 'OWN YOUR ENERGY'." data-he="צללית שמש מעל הר בפורמט תג עגול. טקסט 'SOLARIS' עם סלוגן 'OWN YOUR ENERGY'.">Sun-over-mountain silhouette in circular badge format. "SOLARIS" text with "OWN YOUR ENERGY" tagline.</p>
+
+        <div class="logo-grid reveal">
+            <div class="logo-box dark">
+                <div class="logo-text" style="color:var(--pearl)">SOLARIS</div>
+                <div class="logo-tagline" style="color:var(--gold)">OWN YOUR ENERGY</div>
+                <span style="font-size:11px;color:rgba(254,253,251,.4);margin-top:8px" data-en="Pearl on Green" data-es="Perla sobre Verde" data-he="פנינה על ירוק">Pearl on Green</span>
+            </div>
+            <div class="logo-box light">
+                <div class="logo-text" style="color:var(--green)">SOLARIS</div>
+                <div class="logo-tagline" style="color:var(--gold-aged)">OWN YOUR ENERGY</div>
+                <span style="font-size:11px;color:var(--ash);margin-top:8px" data-en="Green on Pearl" data-es="Verde sobre Perla" data-he="ירוק על פנינה">Green on Pearl</span>
+            </div>
+            <div class="logo-box gold">
+                <div class="logo-text" style="color:var(--green)">SOLARIS</div>
+                <div class="logo-tagline" style="color:var(--green)">OWN YOUR ENERGY</div>
+                <span style="font-size:11px;color:rgba(11,61,46,.6);margin-top:8px" data-en="Green on Gold" data-es="Verde sobre Dorado" data-he="ירוק על זהב">Green on Gold</span>
+            </div>
+        </div>
+
+        <div style="margin-top:32px;padding:24px;background:var(--cloud);border-radius:12px;border:1px solid var(--mist)" class="reveal">
+            <h4 style="font-size:14px;color:var(--green);margin-bottom:12px" data-en="Logo Rules" data-es="Reglas del Logo" data-he="כללי לוגו">Logo Rules</h4>
+            <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✓ <span data-en="Minimum 48px height (digital), 15mm (print)" data-es="Mínimo 48px de alto (digital), 15mm (impreso)" data-he="מינימום 48px גובה (דיגיטלי), 15 מ״מ (דפוס)">Minimum 48px height (digital), 15mm (print)</span></li>
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✓ <span data-en="Icon only: 24px min (digital), 8mm (print)" data-es="Solo icono: 24px mín (digital), 8mm (impreso)" data-he="אייקון בלבד: 24px מינימום (דיגיטלי), 8 מ״מ (דפוס)">Icon only: 24px min (digital), 8mm (print)</span></li>
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never stretch, rotate, or distort" data-es="Nunca estirar, rotar o distorsionar" data-he="לעולם לא למתוח, לסובב או לעוות">Never stretch, rotate, or distort</span></li>
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never add shadows or effects" data-es="Nunca agregar sombras o efectos" data-he="לעולם לא להוסיף צללים או אפקטים">Never add shadows or effects</span></li>
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never place on busy backgrounds without overlay" data-es="Nunca colocar sobre fondos ocupados sin overlay" data-he="לעולם לא לשים על רקע עמוס ללא שכבת כיסוי">Never place on busy backgrounds without overlay</span></li>
+                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never change the typeface or rearrange elements" data-es="Nunca cambiar la tipografía o reorganizar elementos" data-he="לעולם לא לשנות את הגופן או לסדר מחדש אלמנטים">Never change the typeface or rearrange elements</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- COLORS -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="COLORS" data-es="COLORES" data-he="צבעים">COLORS</div>
+        <h2 class="section-title reveal" data-en="Color Palette" data-es="Paleta de Colores" data-he="פלטת צבעים">Color Palette</h2>
+        <p class="section-desc reveal" data-en="60% Pearl White · 25% Solaris Green · 10% Solar Gold · 5% Neutrals" data-es="60% Blanco Perla · 25% Verde Solaris · 10% Dorado Solar · 5% Neutros" data-he="60% לבן פנינה · 25% ירוק סולאריס · 10% זהב סולארי · 5% ניטרליים">60% Pearl White · 25% Solaris Green · 10% Solar Gold · 5% Neutrals</p>
+
+        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Primary Colors" data-es="Colores Primarios" data-he="צבעים ראשיים">Primary Colors</h3>
+        <div class="color-grid reveal" style="margin-bottom:32px">
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#0B3D2E"></div>
+                <div class="color-swatch-info"><h4>Solaris Green</h4><p data-en="Headers, CTAs, nav backgrounds" data-es="Encabezados, CTAs, fondos de nav" data-he="כותרות, קריאות לפעולה, רקעי ניווט">Headers, CTAs, nav backgrounds</p><div class="hex">#0B3D2E</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#D4A843"></div>
+                <div class="color-swatch-info"><h4>Solar Gold</h4><p data-en="Accents, highlights, hover states" data-es="Acentos, resaltados, estados hover" data-he="הדגשות, הבלטות, מצבי ריחוף">Accents, highlights, hover states</p><div class="hex">#D4A843</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#FEFDFB"></div>
+                <div class="color-swatch-info"><h4>Pearl White</h4><p data-en="Backgrounds, cards, breathing space" data-es="Fondos, tarjetas, espacio" data-he="רקעים, כרטיסים, מרחב נשימה">Backgrounds, cards, breathing space</p><div class="hex">#FEFDFB</div></div>
+            </div>
+        </div>
+
+        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Secondary Colors" data-es="Colores Secundarios" data-he="צבעים משניים">Secondary Colors</h3>
+        <div class="color-grid reveal" style="margin-bottom:32px">
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#14573F"></div>
+                <div class="color-swatch-info"><h4>Canopy Green</h4><p data-en="Secondary buttons, hover" data-es="Botones secundarios, hover" data-he="כפתורים משניים, ריחוף">Secondary buttons, hover</p><div class="hex">#14573F</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#B8912E"></div>
+                <div class="color-swatch-info"><h4>Aged Gold</h4><p data-en="Text on light, secondary accent" data-es="Texto claro, acento secundario" data-he="טקסט על בהיר, הדגשה משנית">Text on light, secondary accent</p><div class="hex">#B8912E</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#F5EFE0"></div>
+                <div class="color-swatch-info"><h4>Warm Sand</h4><p data-en="Warm neutral, section alternation" data-es="Neutro cálido, alternar secciones" data-he="ניטרלי חם, חילופי סקשנים">Warm neutral, section alternation</p><div class="hex">#F5EFE0</div></div>
+            </div>
+        </div>
+
+        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Neutrals" data-es="Neutros" data-he="ניטרליים">Neutrals</h3>
+        <div class="color-grid reveal">
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#1A1A1A"></div>
+                <div class="color-swatch-info"><h4>Charcoal</h4><p data-en="Primary text" data-es="Texto principal" data-he="טקסט ראשי">Primary text</p><div class="hex">#1A1A1A</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#4A4A4A"></div>
+                <div class="color-swatch-info"><h4>Slate</h4><p data-en="Body text" data-es="Texto del cuerpo" data-he="טקסט גוף">Body text</p><div class="hex">#4A4A4A</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#8A8A8A"></div>
+                <div class="color-swatch-info"><h4>Ash</h4><p data-en="Captions, placeholders" data-es="Subtítulos, placeholders" data-he="כיתובים, מצייני מקום">Captions, placeholders</p><div class="hex">#8A8A8A</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#E8E4DC"></div>
+                <div class="color-swatch-info"><h4>Mist</h4><p data-en="Borders, dividers" data-es="Bordes, divisores" data-he="גבולות, מפרידים">Borders, dividers</p><div class="hex">#E8E4DC</div></div>
+            </div>
+            <div class="color-swatch">
+                <div class="color-swatch-top" style="background:#F9F7F3"></div>
+                <div class="color-swatch-info"><h4>Cloud</h4><p data-en="Alt card backgrounds" data-es="Fondos alternos" data-he="רקעי כרטיסים חלופיים">Alt card backgrounds</p><div class="hex">#F9F7F3</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="TYPOGRAPHY" data-es="TIPOGRAFÍA" data-he="טיפוגרפיה">TYPOGRAPHY</div>
+        <h2 class="section-title reveal" data-en="Type System" data-es="Sistema Tipográfico" data-he="מערכת טיפוגרפית">Type System</h2>
+        <p class="section-desc reveal" data-en="Playfair Display for headings (premium, editorial). DM Sans for body (modern, legible)." data-es="Playfair Display para títulos (premium, editorial). DM Sans para cuerpo (moderno, legible)." data-he="Playfair Display לכותרות (פרימיום, אדיטוריאלי). DM Sans לגוף (מודרני, קריא).">Playfair Display for headings (premium, editorial). DM Sans for body (modern, legible).</p>
+
+        <div class="reveal">
+            <div class="type-sample">
+                <h3 style="font-family:'Playfair Display',serif;font-size:48px;font-weight:700;letter-spacing:-0.02em;color:var(--green)">Own Your Energy</h3>
+                <div class="type-meta">H1 — Playfair Display Bold · 48px / 3rem · Letter-spacing: -0.02em</div>
+            </div>
+            <div class="type-sample">
+                <h3 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-0.01em;color:var(--green)">Solar for the Azuero Peninsula</h3>
+                <div class="type-meta">H2 — Playfair Display Bold · 36px / 2.25rem · Letter-spacing: -0.01em</div>
+            </div>
+            <div class="type-sample">
+                <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--green)">Law 417 Benefits</h3>
+                <div class="type-meta">H3 — Playfair Display SemiBold · 28px / 1.75rem</div>
+            </div>
+            <div class="type-sample">
+                <h3 style="font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:var(--charcoal)">System Configuration</h3>
+                <div class="type-meta">H4 — DM Sans Bold · 22px / 1.375rem</div>
+            </div>
+            <div class="type-sample">
+                <p style="font-size:18px;color:var(--slate);line-height:1.6">Your system will produce 1,200 kWh per month — enough to cover your entire electricity bill and then some. With Panama's Law 417, you also get 100% tax deduction on the equipment.</p>
+                <div class="type-meta">Body Large — DM Sans Regular · 18px / 1.125rem · Line-height: 1.6</div>
+            </div>
+            <div class="type-sample">
+                <p style="font-size:16px;color:var(--slate);line-height:1.6">At $0.195/kWh, Panama has some of the highest electricity rates in Central America. Solar panels pay for themselves in under 4 years.</p>
+                <div class="type-meta">Body — DM Sans Regular · 16px / 1rem · Line-height: 1.6</div>
+            </div>
+            <div class="type-sample" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+                <button style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;background:var(--gold);color:var(--green);border:none;padding:12px 28px;border-radius:6px;cursor:pointer">GET A QUOTE</button>
+                <button style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;background:var(--green);color:var(--pearl);border:none;padding:12px 28px;border-radius:6px;cursor:pointer">LEARN MORE</button>
+                <div class="type-meta" style="margin:0">Button — DM Sans Bold · 14px · Letter-spacing: 0.08em</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PHOTOGRAPHY -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="PHOTOGRAPHY" data-es="FOTOGRAFÍA" data-he="צילום">PHOTOGRAPHY</div>
+        <h2 class="section-title reveal" data-en="Photography Style" data-es="Estilo Fotográfico" data-he="סגנון צילום">Photography Style</h2>
+        <p class="section-desc reveal" data-en="Tropical but not touristy. Natural light, golden hour preferred. Architecture matters." data-es="Tropical pero no turístico. Luz natural, preferiblemente hora dorada. La arquitectura importa." data-he="טרופי אבל לא תיירותי. אור טבעי, שעת הזהב מועדפת. אדריכלות חשובה.">Tropical but not touristy. Natural light, golden hour preferred. Architecture matters.</p>
+
+        <div class="photo-grid reveal">
+            <div class="photo-card">
+                <h4 data-en="✓ Ideal Subjects" data-es="✓ Sujetos Ideales" data-he="✓ נושאים אידיאליים">✓ Ideal Subjects</h4>
+                <p data-en="Solar panels on beautiful buildings — beach houses, boutique hotels, modern homes. The Azuero coastline. Installation crews at work (professional, safety-focused). Happy clients." data-es="Paneles solares en edificios hermosos — casas de playa, hoteles boutique, casas modernas. La costa del Azuero. Equipos de instalación en trabajo (profesional). Clientes felices." data-he="פאנלים סולאריים על מבנים יפים — בתי חוף, מלונות בוטיק, בתים מודרניים. חופי אזוארו. צוותי התקנה בעבודה (מקצועי, בטיחותי). לקוחות מרוצים.">Solar panels on beautiful buildings — beach houses, boutique hotels, modern homes. The Azuero coastline. Installation crews at work (professional, safety-focused). Happy clients.</p>
+            </div>
+            <div class="photo-card">
+                <h4 data-en="✓ Color Treatment" data-es="✓ Tratamiento de Color" data-he="✓ עיבוד צבע">✓ Color Treatment</h4>
+                <p data-en="Warm color temperature with a slight golden cast. High contrast, not flat. Shadows should be rich, not crushed. Never over-saturated — keep it natural." data-es="Temperatura de color cálida con un ligero tono dorado. Alto contraste, no plano. Sombras ricas, no aplastadas. Nunca sobre-saturado — mantenlo natural." data-he="טמפרטורת צבע חמה עם נגיעה זהובה קלה. ניגודיות גבוהה, לא שטוח. צללים עשירים, לא מרוסקים. לעולם לא מרווי יתר — טבעי.">Warm color temperature with a slight golden cast. High contrast, not flat. Shadows should be rich, not crushed. Never over-saturated — keep it natural.</p>
+            </div>
+            <div class="photo-card">
+                <h4 style="color:#B43C28" data-en="✗ Never Use" data-es="✗ Nunca Usar" data-he="✗ לעולם לא להשתמש">✗ Never Use</h4>
+                <p data-en="No stock photos of generic solar farms in deserts. No cheesy thumbs-up or handshake photos. No cold/blue color grading. No drone shots that make panels look like an afterthought." data-es="No fotos de stock de granjas solares genéricas en desiertos. No fotos cursis de pulgares arriba o apretones de manos. No gradación de color fría/azul. No tomas de drone donde los paneles parezcan secundarios." data-he="לא תמונות סטוק של חוות סולאריות גנריות במדבריות. לא תמונות קלישאתיות של אגודל למעלה או לחיצות יד. לא עיבוד צבע קר/כחול. לא צילומי רחפן שבהם הפאנלים נראים כמחשבה שנייה.">No stock photos of generic solar farms in deserts. No cheesy thumbs-up or handshake photos. No cold/blue color grading. No drone shots that make panels look like an afterthought.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TONE OF VOICE -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="TONE OF VOICE" data-es="TONO DE VOZ" data-he="טון דיבור">TONE OF VOICE</div>
+        <h2 class="section-title reveal" data-en="How We Sound" data-es="Cómo Hablamos" data-he="איך אנחנו נשמעים">How We Sound</h2>
+        <p class="section-desc reveal" data-en="Like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor." data-es="Como un amigo conocedor que resulta ser experto en energía solar. No un vendedor. No un libro de texto. Un asesor de confianza." data-he="כמו חבר בעל ידע שבמקרה הוא מומחה סולארי. לא איש מכירות. לא ספר לימוד. יועץ אמין.">Like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor.</p>
+
+        <div class="tone-grid reveal">
+            <div class="tone-card">
+                <h4 data-en="Confident, not arrogant" data-es="Confiado, no arrogante" data-he="בטוח, לא יהיר">Confident, not arrogant</h4>
+                <div class="tone-example good">✓ <span data-en="We've designed the optimal system for your property." data-es="Hemos diseñado el sistema óptimo para su propiedad." data-he="עיצבנו את המערכת האופטימלית לנכס שלך.">We've designed the optimal system for your property.</span></div>
+                <div class="tone-example bad">✗ <span data-en="We're the best solar company in Panama." data-es="Somos la mejor empresa solar de Panamá." data-he="אנחנו חברת הסולאר הטובה ביותר בפנמה.">We're the best solar company in Panama.</span></div>
+            </div>
+            <div class="tone-card">
+                <h4 data-en="Clear, not dumbed down" data-es="Claro, no simplificado" data-he="ברור, לא מטומטם">Clear, not dumbed down</h4>
+                <div class="tone-example good">✓ <span data-en="Your system will produce 1,200 kWh/month — enough to cover your entire bill." data-es="Su sistema producirá 1,200 kWh/mes — suficiente para cubrir toda su factura." data-he="המערכת שלך תייצר 1,200 קוט״ש/חודש — מספיק לכסות את כל החשבון.">Your system will produce 1,200 kWh/month — enough to cover your entire bill.</span></div>
+                <div class="tone-example bad">✗ <span data-en="Solar panels make electricity from the sun!" data-es="¡Los paneles solares generan electricidad del sol!" data-he="פאנלים סולאריים מייצרים חשמל מהשמש!">Solar panels make electricity from the sun!</span></div>
+            </div>
+            <div class="tone-card">
+                <h4 data-en="Warm, not casual" data-es="Cálido, no casual" data-he="חם, לא רשלני">Warm, not casual</h4>
+                <div class="tone-example good">✓ <span data-en="Let's find the right solution for your home." data-es="Encontremos la solución adecuada para su hogar." data-he="בוא נמצא את הפתרון הנכון לבית שלך.">Let's find the right solution for your home.</span></div>
+                <div class="tone-example bad">✗ <span data-en="Yo, ready to go solar??" data-es="¡Ey, listo para usar solar??" data-he="יו, מוכן לסולאר??">Yo, ready to go solar??</span></div>
+            </div>
+            <div class="tone-card">
+                <h4 data-en="Premium, not exclusive" data-es="Premium, no exclusivo" data-he="פרימיום, לא אקסקלוסיבי">Premium, not exclusive</h4>
+                <div class="tone-example good">✓ <span data-en="Invest in your property's energy independence." data-es="Invierta en la independencia energética de su propiedad." data-he="השקע בעצמאות האנרגטית של הנכס שלך.">Invest in your property's energy independence.</span></div>
+                <div class="tone-example bad">✗ <span data-en="For discerning clients only." data-es="Solo para clientes exigentes." data-he="ללקוחות בררנים בלבד.">For discerning clients only.</span></div>
+            </div>
+        </div>
+
+        <div style="margin-top:24px;padding:20px;background:var(--cloud);border-radius:12px;border:1px solid var(--mist)" class="reveal">
+            <h4 style="font-size:14px;color:var(--green);margin-bottom:8px" data-en="Bilingual Notes" data-es="Notas Bilingües" data-he="הערות דו-לשוניות">Bilingual Notes</h4>
+            <p style="font-size:13px;color:var(--slate);line-height:1.7" data-en="All client-facing materials in English and Spanish. Spanish should feel native, not translated. Use 'usted' form (professional, respectful). Key terms: energía solar, paneles solares, independencia energética." data-es="Todos los materiales para clientes en inglés y español. El español debe sentirse nativo, no traducido. Usar forma 'usted' (profesional, respetuoso). Términos clave: energía solar, paneles solares, independencia energética." data-he="כל החומרים ללקוחות באנגלית וספרדית. הספרדית צריכה להרגיש מקורית, לא מתורגמת. להשתמש בנוסח 'usted' (מקצועי, מכבד). מונחי מפתח: energía solar, paneles solares, independencia energética.">All client-facing materials in English and Spanish. Spanish should feel native, not translated. Use "usted" form (professional, respectful). Key terms: energía solar, paneles solares, independencia energética.</p>
+        </div>
+    </div>
+</section>
+
+<!-- DO'S AND DON'TS -->
+<section class="alt-bg">
+    <div class="container">
+        <div class="section-badge" data-en="GUIDELINES" data-es="DIRECTRICES" data-he="הנחיות">GUIDELINES</div>
+        <h2 class="section-title reveal" data-en="Do's and Don'ts" data-es="Lo Que Sí y Lo Que No" data-he="עשה ואל תעשה">Do's and Don'ts</h2>
+
+        <div class="rules-grid reveal">
+            <div class="rule do">
+                <h4 class="green" data-en="✓ Do" data-es="✓ Sí" data-he="✓ עשה">✓ Do</h4>
+                <span data-en="Use generous whitespace — let the design breathe" data-es="Usar espacio generoso — dejar que el diseño respire" data-he="השתמש ברווח לבן נדיב — תן לעיצוב לנשום">Use generous whitespace — let the design breathe</span><br>
+                <span data-en="Pair Solaris Green with Solar Gold sparingly" data-es="Combinar Verde Solaris con Dorado Solar con moderación" data-he="שלב ירוק סולאריס עם זהב סולארי במשורה">Pair Solaris Green with Solar Gold sparingly</span><br>
+                <span data-en="Use warm, golden-toned photography" data-es="Usar fotografía con tonos cálidos y dorados" data-he="השתמש בצילום בגוונים חמים וזהובים">Use warm, golden-toned photography</span><br>
+                <span data-en="Maintain consistent 8px spacing grid" data-es="Mantener grid de espaciado consistente de 8px" data-he="שמור על רשת ריווח עקבית של 8px">Maintain consistent 8px spacing grid</span><br>
+                <span data-en="Cards: 12px radius · Buttons: 6px · Badges: pill" data-es="Tarjetas: 12px radio · Botones: 6px · Insignias: pill" data-he="כרטיסים: 12px · כפתורים: 6px · תגיות: גלולה">Cards: 12px radius · Buttons: 6px · Badges: pill</span><br>
+                <span data-en="Reference Law 417 in commercial materials" data-es="Referenciar Ley 417 en materiales comerciales" data-he="הפנה לחוק 417 בחומרים מסחריים">Reference Law 417 in commercial materials</span>
+            </div>
+            <div class="rule dont">
+                <h4 class="red" data-en="✗ Don't" data-es="✗ No" data-he="✗ אל תעשה">✗ Don't</h4>
+                <span data-en="Use more than 3 colors in a single layout" data-es="Usar más de 3 colores en un solo diseño" data-he="השתמש ביותר מ-3 צבעים בעיצוב אחד">Use more than 3 colors in a single layout</span><br>
+                <span data-en="Center-align body text" data-es="Centrar texto del cuerpo" data-he="ישר טקסט גוף למרכז">Center-align body text</span><br>
+                <span data-en="Use gradients (subtle hero backgrounds excepted)" data-es="Usar gradientes (excepto fondos hero sutiles)" data-he="השתמש בגרדיאנטים (חוץ מרקעי hero עדינים)">Use gradients (subtle hero backgrounds excepted)</span><br>
+                <span data-en="Mix brand fonts with system fonts" data-es="Mezclar fuentes de marca con fuentes del sistema" data-he="ערבב גופני מותג עם גופני מערכת">Mix brand fonts with system fonts</span><br>
+                <span data-en="Use pure black (#000) — use Charcoal (#1A1A1A)" data-es="Usar negro puro (#000) — usar Charcoal (#1A1A1A)" data-he="השתמש בשחור טהור (#000) — השתמש ב-Charcoal (#1A1A1A)">Use pure black (#000) — use Charcoal (#1A1A1A)</span><br>
+                <span data-en="Overuse gold — it's an accent, not a primary" data-es="Abusar del dorado — es acento, no primario" data-he="תשתמש בזהב ביתר — זה הדגשה, לא ראשי">Overuse gold — it's an accent, not a primary</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SPACING -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="SPACING" data-es="ESPACIADO" data-he="ריווח">SPACING</div>
+        <h2 class="section-title reveal" data-en="Spacing & Shadows" data-es="Espaciado y Sombras" data-he="ריווח וצללים">Spacing & Shadows</h2>
+
+        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+            <div>
+                <h4 style="font-size:14px;color:var(--green);margin-bottom:16px" data-en="Shadow Levels" data-es="Niveles de Sombra" data-he="רמות צל">Shadow Levels</h4>
+                <table class="spacing-table" style="border-radius:12px;overflow:hidden;border:1px solid var(--mist)">
+                    <tr><th data-en="Name" data-es="Nombre" data-he="שם">Name</th><th data-en="Value" data-es="Valor" data-he="ערך">Value</th></tr>
+                    <tr><td>Subtle</td><td><code>0 1px 3px rgba(0,0,0,0.04)</code></td></tr>
+                    <tr><td>Card</td><td><code>0 2px 8px rgba(0,0,0,0.06)</code></td></tr>
+                    <tr><td>Elevated</td><td><code>0 8px 24px rgba(0,0,0,0.08)</code></td></tr>
+                    <tr><td>Modal</td><td><code>0 16px 48px rgba(0,0,0,0.12)</code></td></tr>
+                </table>
+            </div>
+            <div>
+                <h4 style="font-size:14px;color:var(--green);margin-bottom:16px" data-en="Border Radius" data-es="Radio de Borde" data-he="עיגול פינות">Border Radius</h4>
+                <table class="spacing-table" style="border-radius:12px;overflow:hidden;border:1px solid var(--mist)">
+                    <tr><th data-en="Element" data-es="Elemento" data-he="אלמנט">Element</th><th data-en="Radius" data-es="Radio" data-he="רדיוס">Radius</th></tr>
+                    <tr><td data-en="Cards" data-es="Tarjetas" data-he="כרטיסים">Cards</td><td>12px</td></tr>
+                    <tr><td data-en="Buttons" data-es="Botones" data-he="כפתורים">Buttons</td><td>6px</td></tr>
+                    <tr><td data-en="Inputs" data-es="Campos" data-he="שדות">Inputs</td><td>6px</td></tr>
+                    <tr><td data-en="Badges" data-es="Insignias" data-he="תגיות">Badges</td><td>100px (pill)</td></tr>
+                    <tr><td data-en="Images" data-es="Imágenes" data-he="תמונות">Images</td><td>8px</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Brand Guidelines v1.0 · " data-es="© 2026 Solaris Energy · Guías de Marca v1.0 · " data-he="© 2026 Solaris Energy · הנחיות מותג v1.0 · ">© 2026 Solaris Energy · Brand Guidelines v1.0 · </span>
+        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
+    </p>
+</footer>
+
+<script>
+function setLang(lang){
+    localStorage.setItem('solaris-lang',lang);
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir=lang==='he'?'rtl':'ltr';
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-'+lang+']').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});
+}
+const savedLang=localStorage.getItem('solaris-lang')||'en';
+setLang(savedLang);
+const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible')})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
