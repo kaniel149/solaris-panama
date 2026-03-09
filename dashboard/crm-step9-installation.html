@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 9: Installation — Solaris CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+        [data-lang] { display: none; }
+        [data-lang].active { display: block; }
+        span[data-lang] { display: none; }
+        span[data-lang].active { display: inline; }
+        .top-nav { background: var(--green); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .top-nav a { color: var(--gold); text-decoration: none; font-weight: 600; font-size: 14px; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 0.8; }
+        .nav-brand { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--pearl); }
+        .page-hero { background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%); padding: 80px 32px 60px; text-align: center; }
+        .page-hero .step-badge { display: inline-block; background: var(--gold); color: var(--green); font-weight: 700; font-size: 13px; padding: 6px 20px; border-radius: var(--radius-pill); letter-spacing: 0.1em; margin-bottom: 16px; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; color: var(--pearl); font-size: clamp(28px, 5vw, 44px); margin-bottom: 12px; }
+        .page-hero p { color: rgba(255,255,255,0.7); font-size: 16px; max-width: 600px; margin: 0 auto; }
+        .content { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+        .section { margin-bottom: 48px; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--green); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gold); }
+        .card { background: white; border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 28px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
+        .card h3 { font-size: 17px; color: var(--green); margin-bottom: 10px; }
+        .card p, .card li { font-size: 14px; color: var(--slate); line-height: 1.7; }
+        .card ul, .card ol { padding-left: 20px; }
+        .card li { margin-bottom: 6px; }
+
+        /* Day cards */
+        .day-card { background: white; border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 0; margin-bottom: 24px; overflow: hidden; }
+        .day-header { background: var(--green); color: var(--pearl); padding: 16px 28px; display: flex; align-items: center; gap: 14px; }
+        .day-num { width: 48px; height: 48px; background: var(--gold); color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+        .day-title { font-size: 18px; font-weight: 600; }
+        .day-subtitle { font-size: 13px; opacity: 0.7; }
+        .day-body { padding: 24px 28px; }
+        .day-body h4 { font-size: 15px; color: var(--green); margin: 16px 0 8px; }
+        .day-body h4:first-child { margin-top: 0; }
+        .day-body ul { padding-left: 20px; }
+        .day-body li { font-size: 14px; color: var(--slate); margin-bottom: 6px; line-height: 1.6; }
+
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 10px 16px; margin-bottom: 6px; background: var(--cloud); border-radius: var(--radius-btn); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+        .checklist li::before { content: '☐'; color: var(--gold); font-size: 18px; flex-shrink: 0; }
+        .alert { background: linear-gradient(135deg, #FFF8E1, #FFF3CD); border-left: 4px solid var(--gold); border-radius: var(--radius-btn); padding: 18px 22px; margin: 16px 0; }
+        .alert-title { font-weight: 700; color: var(--green); margin-bottom: 4px; }
+        .alert p { font-size: 13px; color: var(--slate); }
+        .alert-red { background: linear-gradient(135deg, #FFEBEE, #FFCDD2); border-left-color: #C62828; }
+        .alert-green { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-left-color: var(--green); }
+
+        .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+        .data-table thead { background: var(--green); color: var(--pearl); }
+        .data-table th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 13px; }
+        .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--mist); }
+        .data-table tbody tr:hover { background: var(--cloud); }
+        .data-table tbody tr:nth-child(even) { background: var(--sand); }
+
+        .step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 48px; padding-top: 32px; border-top: 2px solid var(--mist); flex-wrap: wrap; gap: 16px; }
+        .step-nav a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--green); color: var(--pearl); text-decoration: none; border-radius: var(--radius-btn); font-weight: 600; font-size: 14px; transition: all 0.3s; }
+        .step-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); box-shadow: var(--shadow-elevated); }
+        .step-nav a.outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+        .step-nav a.outline:hover { background: var(--green); color: var(--pearl); }
+        .footer { background: var(--green); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; }
+        [dir="rtl"] { direction: rtl; text-align: right; }
+        [dir="rtl"] .card { border-left: none; border-right: 4px solid var(--gold); }
+        [dir="rtl"] .alert { border-left: none; border-right: 4px solid var(--gold); }
+        [dir="rtl"] .alert-red { border-right-color: #C62828; }
+        [dir="rtl"] .data-table th { text-align: right; }
+        @media (max-width: 768px) {
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 8px 10px; }
+            .step-nav { flex-direction: column; }
+            .step-nav a { width: 100%; justify-content: center; }
+            .day-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">עב</button>
+    </div>
+
+    <nav class="top-nav">
+        <span class="nav-brand">Solaris Energy</span>
+        <div style="display:flex;gap:20px;">
+            <a href="crm-value-chain.html"><span data-lang="en" class="active">CRM Pipeline</span><span data-lang="es">Pipeline CRM</span><span data-lang="he">שרשרת CRM</span></a>
+            <a href="index.html"><span data-lang="en" class="active">Dashboard</span><span data-lang="es">Panel</span><span data-lang="he">לוח בקרה</span></a>
+        </div>
+    </nav>
+
+    <div class="page-hero">
+        <div class="step-badge">STEP 9 / PASO 9</div>
+        <h1>
+            <span data-lang="en" class="active">Installation Execution</span>
+            <span data-lang="es">Ejecución de Instalación</span>
+            <span data-lang="he">ביצוע התקנה</span>
+        </h1>
+        <p>
+            <span data-lang="en" class="active">Day-by-day execution plan for a flawless solar installation in Panama.</span>
+            <span data-lang="es">Plan de ejecución día a día para una instalación solar impecable en Panamá.</span>
+            <span data-lang="he">תוכנית ביצוע יום-יום להתקנה סולארית ללא רבב בפנמה.</span>
+        </p>
+    </div>
+
+    <div class="content">
+
+        <!-- DAY-BY-DAY SCHEDULE -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Day-by-Day Installation Schedule</span>
+                <span data-lang="es">Cronograma de Instalación Día a Día</span>
+                <span data-lang="he">לוח זמנים יום-יום להתקנה</span>
+            </h2>
+
+            <!-- DAY 1 -->
+            <div data-lang="en" class="active">
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">1</div>
+                        <div><div class="day-title">Mounting Structure & Roof Prep</div><div class="day-subtitle">7:00 AM – 4:00 PM | Team: 4 installers + 1 supervisor</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Morning (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Site arrival, safety briefing, PPE verification (hard hats, harnesses, gloves)</li>
+                            <li>Material staging: unload mounting rails, clamps, roof hooks from truck</li>
+                            <li>Roof survey confirmation: verify structural attachment points vs. design</li>
+                            <li>Mark rail positions on roof using chalk lines per engineering layout</li>
+                            <li>Install roof hooks or L-brackets with proper sealant (Sikaflex for metal roofs)</li>
+                            <li>First row of rails installed and leveled</li>
+                        </ul>
+                        <h4>Afternoon (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>Complete all rail installation — verify level across entire array</li>
+                            <li>Install mid-clamps and end-clamps (finger-tight, final torque after panels)</li>
+                            <li>Route DC cable conduit pathways from array to inverter location</li>
+                            <li>Install string junction boxes if required by design</li>
+                            <li>Clean up, secure loose materials, photo documentation of Day 1 progress</li>
+                        </ul>
+                        <h4>Documentation Required</h4>
+                        <ul>
+                            <li>Photo: Roof before installation (baseline)</li>
+                            <li>Photo: Each roof penetration with sealant applied</li>
+                            <li>Photo: Complete rail layout with level verification</li>
+                            <li>Photo: Team on site with PPE (safety compliance)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">2</div>
+                        <div><div class="day-title">Panel Installation & DC Wiring</div><div class="day-subtitle">7:00 AM – 4:00 PM | Team: 4 installers + 1 electrician</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Morning (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Panel transport to roof using panel lifter or human chain (never drag)</li>
+                            <li>Install first string of panels — verify alignment with first 2 panels before continuing</li>
+                            <li>MC4 connections as each panel is placed (click-lock verification)</li>
+                            <li>Torque mid-clamps to spec (8-10 Nm for most K2 systems)</li>
+                            <li>Continue panel installation across all strings</li>
+                        </ul>
+                        <h4>Afternoon (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>Complete all panel installation — verify end clamp torque</li>
+                            <li>DC string wiring: route PV cables through conduit to inverter location</li>
+                            <li>Label each string at both ends (String 1+, String 1-, etc.)</li>
+                            <li>Measure open circuit voltage (Voc) on each string — record and compare to design</li>
+                            <li>Insulation resistance test on DC strings (>1 MΩ per string)</li>
+                            <li>String Voc verification: should match N × panel Voc (±5%)</li>
+                            <li>Photo documentation of completed array and all string measurements</li>
+                        </ul>
+                        <h4>Documentation Required</h4>
+                        <ul>
+                            <li>Photo: First panel placed showing alignment</li>
+                            <li>Photo: Complete array from ground level</li>
+                            <li>Photo: MC4 connections detail</li>
+                            <li>Photo: Voc measurement readings per string</li>
+                            <li>Log: String voltage readings table</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">3</div>
+                        <div><div class="day-title">Inverter, AC Connection & Commissioning</div><div class="day-subtitle">7:00 AM – 5:00 PM | Team: 2 installers + 1 electrician + 1 supervisor</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Morning (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Mount inverter on wall bracket (shaded location, accessible for maintenance)</li>
+                            <li>Connect DC strings to inverter MPPT inputs per wiring diagram</li>
+                            <li>Install DC disconnect switch between array and inverter</li>
+                            <li>Install AC disconnect between inverter and main panel</li>
+                            <li>AC wiring from inverter to dedicated breaker in main electrical panel</li>
+                            <li>Install Type II surge protection device (SPD) on AC side</li>
+                        </ul>
+                        <h4>Afternoon (12:30 – 15:00)</h4>
+                        <ul>
+                            <li>Ground fault and polarity verification on all DC connections</li>
+                            <li>AC connection verification: voltage, phase, frequency</li>
+                            <li>Close DC disconnects — inverter should detect PV voltage</li>
+                            <li>Power on inverter — follow manufacturer commissioning sequence</li>
+                            <li>Configure WiFi/dongle for FusionSolar monitoring platform</li>
+                            <li>Set grid parameters per ASEP requirements (voltage limits, frequency, anti-islanding)</li>
+                            <li>Close AC disconnect — system begins generating</li>
+                        </ul>
+                        <h4>Late Afternoon (15:00 – 17:00)</h4>
+                        <ul>
+                            <li>Monitor first hour of production — verify all strings producing equally</li>
+                            <li>Install monitoring CT sensors on main feed if net metering</li>
+                            <li>System performance snapshot: current power, daily yield estimate</li>
+                            <li>Client walkthrough: show inverter display, app access, emergency shutoff</li>
+                            <li>Final cleanup: remove all packaging, zip-tie loose cables, clean work area</li>
+                            <li>Sign installation completion certificate with client</li>
+                        </ul>
+                        <h4>Documentation Required</h4>
+                        <ul>
+                            <li>Photo: Inverter mounted with all connections</li>
+                            <li>Photo: Electrical panel with new solar breaker labeled</li>
+                            <li>Photo: Monitoring app showing live production</li>
+                            <li>Photo: Client receiving system walkthrough</li>
+                            <li>Document: Signed completion certificate</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 1-3 SPANISH -->
+            <div data-lang="es">
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">1</div>
+                        <div><div class="day-title">Estructura de Montaje y Preparación del Techo</div><div class="day-subtitle">7:00 AM – 4:00 PM | Equipo: 4 instaladores + 1 supervisor</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Mañana (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Llegada al sitio, charla de seguridad, verificación de EPP</li>
+                            <li>Descarga de materiales: rieles de montaje, abrazaderas, ganchos de techo</li>
+                            <li>Confirmación de puntos de anclaje vs. diseño de ingeniería</li>
+                            <li>Marcar posiciones de rieles en el techo usando líneas de tiza</li>
+                            <li>Instalar ganchos con sellador adecuado (Sikaflex para techos metálicos)</li>
+                            <li>Primera fila de rieles instalada y nivelada</li>
+                        </ul>
+                        <h4>Tarde (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>Completar instalación de rieles — verificar nivel en todo el arreglo</li>
+                            <li>Instalar abrazaderas intermedias y finales</li>
+                            <li>Enrutar conducto de cables DC desde arreglo al inversor</li>
+                            <li>Instalar cajas de unión de strings si el diseño lo requiere</li>
+                            <li>Limpieza, asegurar materiales, foto-documentación Día 1</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">2</div>
+                        <div><div class="day-title">Instalación de Paneles y Cableado DC</div><div class="day-subtitle">7:00 AM – 4:00 PM | Equipo: 4 instaladores + 1 electricista</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Mañana (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Transporte de paneles al techo (nunca arrastrar)</li>
+                            <li>Instalar primer string — verificar alineación con primeros 2 paneles</li>
+                            <li>Conexiones MC4 al colocar cada panel (verificar click-lock)</li>
+                            <li>Torque de abrazaderas según especificación (8-10 Nm para K2)</li>
+                        </ul>
+                        <h4>Tarde (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>Completar instalación de paneles — verificar torque de abrazaderas finales</li>
+                            <li>Cableado DC: enrutar cables PV por conducto al inversor</li>
+                            <li>Etiquetar cada string en ambos extremos</li>
+                            <li>Medir Voc de cada string — registrar y comparar con diseño</li>
+                            <li>Prueba de resistencia de aislamiento (>1 MΩ por string)</li>
+                            <li>Foto-documentación del arreglo completo y mediciones</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">3</div>
+                        <div><div class="day-title">Inversor, Conexión AC y Puesta en Marcha</div><div class="day-subtitle">7:00 AM – 5:00 PM | Equipo: 2 instaladores + 1 electricista + 1 supervisor</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>Mañana (7:00 – 12:00)</h4>
+                        <ul>
+                            <li>Montar inversor en soporte de pared (ubicación sombreada)</li>
+                            <li>Conectar strings DC a entradas MPPT según diagrama</li>
+                            <li>Instalar desconector DC entre arreglo e inversor</li>
+                            <li>Instalar desconector AC entre inversor y panel principal</li>
+                            <li>Cableado AC desde inversor a breaker dedicado en panel eléctrico</li>
+                            <li>Instalar protección contra sobretensiones (SPD) Tipo II en lado AC</li>
+                        </ul>
+                        <h4>Tarde (12:30 – 17:00)</h4>
+                        <ul>
+                            <li>Verificación de falla a tierra y polaridad en todas las conexiones DC</li>
+                            <li>Verificación de conexión AC: voltaje, fase, frecuencia</li>
+                            <li>Cerrar desconectores DC — el inversor debe detectar voltaje PV</li>
+                            <li>Encender inversor — seguir secuencia de comisionamiento del fabricante</li>
+                            <li>Configurar WiFi/dongle para plataforma FusionSolar</li>
+                            <li>Configurar parámetros de red según requisitos ASEP</li>
+                            <li>Cerrar desconector AC — el sistema comienza a generar</li>
+                            <li>Monitorear primera hora de producción</li>
+                            <li>Recorrido con el cliente: mostrar display, app, apagado de emergencia</li>
+                            <li>Limpieza final, firmar certificado de completación</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 1-3 HEBREW -->
+            <div data-lang="he" dir="rtl">
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">1</div>
+                        <div><div class="day-title">מבנה הרכבה והכנת גג</div><div class="day-subtitle">07:00 – 16:00 | צוות: 4 מתקינים + 1 מפקח</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>בוקר (07:00 – 12:00)</h4>
+                        <ul>
+                            <li>הגעה לאתר, תדריך בטיחות, אימות ציוד מגן אישי</li>
+                            <li>פריקת חומרים: מסילות הרכבה, מלחצים, ווים</li>
+                            <li>אימות נקודות עיגון מול תכנון הנדסי</li>
+                            <li>סימון מיקומי מסילות על הגג בקווי גיר</li>
+                            <li>התקנת ווים עם אטם מתאים (Sikaflex לגגות מתכת)</li>
+                            <li>שורה ראשונה של מסילות מותקנת ומפולסת</li>
+                        </ul>
+                        <h4>אחה"צ (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>השלמת כל המסילות — אימות פילוס על כל המערך</li>
+                            <li>התקנת מלחצים אמצעיים וקצה</li>
+                            <li>הנחת נתיב צנרת כבלי DC מהמערך לממיר</li>
+                            <li>ניקיון, אבטחת חומרים, תיעוד צילומי יום 1</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">2</div>
+                        <div><div class="day-title">התקנת פאנלים וחיווט DC</div><div class="day-subtitle">07:00 – 16:00 | צוות: 4 מתקינים + 1 חשמלאי</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>בוקר (07:00 – 12:00)</h4>
+                        <ul>
+                            <li>העלאת פאנלים לגג (לעולם לא לגרור)</li>
+                            <li>התקנת מחרוזת ראשונה — אימות יישור עם 2 פאנלים ראשונים</li>
+                            <li>חיבורי MC4 עם הנחת כל פאנל (אימות נעילה)</li>
+                            <li>מומנט מלחצים לפי מפרט (8-10 Nm ל-K2)</li>
+                        </ul>
+                        <h4>אחה"צ (12:30 – 16:00)</h4>
+                        <ul>
+                            <li>השלמת התקנת כל הפאנלים</li>
+                            <li>חיווט DC: הנחת כבלי PV בצנרת לממיר</li>
+                            <li>תיוג כל מחרוזת בשני הקצוות</li>
+                            <li>מדידת Voc של כל מחרוזת — רישום והשוואה לתכנון</li>
+                            <li>בדיקת התנגדות בידוד (>1 MΩ למחרוזת)</li>
+                            <li>תיעוד צילומי של המערך וכל המדידות</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-header">
+                        <div class="day-num">3</div>
+                        <div><div class="day-title">ממיר, חיבור AC והפעלה</div><div class="day-subtitle">07:00 – 17:00 | צוות: 2 מתקינים + 1 חשמלאי + 1 מפקח</div></div>
+                    </div>
+                    <div class="day-body">
+                        <h4>בוקר (07:00 – 12:00)</h4>
+                        <ul>
+                            <li>הרכבת ממיר על תושבת קיר (מיקום מוצל)</li>
+                            <li>חיבור מחרוזות DC לכניסות MPPT לפי תרשים</li>
+                            <li>התקנת מנתק DC בין המערך לממיר</li>
+                            <li>התקנת מנתק AC בין ממיר ללוח ראשי</li>
+                            <li>חיווט AC מממיר למפסק ייעודי בלוח חשמל ראשי</li>
+                            <li>התקנת מגן ברקים סוג II בצד AC</li>
+                        </ul>
+                        <h4>אחה"צ (12:30 – 17:00)</h4>
+                        <ul>
+                            <li>אימות תקלת ארקה וקוטביות בכל חיבורי DC</li>
+                            <li>אימות חיבור AC: מתח, פאזה, תדר</li>
+                            <li>סגירת מנתקי DC — הממיר אמור לזהות מתח PV</li>
+                            <li>הפעלת ממיר — מעקב אחר רצף הפעלה של היצרן</li>
+                            <li>הגדרת WiFi/דונגל לפלטפורמת ניטור FusionSolar</li>
+                            <li>הגדרת פרמטרי רשת לפי דרישות ASEP</li>
+                            <li>סגירת מנתק AC — המערכת מתחילה לייצר</li>
+                            <li>ניטור שעה ראשונה של ייצור</li>
+                            <li>הדרכת לקוח: תצוגת ממיר, אפליקציה, כיבוי חירום</li>
+                            <li>ניקיון סופי, חתימה על אישור השלמה</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CREW REQUIREMENTS -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Crew Requirements</span>
+                <span data-lang="es">Requisitos de Personal</span>
+                <span data-lang="he">דרישות צוות</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Role</th><th>Qty</th><th>Qualifications</th><th>Responsibilities</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Installers</strong></td><td>2–4</td><td>Solar installation training, roof work experience, fall protection certified</td><td>Mounting, panel placement, cable routing, physical installation work</td></tr>
+                        <tr><td><strong>Electrician</strong></td><td>1</td><td>Licensed Type A or B electrician (Panama), PV system experience</td><td>DC/AC wiring, inverter connection, panel integration, testing</td></tr>
+                        <tr><td><strong>Supervisor</strong></td><td>1</td><td>3+ years solar installation experience, safety certifications</td><td>Quality control, safety compliance, client communication, documentation</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">Crew Scaling</div>
+                    <p>Residential (5-10kWp): 2 installers + 1 electrician. Commercial (20-100kWp): 4 installers + 1 electrician + 1 supervisor. Utility-scale: specialized crews per discipline.</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Rol</th><th>Cant.</th><th>Calificaciones</th><th>Responsabilidades</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Instaladores</strong></td><td>2–4</td><td>Capacitación en instalación solar, experiencia en techos, certificado en protección contra caídas</td><td>Montaje, colocación de paneles, enrutamiento de cables</td></tr>
+                        <tr><td><strong>Electricista</strong></td><td>1</td><td>Electricista licenciado Tipo A o B (Panamá), experiencia en PV</td><td>Cableado DC/AC, conexión de inversor, integración al panel, pruebas</td></tr>
+                        <tr><td><strong>Supervisor</strong></td><td>1</td><td>3+ años de experiencia en instalación solar, certificaciones de seguridad</td><td>Control de calidad, cumplimiento de seguridad, comunicación con cliente</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">Escalamiento de Personal</div>
+                    <p>Residencial (5-10kWp): 2 instaladores + 1 electricista. Comercial (20-100kWp): 4 instaladores + 1 electricista + 1 supervisor.</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>תפקיד</th><th>כמות</th><th>כישורים</th><th>אחריות</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>מתקינים</strong></td><td>2–4</td><td>הכשרה בהתקנה סולארית, ניסיון בעבודה על גגות, הסמכת הגנה מנפילה</td><td>הרכבה, הנחת פאנלים, הנחת כבלים</td></tr>
+                        <tr><td><strong>חשמלאי</strong></td><td>1</td><td>חשמלאי מורשה סוג A או B (פנמה), ניסיון במערכות PV</td><td>חיווט DC/AC, חיבור ממיר, אינטגרציה ללוח, בדיקות</td></tr>
+                        <tr><td><strong>מפקח</strong></td><td>1</td><td>3+ שנות ניסיון בהתקנה סולארית, הסמכות בטיחות</td><td>בקרת איכות, עמידה בבטיחות, תקשורת עם לקוח, תיעוד</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">גודל צוות</div>
+                    <p>ביתי (5-10kWp): 2 מתקינים + 1 חשמלאי. מסחרי (20-100kWp): 4 מתקינים + 1 חשמלאי + 1 מפקח.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAFETY BRIEFING -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Safety Briefing Checklist</span>
+                <span data-lang="es">Lista de Verificación — Charla de Seguridad</span>
+                <span data-lang="he">רשימת תדריך בטיחות</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Daily Pre-Work Safety Briefing (15 min)</h3>
+                    <ul class="checklist">
+                        <li>All team members present and accounted for</li>
+                        <li>PPE inspection: hard hats, safety glasses, gloves, steel-toe boots</li>
+                        <li>Fall protection: harnesses inspected, anchor points identified for work >2m height</li>
+                        <li>Weather check: no work during lightning, high winds (>40 km/h), or heavy rain</li>
+                        <li>Electrical hazard review: DC strings generate voltage in sunlight — treat as LIVE</li>
+                        <li>Emergency contacts posted: nearest hospital, fire department, Solaris office</li>
+                        <li>First aid kit location confirmed and accessible</li>
+                        <li>Tool inspection: ladders, drills, crimping tools in working condition</li>
+                        <li>Hydration plan: water accessible on-site (Panama heat index can exceed 40°C)</li>
+                        <li>Communication: walkie-talkies or phones for roof-to-ground coordination</li>
+                    </ul>
+                </div>
+
+                <div class="alert-red alert">
+                    <div class="alert-title">STOP WORK triggers</div>
+                    <p>Lightning within 10km, wind gusts >50 km/h, any electrical shock incident, unsecured roof edge without guardrails, crew member showing heat exhaustion symptoms. Zero tolerance policy — report immediately to supervisor.</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Charla de Seguridad Diaria Pre-Trabajo (15 min)</h3>
+                    <ul class="checklist">
+                        <li>Todos los miembros del equipo presentes</li>
+                        <li>Inspección de EPP: cascos, lentes, guantes, botas con punta de acero</li>
+                        <li>Protección contra caídas: arneses inspeccionados, puntos de anclaje identificados</li>
+                        <li>Verificación climática: no trabajar durante rayos, vientos fuertes o lluvia intensa</li>
+                        <li>Revisión de riesgo eléctrico: strings DC generan voltaje con luz solar — tratar como ACTIVO</li>
+                        <li>Contactos de emergencia publicados: hospital más cercano, bomberos, oficina Solaris</li>
+                        <li>Botiquín de primeros auxilios verificado y accesible</li>
+                        <li>Inspección de herramientas: escaleras, taladros, herramientas de crimpado</li>
+                        <li>Plan de hidratación: agua accesible en sitio (índice de calor >40°C en Panamá)</li>
+                        <li>Comunicación: radios o teléfonos para coordinación techo-suelo</li>
+                    </ul>
+                </div>
+
+                <div class="alert-red alert">
+                    <div class="alert-title">Disparadores de PARO DE TRABAJO</div>
+                    <p>Rayos a menos de 10km, ráfagas >50 km/h, cualquier incidente de choque eléctrico, borde de techo sin barandas, síntomas de golpe de calor. Política de tolerancia cero.</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>תדריך בטיחות יומי טרום-עבודה (15 דק')</h3>
+                    <ul class="checklist">
+                        <li>כל חברי הצוות נוכחים ומדווחים</li>
+                        <li>בדיקת ציוד מגן: קסדות, משקפי מגן, כפפות, נעלי בטיחות</li>
+                        <li>הגנה מנפילה: רתמות נבדקו, נקודות עיגון זוהו לעבודה מעל 2 מ'</li>
+                        <li>בדיקת מזג אוויר: אין עבודה בברקים, רוחות חזקות (>40 קמ"ש), או גשם כבד</li>
+                        <li>סקירת סכנות חשמל: מחרוזות DC מייצרות מתח באור שמש — טפל כ-חי</li>
+                        <li>אנשי קשר חירום תלויים: בית חולים קרוב, כיבוי אש, משרד סולאריס</li>
+                        <li>מיקום ערכת עזרה ראשונה מאושר ונגיש</li>
+                        <li>בדיקת כלים: סולמות, מקדחות, כלי חיבור במצב תקין</li>
+                        <li>תוכנית שתייה: מים נגישים באתר (מדד חום בפנמה עולה על 40°C)</li>
+                        <li>תקשורת: ווקי-טוקי או טלפונים לתיאום גג-קרקע</li>
+                    </ul>
+                </div>
+
+                <div class="alert-red alert">
+                    <div class="alert-title">טריגרים להפסקת עבודה</div>
+                    <p>ברקים במרחק 10 ק"מ, משבי רוח מעל 50 קמ"ש, כל אירוע התחשמלות, קצה גג לא מאובטח, חבר צוות עם תסמיני מכת חום. מדיניות אפס סובלנות.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMON ISSUES IN PANAMA -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Common Issues in Panama</span>
+                <span data-lang="es">Problemas Comunes en Panamá</span>
+                <span data-lang="he">בעיות נפוצות בפנמה</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Roof Penetrations on Metal Roofs</h3>
+                    <p>Most commercial and many residential buildings in Panama have corrugated metal roofs (zinc or Galvalume). Key considerations:</p>
+                    <ul>
+                        <li><strong>Sealing:</strong> Every penetration must use EPDM rubber washers + polyurethane sealant (Sikaflex 221)</li>
+                        <li><strong>Flashing:</strong> Use metal flashing boots over any pipe or conduit penetrations</li>
+                        <li><strong>Thermal expansion:</strong> Metal roofs expand/contract significantly — use slotted mounting holes</li>
+                        <li><strong>Rust prevention:</strong> Touch up any scratches or drill holes with zinc-rich primer immediately</li>
+                        <li><strong>Preferred method:</strong> Clamp-on mounting (S-5! or K2 S-Dome) to avoid penetrations entirely when possible</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Tropical Storm Preparation</h3>
+                    <ul>
+                        <li><strong>Wind load:</strong> Design for 160 km/h minimum (Panama is outside main hurricane belt but gets tropical storms)</li>
+                        <li><strong>Tilt angle:</strong> Lower tilt angles (10-15°) reduce wind uplift — preferred in Azuero Peninsula</li>
+                        <li><strong>End clamps:</strong> Use reinforced end clamps on perimeter panels</li>
+                        <li><strong>Wire management:</strong> All cables must be secured with UV-rated zip ties every 60cm — loose cables become wind sails</li>
+                        <li><strong>Seasonal timing:</strong> Avoid scheduling installations during peak rainy season (Oct-Nov) when possible</li>
+                        <li><strong>Storm protocol:</strong> If tropical storm warning issued, verify all installations completed in last 30 days — conduct emergency tightening inspection</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Other Panama-Specific Challenges</h3>
+                    <ul>
+                        <li><strong>Heat:</strong> Schedule heavy roof work for early morning. No work 12-1 PM during dry season heat peaks</li>
+                        <li><strong>Afternoon rain:</strong> During rainy season (May-Dec), plan electrical work for mornings — rain typically starts 1-3 PM</li>
+                        <li><strong>Wildlife:</strong> Check for bird nests and wasp nests before mounting. Iguana damage to cables is rare but documented</li>
+                        <li><strong>Accessibility:</strong> Many rural Azuero sites have limited road access — confirm truck clearance before delivery</li>
+                        <li><strong>Power outages:</strong> Have portable generator on site for power tools. Panama grid can be unreliable in rural areas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Penetraciones en Techos Metálicos</h3>
+                    <p>La mayoría de edificios comerciales y muchos residenciales en Panamá tienen techos de metal corrugado. Consideraciones clave:</p>
+                    <ul>
+                        <li><strong>Sellado:</strong> Cada penetración debe usar arandelas EPDM + sellador poliuretano (Sikaflex 221)</li>
+                        <li><strong>Flashing:</strong> Usar botas metálicas sobre cualquier penetración de tubo o conducto</li>
+                        <li><strong>Expansión térmica:</strong> Techos metálicos se expanden/contraen — usar agujeros de montaje ranurados</li>
+                        <li><strong>Prevención de óxido:</strong> Retocar raspaduras con imprimante rico en zinc inmediatamente</li>
+                        <li><strong>Método preferido:</strong> Montaje por abrazadera (S-5! o K2 S-Dome) para evitar penetraciones</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Preparación para Tormentas Tropicales</h3>
+                    <ul>
+                        <li><strong>Carga de viento:</strong> Diseñar para mínimo 160 km/h</li>
+                        <li><strong>Ángulo de inclinación:</strong> Ángulos bajos (10-15°) reducen levantamiento por viento</li>
+                        <li><strong>Abrazaderas finales:</strong> Usar reforzadas en paneles perimetrales</li>
+                        <li><strong>Gestión de cables:</strong> Asegurar con amarres UV cada 60cm</li>
+                        <li><strong>Temporada:</strong> Evitar instalaciones en pico lluvioso (Oct-Nov) cuando sea posible</li>
+                        <li><strong>Protocolo de tormenta:</strong> Si hay alerta, verificar instalaciones últimos 30 días</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Otros Desafíos Específicos de Panamá</h3>
+                    <ul>
+                        <li><strong>Calor:</strong> Programar trabajo pesado de techo temprano. No trabajar 12-1 PM en temporada seca</li>
+                        <li><strong>Lluvia vespertina:</strong> En temporada lluviosa, planificar trabajo eléctrico por las mañanas</li>
+                        <li><strong>Fauna:</strong> Verificar nidos de aves y avispas antes del montaje</li>
+                        <li><strong>Accesibilidad:</strong> Muchos sitios rurales en Azuero tienen acceso limitado — confirmar paso de camión</li>
+                        <li><strong>Cortes de luz:</strong> Tener generador portátil para herramientas eléctricas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>חדירות בגגות מתכת</h3>
+                    <p>רוב המבנים המסחריים ורבים מהביתיים בפנמה בנויים עם גגות מתכת גלית. שיקולים עיקריים:</p>
+                    <ul>
+                        <li><strong>איטום:</strong> כל חדירה חייבת לכלול אטמי EPDM + חומר איטום פוליאורתן (Sikaflex 221)</li>
+                        <li><strong>פלשינג:</strong> להשתמש בכיסויי מתכת על כל חדירת צנרת</li>
+                        <li><strong>התפשטות תרמית:</strong> גגות מתכת מתרחבים/מתכווצים — להשתמש בחורי הרכבה מחורצים</li>
+                        <li><strong>מניעת חלודה:</strong> לתקן שריטות עם פריימר עשיר באבץ מיד</li>
+                        <li><strong>שיטה מועדפת:</strong> הרכבה בלחיצה (S-5! או K2 S-Dome) כדי להימנע מחדירות</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>הכנה לסופות טרופיות</h3>
+                    <ul>
+                        <li><strong>עומס רוח:</strong> תכנון למינימום 160 קמ"ש</li>
+                        <li><strong>זווית הטיה:</strong> זוויות נמוכות (10-15°) מפחיתות עילוי רוח</li>
+                        <li><strong>מלחצי קצה:</strong> להשתמש במחוזקים בפאנלים היקפיים</li>
+                        <li><strong>ניהול כבלים:</strong> לאבטח עם אזיקוני UV כל 60 ס"מ</li>
+                        <li><strong>עונתיות:</strong> להימנע מהתקנות בשיא הגשם (אוק-נוב) כשאפשר</li>
+                        <li><strong>פרוטוקול סופה:</strong> בהתרעה, לבדוק את כל ההתקנות מ-30 יום אחרונים</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>אתגרים נוספים ספציפיים לפנמה</h3>
+                    <ul>
+                        <li><strong>חום:</strong> לתזמן עבודה כבדה על הגג לבוקר. אין עבודה 12-1 בעונה היבשה</li>
+                        <li><strong>גשם אחה"צ:</strong> בעונת הגשמים, לתכנן עבודה חשמלית לבקרים</li>
+                        <li><strong>חיות בר:</strong> לבדוק קיני ציפורים וצרעות לפני הרכבה</li>
+                        <li><strong>נגישות:</strong> אתרים כפריים רבים עם גישה מוגבלת — לאשר מעבר משאית</li>
+                        <li><strong>הפסקות חשמל:</strong> גנרטור נייד באתר לכלים חשמליים</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIENT COMMUNICATION -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Client Communication During Installation</span>
+                <span data-lang="es">Comunicación con el Cliente Durante Instalación</span>
+                <span data-lang="he">תקשורת עם לקוח במהלך התקנה</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <div class="card">
+                    <h3>Daily WhatsApp Updates</h3>
+                    <p>Send progress updates to the client via WhatsApp at the end of each installation day. Format:</p>
+                    <ul>
+                        <li><strong>Subject:</strong> "Solaris Update — [Project Name] — Day [X]"</li>
+                        <li><strong>Content:</strong> 2-3 sentence summary of what was completed</li>
+                        <li><strong>Photos:</strong> 3-5 key progress photos (see documentation requirements above)</li>
+                        <li><strong>Next:</strong> What will happen tomorrow</li>
+                        <li><strong>Issues:</strong> Any concerns or changes (communicate immediately, don't wait for end of day)</li>
+                        <li><strong>Tone:</strong> Professional but friendly. Client should feel informed and confident</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Communication Templates</h3>
+                    <p><strong>Day 1 Message:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "Good evening [Client Name]! Great first day on your solar project. We completed the mounting structure installation — all rails are level and secure on your roof. Tomorrow we'll start placing the panels. Here are some progress photos. Looking forward to Day 2! 🔆"
+                    </p>
+                    <p><strong>Day 3 / Completion Message:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "Congratulations [Client Name]! Your solar system is LIVE! ☀️ We completed all connections and commissioning today. Your system is already producing clean energy. Check your FusionSolar app — you'll see real-time production data. We'll follow up in a few days to make sure everything is running perfectly. Welcome to the solar family!"
+                    </p>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">Client Experience Tip</div>
+                    <p>The installation is the most visible phase of the project. Clients remember this experience and share it with neighbors and friends. Professional communication during installation is your best referral marketing tool.</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <div class="card">
+                    <h3>Actualizaciones Diarias por WhatsApp</h3>
+                    <p>Enviar actualizaciones al cliente por WhatsApp al final de cada día de instalación. Formato:</p>
+                    <ul>
+                        <li><strong>Asunto:</strong> "Actualización Solaris — [Nombre Proyecto] — Día [X]"</li>
+                        <li><strong>Contenido:</strong> Resumen de 2-3 oraciones de lo completado</li>
+                        <li><strong>Fotos:</strong> 3-5 fotos clave de progreso</li>
+                        <li><strong>Siguiente:</strong> Qué pasará mañana</li>
+                        <li><strong>Problemas:</strong> Cualquier inquietud o cambio (comunicar de inmediato)</li>
+                        <li><strong>Tono:</strong> Profesional pero amigable</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Plantillas de Comunicación</h3>
+                    <p><strong>Mensaje Día 1:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "¡Buenas noches [Nombre]! Excelente primer día en su proyecto solar. Completamos la instalación de la estructura de montaje — todos los rieles están nivelados y seguros. Mañana comenzamos con los paneles. Aquí algunas fotos del progreso. ¡Esperamos el Día 2! 🔆"
+                    </p>
+                    <p><strong>Mensaje Día 3 / Completación:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "¡Felicidades [Nombre]! ¡Su sistema solar está EN LÍNEA! ☀️ Completamos todas las conexiones y la puesta en marcha hoy. Revise su app FusionSolar — verá datos de producción en tiempo real. ¡Bienvenido a la familia solar!"
+                    </p>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">Consejo de Experiencia del Cliente</div>
+                    <p>La instalación es la fase más visible del proyecto. Los clientes recuerdan esta experiencia y la comparten con vecinos y amigos. La comunicación profesional durante la instalación es su mejor herramienta de marketing por referidos.</p>
+                </div>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <div class="card">
+                    <h3>עדכונים יומיים בוואטסאפ</h3>
+                    <p>לשלוח עדכוני התקדמות ללקוח בוואטסאפ בסוף כל יום התקנה. פורמט:</p>
+                    <ul>
+                        <li><strong>נושא:</strong> "עדכון סולאריס — [שם פרויקט] — יום [X]"</li>
+                        <li><strong>תוכן:</strong> סיכום של 2-3 משפטים על מה הושלם</li>
+                        <li><strong>תמונות:</strong> 3-5 תמונות התקדמות מרכזיות</li>
+                        <li><strong>הבא:</strong> מה יקרה מחר</li>
+                        <li><strong>בעיות:</strong> כל דאגה או שינוי (לתקשר מיד, לא לחכות לסוף היום)</li>
+                        <li><strong>טון:</strong> מקצועי אך ידידותי. הלקוח צריך להרגיש מעודכן ובטוח</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>תבניות תקשורת</h3>
+                    <p><strong>הודעת יום 1:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "ערב טוב [שם לקוח]! יום ראשון מצוין בפרויקט הסולארי שלך. השלמנו את התקנת מבנה ההרכבה — כל המסילות מפולסות ומאובטחות. מחר נתחיל להניח פאנלים. הנה כמה תמונות התקדמות. מצפים ליום 2! 🔆"
+                    </p>
+                    <p><strong>הודעת יום 3 / השלמה:</strong></p>
+                    <p style="background:var(--cloud);padding:12px;border-radius:6px;font-size:13px;margin:8px 0;">
+                        "מזל טוב [שם לקוח]! המערכת הסולארית שלך פעילה! ☀️ השלמנו את כל החיבורים וההפעלה היום. בדוק את אפליקציית FusionSolar — תראה נתוני ייצור בזמן אמת. נעקוב בימים הקרובים כדי לוודא שהכל רץ מושלם. ברוך הבא למשפחה הסולארית!"
+                    </p>
+                </div>
+
+                <div class="alert-green alert">
+                    <div class="alert-title">טיפ חוויית לקוח</div>
+                    <p>ההתקנה היא השלב הנראה ביותר של הפרויקט. לקוחות זוכרים את החוויה ומשתפים עם שכנים וחברים. תקשורת מקצועית במהלך ההתקנה היא כלי שיווק ההפניות הטוב ביותר שלך.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTALLATION PHOTOS REQUIRED -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en" class="active">Required Installation Photos</span>
+                <span data-lang="es">Fotos de Instalación Requeridas</span>
+                <span data-lang="he">תמונות התקנה נדרשות</span>
+            </h2>
+
+            <div data-lang="en" class="active">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Stage</th><th>Required Photos</th><th>Purpose</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Pre-Installation</td><td>Roof condition, electrical panel, meter area</td><td>Baseline documentation, insurance</td></tr>
+                        <tr><td>Day 1: Mounting</td><td>Rail layout, roof penetrations with sealant, level check</td><td>QC verification, warranty</td></tr>
+                        <tr><td>Day 2: Panels</td><td>Panel placement, MC4 connections, string labels, Voc readings</td><td>Technical compliance, warranty</td></tr>
+                        <tr><td>Day 3: Electrical</td><td>Inverter mount, wiring, panel connections, SPD, disconnects</td><td>Code compliance, inspection prep</td></tr>
+                        <tr><td>Commissioning</td><td>Inverter display, monitoring app, production data</td><td>System verification, handover</td></tr>
+                        <tr><td>Completion</td><td>Full array from ground, clean site, signed certificate</td><td>Marketing, portfolio, client file</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert">
+                    <div class="alert-title">Photo Storage</div>
+                    <p>All photos uploaded to project folder in Google Drive within 24 hours. Naming convention: [ProjectID]-[Date]-[Stage]-[Description].jpg. Minimum 20 photos per residential project, 50+ for commercial.</p>
+                </div>
+            </div>
+
+            <div data-lang="es">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Etapa</th><th>Fotos Requeridas</th><th>Propósito</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Pre-Instalación</td><td>Condición del techo, panel eléctrico, área del medidor</td><td>Documentación base, seguro</td></tr>
+                        <tr><td>Día 1: Montaje</td><td>Layout de rieles, penetraciones con sellador, verificación de nivel</td><td>Verificación QC, garantía</td></tr>
+                        <tr><td>Día 2: Paneles</td><td>Colocación, conexiones MC4, etiquetas de string, lecturas Voc</td><td>Cumplimiento técnico</td></tr>
+                        <tr><td>Día 3: Eléctrico</td><td>Montaje de inversor, cableado, conexiones, SPD, desconectores</td><td>Cumplimiento de código</td></tr>
+                        <tr><td>Puesta en Marcha</td><td>Display inversor, app de monitoreo, datos de producción</td><td>Verificación del sistema</td></tr>
+                        <tr><td>Completación</td><td>Arreglo completo desde suelo, sitio limpio, certificado firmado</td><td>Marketing, portafolio</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div data-lang="he" dir="rtl">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>שלב</th><th>תמונות נדרשות</th><th>מטרה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>טרום-התקנה</td><td>מצב גג, לוח חשמל, אזור מונה</td><td>תיעוד בסיס, ביטוח</td></tr>
+                        <tr><td>יום 1: הרכבה</td><td>מערך מסילות, חדירות עם איטום, בדיקת פילוס</td><td>אימות QC, אחריות</td></tr>
+                        <tr><td>יום 2: פאנלים</td><td>הנחה, חיבורי MC4, תיוג מחרוזות, קריאות Voc</td><td>עמידה טכנית</td></tr>
+                        <tr><td>יום 3: חשמל</td><td>הרכבת ממיר, חיווט, חיבורים, SPD, מנתקים</td><td>עמידה בתקן</td></tr>
+                        <tr><td>הפעלה</td><td>תצוגת ממיר, אפליקציית ניטור, נתוני ייצור</td><td>אימות מערכת</td></tr>
+                        <tr><td>השלמה</td><td>מערך מלא מהקרקע, אתר נקי, אישור חתום</td><td>שיווק, תיק לקוח</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="step-nav">
+            <a href="crm-step8-inventory.html" class="outline">
+                <span data-lang="en" class="active">← Step 8: Inventory</span>
+                <span data-lang="es">← Paso 8: Inventario</span>
+                <span data-lang="he">שלב 8: מלאי →</span>
+            </a>
+            <a href="crm-value-chain.html">
+                <span data-lang="en" class="active">CRM Pipeline</span>
+                <span data-lang="es">Pipeline CRM</span>
+                <span data-lang="he">שרשרת CRM</span>
+            </a>
+            <a href="crm-step10-om.html">
+                <span data-lang="en" class="active">Step 10: O&M →</span>
+                <span data-lang="es">Paso 10: O&M →</span>
+                <span data-lang="he">← שלב 10: תפעול</span>
+            </a>
+        </div>
+    </div>
+
+    <footer class="footer">© 2025 Solaris Energy Panama — Internal Operations Dashboard</footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => el.classList.add('active'));
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.lang-btn[onclick*="' + lang + '"]').classList.add('active');
+            if (lang === 'he') { document.body.setAttribute('dir', 'rtl'); } else { document.body.removeAttribute('dir'); }
+        }
+    </script>
+</body>
+</html>

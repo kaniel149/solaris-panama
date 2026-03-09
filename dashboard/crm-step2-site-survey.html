@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 2: Site Survey — Solaris CRM</title>
+    <meta name="description" content="Complete site survey process for Panama solar installations. Pre-survey, on-site checklist, roof assessment, and documentation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            line-height: 1.6;
+        }
+
+        [dir="rtl"] { direction: rtl; text-align: right; }
+
+        .lang-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav {
+            background: var(--green); padding: 16px 40px;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+
+        .top-nav a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.8; transition: opacity 0.3s; }
+        .top-nav a:hover { opacity: 1; }
+        .top-nav .sep { color: var(--ash); font-size: 12px; }
+        .top-nav .current { color: var(--pearl); opacity: 1; font-weight: 600; font-size: 14px; }
+
+        .hero {
+            background: linear-gradient(135deg, #E65100 0%, #BF360C 100%);
+            padding: 100px 40px 80px; position: relative; overflow: hidden;
+        }
+
+        .hero::before {
+            content: ''; position: absolute; top: -30%; right: -10%;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+        }
+
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.12); color: white;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 24px;
+        }
+
+        .step-badge .num {
+            background: white; color: #E65100; width: 24px; height: 24px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700;
+        }
+
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); color: white; margin-bottom: 16px; line-height: 1.15; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 640px; }
+
+        .content-section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+        .content-section.alt { background: var(--sand); max-width: 100%; }
+        .content-section.alt .inner { max-width: 1100px; margin: 0 auto; }
+        .content-section.dark { background: var(--green); max-width: 100%; color: var(--pearl); }
+        .content-section.dark .inner { max-width: 1100px; margin: 0 auto; }
+
+        .section-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green); margin-bottom: 8px; }
+        .content-section.dark .section-title { color: var(--pearl); }
+        .section-subtitle { color: var(--ash); font-size: 15px; margin-bottom: 40px; }
+        .content-section.dark .section-subtitle { color: rgba(255,255,255,0.6); }
+
+        /* ===== TWO COLUMN LAYOUT ===== */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+        /* ===== PRE-SURVEY CARDS ===== */
+        .presurvey-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 28px; box-shadow: var(--shadow-card); border: 1px solid var(--mist);
+        }
+
+        .presurvey-card h3 { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 12px; }
+
+        .presurvey-card ul {
+            list-style: none; padding: 0;
+        }
+
+        .presurvey-card li {
+            padding: 8px 0; font-size: 14px; color: var(--slate);
+            display: flex; align-items: flex-start; gap: 10px;
+            border-bottom: 1px solid var(--cloud);
+        }
+
+        .presurvey-card li:last-child { border-bottom: none; }
+
+        .presurvey-card li::before {
+            content: '☐'; color: var(--gold); font-weight: 700; flex-shrink: 0; font-size: 16px;
+        }
+
+        /* ===== CHECKLIST ===== */
+        .checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+
+        .checklist-card {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-card); padding: 24px;
+        }
+
+        .checklist-card h4 { color: var(--gold); font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+        .checklist-card ul { list-style: none; padding: 0; }
+
+        .checklist-card li {
+            color: rgba(255,255,255,0.8); font-size: 14px; padding: 6px 0;
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+
+        .checklist-card li::before { content: '☐'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+        /* ===== ROOF TYPES ===== */
+        .roof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 768px) { .roof-grid { grid-template-columns: 1fr; } }
+
+        .roof-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 32px; box-shadow: var(--shadow-card); border: 1px solid var(--mist);
+            text-align: center; transition: transform 0.3s;
+        }
+
+        .roof-card:hover { transform: translateY(-3px); }
+
+        .roof-icon { font-size: 48px; margin-bottom: 12px; display: block; }
+        .roof-card h3 { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+        .roof-card .roof-common { font-size: 12px; color: var(--gold); font-weight: 600; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        .roof-pros, .roof-cons { text-align: left; margin-bottom: 12px; }
+        [dir="rtl"] .roof-pros, [dir="rtl"] .roof-cons { text-align: right; }
+
+        .roof-pros h5, .roof-cons h5 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 700; }
+        .roof-pros h5 { color: var(--green); }
+        .roof-cons h5 { color: #C62828; }
+
+        .roof-pros ul, .roof-cons ul { list-style: none; padding: 0; }
+
+        .roof-pros li, .roof-cons li {
+            font-size: 13px; color: var(--slate); padding: 3px 0;
+            display: flex; align-items: flex-start; gap: 6px;
+        }
+
+        .roof-pros li::before { content: '+'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+        .roof-cons li::before { content: '−'; color: #C62828; font-weight: 700; flex-shrink: 0; }
+
+        /* ===== TOOLS TABLE ===== */
+        .tools-table {
+            width: 100%; border-collapse: collapse;
+            background: white; border-radius: var(--radius-card);
+            overflow: hidden; box-shadow: var(--shadow-card);
+        }
+
+        .tools-table th {
+            background: var(--green); color: var(--pearl);
+            padding: 14px 20px; font-size: 13px; font-weight: 600;
+            text-align: left; letter-spacing: 0.05em;
+        }
+
+        [dir="rtl"] .tools-table th { text-align: right; }
+
+        .tools-table td { padding: 12px 20px; border-bottom: 1px solid var(--mist); font-size: 14px; }
+        .tools-table tr:last-child td { border-bottom: none; }
+        .tools-table tr:hover td { background: var(--cloud); }
+
+        .essential-badge {
+            display: inline-block; background: var(--green); color: white;
+            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
+        }
+
+        .nice-badge {
+            display: inline-block; background: var(--mist); color: var(--slate);
+            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
+        }
+
+        /* ===== PHOTO DOCS ===== */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+        .photo-card {
+            background: white; border-radius: var(--radius-card);
+            padding: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--mist);
+            text-align: center;
+        }
+
+        .photo-card .photo-icon { font-size: 36px; margin-bottom: 8px; }
+        .photo-card h4 { font-size: 14px; color: var(--green); margin-bottom: 4px; }
+        .photo-card p { font-size: 12px; color: var(--ash); }
+
+        .photo-card .photo-required {
+            display: inline-block; margin-top: 8px;
+            font-size: 10px; font-weight: 700; padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .photo-card .photo-required.req { background: #FFEBEE; color: #C62828; }
+        .photo-card .photo-required.opt { background: var(--sand); color: var(--slate); }
+
+        /* ===== SURVEY REPORT ===== */
+        .report-template {
+            background: white; border-radius: var(--radius-card);
+            padding: 40px; box-shadow: var(--shadow-card); border: 1px solid var(--mist);
+            max-width: 700px; margin: 0 auto;
+        }
+
+        .report-template h3 {
+            font-family: 'Playfair Display', serif; font-size: 22px;
+            color: var(--green); margin-bottom: 24px; text-align: center;
+            border-bottom: 2px solid var(--gold); padding-bottom: 12px;
+        }
+
+        .report-section { margin-bottom: 24px; }
+        .report-section h4 { font-size: 14px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 700; }
+
+        .report-field {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px dashed var(--mist); font-size: 14px;
+        }
+
+        .report-field .label { color: var(--slate); }
+        .report-field .value { color: var(--charcoal); font-weight: 600; font-style: italic; }
+
+        /* ===== NAV ===== */
+        .step-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 40px; background: var(--sand); border-top: 1px solid var(--mist);
+        }
+
+        .step-nav a {
+            display: inline-flex; align-items: center; gap: 8px;
+            text-decoration: none; color: var(--green); font-weight: 600; font-size: 15px;
+            padding: 12px 24px; border-radius: var(--radius-btn); transition: background 0.3s;
+        }
+
+        .step-nav a:hover { background: rgba(11,61,46,0.06); }
+        .step-nav .next { background: var(--green); color: var(--pearl); }
+        .step-nav .next:hover { background: var(--green-canopy); }
+
+        .footer { background: var(--charcoal); padding: 40px; text-align: center; color: var(--ash); font-size: 13px; }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .hero { padding: 80px 20px 60px; }
+            .top-nav { padding: 12px 20px; }
+            .content-section { padding: 60px 20px; }
+            .content-section.alt, .content-section.dark { padding: 60px 20px; }
+            .step-nav { padding: 24px 20px; flex-direction: column; gap: 12px; }
+            .checklist-grid { grid-template-columns: 1fr; }
+            .photo-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <nav class="top-nav">
+        <a href="index.html" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</a>
+        <span class="sep">›</span>
+        <a href="crm-value-chain.html" data-en="CRM Value Chain" data-es="Cadena de Valor" data-he="שרשרת ערך">CRM Value Chain</a>
+        <span class="sep">›</span>
+        <span class="current" data-en="Step 2: Site Survey" data-es="Paso 2: Inspección del Sitio" data-he="שלב 2: סקר אתר">Step 2: Site Survey</span>
+    </nav>
+
+    <section class="hero">
+        <div class="step-badge">
+            <span class="num">2</span>
+            <span data-en="EVALUATE PHASE" data-es="FASE DE EVALUACIÓN" data-he="שלב הערכה">EVALUATE PHASE</span>
+        </div>
+        <h1>
+            <span data-en="Site " data-es="Inspección del " data-he="סקר ">Site </span>
+            <span data-en="Survey" data-es="Sitio" data-he="אתר">Survey</span>
+        </h1>
+        <p data-en="Professional on-site evaluation covering roof assessment, shading analysis, electrical review, and full documentation. The foundation of every accurate solar proposal."
+           data-es="Evaluación profesional en sitio: techo, sombras, electricidad y documentación completa. La base de toda propuesta solar precisa."
+           data-he="הערכה מקצועית באתר: גג, הצללה, חשמל ותיעוד מלא. הבסיס לכל הצעה סולארית מדויקת.">
+            Professional on-site evaluation. The foundation of every accurate solar proposal.
+        </p>
+    </section>
+
+    <!-- Pre-Survey -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="Pre-Survey Preparation" data-es="Preparación Pre-Inspección" data-he="הכנה טרום-סקר">Pre-Survey Preparation</h2>
+        <p class="section-subtitle" data-en="Complete these steps before arriving at the client's property"
+           data-es="Complete estos pasos antes de llegar a la propiedad del cliente"
+           data-he="השלימו שלבים אלו לפני ההגעה לנכס הלקוח">
+            Complete these steps before arriving at the client's property
+        </p>
+
+        <div class="two-col">
+            <div class="presurvey-card">
+                <h3 data-en="🛰️ Google Maps Satellite Review" data-es="🛰️ Revisión Satelital Google Maps" data-he="🛰️ סקירת לוויין Google Maps">🛰️ Google Maps Satellite Review</h3>
+                <ul>
+                    <li data-en="Check roof orientation (ideal: south-facing or flat)" data-es="Verificar orientación del techo (ideal: sur o plano)" data-he="בדיקת כיוון גג (אידיאלי: דרום או שטוח)">Check roof orientation (ideal: south-facing or flat)</li>
+                    <li data-en="Estimate roof area from satellite view" data-es="Estimar área del techo desde vista satelital" data-he="הערכת שטח גג מתצוגת לוויין">Estimate roof area from satellite view</li>
+                    <li data-en="Identify potential shading sources (trees, buildings, towers)" data-es="Identificar fuentes de sombra (árboles, edificios, torres)" data-he="זיהוי מקורות הצללה (עצים, מבנים, מגדלים)">Identify shading sources (trees, buildings, towers)</li>
+                    <li data-en="Note nearby structures and terrain elevation" data-es="Notar estructuras cercanas y elevación del terreno" data-he="ציון מבנים סמוכים ותבליט שטח">Note nearby structures and terrain</li>
+                    <li data-en="Verify address and access route" data-es="Verificar dirección y ruta de acceso" data-he="אימות כתובת ודרך גישה">Verify address and access route</li>
+                    <li data-en="Pre-size system: estimate kWp potential" data-es="Pre-dimensionar: estimar potencial kWp" data-he="מדידה מוקדמת: הערכת פוטנציאל kWp">Pre-size system: estimate kWp potential</li>
+                </ul>
+            </div>
+
+            <div class="presurvey-card">
+                <h3 data-en="📝 Client Questionnaire (WhatsApp)" data-es="📝 Cuestionario al Cliente (WhatsApp)" data-he="📝 שאלון ללקוח (WhatsApp)">📝 Client Questionnaire (WhatsApp)</h3>
+                <ul>
+                    <li data-en="Send latest electricity bill photo request" data-es="Solicitar foto de factura de luz más reciente" data-he="בקשת תמונת חשבון חשמל אחרון">Request latest electricity bill photo</li>
+                    <li data-en="Confirm property ownership status" data-es="Confirmar estado de propiedad" data-he="אישור מצב בעלות על הנכס">Confirm property ownership</li>
+                    <li data-en="Ask about roof age and last maintenance" data-es="Preguntar edad del techo y último mantenimiento" data-he="שאלה על גיל הגג ותחזוקה אחרונה">Roof age and last maintenance</li>
+                    <li data-en="Any planned renovations or expansions?" data-es="¿Renovaciones o ampliaciones planeadas?" data-he="שיפוצים או הרחבות מתוכננים?">Planned renovations or expansions?</li>
+                    <li data-en="Confirm someone 18+ will be present" data-es="Confirmar que alguien +18 estará presente" data-he="אישור שמישהו מעל 18 יהיה נוכח">Confirm someone 18+ present</li>
+                    <li data-en="Preferred survey time slot" data-es="Horario preferido para inspección" data-he="שעת סקר מועדפת">Preferred survey time slot</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- On-Site Checklist -->
+    <section class="content-section dark">
+        <div class="inner">
+            <h2 class="section-title" data-en="On-Site Survey Checklist" data-es="Lista de Verificación en Sitio" data-he="רשימת בדיקה באתר">On-Site Survey Checklist</h2>
+            <p class="section-subtitle" data-en="Complete every item during the site visit — typically 45-60 minutes"
+               data-es="Complete cada punto durante la visita — típicamente 45-60 minutos"
+               data-he="השלימו כל פריט בביקור — בדרך כלל 45-60 דקות">
+                Complete every item — typically 45-60 minutes
+            </p>
+
+            <div class="checklist-grid">
+                <div class="checklist-card">
+                    <h4>📐 <span data-en="Roof Measurements" data-es="Mediciones del Techo" data-he="מדידות גג">Roof Measurements</span></h4>
+                    <ul>
+                        <li data-en="Total roof area (length × width)" data-es="Área total del techo (largo × ancho)" data-he="שטח גג כולל (אורך × רוחב)">Total roof area (length × width)</li>
+                        <li data-en="Usable area (minus vents, skylights, edges)" data-es="Área útil (menos ventilaciones, tragaluces, bordes)" data-he="שטח שמיש (פחות פתחים, שוליים)">Usable area (minus vents, edges)</li>
+                        <li data-en="Roof pitch angle (degrees)" data-es="Inclinación del techo (grados)" data-he="זווית שיפוע גג (מעלות)">Roof pitch angle (degrees)</li>
+                        <li data-en="Ridge height and eave height" data-es="Altura de cumbrera y alero" data-he="גובה קורת גג וגובה מרזב">Ridge and eave height</li>
+                        <li data-en="Number of roof planes/sections" data-es="Número de planos/secciones del techo" data-he="מספר משטחי/חלקי גג">Number of roof planes</li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h4>🧭 <span data-en="Tilt & Azimuth" data-es="Inclinación y Azimut" data-he="שיפוע ואזימוט">Tilt & Azimuth</span></h4>
+                    <ul>
+                        <li data-en="Compass bearing of each roof face" data-es="Orientación de cada cara del techo" data-he="כיוון מצפן של כל פן גג">Compass bearing of each face</li>
+                        <li data-en="Optimal: 0-15° tilt for Panama (8°N lat)" data-es="Óptimo: 0-15° inclinación para Panamá (8°N lat)" data-he="אופטימלי: 0-15° עבור פנמה (8°N)">Optimal: 0-15° tilt (8°N latitude)</li>
+                        <li data-en="Document deviations from optimal" data-es="Documentar desviaciones del óptimo" data-he="תיעוד סטיות מהאופטימום">Document deviations from optimal</li>
+                        <li data-en="Consider east-west split for flat roofs" data-es="Considerar split este-oeste para techos planos" data-he="שקילת פיצול מזרח-מערב לגגות שטוחים">East-west split for flat roofs</li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h4>🌳 <span data-en="Shading Analysis" data-es="Análisis de Sombras" data-he="ניתוח הצללה">Shading Analysis</span></h4>
+                    <ul>
+                        <li data-en="Morning shade: east obstructions (6-10 AM)" data-es="Sombra matutina: obstrucciones al este (6-10 AM)" data-he="הצללת בוקר: חסימות מזרח (6-10)">Morning shade: east (6-10 AM)</li>
+                        <li data-en="Midday shade: south obstructions (10 AM-2 PM)" data-es="Sombra mediodía: obstrucciones al sur (10 AM-2 PM)" data-he="הצללת צהריים: דרום (10-14)">Midday: south (10 AM-2 PM)</li>
+                        <li data-en="Afternoon shade: west obstructions (2-6 PM)" data-es="Sombra vespertina: obstrucciones al oeste (2-6 PM)" data-he="הצללת אחה&quot;צ: מערב (14-18)">Afternoon: west (2-6 PM)</li>
+                        <li data-en="Tree growth projection (5-10 year canopy)" data-es="Proyección de crecimiento de árboles (dosel 5-10 años)" data-he="תחזית צמיחת עצים (5-10 שנים)">Tree growth projection (5-10yr)</li>
+                        <li data-en="Shading percentage estimate per section" data-es="Porcentaje estimado de sombra por sección" data-he="הערכת אחוז הצללה לפי חלק">Shade % estimate per section</li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h4>🏗️ <span data-en="Structural Condition" data-es="Condición Estructural" data-he="מצב מבני">Structural Condition</span></h4>
+                    <ul>
+                        <li data-en="Roof material type and condition" data-es="Tipo y condición del material del techo" data-he="סוג חומר גג ומצבו">Roof material and condition</li>
+                        <li data-en="Signs of leaks, rust, or damage" data-es="Señales de filtraciones, óxido o daños" data-he="סימני נזילות, חלודה או נזק">Leaks, rust, or damage signs</li>
+                        <li data-en="Rafter/purlin spacing and condition" data-es="Espaciado y condición de vigas/correas" data-he="מרווח ומצב קורות">Rafter/purlin spacing</li>
+                        <li data-en="Load-bearing capacity assessment" data-es="Evaluación de capacidad de carga" data-he="הערכת כושר נשיאה">Load-bearing capacity</li>
+                        <li data-en="Estimated remaining roof life" data-es="Vida útil restante estimada del techo" data-he="אומדן חיי גג נותרים">Remaining roof life estimate</li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h4>⚡ <span data-en="Electrical Panel" data-es="Panel Eléctrico" data-he="לוח חשמל">Electrical Panel</span></h4>
+                    <ul>
+                        <li data-en="Main breaker size (amps)" data-es="Tamaño del breaker principal (amperios)" data-he="גודל מפסק ראשי (אמפר)">Main breaker size (amps)</li>
+                        <li data-en="Available breaker slots" data-es="Espacios disponibles para breakers" data-he="חריצי מפסקים פנויים">Available breaker slots</li>
+                        <li data-en="Panel brand and age" data-es="Marca y edad del panel" data-he="מותג וגיל הלוח">Panel brand and age</li>
+                        <li data-en="Wire gauge to meter (copper/aluminum)" data-es="Calibre del cable al medidor (cobre/aluminio)" data-he="עובי חוט למונה (נחושת/אלומיניום)">Wire gauge (copper/aluminum)</li>
+                        <li data-en="Grounding system present and type" data-es="Sistema de puesta a tierra presente y tipo" data-he="מערכת הארקה קיימת וסוג">Grounding system type</li>
+                        <li data-en="Distance from panel to proposed inverter location" data-es="Distancia del panel a ubicación propuesta del inversor" data-he="מרחק לוח למיקום ממיר מוצע">Panel to inverter distance</li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h4>📊 <span data-en="Meter & Service" data-es="Medidor y Servicio" data-he="מונה ושירות">Meter & Service</span></h4>
+                    <ul>
+                        <li data-en="ENSA meter number (NIS)" data-es="Número de medidor ENSA (NIS)" data-he="מספר מונה ENSA (NIS)">ENSA meter number (NIS)</li>
+                        <li data-en="Service type: single-phase or three-phase" data-es="Tipo de servicio: monofásico o trifásico" data-he="סוג שירות: חד-פאזי או תלת-פאזי">Single-phase or three-phase</li>
+                        <li data-en="Meter location and accessibility" data-es="Ubicación y accesibilidad del medidor" data-he="מיקום מונה ונגישות">Meter location accessibility</li>
+                        <li data-en="Transformer distance and capacity" data-es="Distancia y capacidad del transformador" data-he="מרחק שנאי וקיבולת">Transformer distance/capacity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roof Types -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="Panama Roof Types" data-es="Tipos de Techo en Panamá" data-he="סוגי גגות בפנמה">Panama Roof Types</h2>
+        <p class="section-subtitle" data-en="Pros and cons for solar installation on each roof type common in the Azuero Peninsula"
+           data-es="Pros y contras para instalación solar en cada tipo de techo común en la Península de Azuero"
+           data-he="יתרונות וחסרונות להתקנה סולארית על כל סוג גג נפוץ בחצי האי אזוארו">
+            Pros and cons for each roof type common in the Azuero Peninsula
+        </p>
+
+        <div class="roof-grid">
+            <div class="roof-card">
+                <span class="roof-icon">🏭</span>
+                <h3 data-en="Metal (Zinc)" data-es="Metal (Zinc)" data-he="מתכת (אבץ)">Metal (Zinc)</h3>
+                <div class="roof-common" data-en="Most Common in Azuero" data-es="Más Común en Azuero" data-he="הנפוץ ביותר באזוארו">Most Common in Azuero</div>
+                <div class="roof-pros">
+                    <h5 data-en="Pros" data-es="Pros" data-he="יתרונות">Pros</h5>
+                    <ul>
+                        <li data-en="Fastest installation (clamp mounting)" data-es="Instalación más rápida (montaje con clamps)" data-he="התקנה מהירה ביותר (חיבור תפסנים)">Fastest install (clamp mounting)</li>
+                        <li data-en="No roof penetrations needed" data-es="Sin perforaciones en el techo" data-he="ללא חדירה לגג">No roof penetrations</li>
+                        <li data-en="Lightweight mounting systems" data-es="Sistemas de montaje livianos" data-he="מערכות הרכבה קלות">Lightweight mounting</li>
+                        <li data-en="Good heat dissipation" data-es="Buena disipación de calor" data-he="פיזור חום טוב">Good heat dissipation</li>
+                    </ul>
+                </div>
+                <div class="roof-cons">
+                    <h5 data-en="Cons" data-es="Contras" data-he="חסרונות">Cons</h5>
+                    <ul>
+                        <li data-en="May need rust treatment first" data-es="Puede necesitar tratamiento anti-óxido" data-he="עשוי לדרוש טיפול בחלודה">May need rust treatment</li>
+                        <li data-en="Shorter roof life (15-25 years)" data-es="Vida útil más corta (15-25 años)" data-he="חיי גג קצרים יותר (15-25 שנה)">Shorter roof life (15-25yr)</li>
+                        <li data-en="Noise during heavy rain" data-es="Ruido durante lluvias fuertes" data-he="רעש בגשם חזק">Noise in heavy rain</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="roof-card">
+                <span class="roof-icon">🏢</span>
+                <h3 data-en="Concrete (Losa)" data-es="Concreto (Losa)" data-he="בטון (לוסה)">Concrete (Losa)</h3>
+                <div class="roof-common" data-en="Common in Urban Areas" data-es="Común en Áreas Urbanas" data-he="נפוץ באזורים עירוניים">Common in Urban Areas</div>
+                <div class="roof-pros">
+                    <h5 data-en="Pros" data-es="Pros" data-he="יתרונות">Pros</h5>
+                    <ul>
+                        <li data-en="Excellent structural capacity" data-es="Excelente capacidad estructural" data-he="כושר נשיאה מצוין">Excellent structural capacity</li>
+                        <li data-en="Long roof life (40+ years)" data-es="Vida útil larga (40+ años)" data-he="חיי גג ארוכים (40+ שנה)">Long roof life (40+ years)</li>
+                        <li data-en="Optimal tilt with ballast mounts" data-es="Inclinación óptima con montaje lastrado" data-he="שיפוע אופטימלי עם הרכבת משקולות">Optimal tilt with ballast</li>
+                        <li data-en="Can use tilt frames for better angle" data-es="Puede usar marcos de inclinación" data-he="אפשר להשתמש במסגרות הטיה">Tilt frames for better angle</li>
+                    </ul>
+                </div>
+                <div class="roof-cons">
+                    <h5 data-en="Cons" data-es="Contras" data-he="חסרונות">Cons</h5>
+                    <ul>
+                        <li data-en="Requires waterproofing penetrations" data-es="Requiere impermeabilizar perforaciones" data-he="דורש איטום חדירות">Waterproofing penetrations</li>
+                        <li data-en="Heavier mounting hardware" data-es="Herrajes de montaje más pesados" data-he="חומרת הרכבה כבדה יותר">Heavier mounting hardware</li>
+                        <li data-en="More labor-intensive install" data-es="Instalación más laboriosa" data-he="התקנה עתירת עבודה">More labor-intensive</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="roof-card">
+                <span class="roof-icon">🏠</span>
+                <h3 data-en="Clay/Concrete Tile" data-es="Teja de Arcilla/Concreto" data-he="רעפי חרס/בטון">Clay/Concrete Tile</h3>
+                <div class="roof-common" data-en="Premium Residences" data-es="Residencias Premium" data-he="מגורים יוקרתיים">Premium Residences</div>
+                <div class="roof-pros">
+                    <h5 data-en="Pros" data-es="Pros" data-he="יתרונות">Pros</h5>
+                    <ul>
+                        <li data-en="Long-lasting (50+ years)" data-es="Duradero (50+ años)" data-he="עמיד (50+ שנה)">Long-lasting (50+ years)</li>
+                        <li data-en="Aesthetically appealing installs" data-es="Instalaciones estéticamente atractivas" data-he="התקנות אסתטיות">Aesthetically appealing</li>
+                        <li data-en="Good ventilation underneath" data-es="Buena ventilación debajo" data-he="אוורור טוב מתחת">Good ventilation underneath</li>
+                    </ul>
+                </div>
+                <div class="roof-cons">
+                    <h5 data-en="Cons" data-es="Contras" data-he="חסרונות">Cons</h5>
+                    <ul>
+                        <li data-en="Most complex installation" data-es="Instalación más compleja" data-he="התקנה מורכבת ביותר">Most complex installation</li>
+                        <li data-en="Tiles may crack during install" data-es="Tejas pueden romperse durante instalación" data-he="רעפים עלולים להישבר">Tiles may crack</li>
+                        <li data-en="Special tile hooks required" data-es="Ganchos especiales para tejas requeridos" data-he="נדרשים ווי רעפים מיוחדים">Special tile hooks needed</li>
+                        <li data-en="Higher installation cost (+15-20%)" data-es="Mayor costo de instalación (+15-20%)" data-he="עלות התקנה גבוהה יותר (+15-20%)">Higher cost (+15-20%)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Needed -->
+    <section class="content-section alt">
+        <div class="inner">
+            <h2 class="section-title" data-en="Survey Tools & Equipment" data-es="Herramientas y Equipos de Inspección" data-he="כלים וציוד לסקר">Survey Tools & Equipment</h2>
+            <p class="section-subtitle" data-en="Essential and recommended tools for every site survey"
+               data-es="Herramientas esenciales y recomendadas para cada inspección"
+               data-he="כלים חיוניים ומומלצים לכל סקר אתר">
+                Essential and recommended tools for every site survey
+            </p>
+
+            <table class="tools-table">
+                <thead>
+                    <tr>
+                        <th data-en="Tool" data-es="Herramienta" data-he="כלי">Tool</th>
+                        <th data-en="Purpose" data-es="Propósito" data-he="שימוש">Purpose</th>
+                        <th data-en="Priority" data-es="Prioridad" data-he="עדיפות">Priority</th>
+                        <th data-en="Est. Cost" data-es="Costo Est." data-he="עלות מוערכת">Est. Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong data-en="Laser Distance Measurer" data-es="Medidor Láser de Distancia" data-he="מד מרחק לייזר">Laser Distance Measurer</strong></td>
+                        <td data-en="Roof dimensions, heights, distances" data-es="Dimensiones del techo, alturas, distancias" data-he="מידות גג, גבהים, מרחקים">Roof dimensions, heights</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>$80-150</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Digital Compass / Inclinometer" data-es="Brújula Digital / Inclinómetro" data-he="מצפן דיגיטלי / מד שיפוע">Digital Compass / Inclinometer</strong></td>
+                        <td data-en="Azimuth and tilt angle measurements" data-es="Medición de azimut y ángulo de inclinación" data-he="מדידת אזימוט וזווית שיפוע">Azimuth and tilt angle</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>$30-60</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Multimeter" data-es="Multímetro" data-he="מולטימטר">Multimeter</strong></td>
+                        <td data-en="Voltage, grounding, wire testing" data-es="Voltaje, puesta a tierra, prueba de cables" data-he="מתח, הארקה, בדיקת חוטים">Voltage, grounding checks</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>$40-80</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Smartphone Camera" data-es="Cámara del Teléfono" data-he="מצלמת סמארטפון">Smartphone Camera</strong></td>
+                        <td data-en="Photo documentation of all areas" data-es="Documentación fotográfica de todas las áreas" data-he="תיעוד צילומי של כל האזורים">Photo documentation</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Tape Measure (30m)" data-es="Cinta Métrica (30m)" data-he="סרט מדידה (30 מ')">Tape Measure (30m)</strong></td>
+                        <td data-en="Ground measurements, cable runs" data-es="Mediciones en suelo, tendido de cables" data-he="מדידות קרקע, מסלולי כבלים">Ground measurements, runs</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>$15-25</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="DJI Mini Drone" data-es="Dron DJI Mini" data-he="רחפן DJI Mini">DJI Mini Drone</strong></td>
+                        <td data-en="Aerial roof photos, hard-to-reach areas" data-es="Fotos aéreas del techo, áreas difíciles" data-he="צילומי גג אוויריים, אזורים קשי גישה">Aerial roof photos</td>
+                        <td><span class="nice-badge">Recommended</span></td>
+                        <td>$300-500</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Solar Pathfinder / Sun Eye" data-es="Solar Pathfinder / Sun Eye" data-he="Solar Pathfinder / Sun Eye">Solar Pathfinder / Sun Eye</strong></td>
+                        <td data-en="Professional shade analysis with annual sun path" data-es="Análisis profesional de sombras con trayectoria solar anual" data-he="ניתוח הצללה מקצועי עם מסלול שמש שנתי">Shade analysis with sun path</td>
+                        <td><span class="nice-badge">Recommended</span></td>
+                        <td>$200-400</td>
+                    </tr>
+                    <tr>
+                        <td><strong data-en="Ladder (Extension)" data-es="Escalera (Extensible)" data-he="סולם (מתקפל)">Ladder (Extension)</strong></td>
+                        <td data-en="Roof access for direct inspection" data-es="Acceso al techo para inspección directa" data-he="גישה לגג לבדיקה ישירה">Roof access</td>
+                        <td><span class="essential-badge">Essential</span></td>
+                        <td>$100-200</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Documentation / Photos Required -->
+    <section class="content-section">
+        <h2 class="section-title" data-en="Required Documentation Photos" data-es="Fotos de Documentación Requeridas" data-he="תמונות תיעוד נדרשות">Required Documentation Photos</h2>
+        <p class="section-subtitle" data-en="Minimum photo set for every site survey — uploaded to CRM within 24 hours"
+           data-es="Conjunto mínimo de fotos para cada inspección — subidas al CRM en 24 horas"
+           data-he="סט תמונות מינימלי לכל סקר — נטען ל-CRM תוך 24 שעות">
+            Minimum photo set — uploaded to CRM within 24 hours
+        </p>
+
+        <div class="photo-grid">
+            <div class="photo-card">
+                <div class="photo-icon">🏠</div>
+                <h4 data-en="Full Roof View" data-es="Vista Completa del Techo" data-he="מבט כללי על הגג">Full Roof View</h4>
+                <p data-en="From ground level, all faces visible" data-es="Desde nivel de suelo, todas las caras" data-he="מגובה הקרקע, כל הפנים">Ground level, all faces</p>
+                <span class="photo-required req" data-en="Required" data-es="Requerido" data-he="חובה">Required</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">📏</div>
+                <h4 data-en="Roof Surface Close-up" data-es="Superficie del Techo de Cerca" data-he="תקריב משטח גג">Roof Surface Close-up</h4>
+                <p data-en="Material condition, rust, damage" data-es="Condición del material, óxido, daños" data-he="מצב חומר, חלודה, נזק">Material condition detail</p>
+                <span class="photo-required req" data-en="Required" data-es="Requerido" data-he="חובה">Required</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">⚡</div>
+                <h4 data-en="Electrical Panel" data-es="Panel Eléctrico" data-he="לוח חשמל">Electrical Panel</h4>
+                <p data-en="Open panel, breaker labels visible" data-es="Panel abierto, etiquetas visibles" data-he="לוח פתוח, תוויות נראות">Open panel, labels visible</p>
+                <span class="photo-required req" data-en="Required" data-es="Requerido" data-he="חובה">Required</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">📊</div>
+                <h4 data-en="ENSA Meter" data-es="Medidor ENSA" data-he="מונה ENSA">ENSA Meter</h4>
+                <p data-en="Meter number (NIS) clearly visible" data-es="Número de medidor (NIS) visible" data-he="מספר מונה (NIS) ברור">Meter number visible</p>
+                <span class="photo-required req" data-en="Required" data-es="Requerido" data-he="חובה">Required</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">🌳</div>
+                <h4 data-en="Surroundings / Shade" data-es="Alrededores / Sombra" data-he="סביבה / הצללה">Surroundings / Shade</h4>
+                <p data-en="Trees, buildings, shade sources" data-es="Árboles, edificios, fuentes de sombra" data-he="עצים, מבנים, מקורות הצללה">Shade sources documented</p>
+                <span class="photo-required req" data-en="Required" data-es="Requerido" data-he="חובה">Required</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">🔌</div>
+                <h4 data-en="Cable/Conduit Routes" data-es="Rutas de Cables/Tubería" data-he="מסלולי כבלים/צנרת">Cable Routes</h4>
+                <p data-en="Proposed wire path from roof to panel" data-es="Ruta propuesta del techo al panel" data-he="מסלול מוצע מגג ללוח">Roof to panel path</p>
+                <span class="photo-required opt" data-en="Recommended" data-es="Recomendado" data-he="מומלץ">Recommended</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">🏗️</div>
+                <h4 data-en="Roof Structure (Below)" data-es="Estructura del Techo (Debajo)" data-he="מבנה גג (מלמטה)">Roof Structure</h4>
+                <p data-en="Rafters, purlins from inside/attic" data-es="Vigas, correas desde interior/ático" data-he="קורות, צלעות מפנים/עלייה">Rafters from inside</p>
+                <span class="photo-required opt" data-en="Recommended" data-es="Recomendado" data-he="מומלץ">Recommended</span>
+            </div>
+            <div class="photo-card">
+                <div class="photo-icon">🚁</div>
+                <h4 data-en="Drone Aerial View" data-es="Vista Aérea con Dron" data-he="מבט אווירי רחפן">Drone Aerial</h4>
+                <p data-en="Top-down roof view if drone available" data-es="Vista cenital del techo si hay dron" data-he="מבט מלמעלה אם רחפן זמין">Top-down if available</p>
+                <span class="photo-required opt" data-en="Recommended" data-es="Recomendado" data-he="מומלץ">Recommended</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Survey Report Template -->
+    <section class="content-section alt">
+        <div class="inner">
+            <h2 class="section-title" data-en="Survey Report Template" data-es="Plantilla del Informe de Inspección" data-he="תבנית דוח סקר">Survey Report Template</h2>
+            <p class="section-subtitle" data-en="Standardized report generated after every site visit"
+               data-es="Informe estandarizado generado después de cada visita"
+               data-he="דוח תקני שנוצר אחרי כל ביקור">
+                Standardized report generated after every site visit
+            </p>
+
+            <div class="report-template">
+                <h3>SOLARIS ENERGY — SITE SURVEY REPORT</h3>
+
+                <div class="report-section">
+                    <h4 data-en="Client Information" data-es="Información del Cliente" data-he="פרטי לקוח">Client Information</h4>
+                    <div class="report-field">
+                        <span class="label" data-en="Client Name" data-es="Nombre del Cliente" data-he="שם לקוח">Client Name</span>
+                        <span class="value">_________________</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Address" data-es="Dirección" data-he="כתובת">Address</span>
+                        <span class="value">_________________</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Survey Date" data-es="Fecha de Inspección" data-he="תאריך סקר">Survey Date</span>
+                        <span class="value">____/____/______</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Surveyor" data-es="Inspector" data-he="סוקר">Surveyor</span>
+                        <span class="value">_________________</span>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4 data-en="Roof Assessment" data-es="Evaluación del Techo" data-he="הערכת גג">Roof Assessment</h4>
+                    <div class="report-field">
+                        <span class="label" data-en="Roof Type" data-es="Tipo de Techo" data-he="סוג גג">Roof Type</span>
+                        <span class="value">Metal / Concrete / Tile</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Total Area" data-es="Área Total" data-he="שטח כולל">Total Area</span>
+                        <span class="value">______ m²</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Usable Area" data-es="Área Útil" data-he="שטח שמיש">Usable Area</span>
+                        <span class="value">______ m²</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Orientation" data-es="Orientación" data-he="כיוון">Orientation</span>
+                        <span class="value">______° (azimuth)</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Tilt Angle" data-es="Ángulo de Inclinación" data-he="זווית שיפוע">Tilt Angle</span>
+                        <span class="value">______°</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Condition" data-es="Condición" data-he="מצב">Condition</span>
+                        <span class="value">Excellent / Good / Fair / Poor</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Shading %" data-es="% de Sombra" data-he="% הצללה">Shading %</span>
+                        <span class="value">______%</span>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4 data-en="Electrical" data-es="Eléctrico" data-he="חשמל">Electrical</h4>
+                    <div class="report-field">
+                        <span class="label" data-en="Main Breaker" data-es="Breaker Principal" data-he="מפסק ראשי">Main Breaker</span>
+                        <span class="value">______ A</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Service Type" data-es="Tipo de Servicio" data-he="סוג שירות">Service Type</span>
+                        <span class="value">1Φ / 3Φ</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="ENSA NIS #" data-es="ENSA NIS #" data-he="ENSA NIS #">ENSA NIS #</span>
+                        <span class="value">_________________</span>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4 data-en="Preliminary Sizing" data-es="Dimensionamiento Preliminar" data-he="מדידה ראשונית">Preliminary Sizing</h4>
+                    <div class="report-field">
+                        <span class="label" data-en="Est. System Size" data-es="Tamaño Est. del Sistema" data-he="גודל מערכת מוערך">Est. System Size</span>
+                        <span class="value">______ kWp</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Est. Panel Count" data-es="Cant. Est. de Paneles" data-he="כמות פאנלים מוערכת">Est. Panel Count</span>
+                        <span class="value">______</span>
+                    </div>
+                    <div class="report-field">
+                        <span class="label" data-en="Feasibility" data-es="Viabilidad" data-he="כדאיות">Feasibility</span>
+                        <span class="value">Go / Conditional / No-Go</span>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4 data-en="Notes & Special Conditions" data-es="Notas y Condiciones Especiales" data-he="הערות ותנאים מיוחדים">Notes & Special Conditions</h4>
+                    <div style="border: 1px dashed var(--mist); border-radius: 8px; padding: 20px; min-height: 80px; color: var(--ash); font-size: 13px; font-style: italic;"
+                         data-en="Additional observations, concerns, or recommendations..."
+                         data-es="Observaciones adicionales, preocupaciones o recomendaciones..."
+                         data-he="תצפיות נוספות, חששות או המלצות...">
+                        Additional observations, concerns, or recommendations...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Navigation -->
+    <nav class="step-nav">
+        <a href="crm-step1-lead-capture.html">
+            ← <span data-en="Prev: Lead Capture" data-es="Anterior: Captura de Leads" data-he="קודם: לכידת לידים">Prev: Lead Capture</span>
+        </a>
+        <a href="crm-step3-electricity.html" class="next">
+            <span data-en="Next: Electricity Analysis" data-es="Siguiente: Análisis Eléctrico" data-he="הבא: ניתוח חשמל">Next: Electricity Analysis</span> →
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <p>Solaris Energy Panama — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+        <p style="margin-top:8px; opacity:0.6;">© 2025 KANIEL TORD LLC. Internal use only.</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            if (lang === 'he') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+            localStorage.setItem('solaris-lang', lang);
+        }
+        const saved = localStorage.getItem('solaris-lang');
+        if (saved) setLang(saved);
+    </script>
+</body>
+</html>
