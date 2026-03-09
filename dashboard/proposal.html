@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Energy — Solar Proposal Generator</title>
+    <meta name="description" content="Professional solar proposal templates for Panama residential and commercial installations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== BACK NAV ===== */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green);
+            color: var(--pearl);
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-elevated);
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover {
+            background: var(--green-canopy);
+            transform: translateY(-1px);
+        }
+
+        /* ===== HERO ===== */
+        .page-hero {
+            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%);
+            padding: 8rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
+            border-radius: 50%;
+        }
+
+        .page-hero .badge {
+            display: inline-block;
+            background: rgba(254,253,251,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(254,253,251,0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-pill);
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            color: var(--pearl);
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-hero h1 em { font-style: italic; color: var(--gold); }
+
+        .page-hero p {
+            font-size: 1.1rem;
+            color: rgba(254,253,251,0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 5rem 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(212,168,67,0.12);
+            border-radius: var(--radius-btn);
+            color: var(--gold-aged);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            color: var(--green);
+            margin-bottom: 0.6rem;
+        }
+
+        .section-sub {
+            color: var(--ash);
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin-bottom: 3rem;
+        }
+
+        /* ===== REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== PROPOSAL TEMPLATE ===== */
+        .proposal-preview {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-modal);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+        }
+
+        .proposal-cover {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 4rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .proposal-cover::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .proposal-cover .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--pearl);
+            position: relative;
+            z-index: 1;
+        }
+
+        .proposal-cover .logo-text span { color: var(--gold); }
+
+        .proposal-cover .subtitle {
+            color: rgba(254,253,251,0.6);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proposal-cover .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--gold);
+            margin: 2rem auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proposal-cover .client-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .proposal-cover .client-info h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--pearl);
+        }
+
+        .proposal-cover .client-info p {
+            color: rgba(254,253,251,0.6);
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+
+        .proposal-body {
+            padding: 3rem;
+        }
+
+        .proposal-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .proposal-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .proposal-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .proposal-section h3 .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .icon-exec { background: rgba(212,168,67,0.12); }
+        .icon-design { background: rgba(11,61,46,0.08); }
+        .icon-finance { background: rgba(212,168,67,0.12); }
+        .icon-timeline { background: rgba(11,61,46,0.08); }
+        .icon-warranty { background: rgba(212,168,67,0.12); }
+        .icon-terms { background: rgba(11,61,46,0.08); }
+
+        .exec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .exec-card {
+            background: var(--cloud);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .exec-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+        }
+
+        .exec-card .label {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .spec-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--mist);
+            font-size: 0.95rem;
+        }
+
+        .spec-table td:first-child {
+            color: var(--ash);
+            font-weight: 500;
+            width: 40%;
+        }
+
+        .spec-table td:last-child {
+            color: var(--charcoal);
+            font-weight: 600;
+        }
+
+        .financial-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .financial-card {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            color: var(--pearl);
+            text-align: center;
+        }
+
+        .financial-card .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+        }
+
+        .financial-card .desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .financial-card.gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-aged) 100%);
+            color: var(--green);
+        }
+
+        .timeline-steps {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .timeline-step {
+            flex: 1;
+            min-width: 200px;
+            background: var(--cloud);
+            border-radius: 10px;
+            padding: 1.5rem;
+            position: relative;
+            border-left: 3px solid var(--gold);
+        }
+
+        .timeline-step .step-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-step h4 {
+            font-size: 0.95rem;
+            color: var(--green);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-step p {
+            font-size: 0.85rem;
+            color: var(--ash);
+        }
+
+        .warranty-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .warranty-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--mist);
+        }
+
+        .warranty-card .years {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+        }
+
+        .warranty-card .years span {
+            font-size: 0.9rem;
+            color: var(--ash);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .warranty-card .wtype {
+            font-size: 0.85rem;
+            color: var(--green);
+            font-weight: 600;
+            margin-top: 0.3rem;
+        }
+
+        .terms-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .terms-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--mist);
+            font-size: 0.9rem;
+            color: var(--slate);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .terms-list li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ===== PRICING TABLES ===== */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .price-card {
+            background: white;
+            border: 1px solid var(--mist);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .price-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--gold);
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--gold);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .price-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gold);
+        }
+
+        .price-card .tier-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .tier-starter .tier-badge { background: rgba(11,61,46,0.08); color: var(--green); }
+        .tier-home .tier-badge { background: rgba(212,168,67,0.15); color: var(--gold-aged); }
+        .tier-business .tier-badge { background: rgba(11,61,46,0.12); color: var(--green); }
+        .tier-commercial .tier-badge { background: rgba(212,168,67,0.2); color: var(--gold-aged); }
+
+        .price-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+            margin-bottom: 0.3rem;
+        }
+
+        .price-card .size {
+            font-size: 0.85rem;
+            color: var(--ash);
+            margin-bottom: 1rem;
+        }
+
+        .price-card .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--charcoal);
+            margin-bottom: 0.2rem;
+        }
+
+        .price-card .price-note {
+            font-size: 0.75rem;
+            color: var(--ash);
+            margin-bottom: 1.5rem;
+        }
+
+        .price-card ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .price-card ul li {
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            color: var(--slate);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-card ul li::before {
+            content: '◆';
+            color: var(--gold);
+            font-size: 8px;
+        }
+
+        /* ===== ROI TABLE ===== */
+        .roi-table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .roi-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 700px;
+        }
+
+        .roi-table thead {
+            background: var(--green);
+        }
+
+        .roi-table th {
+            padding: 1rem;
+            color: var(--pearl);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: center;
+        }
+
+        .roi-table td {
+            padding: 0.9rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .roi-table tbody tr:hover {
+            background: var(--cloud);
+        }
+
+        .roi-table .highlight {
+            background: rgba(212,168,67,0.08);
+            font-weight: 600;
+        }
+
+        .roi-table .payback {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .roi-table .savings {
+            color: var(--gold-aged);
+            font-weight: 600;
+        }
+
+        /* ===== LEY 417 ===== */
+        .ley-card {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card);
+            padding: 3rem;
+            color: var(--pearl);
+            margin-bottom: 2rem;
+        }
+
+        .ley-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--pearl);
+            margin-bottom: 1rem;
+        }
+
+        .ley-card h3 span { color: var(--gold); }
+
+        .ley-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .ley-benefit {
+            background: rgba(254,253,251,0.08);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(254,253,251,0.1);
+        }
+
+        .ley-benefit .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ley-benefit h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .ley-benefit p {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .ley-example {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            border: 1px solid var(--mist);
+        }
+
+        .ley-example h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--green);
+            margin-bottom: 1.5rem;
+        }
+
+        .ley-example-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .ley-example-col {
+            text-align: center;
+        }
+
+        .ley-example-col .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+        }
+
+        .ley-example-col .lbl {
+            font-size: 0.8rem;
+            color: var(--ash);
+            margin-top: 4px;
+        }
+
+        .ley-arrow {
+            font-size: 2rem;
+            color: var(--gold);
+        }
+
+        .ley-breakdown {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--mist);
+        }
+
+        .ley-breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+        }
+
+        .ley-breakdown-row .label { color: var(--slate); }
+        .ley-breakdown-row .value { font-weight: 600; color: var(--charcoal); }
+        .ley-breakdown-row.total {
+            border-top: 2px solid var(--green);
+            padding-top: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .ley-breakdown-row.total .value {
+            color: var(--green);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+        }
+
+        /* 25yr projection bar chart */
+        .projection-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 120px;
+            margin: 2rem 0 0.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .projection-bar {
+            flex: 1;
+            background: var(--green);
+            border-radius: 3px 3px 0 0;
+            position: relative;
+            transition: background 0.3s;
+            cursor: default;
+            min-width: 8px;
+        }
+
+        .projection-bar:hover {
+            background: var(--gold);
+        }
+
+        .projection-bar .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--charcoal);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            margin-bottom: 4px;
+        }
+
+        .projection-bar:hover .tooltip { display: block; }
+
+        .projection-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--ash);
+            padding: 0 0.5rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--green);
+            color: rgba(254,253,251,0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .ley-example-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            .ley-arrow { transform: rotate(90deg); }
+            .warranty-grid { grid-template-columns: 1fr; }
+            .proposal-body { padding: 1.5rem; }
+            .proposal-cover { padding: 3rem 1.5rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            .lang-toggle, .back-nav { display: none; }
+            .page-hero { padding: 4rem 2rem 3rem; }
+            section { padding: 2rem; }
+            .reveal { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Back Nav -->
+<div class="back-nav">
+    <a href="index.html">
+        ← <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="badge" data-en="SALES TOOL" data-es="HERRAMIENTA DE VENTAS" data-he="כלי מכירות">SALES TOOL</div>
+    <h1 data-en="Solar &lt;em&gt;Proposal&lt;/em&gt; Generator" data-es="Generador de &lt;em&gt;Propuestas&lt;/em&gt; Solares" data-he="מחולל &lt;em&gt;הצעות מחיר&lt;/em&gt; סולאריות">Solar <em>Proposal</em> Generator</h1>
+    <p data-en="Professional proposal templates, pricing packages, ROI calculations, and Ley 417 tax benefit breakdowns for Panama solar installations." data-es="Plantillas profesionales de propuestas, paquetes de precios, cálculos de ROI y desglose de beneficios fiscales Ley 417 para instalaciones solares en Panamá." data-he="תבניות הצעות מחיר מקצועיות, חבילות מחירים, חישובי ROI ופירוט הטבות מס חוק 417 להתקנות סולאריות בפנמה.">Professional proposal templates, pricing packages, ROI calculations, and Ley 417 tax benefit breakdowns for Panama solar installations.</p>
+</div>
+
+<!-- ===== PROPOSAL TEMPLATE ===== -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="PROPOSAL TEMPLATE" data-es="PLANTILLA DE PROPUESTA" data-he="תבנית הצעה">PROPOSAL TEMPLATE</div>
+        <h2 class="section-title reveal" data-en="Client Proposal Preview" data-es="Vista Previa de Propuesta al Cliente" data-he="תצוגה מקדימה של הצעת לקוח">Client Proposal Preview</h2>
+        <p class="section-sub reveal" data-en="This is what your client receives — a premium, branded solar proposal with all the details they need to say yes." data-es="Esto es lo que recibe su cliente — una propuesta solar premium y de marca con todos los detalles que necesitan para decir sí." data-he="זה מה שהלקוח שלך מקבל — הצעה סולארית ממותגת ופרימיום עם כל הפרטים שהם צריכים כדי לומר כן.">This is what your client receives — a premium, branded solar proposal with all the details they need to say yes.</p>
+
+        <div class="proposal-preview reveal">
+            <!-- Cover -->
+            <div class="proposal-cover">
+                <div class="logo-text">SOLARIS <span>ENERGY</span></div>
+                <div class="subtitle" data-en="SOLAR ENERGY SOLUTIONS · PANAMÁ" data-es="SOLUCIONES DE ENERGÍA SOLAR · PANAMÁ" data-he="פתרונות אנרגיה סולארית · פנמה">SOLAR ENERGY SOLUTIONS · PANAMÁ</div>
+                <div class="divider"></div>
+                <div class="client-info">
+                    <h2 data-en="Proposal for [Client Name]" data-es="Propuesta para [Nombre del Cliente]" data-he="הצעה עבור [שם לקוח]">Proposal for [Client Name]</h2>
+                    <p data-en="[Project Address] · [Date]" data-es="[Dirección del Proyecto] · [Fecha]" data-he="[כתובת הפרויקט] · [תאריך]">[Project Address] · [Date]</p>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="proposal-body">
+                <!-- Executive Summary -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-exec">📊</span>
+                        <span data-en="Executive Summary" data-es="Resumen Ejecutivo" data-he="תקציר מנהלים">Executive Summary</span>
+                    </h3>
+                    <div class="exec-grid">
+                        <div class="exec-card">
+                            <div class="value">10 kWp</div>
+                            <div class="label" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="value">$285</div>
+                            <div class="label" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="value">28.5%</div>
+                            <div class="label" data-en="Annual ROI" data-es="ROI Anual" data-he="ROI שנתי">Annual ROI</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="value">3.1 yr</div>
+                            <div class="label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Design -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-design">⚡</span>
+                        <span data-en="System Design" data-es="Diseño del Sistema" data-he="תכנון מערכת">System Design</span>
+                    </h3>
+                    <table class="spec-table">
+                        <tr>
+                            <td data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</td>
+                            <td>18 × Jinko Tiger Neo 580W</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Inverter" data-es="Inversor" data-he="ממיר">Inverter</td>
+                            <td>Huawei SUN2000-10KTL-M1</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Mounting" data-es="Estructura" data-he="מבנה הרכבה">Mounting</td>
+                            <td data-en="K2 Systems flush mount (tile roof)" data-es="K2 Systems montaje empotrado (techo de tejas)" data-he="K2 Systems הרכבה שטוחה (גג רעפים)">K2 Systems flush mount (tile roof)</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Annual Production" data-es="Producción Anual" data-he="ייצור שנתי">Annual Production</td>
+                            <td>~17,500 kWh</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</td>
+                            <td>Huawei FusionSolar App</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Financial Analysis -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-finance">💰</span>
+                        <span data-en="Financial Analysis" data-es="Análisis Financiero" data-he="ניתוח פיננסי">Financial Analysis</span>
+                    </h3>
+                    <div class="financial-row">
+                        <div class="financial-card">
+                            <div class="amount">$285</div>
+                            <div class="desc" data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</div>
+                        </div>
+                        <div class="financial-card gold">
+                            <div class="amount">$10,600</div>
+                            <div class="desc" data-en="Ley 417 Deduction" data-es="Deducción Ley 417" data-he="ניכוי חוק 417">Ley 417 Deduction</div>
+                        </div>
+                        <div class="financial-card">
+                            <div class="amount">$85,500</div>
+                            <div class="desc" data-en="25-Year Savings" data-es="Ahorro a 25 Años" data-he="חיסכון ל-25 שנה">25-Year Savings</div>
+                        </div>
+                    </div>
+
+                    <!-- 25yr projection mini chart -->
+                    <p style="font-size: 0.85rem; color: var(--ash); margin-bottom: 0.5rem;" data-en="Cumulative savings projection (25 years)" data-es="Proyección de ahorro acumulado (25 años)" data-he="תחזית חיסכון מצטבר (25 שנה)">Cumulative savings projection (25 years)</p>
+                    <div class="projection-chart" id="projectionChart"></div>
+                    <div class="projection-labels">
+                        <span data-en="Year 1" data-es="Año 1" data-he="שנה 1">Year 1</span>
+                        <span data-en="Year 5" data-es="Año 5" data-he="שנה 5">Year 5</span>
+                        <span data-en="Year 10" data-es="Año 10" data-he="שנה 10">Year 10</span>
+                        <span data-en="Year 15" data-es="Año 15" data-he="שנה 15">Year 15</span>
+                        <span data-en="Year 20" data-es="Año 20" data-he="שנה 20">Year 20</span>
+                        <span data-en="Year 25" data-es="Año 25" data-he="שנה 25">Year 25</span>
+                    </div>
+                </div>
+
+                <!-- Installation Timeline -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-timeline">📅</span>
+                        <span data-en="Installation Timeline" data-es="Cronograma de Instalación" data-he="לוח זמנים להתקנה">Installation Timeline</span>
+                    </h3>
+                    <div class="timeline-steps">
+                        <div class="timeline-step">
+                            <div class="step-num">01</div>
+                            <h4 data-en="Site Analysis" data-es="Análisis del Sitio" data-he="ניתוח אתר">Site Analysis</h4>
+                            <p data-en="Roof assessment, shading study, electrical audit, consumption analysis. 2-3 days." data-es="Evaluación del techo, estudio de sombras, auditoría eléctrica, análisis de consumo. 2-3 días." data-he="הערכת גג, מחקר הצללה, ביקורת חשמלית, ניתוח צריכה. 2-3 ימים.">Roof assessment, shading study, electrical audit, consumption analysis. 2-3 days.</p>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="step-num">02</div>
+                            <h4 data-en="Engineering & Design" data-es="Ingeniería y Diseño" data-he="הנדסה ותכנון">Engineering & Design</h4>
+                            <p data-en="System sizing, panel layout, structural calculations, ASEP permits, utility application. 1-2 weeks." data-es="Dimensionamiento del sistema, distribución de paneles, cálculos estructurales, permisos ASEP, solicitud a distribuidora. 1-2 semanas." data-he="תכנון מערכת, פריסת פאנלים, חישובי קונסטרוקציה, היתרי ASEP, בקשה לחברת חשמל. 1-2 שבועות.">System sizing, panel layout, structural calculations, ASEP permits, utility application. 1-2 weeks.</p>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="step-num">03</div>
+                            <h4 data-en="Installation & Connection" data-es="Instalación y Conexión" data-he="התקנה וחיבור">Installation & Connection</h4>
+                            <p data-en="Panel mounting, inverter setup, wiring, safety testing, grid connection, system commissioning. 1-3 days." data-es="Montaje de paneles, configuración de inversor, cableado, pruebas de seguridad, conexión a la red, puesta en marcha. 1-3 días." data-he="הרכבת פאנלים, התקנת ממיר, חיווט, בדיקות בטיחות, חיבור לרשת, הפעלה. 1-3 ימים.">Panel mounting, inverter setup, wiring, safety testing, grid connection, system commissioning. 1-3 days.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Warranty -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-warranty">🛡️</span>
+                        <span data-en="Warranty Coverage" data-es="Cobertura de Garantía" data-he="כיסוי אחריות">Warranty Coverage</span>
+                    </h3>
+                    <div class="warranty-grid">
+                        <div class="warranty-card">
+                            <div class="years">25 <span data-en="years" data-es="años" data-he="שנה">years</span></div>
+                            <div class="wtype" data-en="Solar Panels" data-es="Paneles Solares" data-he="פאנלים סולאריים">Solar Panels</div>
+                        </div>
+                        <div class="warranty-card">
+                            <div class="years">10 <span data-en="years" data-es="años" data-he="שנה">years</span></div>
+                            <div class="wtype" data-en="Inverter" data-es="Inversor" data-he="ממיר">Inverter</div>
+                        </div>
+                        <div class="warranty-card">
+                            <div class="years">5 <span data-en="years" data-es="años" data-he="שנה">years</span></div>
+                            <div class="wtype" data-en="Installation" data-es="Instalación" data-he="התקנה">Installation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="proposal-section">
+                    <h3>
+                        <span class="icon icon-terms">📋</span>
+                        <span data-en="Terms & Conditions" data-es="Términos y Condiciones" data-he="תנאים והגבלות">Terms & Conditions</span>
+                    </h3>
+                    <ul class="terms-list">
+                        <li data-en="Payment schedule: 50% upon signing, 40% upon equipment delivery, 10% upon commissioning" data-es="Calendario de pagos: 50% al firmar, 40% al entregar equipos, 10% al poner en marcha" data-he="לוח תשלומים: 50% בחתימה, 40% באספקת ציוד, 10% בהפעלה">Payment schedule: 50% upon signing, 40% upon equipment delivery, 10% upon commissioning</li>
+                        <li data-en="Proposal valid for 30 days from date of issue" data-es="Propuesta válida por 30 días desde la fecha de emisión" data-he="ההצעה תקפה ל-30 יום מתאריך ההנפקה">Proposal valid for 30 days from date of issue</li>
+                        <li data-en="Price includes all equipment, installation, permits, and grid connection" data-es="El precio incluye todo el equipo, instalación, permisos y conexión a la red" data-he="המחיר כולל את כל הציוד, ההתקנה, ההיתרים וחיבור לרשת">Price includes all equipment, installation, permits, and grid connection</li>
+                        <li data-en="ASEP compliance and Ley 417 documentation included at no additional cost" data-es="Cumplimiento ASEP y documentación Ley 417 incluidos sin costo adicional" data-he="עמידה בתקני ASEP ותיעוד חוק 417 כלולים ללא עלות נוספת">ASEP compliance and Ley 417 documentation included at no additional cost</li>
+                        <li data-en="Free monitoring setup and 1 year of maintenance included" data-es="Configuración de monitoreo gratuita y 1 año de mantenimiento incluido" data-he="התקנת ניטור חינם ושנה של תחזוקה כלולים">Free monitoring setup and 1 year of maintenance included</li>
+                        <li data-en="System design may vary based on final site assessment" data-es="El diseño del sistema puede variar según la evaluación final del sitio" data-he="תכנון המערכת עשוי להשתנות בהתאם להערכת אתר סופית">System design may vary based on final site assessment</li>
+                        <li data-en="Structural certification required before installation (client responsibility)" data-es="Certificación estructural requerida antes de la instalación (responsabilidad del cliente)" data-he="נדרש אישור קונסטרוקציה לפני ההתקנה (באחריות הלקוח)">Structural certification required before installation (client responsibility)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PRICING PACKAGES ===== -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="PRICING" data-es="PRECIOS" data-he="תמחור">PRICING</div>
+        <h2 class="section-title reveal" data-en="Solar Packages" data-es="Paquetes Solares" data-he="חבילות סולאריות">Solar Packages</h2>
+        <p class="section-sub reveal" data-en="Residential and commercial solutions tailored to the Azuero market. All prices include equipment, installation, permits, and 1 year of maintenance." data-es="Soluciones residenciales y comerciales adaptadas al mercado de Azuero. Todos los precios incluyen equipo, instalación, permisos y 1 año de mantenimiento." data-he="פתרונות מגורים ומסחריים מותאמים לשוק אזוארו. כל המחירים כוללים ציוד, התקנה, היתרים ושנת תחזוקה.">Residential and commercial solutions tailored to the Azuero market. All prices include equipment, installation, permits, and 1 year of maintenance.</p>
+
+        <div class="pricing-grid reveal">
+            <!-- Starter -->
+            <div class="price-card tier-starter">
+                <div class="tier-badge" data-en="STARTER" data-es="INICIAL" data-he="סטארטר">STARTER</div>
+                <h4>Starter Solar</h4>
+                <div class="size">3–5 kWp</div>
+                <div class="price">$3,300–$6,500</div>
+                <div class="price-note" data-en="$1.10–$1.30 per Wp installed" data-es="$1.10–$1.30 por Wp instalado" data-he="$1.10–$1.30 לוואט-פיק מותקן">$1.10–$1.30 per Wp installed</div>
+                <ul>
+                    <li data-en="6–10 solar panels" data-es="6–10 paneles solares" data-he="6-10 פאנלים סולאריים">6–10 solar panels</li>
+                    <li data-en="Single-phase inverter" data-es="Inversor monofásico" data-he="ממיר חד-פאזי">Single-phase inverter</li>
+                    <li data-en="Saves $85–$140/month" data-es="Ahorra $85–$140/mes" data-he="חיסכון $85-$140 לחודש">Saves $85–$140/month</li>
+                    <li data-en="3–3.5 year payback" data-es="Retorno en 3–3.5 años" data-he="החזר תוך 3-3.5 שנים">3–3.5 year payback</li>
+                    <li data-en="Ideal for apartments & small homes" data-es="Ideal para apartamentos y casas pequeñas" data-he="אידיאלי לדירות ובתים קטנים">Ideal for apartments & small homes</li>
+                </ul>
+            </div>
+
+            <!-- Home -->
+            <div class="price-card tier-home featured">
+                <div class="tier-badge" data-en="MOST POPULAR" data-es="MÁS POPULAR" data-he="הכי פופולרי">MOST POPULAR</div>
+                <h4>Home Solar</h4>
+                <div class="size">6–10 kWp</div>
+                <div class="price">$6,600–$13,000</div>
+                <div class="price-note" data-en="$1.00–$1.30 per Wp installed" data-es="$1.00–$1.30 por Wp instalado" data-he="$1.00–$1.30 לוואט-פיק מותקן">$1.00–$1.30 per Wp installed</div>
+                <ul>
+                    <li data-en="10–18 solar panels" data-es="10–18 paneles solares" data-he="10-18 פאנלים סולאריים">10–18 solar panels</li>
+                    <li data-en="Huawei hybrid inverter" data-es="Inversor híbrido Huawei" data-he="ממיר היברידי Huawei">Huawei hybrid inverter</li>
+                    <li data-en="Saves $170–$285/month" data-es="Ahorra $170–$285/mes" data-he="חיסכון $170-$285 לחודש">Saves $170–$285/month</li>
+                    <li data-en="2.5–3 year payback" data-es="Retorno en 2.5–3 años" data-he="החזר תוך 2.5-3 שנים">2.5–3 year payback</li>
+                    <li data-en="Full home coverage" data-es="Cobertura total del hogar" data-he="כיסוי מלא לבית">Full home coverage</li>
+                    <li data-en="Smart monitoring included" data-es="Monitoreo inteligente incluido" data-he="ניטור חכם כלול">Smart monitoring included</li>
+                </ul>
+            </div>
+
+            <!-- Business -->
+            <div class="price-card tier-business">
+                <div class="tier-badge" data-en="BUSINESS" data-es="NEGOCIO" data-he="עסקי">BUSINESS</div>
+                <h4>Business Solar</h4>
+                <div class="size">15–30 kWp</div>
+                <div class="price">$15,000–$36,000</div>
+                <div class="price-note" data-en="$0.95–$1.20 per Wp installed" data-es="$0.95–$1.20 por Wp instalado" data-he="$0.95–$1.20 לוואט-פיק מותקן">$0.95–$1.20 per Wp installed</div>
+                <ul>
+                    <li data-en="26–52 solar panels" data-es="26–52 paneles solares" data-he="26-52 פאנלים סולאריים">26–52 solar panels</li>
+                    <li data-en="Three-phase inverter system" data-es="Sistema inversor trifásico" data-he="מערכת ממיר תלת-פאזי">Three-phase inverter system</li>
+                    <li data-en="Saves $425–$850/month" data-es="Ahorra $425–$850/mes" data-he="חיסכון $425-$850 לחודש">Saves $425–$850/month</li>
+                    <li data-en="2.5–3.5 year payback" data-es="Retorno en 2.5–3.5 años" data-he="החזר תוך 2.5-3.5 שנים">2.5–3.5 year payback</li>
+                    <li data-en="Hotels, restaurants, farms" data-es="Hoteles, restaurantes, fincas" data-he="מלונות, מסעדות, חוות">Hotels, restaurants, farms</li>
+                </ul>
+            </div>
+
+            <!-- Commercial -->
+            <div class="price-card tier-commercial">
+                <div class="tier-badge" data-en="COMMERCIAL" data-es="COMERCIAL" data-he="מסחרי">COMMERCIAL</div>
+                <h4>Commercial Solar</h4>
+                <div class="size">50–100 kWp</div>
+                <div class="price">$50,000–$120,000</div>
+                <div class="price-note" data-en="$0.90–$1.20 per Wp installed" data-es="$0.90–$1.20 por Wp instalado" data-he="$0.90–$1.20 לוואט-פיק מותקן">$0.90–$1.20 per Wp installed</div>
+                <ul>
+                    <li data-en="86–175 solar panels" data-es="86–175 paneles solares" data-he="86-175 פאנלים סולאריים">86–175 solar panels</li>
+                    <li data-en="Multi-inverter architecture" data-es="Arquitectura multi-inversor" data-he="ארכיטקטורת מרובת ממירים">Multi-inverter architecture</li>
+                    <li data-en="Saves $1,400–$2,850/month" data-es="Ahorra $1,400–$2,850/mes" data-he="חיסכון $1,400-$2,850 לחודש">Saves $1,400–$2,850/month</li>
+                    <li data-en="2–3 year payback" data-es="Retorno en 2–3 años" data-he="החזר תוך 2-3 שנים">2–3 year payback</li>
+                    <li data-en="Custom engineering & PPA available" data-es="Ingeniería personalizada y PPA disponible" data-he="הנדסה מותאמת ו-PPA זמינים">Custom engineering & PPA available</li>
+                    <li data-en="Dedicated project manager" data-es="Gerente de proyecto dedicado" data-he="מנהל פרויקט ייעודי">Dedicated project manager</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ROI COMPARISON ===== -->
+<section>
+    <div class="container">
+        <div class="section-badge" data-en="RETURN ON INVESTMENT" data-es="RETORNO DE INVERSIÓN" data-he="החזר השקעה">RETURN ON INVESTMENT</div>
+        <h2 class="section-title reveal" data-en="ROI Comparison" data-es="Comparación de ROI" data-he="השוואת ROI">ROI Comparison</h2>
+        <p class="section-sub reveal" data-en="Interactive comparison of system sizes, monthly savings, and payback periods at $0.195/kWh electricity rate and 5.3 peak sun hours." data-es="Comparación interactiva de tamaños de sistema, ahorros mensuales y períodos de retorno a tarifa eléctrica de $0.195/kWh y 5.3 horas sol pico." data-he="השוואה אינטראקטיבית של גדלי מערכות, חיסכון חודשי ותקופות החזר בתעריף חשמל $0.195/kWh ו-5.3 שעות שיא שמש.">Interactive comparison of system sizes, monthly savings, and payback periods at $0.195/kWh electricity rate and 5.3 peak sun hours.</p>
+
+        <div class="roi-table-wrap reveal">
+            <table class="roi-table">
+                <thead>
+                    <tr>
+                        <th data-en="System Size" data-es="Tamaño" data-he="גודל מערכת">System Size</th>
+                        <th data-en="Panels" data-es="Paneles" data-he="פאנלים">Panels</th>
+                        <th data-en="Annual kWh" data-es="kWh Anual" data-he="kWh שנתי">Annual kWh</th>
+                        <th data-en="Monthly Savings" data-es="Ahorro Mensual" data-he="חיסכון חודשי">Monthly Savings</th>
+                        <th data-en="System Cost" data-es="Costo Sistema" data-he="עלות מערכת">System Cost</th>
+                        <th data-en="Payback" data-es="Retorno" data-he="החזר">Payback</th>
+                        <th data-en="25yr Savings" data-es="Ahorro 25 Años" data-he="חיסכון 25 שנה">25yr Savings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3 kWp</td>
+                        <td>6</td>
+                        <td>5,247</td>
+                        <td class="savings">$85</td>
+                        <td>$3,300</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$25,500</td>
+                    </tr>
+                    <tr>
+                        <td>5 kWp</td>
+                        <td>9</td>
+                        <td>8,745</td>
+                        <td class="savings">$142</td>
+                        <td>$6,000</td>
+                        <td class="payback">3.5 yr</td>
+                        <td class="savings">$42,600</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>8 kWp</strong></td>
+                        <td>14</td>
+                        <td>13,992</td>
+                        <td class="savings"><strong>$227</strong></td>
+                        <td>$9,200</td>
+                        <td class="payback"><strong>3.4 yr</strong></td>
+                        <td class="savings"><strong>$68,100</strong></td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>10 kWp</strong></td>
+                        <td>18</td>
+                        <td>17,490</td>
+                        <td class="savings"><strong>$285</strong></td>
+                        <td>$10,600</td>
+                        <td class="payback"><strong>3.1 yr</strong></td>
+                        <td class="savings"><strong>$85,500</strong></td>
+                    </tr>
+                    <tr>
+                        <td>15 kWp</td>
+                        <td>26</td>
+                        <td>26,235</td>
+                        <td class="savings">$426</td>
+                        <td>$16,500</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$127,800</td>
+                    </tr>
+                    <tr>
+                        <td>20 kWp</td>
+                        <td>35</td>
+                        <td>34,980</td>
+                        <td class="savings">$568</td>
+                        <td>$22,000</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$170,400</td>
+                    </tr>
+                    <tr>
+                        <td>30 kWp</td>
+                        <td>52</td>
+                        <td>52,470</td>
+                        <td class="savings">$852</td>
+                        <td>$33,000</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$255,600</td>
+                    </tr>
+                    <tr>
+                        <td>50 kWp</td>
+                        <td>86</td>
+                        <td>87,450</td>
+                        <td class="savings">$1,421</td>
+                        <td>$55,000</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$426,300</td>
+                    </tr>
+                    <tr>
+                        <td>100 kWp</td>
+                        <td>175</td>
+                        <td>174,900</td>
+                        <td class="savings">$2,842</td>
+                        <td>$110,000</td>
+                        <td class="payback">3.2 yr</td>
+                        <td class="savings">$852,600</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="font-size: 0.75rem; color: var(--ash); margin-top: 0.8rem; text-align: center;" data-en="* Based on $0.195/kWh grid rate, 5.3 peak sun hours, 0.5% annual degradation. Savings include Ley 417 tax benefit where applicable." data-es="* Basado en tarifa de red $0.195/kWh, 5.3 horas sol pico, 0.5% degradación anual. Ahorros incluyen beneficio fiscal Ley 417 donde aplique." data-he="* מבוסס על תעריף רשת $0.195/kWh, 5.3 שעות שיא שמש, 0.5% ירידה שנתית. חיסכון כולל הטבת מס חוק 417 במקומות רלוונטיים.">* Based on $0.195/kWh grid rate, 5.3 peak sun hours, 0.5% annual degradation. Savings include Ley 417 tax benefit where applicable.</p>
+    </div>
+</section>
+
+<!-- ===== LEY 417 BREAKDOWN ===== -->
+<section style="background: var(--sand);">
+    <div class="container">
+        <div class="section-badge" data-en="TAX BENEFITS" data-es="BENEFICIOS FISCALES" data-he="הטבות מס">TAX BENEFITS</div>
+        <h2 class="section-title reveal" data-en="Ley 417 Breakdown" data-es="Desglose Ley 417" data-he="פירוט חוק 417">Ley 417 Breakdown</h2>
+        <p class="section-sub reveal" data-en="Panama's Law 417 (2013) provides powerful incentives that make solar the smartest investment in Central America." data-es="La Ley 417 de Panamá (2013) proporciona incentivos poderosos que hacen de la energía solar la inversión más inteligente de Centroamérica." data-he="חוק 417 של פנמה (2013) מספק תמריצים חזקים שהופכים סולארי להשקעה החכמה ביותר במרכז אמריקה.">Panama's Law 417 (2013) provides powerful incentives that make solar the smartest investment in Central America.</p>
+
+        <!-- Benefits Cards -->
+        <div class="ley-card reveal">
+            <h3 data-en="Ley 417 — <span>Your Benefits</span>" data-es="Ley 417 — <span>Sus Beneficios</span>" data-he="חוק 417 — <span>ההטבות שלך</span>">Ley 417 — <span>Your Benefits</span></h3>
+            <div class="ley-benefits">
+                <div class="ley-benefit">
+                    <div class="icon">🏷️</div>
+                    <h4 data-en="100% Tax Deduction" data-es="100% Deducción Fiscal" data-he="100% ניכוי מס">100% Tax Deduction</h4>
+                    <p data-en="Deduct the entire cost of your solar system from taxable income in the year of installation." data-es="Deduzca el costo total de su sistema solar del ingreso gravable en el año de instalación." data-he="נכה את כל עלות המערכת הסולארית מההכנסה החייבת בשנת ההתקנה.">Deduct the entire cost of your solar system from taxable income in the year of installation.</p>
+                </div>
+                <div class="ley-benefit">
+                    <div class="icon">🚢</div>
+                    <h4 data-en="Import Duty Exemption" data-es="Exención de Impuestos de Importación" data-he="פטור ממכס יבוא">Import Duty Exemption</h4>
+                    <p data-en="Zero import taxes on solar panels, inverters, and related equipment. Savings of 7-15% on equipment cost." data-es="Cero impuestos de importación en paneles solares, inversores y equipos relacionados. Ahorro del 7-15% en costo de equipos." data-he="אפס מס יבוא על פאנלים סולאריים, ממירים וציוד נלווה. חיסכון של 7-15% בעלות הציוד.">Zero import taxes on solar panels, inverters, and related equipment. Savings of 7-15% on equipment cost.</p>
+                </div>
+                <div class="ley-benefit">
+                    <div class="icon">⚡</div>
+                    <h4 data-en="Net Metering" data-es="Medición Neta" data-he="מדידה נטו">Net Metering</h4>
+                    <p data-en="Excess energy sent to the grid earns credits on your electricity bill. Your meter literally runs backwards." data-es="La energía excedente enviada a la red genera créditos en su factura eléctrica. Su medidor literalmente gira al revés." data-he="עודפי אנרגיה שנשלחים לרשת מזכים אותך בזיכויים בחשבון החשמל. המונה שלך פשוט רץ אחורה.">Excess energy sent to the grid earns credits on your electricity bill. Your meter literally runs backwards.</p>
+                </div>
+                <div class="ley-benefit">
+                    <div class="icon">📋</div>
+                    <h4 data-en="ASEP Fast-Track" data-es="Trámite Acelerado ASEP" data-he="מסלול מהיר ASEP">ASEP Fast-Track</h4>
+                    <p data-en="Simplified permitting process through ASEP for systems under 500kWp. We handle all paperwork." data-es="Proceso de permisos simplificado a través de ASEP para sistemas menores a 500kWp. Nosotros manejamos todo el papeleo." data-he="תהליך היתרים מפושט דרך ASEP למערכות מתחת ל-500kWp. אנחנו מטפלים בכל הניירת.">Simplified permitting process through ASEP for systems under 500kWp. We handle all paperwork.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Calculation -->
+        <div class="ley-example reveal">
+            <h4 data-en="Example: 10 kWp Home Solar System" data-es="Ejemplo: Sistema Solar Residencial de 10 kWp" data-he="דוגמה: מערכת סולארית ביתית 10 kWp">Example: 10 kWp Home Solar System</h4>
+            <div class="ley-example-grid">
+                <div class="ley-example-col">
+                    <div class="val">$10,600</div>
+                    <div class="lbl" data-en="System Cost" data-es="Costo del Sistema" data-he="עלות מערכת">System Cost</div>
+                </div>
+                <div class="ley-arrow">→</div>
+                <div class="ley-example-col">
+                    <div class="val" style="color: var(--gold);">$7,155</div>
+                    <div class="lbl" data-en="Effective Cost After Ley 417" data-es="Costo Efectivo Después de Ley 417" data-he="עלות אפקטיבית אחרי חוק 417">Effective Cost After Ley 417</div>
+                </div>
+            </div>
+            <div class="ley-breakdown">
+                <div class="ley-breakdown-row">
+                    <span class="label" data-en="System equipment + installation" data-es="Equipos del sistema + instalación" data-he="ציוד מערכת + התקנה">System equipment + installation</span>
+                    <span class="value">$10,600</span>
+                </div>
+                <div class="ley-breakdown-row">
+                    <span class="label" data-en="Import duty exemption (saved ~10%)" data-es="Exención de importación (ahorro ~10%)" data-he="פטור מכס יבוא (חיסכון ~10%)">Import duty exemption (saved ~10%)</span>
+                    <span class="value" style="color: var(--gold);">−$795</span>
+                </div>
+                <div class="ley-breakdown-row">
+                    <span class="label" data-en="Tax deduction (25% corporate rate)" data-es="Deducción fiscal (tasa corporativa 25%)" data-he="ניכוי מס (שיעור חברות 25%)">Tax deduction (25% corporate rate)</span>
+                    <span class="value" style="color: var(--gold);">−$2,650</span>
+                </div>
+                <div class="ley-breakdown-row total">
+                    <span class="label" data-en="Effective net cost" data-es="Costo neto efectivo" data-he="עלות נטו אפקטיבית">Effective net cost</span>
+                    <span class="value">$7,155</span>
+                </div>
+                <div class="ley-breakdown-row" style="border: none;">
+                    <span class="label" data-en="Effective payback period" data-es="Período de retorno efectivo" data-he="תקופת החזר אפקטיבית">Effective payback period</span>
+                    <span class="value" style="color: var(--green); font-weight: 700;">2.1 years</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>
+        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+        <a href="https://solaris-panama.com" data-en="solaris-panama.com" data-es="solaris-panama.com" data-he="solaris-panama.com">solaris-panama.com</a>
+    </p>
+</footer>
+
+<script>
+// Language switching
+function setLang(lang) {
+    localStorage.setItem('solaris-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+    if (btn) btn.classList.add('active');
+
+    const isRTL = lang === 'he';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        const val = el.getAttribute('data-' + lang);
+        if (val.includes('<')) {
+            el.innerHTML = val;
+        } else {
+            el.textContent = val;
+        }
+    });
+}
+
+// Init
+const savedLang = localStorage.getItem('solaris-lang') || 'en';
+setLang(savedLang);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// 25yr savings projection chart
+(function() {
+    const chart = document.getElementById('projectionChart');
+    if (!chart) return;
+    const annual = 3420; // ~$285/mo
+    const maxSavings = annual * 25;
+    for (let y = 1; y <= 25; y++) {
+        const cumulative = annual * y;
+        const pct = (cumulative / maxSavings) * 100;
+        const bar = document.createElement('div');
+        bar.className = 'projection-bar';
+        bar.style.height = pct + '%';
+        if (y <= 3) bar.style.background = 'var(--gold)'; // payback period
+        const tip = document.createElement('span');
+        tip.className = 'tooltip';
+        tip.textContent = `Year ${y}: $${cumulative.toLocaleString()}`;
+        bar.appendChild(tip);
+        chart.appendChild(bar);
+    }
+})();
+</script>
+
+</body>
+</html>
