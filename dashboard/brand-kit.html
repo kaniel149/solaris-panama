@@ -100,80 +100,8 @@ section{padding:64px 0}
 .merch-card-body p{font-size:12px;color:var(--slate);line-height:1.5}
 .merch-card-body .specs{margin-top:8px;font-size:11px;color:var(--gold-aged);font-weight:600}
 
-/* CSS Merch Illustrations */
-.polo-illust{width:120px;height:130px;background:var(--green);border-radius:0 0 20px 20px;position:relative}
-.polo-illust::before{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:30px;height:20px;background:var(--green);border-radius:50% 50% 0 0}
-.polo-illust::after{content:'SOLARIS';position:absolute;top:35px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--gold);font-weight:700;letter-spacing:2px}
-.polo-illust .sleeve-l,.polo-illust .sleeve-r{position:absolute;top:0;width:35px;height:50px;background:var(--green)}
-.polo-illust .sleeve-l{left:-30px;border-radius:0 0 0 12px;transform:rotate(15deg);transform-origin:top right}
-.polo-illust .sleeve-r{right:-30px;border-radius:0 0 12px 0;transform:rotate(-15deg);transform-origin:top left}
-
-.cap-illust{width:120px;height:70px;position:relative}
-.cap-illust .brim{width:140px;height:12px;background:var(--green);border-radius:0 0 50% 50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
-.cap-illust .crown{width:120px;height:60px;background:var(--green);border-radius:50% 50% 0 0;position:absolute;bottom:10px;left:50%;transform:translateX(-50%)}
-.cap-illust .crown::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--gold);font-weight:700;letter-spacing:3px}
-
-.notebook-illust{width:90px;height:120px;background:var(--green);border-radius:4px;position:relative;box-shadow:3px 3px 0 var(--gold)}
-.notebook-illust::before{content:'S';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);font-weight:700}
-.notebook-illust::after{content:'';position:absolute;left:8px;top:10%;height:80%;width:1px;background:var(--gold);opacity:.5}
-
-.bottle-illust{width:50px;height:140px;position:relative}
-.bottle-illust .cap-part{width:24px;height:18px;background:var(--gold);border-radius:4px 4px 0 0;position:absolute;top:0;left:50%;transform:translateX(-50%)}
-.bottle-illust .neck{width:20px;height:20px;background:var(--green-canopy);position:absolute;top:16px;left:50%;transform:translateX(-50%)}
-.bottle-illust .body-part{width:50px;height:100px;background:var(--green);border-radius:8px 8px 12px 12px;position:absolute;bottom:0;left:0}
-.bottle-illust .body-part::after{content:'☀';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-size:18px;color:var(--gold)}
-
-.bag-illust{width:120px;height:100px;background:var(--green);border-radius:8px;position:relative;border:2px solid var(--green-canopy)}
-.bag-illust::before{content:'';position:absolute;top:-20px;left:30px;width:60px;height:24px;border:3px solid var(--green);border-bottom:none;border-radius:12px 12px 0 0}
-.bag-illust::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--gold);font-weight:700;letter-spacing:2px;background:rgba(0,0,0,.2);padding:4px 10px;border-radius:3px}
-
-.gloves-illust{display:flex;gap:16px;align-items:center}
-.glove{width:45px;height:70px;background:var(--green);border-radius:12px 12px 8px 8px;position:relative;border:2px solid var(--gold)}
-.glove::before{content:'';position:absolute;top:15px;right:-10px;width:15px;height:25px;background:var(--green);border-radius:8px;border:2px solid var(--gold)}
-.glasses{width:80px;height:30px;position:relative}
-.glasses::before,.glasses::after{content:'';position:absolute;top:0;width:32px;height:24px;border:3px solid var(--green);border-radius:4px}
-.glasses::before{left:0}
-.glasses::after{right:0}
-
-.truck-illust{width:180px;height:80px;position:relative}
-.truck-illust .truck-body{width:120px;height:50px;background:var(--green);border-radius:6px 6px 0 0;position:absolute;bottom:12px;left:0}
-.truck-illust .truck-body::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--gold);font-weight:700;letter-spacing:3px}
-.truck-illust .truck-cab{width:55px;height:40px;background:var(--green-canopy);border-radius:0 10px 0 0;position:absolute;bottom:12px;right:0}
-.truck-illust .truck-cab::before{content:'';position:absolute;top:5px;right:5px;width:30px;height:20px;background:rgba(212,168,67,.3);border-radius:3px}
-.truck-illust .wheel1,.truck-illust .wheel2{position:absolute;bottom:0;width:24px;height:24px;background:var(--charcoal);border-radius:50%;border:3px solid var(--ash)}
-.truck-illust .wheel1{left:20px}
-.truck-illust .wheel2{right:15px}
-
-.flag-illust{display:flex;gap:20px;align-items:flex-end}
-.feather-flag{width:30px;height:110px;position:relative}
-.feather-flag .pole{width:2px;height:110px;background:var(--ash);position:absolute;left:0;bottom:0}
-.feather-flag .fabric{width:28px;height:90px;background:var(--green);position:absolute;left:2px;top:0;border-radius:0 0 50% 0;clip-path:ellipse(100% 50% at 0% 50%)}
-.feather-flag .fabric::after{content:'S';position:absolute;top:30%;left:40%;color:var(--gold);font-weight:700;font-size:14px}
-.rollup{width:50px;height:100px;background:var(--green);border-radius:2px;position:relative}
-.rollup::after{content:'☀\ASOLARIS';white-space:pre;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--gold);font-size:10px;font-weight:700;text-align:center;letter-spacing:1px}
-.rollup-base{width:56px;height:8px;background:var(--ash);border-radius:2px;position:absolute;bottom:-4px;left:-3px}
-
-.lanyard-illust{position:relative;width:80px;height:120px}
-.lanyard-illust .strap{width:60px;height:80px;border:4px solid var(--green);border-top:none;border-radius:0 0 30px 30px;position:absolute;top:0;left:10px}
-.lanyard-illust .badge{width:54px;height:36px;background:var(--pearl);border:2px solid var(--gold);border-radius:4px;position:absolute;bottom:0;left:13px}
-.lanyard-illust .badge::after{content:'ID';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--green);font-weight:700}
-
-.powerbank-illust{width:70px;height:100px;background:linear-gradient(180deg,var(--green) 0%,var(--green-canopy) 100%);border-radius:10px;position:relative;border:2px solid var(--gold)}
-.powerbank-illust::before{content:'⚡';position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:24px}
-.powerbank-illust::after{content:'OWN YOUR\AENERGY';white-space:pre;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--gold);font-weight:600;text-align:center;letter-spacing:.5px}
-.powerbank-illust .dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:3px}
-.powerbank-illust .dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
-
-.magnet-illust{width:140px;height:60px;background:var(--green);border-radius:6px;position:relative;border:2px solid var(--gold)}
-.magnet-illust::before{content:'☀ SOLARIS';position:absolute;top:12px;left:12px;font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px}
-.magnet-illust::after{content:'+507 6XXX · solarispanama.com';position:absolute;bottom:10px;left:12px;font-size:8px;color:rgba(254,253,251,.6)}
-
-.giftbox-illust{width:100px;height:100px;position:relative}
-.giftbox-illust .box{width:100px;height:70px;background:var(--green);border-radius:4px;position:absolute;bottom:0;border:2px solid var(--gold)}
-.giftbox-illust .lid{width:110px;height:16px;background:var(--green-canopy);border-radius:4px;position:absolute;bottom:68px;left:-5px;border:2px solid var(--gold)}
-.giftbox-illust .ribbon-v{position:absolute;width:8px;height:68px;background:var(--gold);bottom:0;left:46px}
-.giftbox-illust .ribbon-h{position:absolute;width:100px;height:8px;background:var(--gold);bottom:31px;left:0}
-.giftbox-illust .bow{position:absolute;top:0;left:38px;font-size:20px;color:var(--gold)}
+/* Merch images */
+.merch-visual img{border-radius:0}
 
 /* Photo & Tone cards */
 .guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -408,10 +336,7 @@ section{padding:64px 0}
 <!-- 1. Polo Shirt -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="polo-illust">
-<div class="sleeve-l"></div>
-<div class="sleeve-r"></div>
-</div>
+<img src="brand-kit-images/polo.png" alt="Polo Shirt" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>👕 Polo Shirt</h4>
@@ -423,10 +348,7 @@ section{padding:64px 0}
 <!-- 2. Cap -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="cap-illust">
-<div class="crown"></div>
-<div class="brim"></div>
-</div>
+<img src="brand-kit-images/cap.png" alt="Cap" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🧢 Cap</h4>
@@ -438,7 +360,7 @@ section{padding:64px 0}
 <!-- 3. Stationery Kit -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="notebook-illust"></div>
+<img src="brand-kit-images/stationery.png" alt="Stationery Kit" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>📓 Stationery Kit</h4>
@@ -450,11 +372,7 @@ section{padding:64px 0}
 <!-- 4. Water Bottle -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="bottle-illust">
-<div class="cap-part"></div>
-<div class="neck"></div>
-<div class="body-part"></div>
-</div>
+<img src="brand-kit-images/bottle.png" alt="Water Bottle" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🥤 Water Bottle</h4>
@@ -466,7 +384,7 @@ section{padding:64px 0}
 <!-- 5. Installer Bag -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="bag-illust"></div>
+<img src="brand-kit-images/bag.png" alt="Installer Bag" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🎒 Installer Bag</h4>
@@ -478,10 +396,7 @@ section{padding:64px 0}
 <!-- 6. Work Gloves + Safety Glasses -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="gloves-illust">
-<div class="glove"></div>
-<div class="glasses"></div>
-</div>
+<img src="brand-kit-images/safety-gear.png" alt="Safety Gear" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🧤 Work Gloves + Safety Glasses</h4>
@@ -493,12 +408,7 @@ section{padding:64px 0}
 <!-- 7. Vehicle Wrap -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="truck-illust">
-<div class="truck-body"></div>
-<div class="truck-cab"></div>
-<div class="wheel1"></div>
-<div class="wheel2"></div>
-</div>
+<img src="brand-kit-images/vehicle-wrap.png" alt="Vehicle Wrap" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🚗 Vehicle Wrap</h4>
@@ -510,17 +420,7 @@ section{padding:64px 0}
 <!-- 8. Feather Flag + Roll-up Banner -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="flag-illust">
-<div class="feather-flag">
-<div class="pole"></div>
-<div class="fabric"></div>
-</div>
-<div style="position:relative">
-<div class="rollup">
-<div class="rollup-base"></div>
-</div>
-</div>
-</div>
+<img src="brand-kit-images/banner.png" alt="Feather Flag + Banner" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🚩 Feather Flag + Roll-up Banner</h4>
@@ -532,10 +432,7 @@ section{padding:64px 0}
 <!-- 9. Lanyard + ID Badge -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="lanyard-illust">
-<div class="strap"></div>
-<div class="badge"></div>
-</div>
+<img src="brand-kit-images/lanyard.png" alt="Lanyard + Badge" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🪪 Lanyard + ID Badge</h4>
@@ -547,9 +444,7 @@ section{padding:64px 0}
 <!-- 10. Solar Power Bank -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="powerbank-illust">
-<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-</div>
+<img src="brand-kit-images/powerbank.png" alt="Solar Power Bank" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🔋 Solar Power Bank</h4>
@@ -561,7 +456,7 @@ section{padding:64px 0}
 <!-- 11. Car Magnet -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="magnet-illust"></div>
+<img src="brand-kit-images/magnet.png" alt="Car Magnet" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🧲 Car Magnet</h4>
@@ -573,13 +468,7 @@ section{padding:64px 0}
 <!-- 12. Client Gift Box -->
 <div class="merch-card">
 <div class="merch-visual" style="background:var(--sand)">
-<div class="giftbox-illust">
-<div class="box"></div>
-<div class="lid"></div>
-<div class="ribbon-v"></div>
-<div class="ribbon-h"></div>
-<div class="bow">🎀</div>
-</div>
+<img src="brand-kit-images/giftbox.png" alt="Client Gift Box" style="width:100%;height:100%;object-fit:cover;">
 </div>
 <div class="merch-card-body">
 <h4>🎁 Client Gift Box</h4>
