@@ -3,438 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solaris Energy Panama — OWN YOUR ENERGY</title>
+    <title>Solaris Energy Panama — Dashboard</title>
     <meta name="description" content="Premium solar installations in the Azuero Peninsula, Panama. Law 417 tax benefits. 2.5-3.5 year payback.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
     <style>
-        :root {
-            --green: #0B3D2E;
-            --green-canopy: #14573F;
-            --gold: #D4A843;
-            --gold-aged: #B8912E;
-            --pearl: #FEFDFB;
-            --sand: #F5EFE0;
-            --charcoal: #1A1A1A;
-            --slate: #4A4A4A;
-            --ash: #8A8A8A;
-            --mist: #E8E4DC;
-            --cloud: #F9F7F3;
-            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
-            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
-            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
-            --radius-card: 12px;
-            --radius-btn: 6px;
-            --radius-pill: 100px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--charcoal);
-            background: var(--pearl);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* ===== LANGUAGE TOGGLE ===== */
-        .lang-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            background: var(--green);
-            border-radius: var(--radius-pill);
-            padding: 4px;
-            box-shadow: var(--shadow-elevated);
-        }
-
-        .lang-btn {
-            padding: 6px 14px;
-            border: none;
-            background: transparent;
-            color: rgba(255,255,255,0.6);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: var(--radius-pill);
-            transition: all 0.3s;
-            letter-spacing: 0.08em;
-        }
-
-        .lang-btn.active {
-            background: var(--gold);
-            color: var(--green);
-        }
-
-        .lang-btn:hover:not(.active) {
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* ===== HERO ===== */
-        .hero {
-            min-height: 100vh;
-            background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 75%, #2A8B5A 100%);
+        /* === Page-specific: Hero with background image === */
+        .dash-hero {
             position: relative;
+            min-height: 380px;
+            background: linear-gradient(165deg, var(--green), var(--green-canopy));
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 2rem;
+            padding: 3.5rem 3rem;
             overflow: hidden;
         }
 
-        .hero::before {
+        .dash-hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('images/hero-main.png') center/cover no-repeat;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .dash-hero::before {
             content: '';
             position: absolute;
-            top: -30%;
-            right: -15%;
-            width: 70vw;
-            height: 70vw;
-            background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 55%);
+            top: -25%; right: -10%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%);
             border-radius: 50%;
-            animation: sunGlow 10s ease-in-out infinite;
+            animation: sunPulse 10s ease-in-out infinite;
         }
 
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            left: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 50%);
-            border-radius: 50%;
-            animation: sunGlow 12s ease-in-out infinite reverse;
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.12); opacity: 1; }
         }
 
-        @keyframes sunGlow {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.15); opacity: 1; }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .hero-nav {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .logo {
+        .dash-hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
             color: var(--pearl);
-            letter-spacing: 0.05em;
-            font-weight: 700;
-        }
-
-        .logo span { color: var(--gold); }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: rgba(254,253,251,0.7);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover { color: var(--gold); }
-
-        .nav-cta {
-            background: var(--gold) !important;
-            color: var(--green) !important;
-            padding: 0.7rem 1.8rem;
-            border-radius: var(--radius-pill);
-            font-weight: 700 !important;
-            font-size: 0.85rem !important;
-            letter-spacing: 0.04em;
-            transition: all 0.3s;
-        }
-
-        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,67,0.4); }
-
-        .hero-content {
-            max-width: 800px;
-            z-index: 5;
-            animation: fadeUp 1s ease-out;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(254,253,251,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(254,253,251,0.2);
-            padding: 0.5rem 1.2rem;
-            border-radius: var(--radius-pill);
-            color: var(--gold);
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: 0.06em;
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.8rem, 6.5vw, 5rem);
-            color: var(--pearl);
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
+            position: relative; z-index: 1;
             letter-spacing: -0.02em;
         }
 
-        .hero h1 em {
-            font-style: italic;
-            color: var(--gold);
-        }
+        .dash-hero h1 em { font-style: italic; color: var(--gold); }
 
-        .hero-sub {
-            font-size: 1.15rem;
-            color: rgba(254,253,251,0.75);
+        .dash-hero-sub {
+            color: rgba(254,253,251,0.7);
+            max-width: 560px;
+            margin-top: 0.8rem;
+            font-size: 1.05rem;
             line-height: 1.7;
-            max-width: 540px;
-            margin-bottom: 2.5rem;
+            position: relative; z-index: 1;
         }
 
-        .hero-cta-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            background: var(--gold);
-            color: var(--green);
-            padding: 1rem 2.5rem;
-            border-radius: var(--radius-pill);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            letter-spacing: 0.02em;
-        }
-
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,168,67,0.4); }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--pearl);
-            padding: 1rem 2.5rem;
-            border-radius: var(--radius-pill);
-            text-decoration: none;
+        .dash-hero-badge {
+            display: inline-block;
+            background: rgba(254,253,251,0.1);
+            border: 1px solid rgba(254,253,251,0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            color: var(--gold);
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 1rem;
-            border: 2px solid rgba(254,253,251,0.3);
+            letter-spacing: 0.06em;
+            margin-bottom: 1.5rem;
+            position: relative; z-index: 1;
+        }
+
+        /* === Quick Stats Strip === */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            padding: 2rem 2.5rem;
+            background: var(--cloud);
+            border-bottom: 1px solid var(--mist);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.2rem;
+            background: var(--pearl);
+            border-radius: var(--radius);
+            border: 1px solid var(--mist);
             transition: all 0.3s;
         }
 
-        .btn-secondary:hover { border-color: var(--pearl); background: rgba(254,253,251,0.1); }
-
-        /* ===== STATS BAR ===== */
-        .stats-bar {
-            background: var(--pearl);
-            padding: 3rem 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 40px rgba(0,0,0,0.04);
-        }
-
-        .stat { text-align: center; }
+        .stat-card:hover { box-shadow: var(--shadow-card); }
 
         .stat-num {
             font-family: 'Playfair Display', serif;
-            font-size: 2.6rem;
+            font-size: 1.8rem;
             color: var(--green);
-            letter-spacing: -0.02em;
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             color: var(--ash);
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
             font-weight: 500;
         }
 
-        /* ===== SECTIONS ===== */
-        section { padding: 6rem 2rem; }
-
-        .container { max-width: 1100px; margin: 0 auto; }
-
-        .section-badge {
-            display: inline-block;
-            padding: 4px 14px;
-            background: rgba(212,168,67,0.12);
-            border-radius: var(--radius-btn);
-            color: var(--gold-aged);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            color: var(--green);
-            letter-spacing: -0.02em;
-            margin-bottom: 0.8rem;
-        }
-
-        .section-sub {
-            font-size: 1.05rem;
-            color: var(--slate);
-            max-width: 600px;
-            line-height: 1.7;
-            margin-bottom: 3rem;
-        }
-
-        /* ===== ABOUT ===== */
-        .about-section { background: var(--sand); }
-
-        .about-grid {
+        /* === Dashboard Grid === */
+        .dash-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .about-card {
-            background: var(--pearl);
-            border-radius: var(--radius-card);
-            padding: 2.5rem;
-            transition: all 0.4s;
-            border: 1px solid var(--mist);
-        }
-
-        .about-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-elevated);
-        }
-
-        .about-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .about-icon.law { background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05)); }
-        .about-icon.sun { background: linear-gradient(135deg, rgba(20,87,63,0.12), rgba(20,87,63,0.04)); }
-        .about-icon.roi { background: linear-gradient(135deg, rgba(184,145,46,0.15), rgba(184,145,46,0.05)); }
-
-        .about-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-            color: var(--green);
-        }
-
-        .about-card p {
-            color: var(--slate);
-            line-height: 1.7;
-            font-size: 0.95rem;
-        }
-
-        /* ===== TOOLS GRID ===== */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
+            padding: 2.5rem;
         }
 
-        .tool-card {
+        .dash-card {
             background: var(--pearl);
             border: 1px solid var(--mist);
-            border-radius: var(--radius-card);
+            border-top: 3px solid var(--gold);
+            border-radius: var(--radius);
             padding: 2rem;
             text-decoration: none;
-            color: inherit;
-            transition: all 0.4s;
+            transition: all 0.35s;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
         }
 
-        .tool-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-elevated);
-            border-color: var(--gold);
+        .dash-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-top-color: var(--green-canopy);
         }
 
-        .tool-card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
+        .dash-card-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
+            background: linear-gradient(135deg, rgba(11,61,46,0.1), rgba(11,61,46,0.03));
         }
 
-        .tool-card-icon.brand { background: linear-gradient(135deg, #0B3D2E15, #14573F08); }
-        .tool-card-icon.assets { background: linear-gradient(135deg, #D4A84315, #B8912E08); }
-        .tool-card-icon.strategy { background: linear-gradient(135deg, #14573F15, #0B3D2E08); }
-        .tool-card-icon.avatars { background: linear-gradient(135deg, #B8912E15, #D4A84308); }
-
-        .tool-card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .dash-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
             color: var(--green);
         }
 
-        .tool-card p {
-            font-size: 0.9rem;
+        .dash-card p {
+            font-size: 0.88rem;
             color: var(--slate);
             line-height: 1.6;
+            flex: 1;
         }
 
-        .tool-card .arrow {
+        .dash-card .arrow {
             color: var(--gold);
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 0.05em;
-            margin-top: auto;
             transition: transform 0.3s;
         }
 
-        .tool-card:hover .arrow { transform: translateX(6px); }
+        .dash-card:hover .arrow { transform: translateX(6px); }
 
-        /* ===== TEAM ===== */
-        .team-section { background: var(--green); }
+        /* === Team Section === */
+        .team-section {
+            background: var(--green);
+            padding: 3.5rem 2.5rem;
+        }
 
+        .team-section .section-badge { background: rgba(212,168,67,0.15); color: var(--gold); }
         .team-section .section-title { color: var(--pearl); }
-        .team-section .section-sub { color: rgba(254,253,251,0.6); }
+        .team-section .section-sub { color: rgba(254,253,251,0.55); }
 
         .team-grid {
             display: grid;
@@ -445,20 +188,19 @@
         .team-card {
             background: rgba(254,253,251,0.06);
             border: 1px solid rgba(254,253,251,0.1);
-            border-radius: var(--radius-card);
+            border-radius: var(--radius);
             padding: 2.5rem;
             backdrop-filter: blur(10px);
-            transition: all 0.4s;
+            transition: all 0.35s;
         }
 
         .team-card:hover {
             background: rgba(254,253,251,0.1);
-            transform: translateY(-4px);
+            transform: translateY(-3px);
         }
 
         .team-avatar {
-            width: 64px;
-            height: 64px;
+            width: 64px; height: 64px;
             border-radius: 50%;
             background: var(--gold);
             display: flex;
@@ -468,73 +210,103 @@
             font-size: 1.4rem;
             color: var(--green);
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
         }
+
+        .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         .team-card h3 {
             font-family: 'Playfair Display', serif;
             color: var(--pearl);
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             margin-bottom: 0.3rem;
         }
 
         .team-card .role {
             color: var(--gold);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .team-card p {
-            color: rgba(254,253,251,0.6);
-            font-size: 0.9rem;
+            color: rgba(254,253,251,0.55);
+            font-size: 0.88rem;
             line-height: 1.6;
         }
 
-        /* ===== FOOTER ===== */
-        footer {
-            background: var(--charcoal);
-            padding: 3rem 2rem;
+        /* === CTA Footer === */
+        .cta-footer {
+            background: var(--sand);
+            padding: 3rem 2.5rem;
             text-align: center;
         }
 
-        footer p {
-            color: rgba(254,253,251,0.4);
-            font-size: 0.85rem;
+        .cta-footer h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            margin-bottom: 0.6rem;
         }
 
-        footer a {
-            color: var(--gold);
-            text-decoration: none;
+        .cta-footer p {
+            color: var(--slate);
+            margin-bottom: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* ===== RESPONSIVE ===== */
+        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* === POC Section === */
+        .poc-section {
+            background: var(--cloud);
+            padding: 3rem 2.5rem;
+            text-align: center;
+        }
+
+        .poc-stats {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .poc-stat {
+            background: var(--pearl);
+            border: 1px solid var(--mist);
+            border-radius: var(--radius);
+            padding: 1.5rem 2.5rem;
+        }
+
+        .poc-stat .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--green);
+        }
+
+        .poc-stat .lbl {
+            font-size: 0.78rem;
+            color: var(--ash);
+            margin-top: 0.2rem;
+        }
+
+        /* === Responsive overrides === */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .stats-bar { gap: 2rem; padding: 2rem 1rem; }
-            .stat-num { font-size: 2rem; }
-            section { padding: 4rem 1.5rem; }
-            .hero { padding: 1.5rem; }
-            .hero-cta-row { flex-direction: column; }
-            .btn-primary, .btn-secondary { text-align: center; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 1.5rem; }
+            .dash-grid { padding: 1.5rem; }
+            .dash-hero { padding: 2.5rem 1.5rem; min-height: 280px; }
+            .team-section, .cta-footer, .poc-section { padding: 2.5rem 1.5rem; }
         }
 
-        /* ===== SCROLL ANIMATIONS ===== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        @media (max-width: 480px) {
+            .stats-strip { grid-template-columns: 1fr 1fr; }
+            .stat-num { font-size: 1.4rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
         }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* RTL support for Hebrew */
-        [dir="rtl"] { text-align: right; }
-        [dir="rtl"] .hero-cta-row { flex-direction: row-reverse; }
-        [dir="rtl"] .tool-card:hover .arrow { transform: translateX(-6px); }
     </style>
 </head>
 <body>
@@ -546,178 +318,258 @@
     <button class="lang-btn" onclick="setLang('he')">HE</button>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-    <nav class="hero-nav">
-        <div class="logo">SOLARIS <span>ENERGY</span></div>
-        <div class="nav-links">
-            <a href="brand-kit.html" data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</a>
-            <a href="assets.html" data-en="Assets" data-es="Recursos" data-he="נכסים">Assets</a>
-            <a href="strategy.html" data-en="Strategy" data-es="Estrategia" data-he="אסטרטגיה">Strategy</a>
-            <a href="customer-avatars.html" data-en="Personas" data-es="Personas" data-he="פרסונות">Personas</a>
-            <a href="https://wa.me/50765831822" class="nav-cta" data-en="WhatsApp" data-es="WhatsApp" data-he="WhatsApp">WhatsApp</a>
-        </div>
-    </nav>
+<!-- Mobile Sidebar Toggle -->
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
 
-    <div class="hero-content">
-        <div class="hero-badge" data-en="AZUERO PENINSULA, PANAMA" data-es="PENINSULA DE AZUERO, PANAMA" data-he="חצי האי אזוארו, פנמה">AZUERO PENINSULA, PANAMA</div>
+<!-- SIDEBAR NAVIGATION -->
+<nav class="sidebar">
+    <div class="sidebar-logo">SOLARIS <span>ENERGY</span></div>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</div>
+    <ul class="sidebar-links">
+        <li><a href="index.html" class="active" data-en="Home" data-es="Inicio" data-he="ראשי">Home</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Brand & Assets" data-es="Marca y Recursos" data-he="מותג ונכסים">Brand & Assets</div>
+    <ul class="sidebar-links">
+        <li><a href="brand-kit.html" data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</a></li>
+        <li><a href="assets.html" data-en="All Assets" data-es="Todos los Recursos" data-he="כל הנכסים">All Assets</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Strategy" data-es="Estrategia" data-he="אסטרטגיה">Strategy</div>
+    <ul class="sidebar-links">
+        <li><a href="strategy.html" data-en="Strategy" data-es="Estrategia" data-he="אסטרטגיה">Strategy</a></li>
+        <li><a href="customer-avatars.html" data-en="Customer Personas" data-es="Personas" data-he="פרסונות">Customer Personas</a></li>
+        <li><a href="business-plan.html" data-en="Business Plan" data-es="Plan de Negocio" data-he="תוכנית עסקית">Business Plan</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Sales & Marketing" data-es="Ventas y Marketing" data-he="מכירות ושיווק">Sales & Marketing</div>
+    <ul class="sidebar-links">
+        <li><a href="sales-marketing.html" data-en="Sales & Marketing" data-es="Ventas y Marketing" data-he="מכירות ושיווק">Sales & Marketing</a></li>
+        <li><a href="ads-dashboard.html" data-en="Ads Dashboard" data-es="Panel de Anuncios" data-he="לוח פרסום">Ads Dashboard</a></li>
+        <li><a href="proposal.html" data-en="Proposal" data-es="Propuesta" data-he="הצעה">Proposal</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Finance" data-es="Finanzas" data-he="פיננסים">Finance</div>
+    <ul class="sidebar-links">
+        <li><a href="financial-dashboard.html" data-en="Financial Dashboard" data-es="Panel Financiero" data-he="לוח פיננסי">Financial Dashboard</a></li>
+        <li><a href="pnl-plan.html" data-en="P&L Plan" data-es="Plan P&L" data-he="תוכנית רווח והפסד">P&L Plan</a></li>
+        <li><a href="financing.html" data-en="Financing" data-es="Financiamiento" data-he="מימון">Financing</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Legal" data-es="Legal" data-he="משפטי">Legal</div>
+    <ul class="sidebar-links">
+        <li><a href="legal-contracts.html" data-en="Contracts Overview" data-es="Resumen de Contratos" data-he="סקירת חוזים">Contracts Overview</a></li>
+        <li><a href="epc-contract.html" data-en="EPC Contract" data-es="Contrato EPC" data-he="חוזה EPC">EPC Contract</a></li>
+        <li><a href="ppa-contract.html" data-en="PPA Contract" data-es="Contrato PPA" data-he="חוזה PPA">PPA Contract</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Operations" data-es="Operaciones" data-he="תפעול">Operations</div>
+    <ul class="sidebar-links">
+        <li><a href="equipment-list.html" data-en="Equipment List" data-es="Lista de Equipos" data-he="רשימת ציוד">Equipment List</a></li>
+        <li><a href="licensing.html" data-en="Licensing" data-es="Licencias" data-he="רישוי">Licensing</a></li>
+        <li><a href="installation.html" data-en="Installation" data-es="Instalación" data-he="התקנה">Installation</a></li>
+        <li><a href="monitoring-maintenance.html" data-en="Monitoring" data-es="Monitoreo" data-he="ניטור">Monitoring</a></li>
+        <li><a href="drone-guide.html" data-en="Drone Guide" data-es="Guía de Drones" data-he="מדריך דרונים">Drone Guide</a></li>
+        <li><a href="procurement-engineering.html" data-en="Procurement" data-es="Adquisiciones" data-he="רכש">Procurement</a></li>
+        <li><a href="roof-scanner.html" data-en="Roof Scanner" data-es="Escáner de Techos" data-he="סורק גגות">Roof Scanner</a></li>
+        <li><a href="value-chain.html" data-en="Value Chain" data-es="Cadena de Valor" data-he="שרשרת ערך">Value Chain</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="Tools" data-es="Herramientas" data-he="כלים">Tools</div>
+    <ul class="sidebar-links">
+        <li><a href="bill-scanner.html" data-en="Bill Scanner" data-es="Escáner de Facturas" data-he="סורק חשבונות">Bill Scanner</a></li>
+    </ul>
+
+    <div class="sidebar-category" onclick="this.classList.toggle('collapsed')" data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</div>
+    <ul class="sidebar-links">
+        <li><a href="crm-value-chain.html" data-en="CRM Overview" data-es="Resumen CRM" data-he="סקירת CRM">CRM Overview</a></li>
+        <li><a href="crm-step1-lead-capture.html" data-en="1. Lead Capture" data-es="1. Captura de Leads" data-he="1. לכידת ליד">1. Lead Capture</a></li>
+        <li><a href="crm-step2-site-survey.html" data-en="2. Site Survey" data-es="2. Inspección" data-he="2. סקר אתר">2. Site Survey</a></li>
+        <li><a href="crm-step3-electricity.html" data-en="3. Electricity" data-es="3. Electricidad" data-he="3. חשמל">3. Electricity</a></li>
+        <li><a href="crm-step4-design.html" data-en="4. Design" data-es="4. Diseño" data-he="4. עיצוב">4. Design</a></li>
+        <li><a href="crm-step5-sld.html" data-en="5. SLD" data-es="5. SLD" data-he="5. SLD">5. SLD</a></li>
+        <li><a href="crm-step6-proposal.html" data-en="6. Proposal" data-es="6. Propuesta" data-he="6. הצעה">6. Proposal</a></li>
+        <li><a href="crm-step7-contract.html" data-en="7. Contract" data-es="7. Contrato" data-he="7. חוזה">7. Contract</a></li>
+        <li><a href="crm-step8-inventory.html" data-en="8. Inventory" data-es="8. Inventario" data-he="8. מלאי">8. Inventory</a></li>
+        <li><a href="crm-step9-installation.html" data-en="9. Installation" data-es="9. Instalación" data-he="9. התקנה">9. Installation</a></li>
+        <li><a href="crm-step10-om.html" data-en="10. O&M" data-es="10. O&M" data-he="10. תפעול">10. O&M</a></li>
+    </ul>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+    <!-- HERO -->
+    <section class="dash-hero">
+        <div class="dash-hero-bg"></div>
+        <div class="dash-hero-badge" data-en="AZUERO PENINSULA, PANAMA" data-es="PENINSULA DE AZUERO, PANAMA" data-he="חצי האי אזוארו, פנמה">AZUERO PENINSULA, PANAMA</div>
         <h1>
             <span data-en="Own Your" data-es="Controla Tu" data-he="השתלט על">Own Your</span><br>
             <em data-en="Energy" data-es="Energía" data-he="האנרגיה שלך">Energy</em>
         </h1>
-        <p class="hero-sub" data-en="Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition." data-es="Instalaciones solares premium en la región más soleada de Panamá. La Ley 417 ofrece 100% de deducción fiscal. Retorno en 2.5–3.5 años. Cero competencia digital." data-he="התקנות סולאריות פרימיום באזור השמשי ביותר של פנמה. חוק 417 מעניק 100% ניכוי מס. החזר השקעה תוך 2.5-3.5 שנים. אפס תחרות דיגיטלית.">Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition.</p>
-        <div class="hero-cta-row">
-            <a href="strategy.html" class="btn-primary" data-en="View Strategy" data-es="Ver Estrategia" data-he="צפה באסטרטגיה">View Strategy</a>
-            <a href="assets.html" class="btn-secondary" data-en="Explore Assets" data-es="Explorar Recursos" data-he="גלה נכסים">Explore Assets</a>
+        <p class="dash-hero-sub" data-en="Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition." data-es="Instalaciones solares premium en la región más soleada de Panamá. La Ley 417 ofrece 100% de deducción fiscal. Retorno en 2.5–3.5 años. Cero competencia digital." data-he="התקנות סולאריות פרימיום באזור השמשי ביותר של פנמה. חוק 417 מעניק 100% ניכוי מס. החזר השקעה תוך 2.5-3.5 שנים. אפס תחרות דיגיטלית.">Premium solar installations in Panama's sunniest region. Law 417 delivers 100% tax deduction. Payback in 2.5–3.5 years. Zero digital competition.</p>
+    </section>
+
+    <!-- QUICK STATS -->
+    <div class="stats-strip">
+        <div class="stat-card reveal">
+            <div class="stat-num">300kW</div>
+            <div class="stat-label" data-en="POC Project" data-es="Proyecto POC" data-he="פרויקט POC">POC Project</div>
+        </div>
+        <div class="stat-card reveal">
+            <div class="stat-num">5.3h</div>
+            <div class="stat-label" data-en="Sun Hours/Day" data-es="Horas Sol/Día" data-he="שעות שמש/יום">Sun Hours/Day</div>
+        </div>
+        <div class="stat-card reveal">
+            <div class="stat-num">2.5-3.5yr</div>
+            <div class="stat-label" data-en="Payback Period" data-es="Período de Retorno" data-he="תקופת החזר">Payback Period</div>
+        </div>
+        <div class="stat-card reveal">
+            <div class="stat-num">85%</div>
+            <div class="stat-label" data-en="Max Savings" data-es="Ahorro Máximo" data-he="חיסכון מקסימלי">Max Savings</div>
         </div>
     </div>
-</section>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-    <div class="stat">
-        <div class="stat-num">$50M+</div>
-        <div class="stat-label" data-en="Market Opportunity" data-es="Oportunidad de Mercado" data-he="הזדמנות שוק">Market Opportunity</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">5.3h</div>
-        <div class="stat-label" data-en="Peak Sun Hours/Day" data-es="Horas Sol Pico/Día" data-he="שעות שיא שמש/יום">Peak Sun Hours/Day</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">100%</div>
-        <div class="stat-label" data-en="Tax Deduction (Law 417)" data-es="Deducción Fiscal (Ley 417)" data-he="ניכוי מס (חוק 417)">Tax Deduction (Law 417)</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">2.5yr</div>
-        <div class="stat-label" data-en="Average Payback" data-es="Retorno Promedio" data-he="החזר השקעה ממוצע">Average Payback</div>
-    </div>
-</div>
-
-<!-- WHY SOLARIS -->
-<section class="about-section">
-    <div class="container">
-        <div class="section-badge" data-en="WHY SOLARIS" data-es="POR QUE SOLARIS" data-he="למה סולאריס">WHY SOLARIS</div>
-        <h2 class="section-title reveal" data-en="The Azuero Advantage" data-es="La Ventaja del Azuero" data-he="היתרון של אזוארו">The Azuero Advantage</h2>
-        <p class="section-sub reveal" data-en="Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula." data-es="La Ley 417 de Panamá convierte la energía solar en la inversión más inteligente de Centroamérica. Somos el primer instalador profesional en la península." data-he="חוק 417 של פנמה הופך סולארי להשקעה החכמה ביותר במרכז אמריקה. אנחנו המתקינים המקצועיים הראשונים בחצי האי.">Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula.</p>
-
-        <div class="about-grid">
-            <div class="about-card reveal">
-                <div class="about-icon law">⚖️</div>
-                <h3 data-en="Law 417 Benefits" data-es="Beneficios Ley 417" data-he="הטבות חוק 417">Law 417 Benefits</h3>
-                <p data-en="100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar." data-es="100% de deducción fiscal en equipos solares más exención total de impuestos de importación. El gobierno literalmente te paga por usar energía solar." data-he="100% ניכוי מס על ציוד סולארי בתוספת פטור מלא ממכס יבוא. הממשלה ממש משלמת לך להתקין סולארי.">100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar.</p>
-            </div>
-            <div class="about-card reveal">
-                <div class="about-icon sun">☀️</div>
-                <h3 data-en="5.3 Peak Sun Hours" data-es="5.3 Horas Sol Pico" data-he="5.3 שעות שיא שמש">5.3 Peak Sun Hours</h3>
-                <p data-en="Azuero is one of the sunniest regions in all of Panama with 5.3 average peak sun hours daily — ideal conditions for maximum solar output." data-es="Azuero es una de las regiones más soleadas de todo Panamá con 5.3 horas sol pico promedio diarias — condiciones ideales para máxima producción solar." data-he="אזוארו הוא אחד האזורים השמשיים ביותר בכל פנמה עם 5.3 שעות שיא שמש ממוצעות ביום — תנאים אידיאליים לתפוקה סולארית מקסימלית.">Azuero is one of the sunniest regions in all of Panama with 5.3 average peak sun hours daily — ideal conditions for maximum solar output.</p>
-            </div>
-            <div class="about-card reveal">
-                <div class="about-icon roi">📈</div>
-                <h3 data-en="2.5–3.5 Year Payback" data-es="Retorno en 2.5–3.5 Años" data-he="החזר השקעה תוך 2.5-3.5 שנים">2.5–3.5 Year Payback</h3>
-                <p data-en="At $0.18–0.195/kWh electricity rates, solar systems pay for themselves in 2.5–3.5 years — then deliver free electricity for 25+ years." data-es="Con tarifas eléctricas de $0.18–0.195/kWh, los sistemas solares se pagan solos en 2.5–3.5 años — luego entregan electricidad gratis por más de 25 años." data-he="בתעריפי חשמל של $0.18–0.195/kWh, מערכות סולאריות מחזירות את עצמן תוך 2.5–3.5 שנים — ואז מספקות חשמל חינם ל-25+ שנים.">At $0.18–0.195/kWh electricity rates, solar systems pay for themselves in 2.5–3.5 years — then deliver free electricity for 25+ years.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- DASHBOARD TOOLS -->
-<section>
-    <div class="container">
-        <div class="section-badge" data-en="DASHBOARD" data-es="PANEL DE CONTROL" data-he="לוח בקרה">DASHBOARD</div>
-        <h2 class="section-title reveal" data-en="Business Tools" data-es="Herramientas de Negocio" data-he="כלי עסק">Business Tools</h2>
-        <p class="section-sub reveal" data-en="Everything you need to build, sell, and scale solar in the Azuero Peninsula." data-es="Todo lo que necesitas para construir, vender y escalar energía solar en la Península de Azuero." data-he="כל מה שצריך כדי לבנות, למכור ולהגדיל סולארי בחצי האי אזוארו.">Everything you need to build, sell, and scale solar in the Azuero Peninsula.</p>
-
-        <div class="tools-grid reveal">
-            <a href="brand-kit.html" class="tool-card">
-                <div class="tool-card-icon brand">🎨</div>
-                <h3 data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</h3>
-                <p data-en="Logo showcase, colors, typography, 12 merchandise mockups, photography style, and tone of voice guidelines." data-es="Presentación del logo, colores, tipografía, 12 mockups de merchandising, estilo fotográfico y guías de tono de voz." data-he="תצוגת לוגו, צבעים, טיפוגרפיה, 12 מוקאפים של מרצ'נדייז, סגנון צילום והנחיות טון דיבור.">Logo showcase, colors, typography, 12 merchandise mockups, photography style, and tone of voice guidelines.</p>
+    <!-- DASHBOARD GRID -->
+    <section style="padding: 0;">
+        <div class="dash-grid">
+            <a href="brand-kit.html" class="dash-card reveal">
+                <div class="dash-card-icon">🎨</div>
+                <h3 data-en="Brand & Assets" data-es="Marca y Recursos" data-he="מותג ונכסים">Brand & Assets</h3>
+                <p data-en="Logo, colors, typography, merchandise mockups, photography style, and brand voice guidelines." data-es="Logo, colores, tipografía, mockups de merchandising, estilo fotográfico y guías de voz de marca." data-he="לוגו, צבעים, טיפוגרפיה, מוקאפים, סגנון צילום והנחיות טון דיבור.">Logo, colors, typography, merchandise mockups, photography style, and brand voice guidelines.</p>
                 <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
             </a>
-            <a href="assets.html" class="tool-card">
-                <div class="tool-card-icon assets">📦</div>
-                <h3 data-en="All Assets" data-es="Todos los Recursos" data-he="כל הנכסים">All Assets</h3>
-                <p data-en="Market research, sales tools, operations docs, financial models, and CRM templates." data-es="Investigación de mercado, herramientas de ventas, documentos operativos, modelos financieros y plantillas CRM." data-he="מחקר שוק, כלי מכירות, מסמכי תפעול, מודלים פיננסיים ותבניות CRM.">Market research, sales tools, operations docs, financial models, and CRM templates.</p>
+            <a href="strategy.html" class="dash-card reveal">
+                <div class="dash-card-icon">🗺️</div>
+                <h3 data-en="Strategy & Planning" data-es="Estrategia y Planificación" data-he="אסטרטגיה ותכנון">Strategy & Planning</h3>
+                <p data-en="Market analysis, Law 417 benefits, target segments, go-to-market plan, and 5-year projection." data-es="Análisis de mercado, beneficios Ley 417, segmentos objetivo, plan go-to-market y proyección a 5 años." data-he="ניתוח שוק, הטבות חוק 417, פלחי יעד, תוכנית כניסה לשוק ותחזית ל-5 שנים.">Market analysis, Law 417 benefits, target segments, go-to-market plan, and 5-year projection.</p>
                 <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
             </a>
-            <a href="strategy.html" class="tool-card">
-                <div class="tool-card-icon strategy">🗺️</div>
-                <h3 data-en="Business Strategy" data-es="Estrategia de Negocio" data-he="אסטרטגיה עסקית">Business Strategy</h3>
-                <p data-en="Market analysis, Law 417, target segments, go-to-market plan, pricing, and 5-year projection." data-es="Análisis de mercado, Ley 417, segmentos objetivo, plan go-to-market, precios y proyección a 5 años." data-he="ניתוח שוק, חוק 417, פלחי יעד, תוכנית כניסה לשוק, תמחור ותחזית ל-5 שנים.">Market analysis, Law 417, target segments, go-to-market plan, pricing, and 5-year projection.</p>
+            <a href="sales-marketing.html" class="dash-card reveal">
+                <div class="dash-card-icon">📈</div>
+                <h3 data-en="Sales & Marketing" data-es="Ventas y Marketing" data-he="מכירות ושיווק">Sales & Marketing</h3>
+                <p data-en="Sales tools, proposal templates, ads dashboard, and customer acquisition strategy." data-es="Herramientas de ventas, plantillas de propuestas, panel de anuncios y estrategia de adquisición." data-he="כלי מכירות, תבניות הצעות, לוח פרסום ואסטרטגיית רכישת לקוחות.">Sales tools, proposal templates, ads dashboard, and customer acquisition strategy.</p>
                 <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
             </a>
-            <a href="customer-avatars.html" class="tool-card">
-                <div class="tool-card-icon avatars">👥</div>
-                <h3 data-en="Customer Personas" data-es="Personas de Clientes" data-he="פרסונות לקוחות">Customer Personas</h3>
-                <p data-en="Detailed profiles: expat homeowners, boutique hotels, restaurants, farms, and commercial properties." data-es="Perfiles detallados: propietarios expatriados, hoteles boutique, restaurantes, fincas y propiedades comerciales." data-he="פרופילים מפורטים: בעלי בתים אקספטים, מלונות בוטיק, מסעדות, חוות ונכסים מסחריים.">Detailed profiles: expat homeowners, boutique hotels, restaurants, farms, and commercial properties.</p>
+            <a href="financial-dashboard.html" class="dash-card reveal">
+                <div class="dash-card-icon">💰</div>
+                <h3 data-en="Finance" data-es="Finanzas" data-he="פיננסים">Finance</h3>
+                <p data-en="Financial dashboard, P&L projections, financing options, and ROI calculator." data-es="Panel financiero, proyecciones P&L, opciones de financiamiento y calculadora de ROI." data-he="לוח פיננסי, תחזיות רווח והפסד, אפשרויות מימון ומחשבון ROI.">Financial dashboard, P&L projections, financing options, and ROI calculator.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+            <a href="equipment-list.html" class="dash-card reveal">
+                <div class="dash-card-icon">⚙️</div>
+                <h3 data-en="Operations" data-es="Operaciones" data-he="תפעול">Operations</h3>
+                <p data-en="Equipment, licensing, installation guides, monitoring, drone surveys, and procurement." data-es="Equipos, licencias, guías de instalación, monitoreo, inspección con drones y adquisiciones." data-he="ציוד, רישוי, מדריכי התקנה, ניטור, סקרי דרונים ורכש.">Equipment, licensing, installation guides, monitoring, drone surveys, and procurement.</p>
+                <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
+            </a>
+            <a href="crm-value-chain.html" class="dash-card reveal">
+                <div class="dash-card-icon">🔗</div>
+                <h3 data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</h3>
+                <p data-en="10-step customer journey: from lead capture through installation to ongoing O&M." data-es="Recorrido del cliente en 10 pasos: desde la captura de leads hasta la instalación y O&M continuo." data-he="מסע לקוח ב-10 שלבים: מלכידת ליד דרך התקנה ועד תפעול שוטף.">10-step customer journey: from lead capture through installation to ongoing O&M.</p>
                 <span class="arrow" data-en="EXPLORE →" data-es="EXPLORAR →" data-he="← גלה">EXPLORE →</span>
             </a>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- TEAM -->
-<section class="team-section">
-    <div class="container">
-        <div class="section-badge" style="background: rgba(212,168,67,0.15); color: var(--gold);" data-en="THE TEAM" data-es="EL EQUIPO" data-he="הצוות">THE TEAM</div>
+    <!-- WHY SOLARIS -->
+    <section style="background: var(--sand); padding: 3rem 2.5rem;">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <div class="section-badge" data-en="WHY SOLARIS" data-es="POR QUÉ SOLARIS" data-he="למה סולאריס">WHY SOLARIS</div>
+            <h2 class="section-title reveal" data-en="The Azuero Advantage" data-es="La Ventaja del Azuero" data-he="היתרון של אזוארו">The Azuero Advantage</h2>
+            <p class="section-sub reveal" data-en="Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula." data-es="La Ley 417 de Panamá convierte la energía solar en la inversión más inteligente de Centroamérica. Somos el primer instalador profesional en la península." data-he="חוק 417 של פנמה הופך סולארי להשקעה החכמה ביותר במרכז אמריקה. אנחנו המתקינים המקצועיים הראשונים בחצי האי.">Panama's Law 417 makes solar the smartest investment in Central America. We're the first professional installer in the peninsula.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <div class="card card-gold reveal">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.8rem;">⚖️</div>
+                    <h3 data-en="Law 417 Benefits" data-es="Beneficios Ley 417" data-he="הטבות חוק 417">Law 417 Benefits</h3>
+                    <p data-en="100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar." data-es="100% de deducción fiscal en equipos solares más exención total de impuestos de importación." data-he="100% ניכוי מס על ציוד סולארי בתוספת פטור מלא ממכס יבוא.">100% tax deduction on solar equipment plus full import duty exemption. The government is literally paying you to go solar.</p>
+                </div>
+                <div class="card card-green reveal">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.8rem;">☀️</div>
+                    <h3 data-en="5.3 Peak Sun Hours" data-es="5.3 Horas Sol Pico" data-he="5.3 שעות שיא שמש">5.3 Peak Sun Hours</h3>
+                    <p data-en="Azuero is one of the sunniest regions in Panama with 5.3 average peak sun hours daily — ideal for maximum solar output." data-es="Azuero es una de las regiones más soleadas de Panamá con 5.3 horas sol pico promedio diarias." data-he="אזוארו הוא אחד האזורים השמשיים ביותר בפנמה עם 5.3 שעות שיא שמש ממוצעות ביום.">Azuero is one of the sunniest regions in Panama with 5.3 average peak sun hours daily — ideal for maximum solar output.</p>
+                </div>
+                <div class="card card-gold reveal">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.8rem;">📈</div>
+                    <h3 data-en="2.5–3.5 Year Payback" data-es="Retorno en 2.5–3.5 Años" data-he="החזר השקעה תוך 2.5-3.5 שנים">2.5–3.5 Year Payback</h3>
+                    <p data-en="At $0.18–0.195/kWh electricity rates, solar pays for itself in 2.5–3.5 years — then free electricity for 25+ years." data-es="Con tarifas de $0.18–0.195/kWh, el solar se paga solo en 2.5–3.5 años — luego electricidad gratis por 25+ años." data-he="בתעריפי חשמל של $0.18–0.195/kWh, סולארי מחזיר את עצמו תוך 2.5–3.5 שנים — ואז חשמל חינם ל-25+ שנים.">At $0.18–0.195/kWh electricity rates, solar pays for itself in 2.5–3.5 years — then free electricity for 25+ years.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POC -->
+    <section class="poc-section">
+        <div class="section-badge" data-en="PROOF OF CONCEPT" data-es="PRUEBA DE CONCEPTO" data-he="הוכחת היתכנות">PROOF OF CONCEPT</div>
+        <h2 class="section-title reveal" data-en="300kW on Tipi" data-es="300kW en Tipi" data-he="300kW על טיפי">300kW on Tipi</h2>
+        <p class="section-sub reveal" style="margin: 0.6rem auto 0; max-width: 650px;" data-en="Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale." data-es="Nuestro primer proyecto: una instalación comercial de 300kW detrás del Resort Playa Venao para los propietarios Ami y Uri." data-he="הפרויקט הראשון שלנו: התקנה מסחרית של 300kW מאחורי ריזורט פלאיה וונאו עבור הבעלים עמי ואורי.">Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale.</p>
+        <div class="poc-stats reveal">
+            <div class="poc-stat">
+                <div class="val">300kW</div>
+                <div class="lbl" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
+            </div>
+            <div class="poc-stat">
+                <div class="val">~$300K</div>
+                <div class="lbl" data-en="Project Value" data-es="Valor del Proyecto" data-he="שווי פרויקט">Project Value</div>
+            </div>
+            <div class="poc-stat">
+                <div class="val">Playa Venao</div>
+                <div class="lbl" data-en="Location" data-es="Ubicación" data-he="מיקום">Location</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="team-section">
+        <div class="section-badge" data-en="THE TEAM" data-es="EL EQUIPO" data-he="הצוות">THE TEAM</div>
         <h2 class="section-title reveal" data-en="Built to Scale" data-es="Construido para Escalar" data-he="בנוי לצמיחה">Built to Scale</h2>
-        <p class="section-sub reveal" data-en="Strategy meets ground execution. Two founders, complementary skills, one mission." data-es="La estrategia se encuentra con la ejecución en terreno. Dos fundadores, habilidades complementarias, una misión." data-he="אסטרטגיה פוגשת ביצוע בשטח. שני מייסדים, כישורים משלימים, משימה אחת.">Strategy meets ground execution. Two founders, complementary skills, one mission.</p>
+        <p class="section-sub reveal" data-en="Strategy meets ground execution. Two founders, complementary skills, one mission." data-es="La estrategia se encuentra con la ejecución. Dos fundadores, habilidades complementarias, una misión." data-he="אסטרטגיה פוגשת ביצוע בשטח. שני מייסדים, כישורים משלימים, משימה אחת.">Strategy meets ground execution. Two founders, complementary skills, one mission.</p>
 
         <div class="team-grid reveal">
             <div class="team-card">
                 <div class="team-avatar">K</div>
                 <h3>Kaniel Tordjman</h3>
                 <div class="role" data-en="Strategy & Technology" data-es="Estrategia y Tecnología" data-he="אסטרטגיה וטכנולוגיה">Strategy & Technology</div>
-                <p data-en="Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure." data-es="Veterano de la industria solar de Israel (Navitas). Desarrollador full-stack. Maneja estrategia digital, sistemas de ventas e infraestructura tecnológica." data-he="ותיק בתעשיית הסולאר מישראל (נביטס). מפתח פול-סטאק. מנהל אסטרטגיה דיגיטלית, מערכות מכירות ותשתית טכנולוגית.">Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure.</p>
+                <p data-en="Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure." data-es="Veterano de la industria solar de Israel (Navitas). Desarrollador full-stack. Estrategia digital, sistemas de ventas e infraestructura tecnológica." data-he="ותיק בתעשיית הסולאר מישראל (נביטס). מפתח פול-סטאק. אסטרטגיה דיגיטלית, מערכות מכירות ותשתית טכנולוגית.">Solar industry veteran from Israel (Navitas). Full-stack developer. Handles digital strategy, sales systems, and technology infrastructure.</p>
             </div>
             <div class="team-card">
                 <div class="team-avatar">O</div>
                 <h3>Omri Peretz</h3>
                 <div class="role" data-en="COO — Operations" data-es="COO — Operaciones" data-he="מנכ״ל תפעול">COO — Operations</div>
-                <p data-en="On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero." data-es="En terreno en Panamá. Gestiona instalaciones, relaciones con clientes, alianzas locales y operaciones diarias en Azuero." data-he="בשטח בפנמה. מנהל התקנות, קשרי לקוחות, שותפויות מקומיות ותפעול יומיומי באזוארו.">On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero.</p>
+                <p data-en="On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero." data-es="En terreno en Panamá. Gestiona instalaciones, relaciones con clientes, alianzas locales y operaciones diarias." data-he="בשטח בפנמה. מנהל התקנות, קשרי לקוחות, שותפויות מקומיות ותפעול יומיומי באזוארו.">On the ground in Panama. Manages installations, client relationships, local partnerships, and day-to-day operations in Azuero.</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- POC -->
-<section style="background: var(--sand);">
-    <div class="container" style="text-align: center;">
-        <div class="section-badge" data-en="PROOF OF CONCEPT" data-es="PRUEBA DE CONCEPTO" data-he="הוכחת היתכנות">PROOF OF CONCEPT</div>
-        <h2 class="section-title reveal" data-en="300kW on Tipi" data-es="300kW en Tipi" data-he="300kW על טיפי">300kW on Tipi</h2>
-        <p class="section-sub reveal" style="margin: 0.8rem auto 2rem; max-width: 700px;" data-en="Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale before rolling out across the peninsula." data-es="Nuestro primer proyecto: una instalación comercial de 300kW detrás del Resort Playa Venao para los propietarios Ami y Uri. Comprobando el modelo a gran escala antes de expandirse por toda la península." data-he="הפרויקט הראשון שלנו: התקנה מסחרית של 300kW מאחורי ריזורט פלאיה וונאו עבור הבעלים עמי ואורי. מוכיחים את המודל בגדול לפני פריסה בכל חצי האי.">Our first project: a 300kW commercial installation behind Resort Playa Venao for owners Ami & Uri. Proving the model at scale before rolling out across the peninsula.</p>
-
-        <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;" class="reveal">
-            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
-                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">300kW</div>
-                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="System Size" data-es="Tamaño del Sistema" data-he="גודל מערכת">System Size</div>
-            </div>
-            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
-                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">~$300K</div>
-                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="Project Value" data-es="Valor del Proyecto" data-he="שווי פרויקט">Project Value</div>
-            </div>
-            <div style="background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 2rem 3rem; text-align: center;">
-                <div style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green);">Playa Venao</div>
-                <div style="color: var(--ash); font-size: 0.85rem; margin-top: 0.3rem;" data-en="Location" data-es="Ubicación" data-he="מיקום">Location</div>
-            </div>
+    <!-- CTA FOOTER -->
+    <section class="cta-footer">
+        <h2 data-en="Ready to Own Your Energy?" data-es="¿Listo para Controlar Tu Energía?" data-he="מוכנים להשתלט על האנרגיה?">Ready to Own Your Energy?</h2>
+        <p data-en="Schedule a free solar consultation. We'll analyze your roof, calculate savings, and design a custom system." data-es="Programa una consulta solar gratuita. Analizaremos tu techo, calcularemos ahorros y diseñaremos un sistema personalizado." data-he="קבעו ייעוץ סולארי חינם. ננתח את הגג שלכם, נחשב חיסכון ונתכנן מערכת מותאמת אישית.">Schedule a free solar consultation. We'll analyze your roof, calculate savings, and design a custom system.</p>
+        <div class="cta-buttons">
+            <a href="https://wa.me/50765831822" class="btn btn-primary" data-en="WhatsApp Us" data-es="Escríbenos por WhatsApp" data-he="שלחו WhatsApp">WhatsApp Us</a>
+            <a href="proposal.html" class="btn btn-gold" data-en="View Proposal" data-es="Ver Propuesta" data-he="צפה בהצעה">View Proposal</a>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- FOOTER -->
-<footer>
-    <p>
-        <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
-        <a href="https://solaris-panama.com" data-en="solaris-panama.com" data-es="solaris-panama.com" data-he="solaris-panama.com">solaris-panama.com</a>
-    </p>
-</footer>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <p>
+            <span data-en="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-es="© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · " data-he="© 2026 Solaris Energy · פלאיה וונאו, אזוארו, פנמה · ">© 2026 Solaris Energy · Playa Venao, Azuero, Panamá · </span>
+            <a href="https://solaris-panama.com">solaris-panama.com</a>
+        </p>
+    </footer>
+
+</div><!-- /.main-content -->
 
 <script>
 // Language switching
 function setLang(lang) {
     localStorage.setItem('solaris-lang', lang);
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    const btn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+    if (btn) btn.classList.add('active');
 
     const isRTL = lang === 'he';
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -732,7 +584,7 @@ function setLang(lang) {
 const savedLang = localStorage.getItem('solaris-lang') || 'en';
 setLang(savedLang);
 
-// Scroll reveal
+// Scroll reveal (IntersectionObserver)
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -742,6 +594,15 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-links a').forEach(a => {
+    a.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            document.querySelector('.sidebar').classList.remove('open');
+        }
+    });
+});
 </script>
 
 </body>
