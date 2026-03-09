@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Process — Solaris Energy Panama</title>
+    <meta name="description" content="Solar installation process guide for Panama. Pre-installation through commissioning and handover.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+
+        /* Lang Toggle */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* Back Nav */
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; color: var(--pearl); background: var(--green); padding: 8px 18px; border-radius: var(--radius-pill); text-decoration: none; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        /* Hero */
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%); padding: 8rem 2rem 4rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); color: var(--pearl); margin-bottom: 0.8rem; }
+        .page-hero p { color: rgba(254,253,251,0.7); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+
+        /* Section Headers */
+        .section-badge { display: inline-block; background: rgba(212,168,67,0.15); color: var(--gold); padding: 0.4rem 1rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.4rem); color: var(--green); margin-bottom: 0.6rem; }
+        .section-sub { color: var(--ash); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 60px; }
+        .timeline::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, var(--gold), var(--green)); border-radius: 3px; }
+        .timeline-step { position: relative; margin-bottom: 2.5rem; }
+        .timeline-step:last-child { margin-bottom: 0; }
+        .step-number { position: absolute; left: -60px; top: 0; width: 48px; height: 48px; background: var(--green); color: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: var(--shadow-card); border: 3px solid var(--pearl); z-index: 1; }
+        .step-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.8rem; transition: all 0.3s; }
+        .step-card:hover { box-shadow: var(--shadow-elevated); transform: translateX(4px); }
+        .step-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--green); margin-bottom: 0.3rem; }
+        .step-card .step-time { font-size: 0.8rem; color: var(--gold-aged); font-weight: 600; margin-bottom: 0.8rem; letter-spacing: 0.04em; }
+        .step-card p { color: var(--slate); font-size: 0.92rem; line-height: 1.7; }
+        .step-card ul { list-style: none; margin-top: 0.8rem; }
+        .step-card ul li { padding: 0.35rem 0; padding-left: 1.4rem; position: relative; color: var(--slate); font-size: 0.9rem; }
+        .step-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+        /* Phase Header */
+        .phase-header { background: var(--green); color: var(--pearl); padding: 2rem 2.5rem; border-radius: var(--radius-card); margin-bottom: 2rem; display: flex; align-items: center; gap: 1.2rem; }
+        .phase-header .phase-icon { width: 56px; height: 56px; background: rgba(212,168,67,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+        .phase-header h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+        .phase-header p { color: rgba(254,253,251,0.6); font-size: 0.9rem; margin-top: 0.2rem; }
+
+        /* Info Cards Grid */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .info-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.8rem; transition: all 0.3s; }
+        .info-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-3px); }
+        .info-card .card-icon { width: 48px; height: 48px; background: rgba(11,61,46,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+        .info-card h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--green); margin-bottom: 0.5rem; }
+        .info-card p { color: var(--slate); font-size: 0.88rem; line-height: 1.6; }
+        .info-card ul { list-style: none; margin-top: 0.6rem; }
+        .info-card ul li { padding: 0.3rem 0; padding-left: 1.2rem; position: relative; color: var(--slate); font-size: 0.85rem; }
+        .info-card ul li::before { content: '•'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+        /* Standards Table */
+        .standards-section { background: var(--sand); border-radius: var(--radius-card); padding: 2.5rem; margin: 2rem 0; }
+        .standards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .standard-card { background: var(--pearl); border-radius: var(--radius-card); padding: 1.5rem; border-left: 4px solid var(--gold); }
+        .standard-card h4 { color: var(--green); font-weight: 700; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .standard-card p { color: var(--slate); font-size: 0.85rem; }
+
+        /* Safety Box */
+        .safety-box { background: linear-gradient(135deg, #FFF3E0, #FFF8E1); border: 2px solid var(--gold); border-radius: var(--radius-card); padding: 2rem; margin: 2rem 0; }
+        .safety-box h3 { color: var(--gold-aged); font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+        .safety-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+        .safety-item { background: white; border-radius: 8px; padding: 1rem 1.2rem; display: flex; align-items: flex-start; gap: 0.8rem; }
+        .safety-item .s-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+        .safety-item h5 { font-size: 0.88rem; color: var(--green); margin-bottom: 0.2rem; }
+        .safety-item p { font-size: 0.8rem; color: var(--ash); }
+
+        /* Tools Grid */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .tool-item { background: var(--pearl); border: 1px solid var(--mist); border-radius: 10px; padding: 1.2rem; text-align: center; transition: all 0.3s; }
+        .tool-item:hover { border-color: var(--gold); box-shadow: var(--shadow-card); }
+        .tool-item .tool-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+        .tool-item h5 { font-size: 0.85rem; color: var(--green); font-weight: 700; }
+        .tool-item p { font-size: 0.75rem; color: var(--ash); margin-top: 0.2rem; }
+
+        /* Summary Stats */
+        .summary-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 2rem 0; }
+        .stat-pill { background: var(--green); color: var(--pearl); border-radius: var(--radius-card); padding: 1.5rem; text-align: center; }
+        .stat-pill .stat-val { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); display: block; }
+        .stat-pill .stat-label { font-size: 0.78rem; color: rgba(254,253,251,0.6); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        /* Footer */
+        .page-footer { background: var(--green); color: rgba(254,253,251,0.5); text-align: center; padding: 2rem; font-size: 0.8rem; }
+        .page-footer a { color: var(--gold); text-decoration: none; }
+
+        /* RTL */
+        [dir="rtl"] .timeline { padding-left: 0; padding-right: 60px; }
+        [dir="rtl"] .timeline::before { left: auto; right: 24px; }
+        [dir="rtl"] .step-number { left: auto; right: -60px; }
+        [dir="rtl"] .step-card:hover { transform: translateX(-4px); }
+        [dir="rtl"] .step-card ul li { padding-left: 0; padding-right: 1.4rem; }
+        [dir="rtl"] .step-card ul li::before { left: auto; right: 0; }
+        [dir="rtl"] .info-card ul li { padding-left: 0; padding-right: 1.2rem; }
+        [dir="rtl"] .info-card ul li::before { left: auto; right: 0; }
+        [dir="rtl"] .standard-card { border-left: none; border-right: 4px solid var(--gold); }
+
+        @media (max-width: 768px) {
+            .container { padding: 2.5rem 1.2rem; }
+            .timeline { padding-left: 45px; }
+            .timeline::before { left: 16px; }
+            .step-number { left: -45px; width: 36px; height: 36px; font-size: 0.9rem; }
+            .phase-header { flex-direction: column; text-align: center; padding: 1.5rem; }
+            .phase-header .phase-icon { width: 48px; height: 48px; font-size: 1.4rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .standards-grid { grid-template-columns: 1fr; }
+            .safety-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: repeat(2, 1fr); }
+            .summary-bar { grid-template-columns: repeat(2, 1fr); }
+            [dir="rtl"] .timeline { padding-right: 45px; }
+            [dir="rtl"] .timeline::before { right: 16px; }
+            [dir="rtl"] .step-number { right: -45px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back Navigation -->
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Hero -->
+<section class="page-hero">
+    <span class="icon">⚡</span>
+    <h1 data-en="Installation Process" data-es="Proceso de Instalación" data-he="תהליך ההתקנה">Installation Process</h1>
+    <p data-en="Complete solar installation guide for Panama — from site survey to client handover" data-es="Guía completa de instalación solar para Panamá — desde la inspección del sitio hasta la entrega al cliente" data-he="מדריך מלא להתקנת מערכת סולארית בפנמה — מסקר אתר ועד מסירה ללקוח">Complete solar installation guide for Panama — from site survey to client handover</p>
+</section>
+
+<!-- Summary Stats -->
+<div class="container">
+    <div class="summary-bar">
+        <div class="stat-pill">
+            <span class="stat-val">3</span>
+            <span class="stat-label" data-en="Main Phases" data-es="Fases Principales" data-he="שלבים עיקריים">Main Phases</span>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-val">1-2</span>
+            <span class="stat-label" data-en="Days Install" data-es="Días de Instalación" data-he="ימי התקנה">Days Install</span>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-val">IEC</span>
+            <span class="stat-label" data-en="62446 Certified" data-es="Certificado 62446" data-he="תקן 62446">62446 Certified</span>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-val">ASEP</span>
+            <span class="stat-label" data-en="Inspected" data-es="Inspeccionado" data-he="פיקוח">Inspected</span>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-val">25+</span>
+            <span class="stat-label" data-en="Year Warranty" data-es="Años de Garantía" data-he="שנות אחריות">Year Warranty</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PHASE 1: PRE-INSTALLATION ===== -->
+<div class="container">
+    <div class="phase-header">
+        <div class="phase-icon">📋</div>
+        <div>
+            <h2 data-en="Phase 1 — Pre-Installation" data-es="Fase 1 — Pre-Instalación" data-he="שלב 1 — לפני ההתקנה">Phase 1 — Pre-Installation</h2>
+            <p data-en="Thorough planning ensures a flawless installation day" data-es="Una planificación exhaustiva garantiza un día de instalación impecable" data-he="תכנון יסודי מבטיח יום התקנה מושלם">Thorough planning ensures a flawless installation day</p>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-step">
+            <div class="step-number">1</div>
+            <div class="step-card">
+                <h3 data-en="Site Survey" data-es="Inspección del Sitio" data-he="סקר אתר">Site Survey</h3>
+                <div class="step-time" data-en="Duration: 2-3 hours" data-es="Duración: 2-3 horas" data-he="משך: 2-3 שעות">Duration: 2-3 hours</div>
+                <p data-en="On-site assessment to determine optimal panel placement, shading analysis, and roof conditions." data-es="Evaluación en sitio para determinar la ubicación óptima de los paneles, análisis de sombras y condiciones del techo." data-he="הערכה באתר לקביעת מיקום אופטימלי של הפאנלים, ניתוח הצללה ומצב הגג.">On-site assessment to determine optimal panel placement, shading analysis, and roof conditions.</p>
+                <ul>
+                    <li data-en="Roof measurements and orientation (azimuth/tilt)" data-es="Mediciones y orientación del techo (azimut/inclinación)" data-he="מדידות גג וכיוון (אזימוט/שיפוע)">Roof measurements and orientation (azimuth/tilt)</li>
+                    <li data-en="Shading analysis using SunEye or Solar Pathfinder" data-es="Análisis de sombras usando SunEye o Solar Pathfinder" data-he="ניתוח הצללה באמצעות SunEye או Solar Pathfinder">Shading analysis using SunEye or Solar Pathfinder</li>
+                    <li data-en="Drone photography for complex roofs" data-es="Fotografía con dron para techos complejos" data-he="צילום רחפן לגגות מורכבים">Drone photography for complex roofs</li>
+                    <li data-en="GPS coordinates and compass readings" data-es="Coordenadas GPS y lecturas de brújula" data-he="קואורדינטות GPS וקריאות מצפן">GPS coordinates and compass readings</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">2</div>
+            <div class="step-card">
+                <h3 data-en="Structural Assessment" data-es="Evaluación Estructural" data-he="הערכה מבנית">Structural Assessment</h3>
+                <div class="step-time" data-en="Duration: 1-2 hours" data-es="Duración: 1-2 horas" data-he="משך: 1-2 שעות">Duration: 1-2 hours</div>
+                <p data-en="Verify the roof can safely support the solar array weight and wind loads for Panama's climate." data-es="Verificar que el techo puede soportar de forma segura el peso del arreglo solar y las cargas de viento del clima de Panamá." data-he="אימות שהגג יכול לתמוך בבטחה במשקל מערך הפאנלים ובעומסי רוח לאקלים פנמה.">Verify the roof can safely support the solar array weight and wind loads for Panama's climate.</p>
+                <ul>
+                    <li data-en="Roof material and age assessment" data-es="Evaluación del material y antigüedad del techo" data-he="הערכת חומר הגג וגילו">Roof material and age assessment</li>
+                    <li data-en="Load-bearing capacity calculation" data-es="Cálculo de capacidad de carga" data-he="חישוב כושר נשיאה">Load-bearing capacity calculation</li>
+                    <li data-en="Wind zone classification (Panama tropical)" data-es="Clasificación de zona de viento (tropical de Panamá)" data-he="סיווג אזור רוח (טרופי פנמה)">Wind zone classification (Panama tropical)</li>
+                    <li data-en="Waterproofing integrity check" data-es="Verificación de integridad de impermeabilización" data-he="בדיקת שלמות איטום">Waterproofing integrity check</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">3</div>
+            <div class="step-card">
+                <h3 data-en="Electrical Audit" data-es="Auditoría Eléctrica" data-he="ביקורת חשמל">Electrical Audit</h3>
+                <div class="step-time" data-en="Duration: 1-2 hours" data-es="Duración: 1-2 horas" data-he="משך: 1-2 שעות">Duration: 1-2 hours</div>
+                <p data-en="Evaluate existing electrical infrastructure for solar integration compatibility." data-es="Evaluar la infraestructura eléctrica existente para compatibilidad con integración solar." data-he="הערכת תשתית חשמל קיימת לתאימות אינטגרציה סולארית.">Evaluate existing electrical infrastructure for solar integration compatibility.</p>
+                <ul>
+                    <li data-en="Main panel capacity and available breaker slots" data-es="Capacidad del panel principal y espacios de interruptores disponibles" data-he="קיבולת לוח ראשי ומגנים פנויים">Main panel capacity and available breaker slots</li>
+                    <li data-en="Utility meter type (bi-directional required)" data-es="Tipo de medidor (bidireccional requerido)" data-he="סוג מונה (נדרש דו-כיווני)">Utility meter type (bi-directional required)</li>
+                    <li data-en="Grounding system evaluation" data-es="Evaluación del sistema de tierra" data-he="הערכת מערכת הארקה">Grounding system evaluation</li>
+                    <li data-en="Wire gauge and conduit routing plan" data-es="Calibre del cable y plan de enrutamiento de conductos" data-he="עובי כבלים ותוכנית ניתוב תעלות">Wire gauge and conduit routing plan</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">4</div>
+            <div class="step-card">
+                <h3 data-en="System Design" data-es="Diseño del Sistema" data-he="תכנון המערכת">System Design</h3>
+                <div class="step-time" data-en="Duration: 3-5 days" data-es="Duración: 3-5 días" data-he="משך: 3-5 ימים">Duration: 3-5 days</div>
+                <p data-en="Engineering team creates optimized system layout using PVsyst and AutoCAD." data-es="El equipo de ingeniería crea un diseño optimizado del sistema usando PVsyst y AutoCAD." data-he="צוות הנדסה יוצר תכנון מערכת מיטבי באמצעות PVsyst ו-AutoCAD.">Engineering team creates optimized system layout using PVsyst and AutoCAD.</p>
+                <ul>
+                    <li data-en="PVsyst simulation with local irradiance data" data-es="Simulación PVsyst con datos de irradiancia local" data-he="סימולציית PVsyst עם נתוני קרינה מקומיים">PVsyst simulation with local irradiance data</li>
+                    <li data-en="String sizing and inverter matching" data-es="Dimensionamiento de cadenas y coincidencia de inversores" data-he="גודל שרשרות והתאמת ממיר">String sizing and inverter matching</li>
+                    <li data-en="Single-line electrical diagram" data-es="Diagrama eléctrico unifilar" data-he="תרשים חד-קווי חשמלי">Single-line electrical diagram</li>
+                    <li data-en="ASEP permit application preparation" data-es="Preparación de solicitud de permiso ASEP" data-he="הכנת בקשת היתר ASEP">ASEP permit application preparation</li>
+                    <li data-en="Bill of materials finalization" data-es="Finalización de la lista de materiales" data-he="סיום רשימת חומרים">Bill of materials finalization</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PHASE 2: DAY OF INSTALLATION ===== -->
+<div class="container" style="padding-top: 0;">
+    <div class="phase-header">
+        <div class="phase-icon">🔧</div>
+        <div>
+            <h2 data-en="Phase 2 — Day of Installation" data-es="Fase 2 — Día de Instalación" data-he="שלב 2 — יום ההתקנה">Phase 2 — Day of Installation</h2>
+            <p data-en="Professional crew executes the installation with precision and safety" data-es="El equipo profesional ejecuta la instalación con precisión y seguridad" data-he="צוות מקצועי מבצע את ההתקנה בדיוק ובבטיחות">Professional crew executes the installation with precision and safety</p>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-step">
+            <div class="step-number">5</div>
+            <div class="step-card">
+                <h3 data-en="Safety Briefing" data-es="Charla de Seguridad" data-he="תדריך בטיחות">Safety Briefing</h3>
+                <div class="step-time" data-en="07:00 AM — 30 minutes" data-es="07:00 AM — 30 minutos" data-he="07:00 — 30 דקות">07:00 AM — 30 minutes</div>
+                <p data-en="Full team briefing covering job hazards, emergency procedures, and PPE verification." data-es="Briefing completo del equipo cubriendo peligros del trabajo, procedimientos de emergencia y verificación de EPP." data-he="תדריך צוות מלא הכולל סיכוני עבודה, נהלי חירום ואימות ציוד מגן.">Full team briefing covering job hazards, emergency procedures, and PPE verification.</p>
+                <ul>
+                    <li data-en="Tailboard safety meeting documentation" data-es="Documentación de reunión de seguridad" data-he="תיעוד ישיבת בטיחות">Tailboard safety meeting documentation</li>
+                    <li data-en="Weather assessment (no work if lightning risk)" data-es="Evaluación del clima (sin trabajo si hay riesgo de rayos)" data-he="הערכת מזג אוויר (ללא עבודה בסיכון ברקים)">Weather assessment (no work if lightning risk)</li>
+                    <li data-en="Fall protection plan review" data-es="Revisión del plan de protección contra caídas" data-he="סקירת תוכנית הגנה מנפילה">Fall protection plan review</li>
+                    <li data-en="First aid kit and emergency contacts verified" data-es="Kit de primeros auxilios y contactos de emergencia verificados" data-he="ערכת עזרה ראשונה ואנשי קשר לחירום מאומתים">First aid kit and emergency contacts verified</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">6</div>
+            <div class="step-card">
+                <h3 data-en="Mounting Rails Installation" data-es="Instalación de Rieles de Montaje" data-he="התקנת מסילות">Mounting Rails Installation</h3>
+                <div class="step-time" data-en="07:30 AM — 2-3 hours" data-es="07:30 AM — 2-3 horas" data-he="07:30 — 2-3 שעות">07:30 AM — 2-3 hours</div>
+                <p data-en="Secure aluminum rail system to roof structure with proper flashing and sealant." data-es="Fijar el sistema de rieles de aluminio a la estructura del techo con las tapajuntas y sellador apropiados." data-he="חיבור מערכת מסילות אלומיניום לשלד הגג עם מתאם ואיטום מתאימים.">Secure aluminum rail system to roof structure with proper flashing and sealant.</p>
+                <ul>
+                    <li data-en="Lag bolt installation with flashing boots" data-es="Instalación de pernos con tapajuntas" data-he="התקנת ברגי עוגן עם מתאמי איטום">Lag bolt installation with flashing boots</li>
+                    <li data-en="Rail alignment and leveling verification" data-es="Verificación de alineación y nivelación de rieles" data-he="אימות יישור ופילוס מסילות">Rail alignment and leveling verification</li>
+                    <li data-en="Torque specification: 50-70 Nm per bolt" data-es="Especificación de torque: 50-70 Nm por perno" data-he="מפרט מומנט: 50-70 ניוטון-מטר לבורג">Torque specification: 50-70 Nm per bolt</li>
+                    <li data-en="Sealant application (polyurethane, UV-resistant)" data-es="Aplicación de sellador (poliuretano, resistente a UV)" data-he="יישום חומר איטום (פוליאוריטן, עמיד UV)">Sealant application (polyurethane, UV-resistant)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">7</div>
+            <div class="step-card">
+                <h3 data-en="Panel Placement" data-es="Colocación de Paneles" data-he="הנחת פאנלים">Panel Placement</h3>
+                <div class="step-time" data-en="10:30 AM — 2-3 hours" data-es="10:30 AM — 2-3 horas" data-he="10:30 — 2-3 שעות">10:30 AM — 2-3 hours</div>
+                <p data-en="Careful panel mounting with mid and end clamps, maintaining proper spacing for ventilation." data-es="Montaje cuidadoso de paneles con abrazaderas intermedias y finales, manteniendo el espaciado adecuado para ventilación." data-he="הרכבת פאנלים בזהירות עם תפסנים אמצעיים וקצה, שמירה על ריווח נאות לאוורור.">Careful panel mounting with mid and end clamps, maintaining proper spacing for ventilation.</p>
+                <ul>
+                    <li data-en="Module clamp torque: 18-22 Nm" data-es="Torque de abrazadera: 18-22 Nm" data-he="מומנט תפסן: 18-22 ניוטון-מטר">Module clamp torque: 18-22 Nm</li>
+                    <li data-en="Minimum 20mm gap between panels for ventilation" data-es="Espacio mínimo de 20mm entre paneles para ventilación" data-he="רווח מינימלי 20 מ&quot;מ בין פאנלים לאוורור">Minimum 20mm gap between panels for ventilation</li>
+                    <li data-en="Panel serial number recording for warranty" data-es="Registro de números de serie para garantía" data-he="רישום מספרי סריאליים לאחריות">Panel serial number recording for warranty</li>
+                    <li data-en="Visual inspection for micro-cracks or damage" data-es="Inspección visual para micro-grietas o daños" data-he="בדיקה חזותית לסדקים זעירים או נזק">Visual inspection for micro-cracks or damage</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">8</div>
+            <div class="step-card">
+                <h3 data-en="DC Wiring & String Connection" data-es="Cableado DC y Conexión de Cadenas" data-he="חיווט DC וחיבור שרשרות">DC Wiring & String Connection</h3>
+                <div class="step-time" data-en="01:00 PM — 2 hours" data-es="01:00 PM — 2 horas" data-he="13:00 — 2 שעות">01:00 PM — 2 hours</div>
+                <p data-en="Connect panels in series/parallel strings using MC4 connectors and route DC cables to inverter." data-es="Conectar paneles en cadenas serie/paralelo usando conectores MC4 y enrutar cables DC al inversor." data-he="חיבור פאנלים בשרשרות טור/מקביל באמצעות מחברי MC4 וניתוב כבלי DC לממיר.">Connect panels in series/parallel strings using MC4 connectors and route DC cables to inverter.</p>
+                <ul>
+                    <li data-en="MC4 connector crimping with calibrated tool" data-es="Engaste de conectores MC4 con herramienta calibrada" data-he="לחיצת מחברי MC4 עם כלי מכויל">MC4 connector crimping with calibrated tool</li>
+                    <li data-en="String voltage verification (Voc within ±5%)" data-es="Verificación de voltaje de cadena (Voc dentro de ±5%)" data-he="אימות מתח שרשרת (Voc בטווח ±5%)">String voltage verification (Voc within ±5%)</li>
+                    <li data-en="UV-resistant cable ties every 50cm" data-es="Amarres de cable resistentes a UV cada 50cm" data-he="אזיקוני כבל עמידי UV כל 50 ס&quot;מ">UV-resistant cable ties every 50cm</li>
+                    <li data-en="Cable management in UV-rated conduit" data-es="Gestión de cables en conducto con protección UV" data-he="ניהול כבלים בתעלות עמידות UV">Cable management in UV-rated conduit</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">9</div>
+            <div class="step-card">
+                <h3 data-en="Inverter Installation" data-es="Instalación del Inversor" data-he="התקנת ממיר">Inverter Installation</h3>
+                <div class="step-time" data-en="03:00 PM — 1-2 hours" data-es="03:00 PM — 1-2 horas" data-he="15:00 — 1-2 שעות">03:00 PM — 1-2 hours</div>
+                <p data-en="Mount inverter in shaded, ventilated location and connect DC input and AC output." data-es="Montar el inversor en una ubicación sombreada y ventilada, y conectar la entrada DC y la salida AC." data-he="הרכבת ממיר במקום מוצל ומאוורר וחיבור כניסת DC ויציאת AC.">Mount inverter in shaded, ventilated location and connect DC input and AC output.</p>
+                <ul>
+                    <li data-en="Wall-mount with vibration dampeners" data-es="Montaje en pared con amortiguadores de vibración" data-he="הרכבה על קיר עם מנחתי רטט">Wall-mount with vibration dampeners</li>
+                    <li data-en="DC disconnect switch installation" data-es="Instalación de interruptor de desconexión DC" data-he="התקנת מנתק DC">DC disconnect switch installation</li>
+                    <li data-en="AC breaker in main distribution panel" data-es="Interruptor AC en panel de distribución principal" data-he="מגן AC בלוח חלוקה ראשי">AC breaker in main distribution panel</li>
+                    <li data-en="WiFi/Ethernet connection for monitoring" data-es="Conexión WiFi/Ethernet para monitoreo" data-he="חיבור WiFi/Ethernet לניטור">WiFi/Ethernet connection for monitoring</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">10</div>
+            <div class="step-card">
+                <h3 data-en="Grounding & Surge Protection" data-es="Puesta a Tierra y Protección contra Sobretensiones" data-he="הארקה והגנת נחשולים">Grounding & Surge Protection</h3>
+                <div class="step-time" data-en="04:30 PM — 1 hour" data-es="04:30 PM — 1 hora" data-he="16:30 — שעה">04:30 PM — 1 hour</div>
+                <p data-en="Complete grounding system with equipment grounding conductors and surge protection devices." data-es="Sistema de puesta a tierra completo con conductores de tierra de equipos y dispositivos de protección contra sobretensiones." data-he="מערכת הארקה מלאה עם מוליכי הארקת ציוד והתקני הגנת נחשולים.">Complete grounding system with equipment grounding conductors and surge protection devices.</p>
+                <ul>
+                    <li data-en="Equipment grounding conductor (#6 AWG copper)" data-es="Conductor de tierra de equipos (#6 AWG cobre)" data-he="מוליך הארקת ציוד (נחושת #6 AWG)">Equipment grounding conductor (#6 AWG copper)</li>
+                    <li data-en="Ground rod installation (8ft copper-clad)" data-es="Instalación de varilla de tierra (2.4m recubierta de cobre)" data-he="התקנת מוט הארקה (2.4 מ' מצופה נחושת)">Ground rod installation (8ft copper-clad)</li>
+                    <li data-en="Type II SPD on DC and AC side" data-es="SPD Tipo II en lado DC y AC" data-he="SPD סוג II בצד DC ו-AC">Type II SPD on DC and AC side</li>
+                    <li data-en="Ground resistance test: ≤5 ohms required" data-es="Prueba de resistencia de tierra: ≤5 ohmios requeridos" data-he="בדיקת התנגדות הארקה: נדרש ≤5 אוהם">Ground resistance test: ≤5 ohms required</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PHASE 3: POST-INSTALLATION ===== -->
+<div class="container" style="padding-top: 0;">
+    <div class="phase-header">
+        <div class="phase-icon">✅</div>
+        <div>
+            <h2 data-en="Phase 3 — Post-Installation" data-es="Fase 3 — Post-Instalación" data-he="שלב 3 — לאחר ההתקנה">Phase 3 — Post-Installation</h2>
+            <p data-en="Testing, commissioning, and official handover to client" data-es="Pruebas, puesta en servicio y entrega oficial al cliente" data-he="בדיקות, הפעלה ומסירה רשמית ללקוח">Testing, commissioning, and official handover to client</p>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-step">
+            <div class="step-number">11</div>
+            <div class="step-card">
+                <h3 data-en="System Testing" data-es="Pruebas del Sistema" data-he="בדיקות מערכת">System Testing</h3>
+                <div class="step-time" data-en="Day 2 Morning — 2 hours" data-es="Día 2 Mañana — 2 horas" data-he="יום 2 בוקר — 2 שעות">Day 2 Morning — 2 hours</div>
+                <ul>
+                    <li data-en="Open circuit voltage (Voc) per string" data-es="Voltaje de circuito abierto (Voc) por cadena" data-he="מתח מעגל פתוח (Voc) לכל שרשרת">Open circuit voltage (Voc) per string</li>
+                    <li data-en="Short circuit current (Isc) per string" data-es="Corriente de cortocircuito (Isc) por cadena" data-he="זרם קצר (Isc) לכל שרשרת">Short circuit current (Isc) per string</li>
+                    <li data-en="Insulation resistance test (≥1MΩ)" data-es="Prueba de resistencia de aislamiento (≥1MΩ)" data-he="בדיקת התנגדות בידוד (≥1MΩ)">Insulation resistance test (≥1MΩ)</li>
+                    <li data-en="Earth continuity test" data-es="Prueba de continuidad de tierra" data-he="בדיקת רציפות הארקה">Earth continuity test</li>
+                    <li data-en="Polarity verification all connections" data-es="Verificación de polaridad en todas las conexiones" data-he="אימות קוטביות כל החיבורים">Polarity verification all connections</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">12</div>
+            <div class="step-card">
+                <h3 data-en="Commissioning" data-es="Puesta en Servicio" data-he="הפעלה ראשונית">Commissioning</h3>
+                <div class="step-time" data-en="Day 2 — 1 hour" data-es="Día 2 — 1 hora" data-he="יום 2 — שעה">Day 2 — 1 hour</div>
+                <ul>
+                    <li data-en="Inverter initial startup sequence" data-es="Secuencia de arranque inicial del inversor" data-he="רצף הפעלה ראשונית של ממיר">Inverter initial startup sequence</li>
+                    <li data-en="Grid synchronization verification" data-es="Verificación de sincronización con la red" data-he="אימות סנכרון עם הרשת">Grid synchronization verification</li>
+                    <li data-en="Anti-islanding protection test" data-es="Prueba de protección anti-islanding" data-he="בדיקת הגנת אנטי-איילנדינג">Anti-islanding protection test</li>
+                    <li data-en="Production monitoring baseline reading" data-es="Lectura base de monitoreo de producción" data-he="קריאת בסיס ניטור ייצור">Production monitoring baseline reading</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">13</div>
+            <div class="step-card">
+                <h3 data-en="ASEP Inspection" data-es="Inspección ASEP" data-he="פיקוח ASEP">ASEP Inspection</h3>
+                <div class="step-time" data-en="Scheduled within 5-10 business days" data-es="Programada dentro de 5-10 días hábiles" data-he="מתוזמן תוך 5-10 ימי עסקים">Scheduled within 5-10 business days</div>
+                <ul>
+                    <li data-en="ASEP inspector verifies compliance" data-es="Inspector de ASEP verifica cumplimiento" data-he="מפקח ASEP מאמת תאימות">ASEP inspector verifies compliance</li>
+                    <li data-en="Net metering agreement activation" data-es="Activación de acuerdo de medición neta" data-he="הפעלת הסכם מדידה נטו">Net metering agreement activation</li>
+                    <li data-en="Bi-directional meter installation by utility" data-es="Instalación de medidor bidireccional por la empresa eléctrica" data-he="התקנת מונה דו-כיווני על ידי חברת חשמל">Bi-directional meter installation by utility</li>
+                    <li data-en="Certificate of compliance issued" data-es="Certificado de cumplimiento emitido" data-he="תעודת תאימות מונפקת">Certificate of compliance issued</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">14</div>
+            <div class="step-card">
+                <h3 data-en="Monitoring Setup" data-es="Configuración de Monitoreo" data-he="הגדרת ניטור">Monitoring Setup</h3>
+                <div class="step-time" data-en="30 minutes" data-es="30 minutos" data-he="30 דקות">30 minutes</div>
+                <ul>
+                    <li data-en="FusionSolar / SolarEdge app installation" data-es="Instalación de app FusionSolar / SolarEdge" data-he="התקנת אפליקציית FusionSolar / SolarEdge">FusionSolar / SolarEdge app installation</li>
+                    <li data-en="Client account creation and pairing" data-es="Creación de cuenta del cliente y vinculación" data-he="יצירת חשבון לקוח וצימוד">Client account creation and pairing</li>
+                    <li data-en="Alert thresholds configured" data-es="Umbrales de alerta configurados" data-he="ספי התראה מוגדרים">Alert thresholds configured</li>
+                    <li data-en="Solaris O&M team added as admin" data-es="Equipo O&M de Solaris agregado como administrador" data-he="צוות תפעול Solaris נוסף כמנהל">Solaris O&M team added as admin</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-step">
+            <div class="step-number">15</div>
+            <div class="step-card">
+                <h3 data-en="Client Handover" data-es="Entrega al Cliente" data-he="מסירה ללקוח">Client Handover</h3>
+                <div class="step-time" data-en="45 minutes" data-es="45 minutos" data-he="45 דקות">45 minutes</div>
+                <ul>
+                    <li data-en="System walkthrough and operation overview" data-es="Recorrido del sistema y resumen de operación" data-he="סיור במערכת וסקירת הפעלה">System walkthrough and operation overview</li>
+                    <li data-en="Monitoring app tutorial" data-es="Tutorial de la app de monitoreo" data-he="הדרכת אפליקציית ניטור">Monitoring app tutorial</li>
+                    <li data-en="Emergency shutdown procedure training" data-es="Capacitación en procedimiento de apagado de emergencia" data-he="הדרכת נוהל כיבוי חירום">Emergency shutdown procedure training</li>
+                    <li data-en="Warranty documentation package" data-es="Paquete de documentación de garantía" data-he="חבילת תיעוד אחריות">Warranty documentation package</li>
+                    <li data-en="Maintenance schedule and contact information" data-es="Calendario de mantenimiento e información de contacto" data-he="לוח זמנים לתחזוקה ופרטי קשר">Maintenance schedule and contact information</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== QUALITY STANDARDS ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="QUALITY ASSURANCE" data-es="ASEGURAMIENTO DE CALIDAD" data-he="אבטחת איכות">QUALITY ASSURANCE</span>
+    <h2 class="section-title" data-en="Quality Standards" data-es="Estándares de Calidad" data-he="תקני איכות">Quality Standards</h2>
+    <p class="section-sub" data-en="Every installation meets or exceeds international quality benchmarks" data-es="Cada instalación cumple o supera los estándares internacionales de calidad" data-he="כל התקנה עומדת או עולה על תקנים בינלאומיים">Every installation meets or exceeds international quality benchmarks</p>
+
+    <div class="standards-section">
+        <div class="standards-grid">
+            <div class="standard-card">
+                <h4 data-en="IEC 62446-1 Compliance" data-es="Cumplimiento IEC 62446-1" data-he="עמידה ב-IEC 62446-1">IEC 62446-1 Compliance</h4>
+                <p data-en="Full documentation per IEC 62446-1: system data, inspection checklist, test results, and commissioning report delivered to every client." data-es="Documentación completa según IEC 62446-1: datos del sistema, lista de verificación, resultados de pruebas e informe de puesta en servicio entregados a cada cliente." data-he="תיעוד מלא לפי IEC 62446-1: נתוני מערכת, רשימת בדיקות, תוצאות מבחנים ודוח הפעלה לכל לקוח.">Full documentation per IEC 62446-1: system data, inspection checklist, test results, and commissioning report delivered to every client.</p>
+            </div>
+            <div class="standard-card">
+                <h4 data-en="Cable Management" data-es="Gestión de Cables" data-he="ניהול כבלים">Cable Management</h4>
+                <p data-en="All cables routed in UV-stabilized conduit. DC cables labeled at both ends. Drip loops at all roof penetrations. Cable ties rated for outdoor tropical use (UV + humidity)." data-es="Todos los cables enrutados en conductos estabilizados contra UV. Cables DC etiquetados en ambos extremos. Lazos anti-goteo en todas las penetraciones. Amarres aptos para uso tropical." data-he="כל הכבלים מנותבים בתעלות עמידות UV. כבלי DC מסומנים בשני הקצוות. לולאות ניקוז בכל חדירות הגג. אזיקונים מדורגים לשימוש טרופי חיצוני.">All cables routed in UV-stabilized conduit. DC cables labeled at both ends. Drip loops at all roof penetrations. Cable ties rated for outdoor tropical use (UV + humidity).</p>
+            </div>
+            <div class="standard-card">
+                <h4 data-en="Waterproofing Protocol" data-es="Protocolo de Impermeabilización" data-he="פרוטוקול איטום">Waterproofing Protocol</h4>
+                <p data-en="Flashing boots on all roof penetrations. Polyurethane sealant (Sikaflex or equivalent). Water test after installation with photo documentation before leaving site." data-es="Tapajuntas en todas las penetraciones del techo. Sellador de poliuretano (Sikaflex o equivalente). Prueba de agua después de la instalación con documentación fotográfica." data-he="מתאמי איטום בכל חדירות הגג. חומר איטום פוליאוריטן (Sikaflex או שווה ערך). בדיקת מים לאחר התקנה עם תיעוד צילומי.">Flashing boots on all roof penetrations. Polyurethane sealant (Sikaflex or equivalent). Water test after installation with photo documentation before leaving site.</p>
+            </div>
+            <div class="standard-card">
+                <h4 data-en="Torque Specifications" data-es="Especificaciones de Torque" data-he="מפרטי מומנט">Torque Specifications</h4>
+                <p data-en="All bolted connections torqued to manufacturer specs with calibrated wrench. Lag bolts: 50-70 Nm. Mid clamps: 18-22 Nm. End clamps: 18-22 Nm. Lug terminals: per manufacturer." data-es="Todas las conexiones atornilladas con torque según especificaciones del fabricante. Pernos: 50-70 Nm. Abrazaderas intermedias: 18-22 Nm. Abrazaderas finales: 18-22 Nm." data-he="כל חיבורי הברגה במומנט לפי מפרט יצרן. ברגי עוגן: 50-70 ניוטון-מטר. תפסנים אמצעיים: 18-22. תפסני קצה: 18-22. מסופי כבל: לפי יצרן.">All bolted connections torqued to manufacturer specs with calibrated wrench. Lag bolts: 50-70 Nm. Mid clamps: 18-22 Nm. End clamps: 18-22 Nm. Lug terminals: per manufacturer.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SAFETY PROTOCOLS ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="SAFETY FIRST" data-es="SEGURIDAD PRIMERO" data-he="בטיחות קודמת">SAFETY FIRST</span>
+    <h2 class="section-title" data-en="Safety Protocols" data-es="Protocolos de Seguridad" data-he="פרוטוקולי בטיחות">Safety Protocols</h2>
+    <p class="section-sub" data-en="Zero-incident commitment — every crew member goes home safe" data-es="Compromiso de cero incidentes — cada miembro del equipo regresa a casa seguro" data-he="מחויבות לאפס תקריות — כל איש צוות חוזר הביתה בשלום">Zero-incident commitment — every crew member goes home safe</p>
+
+    <div class="safety-box">
+        <h3>⚠️ <span data-en="PPE Requirements" data-es="Requisitos de EPP" data-he="דרישות ציוד מגן">PPE Requirements</span></h3>
+        <div class="safety-grid">
+            <div class="safety-item">
+                <span class="s-icon">🪖</span>
+                <div>
+                    <h5 data-en="Hard Hat" data-es="Casco" data-he="קסדה">Hard Hat</h5>
+                    <p data-en="ANSI Z89.1 Type I, Class E. Required at all times on job site." data-es="ANSI Z89.1 Tipo I, Clase E. Requerido en todo momento en el sitio." data-he="ANSI Z89.1 סוג I, מחלקה E. נדרש בכל עת באתר.">ANSI Z89.1 Type I, Class E. Required at all times on job site.</p>
+                </div>
+            </div>
+            <div class="safety-item">
+                <span class="s-icon">🥽</span>
+                <div>
+                    <h5 data-en="Safety Glasses" data-es="Gafas de Seguridad" data-he="משקפי מגן">Safety Glasses</h5>
+                    <p data-en="ANSI Z87.1 impact-rated. UV protection for outdoor work." data-es="ANSI Z87.1 resistentes al impacto. Protección UV para trabajo exterior." data-he="ANSI Z87.1 עמידות בפני פגיעה. הגנת UV לעבודה חיצונית.">ANSI Z87.1 impact-rated. UV protection for outdoor work.</p>
+                </div>
+            </div>
+            <div class="safety-item">
+                <span class="s-icon">🧤</span>
+                <div>
+                    <h5 data-en="Insulated Gloves" data-es="Guantes Aislantes" data-he="כפפות מבודדות">Insulated Gloves</h5>
+                    <p data-en="Class 0 rated (1000V DC). Required for all electrical connections." data-es="Clasificación Clase 0 (1000V DC). Requeridos para todas las conexiones eléctricas." data-he="מדורגות מחלקה 0 (1000V DC). נדרשות לכל חיבור חשמלי.">Class 0 rated (1000V DC). Required for all electrical connections.</p>
+                </div>
+            </div>
+            <div class="safety-item">
+                <span class="s-icon">👢</span>
+                <div>
+                    <h5 data-en="Safety Boots" data-es="Botas de Seguridad" data-he="נעלי בטיחות">Safety Boots</h5>
+                    <p data-en="Steel-toe, slip-resistant, EH rated. Non-marking soles for roof work." data-es="Punta de acero, antideslizantes, clasificación EH. Suelas que no marcan para techos." data-he="כיפת פלדה, נגד החלקה, דירוג EH. סוליות שלא משאירות סימנים לעבודת גג.">Steel-toe, slip-resistant, EH rated. Non-marking soles for roof work.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="card-icon">🧗</div>
+            <h4 data-en="Fall Protection" data-es="Protección contra Caídas" data-he="הגנה מנפילה">Fall Protection</h4>
+            <ul>
+                <li data-en="Full body harness required above 2m (6ft)" data-es="Arnés de cuerpo completo requerido sobre 2m" data-he="רתמת גוף מלאה נדרשת מעל 2 מ'">Full body harness required above 2m (6ft)</li>
+                <li data-en="Self-retracting lifeline (SRL) anchored to structure" data-es="Línea de vida auto-retráctil (SRL) anclada a la estructura" data-he="כבל חיים נסגר אוטומטית מעוגן למבנה">Self-retracting lifeline (SRL) anchored to structure</li>
+                <li data-en="Roof edge warning line at 2m from edge" data-es="Línea de advertencia a 2m del borde del techo" data-he="קו אזהרת שפת גג במרחק 2 מ' מהשפה">Roof edge warning line at 2m from edge</li>
+                <li data-en="Ladder secured at top and bottom" data-es="Escalera asegurada arriba y abajo" data-he="סולם מאובטח למעלה ולמטה">Ladder secured at top and bottom</li>
+            </ul>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">⚡</div>
+            <h4 data-en="Electrical Lockout/Tagout" data-es="Bloqueo/Etiquetado Eléctrico" data-he="נעילה/תיוג חשמלי">Electrical Lockout/Tagout</h4>
+            <ul>
+                <li data-en="LOTO procedure before any electrical work" data-es="Procedimiento LOTO antes de cualquier trabajo eléctrico" data-he="נוהל LOTO לפני כל עבודה חשמלית">LOTO procedure before any electrical work</li>
+                <li data-en="DC isolator OFF before string connections" data-es="Aislador DC apagado antes de conexiones" data-he="מנתק DC כבוי לפני חיבורי שרשרות">DC isolator OFF before string connections</li>
+                <li data-en="Panels produce voltage in daylight — cover if needed" data-es="Los paneles producen voltaje con luz — cubrir si es necesario" data-he="פאנלים מייצרים מתח באור יום — לכסות במידת הצורך">Panels produce voltage in daylight — cover if needed</li>
+                <li data-en="Multimeter verification before touching conductors" data-es="Verificación con multímetro antes de tocar conductores" data-he="אימות מולטימטר לפני נגיעה במוליכים">Multimeter verification before touching conductors</li>
+            </ul>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">🌧️</div>
+            <h4 data-en="Weather Protocols" data-es="Protocolos Climáticos" data-he="פרוטוקולי מזג אוויר">Weather Protocols</h4>
+            <ul>
+                <li data-en="Stop work if lightning within 10 miles" data-es="Detener trabajo si hay rayos a menos de 16km" data-he="הפסקת עבודה אם ברק בטווח 16 ק&quot;מ">Stop work if lightning within 10 miles</li>
+                <li data-en="Wait 30 minutes after last thunder/lightning" data-es="Esperar 30 minutos después del último trueno/rayo" data-he="המתנה 30 דקות אחרי ברק/רעם אחרון">Wait 30 minutes after last thunder/lightning</li>
+                <li data-en="Wet roof = no roof work (slip hazard)" data-es="Techo mojado = no trabajar en techo (riesgo de resbalones)" data-he="גג רטוב = אין עבודה על הגג (סכנת החלקה)">Wet roof = no roof work (slip hazard)</li>
+                <li data-en="Wind gusts >40 km/h = suspend panel lifting" data-es="Ráfagas >40 km/h = suspender levantamiento de paneles" data-he="משבי רוח >40 קמ&quot;ש = השעיית הרמת פאנלים">Wind gusts >40 km/h = suspend panel lifting</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOOLS REQUIRED ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="EQUIPMENT" data-es="EQUIPO" data-he="ציוד">EQUIPMENT</span>
+    <h2 class="section-title" data-en="Tools Required" data-es="Herramientas Requeridas" data-he="כלים נדרשים">Tools Required</h2>
+    <p class="section-sub" data-en="Professional-grade tools for every installation" data-es="Herramientas de grado profesional para cada instalación" data-he="כלים מקצועיים לכל התקנה">Professional-grade tools for every installation</p>
+
+    <div class="tools-grid">
+        <div class="tool-item">
+            <span class="tool-icon">🔩</span>
+            <h5 data-en="Impact Drill" data-es="Taladro de Impacto" data-he="מקדחה אימפקט">Impact Drill</h5>
+            <p data-en="Cordless, 18V+ lithium" data-es="Inalámbrico, litio 18V+" data-he="אלחוטית, ליתיום 18V+">Cordless, 18V+ lithium</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">🔧</span>
+            <h5 data-en="Torque Wrench" data-es="Llave de Torque" data-he="מפתח מומנט">Torque Wrench</h5>
+            <p data-en="Calibrated, 10-100 Nm range" data-es="Calibrada, rango 10-100 Nm" data-he="מכויל, טווח 10-100 Nm">Calibrated, 10-100 Nm range</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">📏</span>
+            <h5 data-en="Digital Multimeter" data-es="Multímetro Digital" data-he="מולטימטר דיגיטלי">Digital Multimeter</h5>
+            <p data-en="CAT III 1000V rated" data-es="Clasificación CAT III 1000V" data-he="מדורג CAT III 1000V">CAT III 1000V rated</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">🔌</span>
+            <h5 data-en="MC4 Crimper" data-es="Engastadora MC4" data-he="מלחץ MC4">MC4 Crimper</h5>
+            <p data-en="Professional crimping tool" data-es="Herramienta de engaste profesional" data-he="כלי לחיצה מקצועי">Professional crimping tool</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">📡</span>
+            <h5 data-en="Cable Tester" data-es="Probador de Cables" data-he="בודק כבלים">Cable Tester</h5>
+            <p data-en="Insulation resistance tester" data-es="Probador de resistencia de aislamiento" data-he="בודק התנגדות בידוד">Insulation resistance tester</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">📐</span>
+            <h5 data-en="Laser Level" data-es="Nivel Láser" data-he="פלס לייזר">Laser Level</h5>
+            <p data-en="Self-leveling, outdoor rated" data-es="Auto-nivelante, uso exterior" data-he="מיישר עצמי, לשימוש חיצוני">Self-leveling, outdoor rated</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">🌡️</span>
+            <h5 data-en="IR Thermometer" data-es="Termómetro IR" data-he="מד חום IR">IR Thermometer</h5>
+            <p data-en="For hotspot detection" data-es="Para detección de puntos calientes" data-he="לזיהוי נקודות חמות">For hotspot detection</p>
+        </div>
+        <div class="tool-item">
+            <span class="tool-icon">⚡</span>
+            <h5 data-en="Earth Resistance Tester" data-es="Medidor de Tierra" data-he="בודק הארקה">Earth Resistance Tester</h5>
+            <p data-en="3-point measurement" data-es="Medición de 3 puntos" data-he="מדידת 3 נקודות">3-point measurement</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="page-footer">
+    <p>© 2025 Solaris Energy Panama — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+</footer>
+
+<script>
+function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+</script>
+
+</body>
+</html>
