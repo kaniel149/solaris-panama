@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ads Dashboard — Solaris Energy Panamá</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET & VARIABLES ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #0B3D2E;
+    --green-light: #14614A;
+    --green-dark: #082A1F;
+    --gold: #D4A843;
+    --gold-light: #E4C06A;
+    --pearl: #FEFDFB;
+    --sand: #F5EFE0;
+    --sand-dark: #E8DFC8;
+    --text-dark: #1A1A1A;
+    --text-mid: #4A4A4A;
+    --text-light: #7A7A7A;
+    --shadow-sm: 0 1px 3px rgba(11,61,46,0.08);
+    --shadow-md: 0 4px 12px rgba(11,61,46,0.10);
+    --shadow-lg: 0 8px 30px rgba(11,61,46,0.12);
+    --radius: 12px;
+    --radius-lg: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sand);
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  html[dir="rtl"] body { direction: rtl; }
+
+  h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  /* ===== TOP NAV ===== */
+  .top-nav {
+    background: var(--green);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .top-nav a.back-link {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+  }
+
+  .top-nav a.back-link:hover { opacity: 0.8; }
+
+  .top-nav .nav-title {
+    color: var(--pearl);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  html[dir="rtl"] .top-nav .nav-title {
+    transform: translateX(50%);
+  }
+
+  .lang-toggle {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--green-dark);
+  }
+
+  .lang-btn:hover:not(.active) { color: #fff; }
+
+  /* ===== MAIN CONTAINER ===== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+
+  .page-header .subtitle {
+    color: var(--text-mid);
+    font-size: 1rem;
+  }
+
+  /* ===== KPI BAR ===== */
+  .kpi-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .kpi-card {
+    background: var(--pearl);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border-top: 3px solid var(--gold);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .kpi-card .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.2;
+  }
+
+  .kpi-card .kpi-label {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* ===== SECTION TITLES ===== */
+  .section-title {
+    font-size: 1.4rem;
+    color: var(--green);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+  }
+
+  .section-block { margin-bottom: 40px; }
+
+  /* ===== CAMPAIGN CARDS ===== */
+  .campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .campaign-card {
+    background: var(--pearl);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .campaign-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .campaign-header {
+    background: var(--green);
+    padding: 18px 20px;
+    color: var(--pearl);
+  }
+
+  .campaign-header h3 {
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+  }
+
+  .campaign-header .campaign-tag {
+    font-size: 0.78rem;
+    background: rgba(212,168,67,0.2);
+    color: var(--gold-light);
+    padding: 2px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+  }
+
+  .campaign-body { padding: 20px; }
+
+  .campaign-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+    font-size: 0.9rem;
+  }
+
+  .campaign-stat:last-child { border-bottom: none; }
+
+  .campaign-stat .stat-label { color: var(--text-mid); }
+
+  .campaign-stat .stat-value {
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .campaign-platforms {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .platform-badge {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: var(--sand);
+    color: var(--text-mid);
+  }
+
+  .platform-badge.fb { background: #E8F0FE; color: #1877F2; }
+  .platform-badge.ig { background: #FDE8F0; color: #E1306C; }
+  .platform-badge.google { background: #E8F5E9; color: #34A853; }
+
+  /* ===== PLATFORM BREAKDOWN ===== */
+  .platform-table {
+    width: 100%;
+    background: var(--pearl);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border-collapse: collapse;
+  }
+
+  .platform-table thead {
+    background: var(--green);
+    color: var(--pearl);
+  }
+
+  .platform-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  html[dir="rtl"] .platform-table th { text-align: right; }
+
+  .platform-table td {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--sand);
+  }
+
+  .platform-table tbody tr:hover { background: var(--sand); }
+
+  .cpl-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--sand-dark);
+    position: relative;
+    min-width: 80px;
+  }
+
+  .cpl-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+  }
+
+  /* ===== BUDGET PHASES ===== */
+  .phases-timeline {
+    display: flex;
+    gap: 0;
+    background: var(--pearl);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .phase-block {
+    flex: 1;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .phase-block:not(:last-child) { border-right: 1px solid var(--sand); }
+  html[dir="rtl"] .phase-block:not(:last-child) { border-right: none; border-left: 1px solid var(--sand); }
+
+  .phase-block.active {
+    background: var(--green);
+    color: var(--pearl);
+  }
+
+  .phase-block.active .phase-label { color: var(--gold-light); }
+  .phase-block.active .phase-amount { color: var(--pearl); }
+
+  .phase-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .phase-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .phase-desc {
+    font-size: 0.78rem;
+    margin-top: 6px;
+    opacity: 0.8;
+  }
+
+  /* ===== CREATIVE LIBRARY ===== */
+  .creative-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .creative-card {
+    background: var(--pearl);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: block;
+  }
+
+  .creative-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .creative-thumb {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+  }
+
+  .creative-thumb.ahorro { background: linear-gradient(135deg, #0B3D2E, #14614A); }
+  .creative-thumb.ley417 { background: linear-gradient(135deg, #D4A843, #E4C06A); }
+  .creative-thumb.testimonial { background: linear-gradient(135deg, #082A1F, #0B3D2E); }
+
+  .creative-thumb-label {
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  html[dir="rtl"] .creative-thumb-label { left: auto; right: 14px; }
+
+  .creative-info {
+    padding: 16px;
+  }
+
+  .creative-info h4 {
+    font-size: 1rem;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+
+  .creative-info p {
+    font-size: 0.82rem;
+    color: var(--text-mid);
+  }
+
+  /* ===== PIE CHART (CSS) ===== */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .pie-container {
+    background: var(--pearl);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pie-chart {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #1877F2 0% 40%,
+      #FF6B35 40% 65%,
+      #34A853 65% 85%,
+      #25D366 85% 95%,
+      #8B8B8B 95% 100%
+    );
+    position: relative;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .pie-chart::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: var(--pearl);
+    border-radius: 50%;
+  }
+
+  .pie-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .legend-dot.facebook { background: #1877F2; }
+  .legend-dot.referral { background: #FF6B35; }
+  .legend-dot.goog { background: #34A853; }
+  .legend-dot.whatsapp { background: #25D366; }
+  .legend-dot.walkin { background: #8B8B8B; }
+
+  /* ===== ROI TRACKER ===== */
+  .roi-container {
+    background: var(--green);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+    color: var(--pearl);
+    text-align: center;
+  }
+
+  .roi-container h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--gold);
+  }
+
+  .roi-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .roi-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 18px 28px;
+    text-align: center;
+  }
+
+  .roi-box .roi-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .roi-box .roi-label {
+    font-size: 0.82rem;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .roi-arrow {
+    font-size: 1.8rem;
+    color: var(--gold);
+  }
+
+  .roi-result {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green-dark);
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* ===== FOOTER ===== */
+  .page-footer {
+    text-align: center;
+    padding: 32px 24px;
+    color: var(--text-light);
+    font-size: 0.82rem;
+  }
+
+  .page-footer a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    .campaign-grid { grid-template-columns: 1fr; }
+    .creative-grid { grid-template-columns: 1fr; }
+    .chart-row { grid-template-columns: 1fr; }
+    .phases-timeline { flex-direction: column; }
+    .phase-block:not(:last-child) { border-right: none; border-bottom: 1px solid var(--sand); }
+    html[dir="rtl"] .phase-block:not(:last-child) { border-left: none; }
+    .top-nav .nav-title { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .kpi-bar { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi-card { padding: 16px 12px; }
+    .kpi-card .kpi-value { font-size: 1.5rem; }
+    .container { padding: 20px 16px 40px; }
+    .page-header h1 { font-size: 1.5rem; }
+    .roi-flow { gap: 12px; }
+    .roi-box { padding: 14px 20px; }
+    .roi-box .roi-amount { font-size: 1.5rem; }
+  }
+
+  /* ===== LANG VISIBILITY ===== */
+  [data-lang-en], [data-lang-es], [data-lang-he] { display: none; }
+  [data-active-lang="en"] [data-lang-en] { display: initial; }
+  [data-active-lang="es"] [data-lang-es] { display: initial; }
+  [data-active-lang="he"] [data-lang-he] { display: initial; }
+
+  /* Block-level lang elements */
+  div[data-lang-en], div[data-lang-es], div[data-lang-he],
+  p[data-lang-en], p[data-lang-es], p[data-lang-he],
+  span[data-lang-en], span[data-lang-es], span[data-lang-he],
+  th[data-lang-en], th[data-lang-es], th[data-lang-he],
+  td[data-lang-en], td[data-lang-es], td[data-lang-he] { display: none !important; }
+
+  [data-active-lang="en"] [data-lang-en] { display: initial !important; }
+  [data-active-lang="es"] [data-lang-es] { display: initial !important; }
+  [data-active-lang="he"] [data-lang-he] { display: initial !important; }
+
+  /* Table cells need table-cell display */
+  [data-active-lang="en"] th[data-lang-en],
+  [data-active-lang="es"] th[data-lang-es],
+  [data-active-lang="he"] th[data-lang-he],
+  [data-active-lang="en"] td[data-lang-en],
+  [data-active-lang="es"] td[data-lang-es],
+  [data-active-lang="he"] td[data-lang-he] { display: table-cell !important; }
+
+  /* Divs/p need block */
+  [data-active-lang="en"] div[data-lang-en],
+  [data-active-lang="es"] div[data-lang-es],
+  [data-active-lang="he"] div[data-lang-he],
+  [data-active-lang="en"] p[data-lang-en],
+  [data-active-lang="es"] p[data-lang-es],
+  [data-active-lang="he"] p[data-lang-he] { display: block !important; }
+</style>
+</head>
+<body data-active-lang="en">
+
+<!-- ===== TOP NAVIGATION ===== -->
+<nav class="top-nav">
+  <a href="index.html" class="back-link">
+    <span>&#8592;</span>
+    <span data-lang-en>Dashboard</span>
+    <span data-lang-es>Panel</span>
+    <span data-lang-he>לוח בקרה</span>
+  </a>
+  <div class="nav-title">
+    <span data-lang-en>Ads Performance</span>
+    <span data-lang-es>Rendimiento de Anuncios</span>
+    <span data-lang-he>ביצועי פרסום</span>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>
+      <span data-lang-en>Advertising Dashboard</span>
+      <span data-lang-es>Panel de Publicidad</span>
+      <span data-lang-he>לוח פרסום</span>
+    </h1>
+    <p class="subtitle">
+      <span data-lang-en>Solaris Energy Panam&aacute; — Campaign Performance & ROI Tracking</span>
+      <span data-lang-es>Solaris Energy Panam&aacute; — Rendimiento de Campa&ntilde;as y Seguimiento de ROI</span>
+      <span data-lang-he>Solaris Energy Panama — מעקב ביצועי קמפיינים והחזר השקעה</span>
+    </p>
+  </div>
+
+  <!-- ===== KPI HEADER BAR ===== -->
+  <div class="kpi-bar">
+    <div class="kpi-card">
+      <div class="kpi-value">$600</div>
+      <div class="kpi-label">
+        <span data-lang-en>Monthly Spend</span>
+        <span data-lang-es>Gasto Mensual</span>
+        <span data-lang-he>הוצאה חודשית</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">35</div>
+      <div class="kpi-label">
+        <span data-lang-en>Leads / Month</span>
+        <span data-lang-es>Leads / Mes</span>
+        <span data-lang-he>לידים / חודש</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">$17</div>
+      <div class="kpi-label">
+        <span data-lang-en>Avg. Cost Per Lead</span>
+        <span data-lang-es>Costo Promedio por Lead</span>
+        <span data-lang-he>עלות ממוצעת לליד</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">25%</div>
+      <div class="kpi-label">
+        <span data-lang-en>Conversion Rate</span>
+        <span data-lang-es>Tasa de Conversi&oacute;n</span>
+        <span data-lang-he>אחוז המרה</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CAMPAIGN CARDS ===== -->
+  <div class="section-block">
+    <h2 class="section-title">
+      <span data-lang-en>Active Campaigns</span>
+      <span data-lang-es>Campa&ntilde;as Activas</span>
+      <span data-lang-he>קמפיינים פעילים</span>
+    </h2>
+    <div class="campaign-grid">
+
+      <!-- Campaign 1: Ahorro -->
+      <div class="campaign-card">
+        <div class="campaign-header">
+          <h3>
+            <span data-lang-en>Campaign: Ahorro (Savings)</span>
+            <span data-lang-es>Campa&ntilde;a: Ahorro</span>
+            <span data-lang-he>קמפיין: חיסכון (Ahorro)</span>
+          </h3>
+          <span class="campaign-tag">
+            <span data-lang-en>Homeowners &gt; $150/mo bill</span>
+            <span data-lang-es>Propietarios &gt; $150/mes</span>
+            <span data-lang-he>בעלי בתים &gt; $150 חשבון</span>
+          </span>
+        </div>
+        <div class="campaign-body">
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Budget</span>
+              <span data-lang-es>Presupuesto</span>
+              <span data-lang-he>תקציב</span>
+            </span>
+            <span class="stat-value">$300/mo</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Leads</span>
+              <span data-lang-es>Leads</span>
+              <span data-lang-he>לידים</span>
+            </span>
+            <span class="stat-value">20</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Cost Per Lead</span>
+              <span data-lang-es>Costo por Lead</span>
+              <span data-lang-he>עלות לליד</span>
+            </span>
+            <span class="stat-value">$15</span>
+          </div>
+          <div class="campaign-platforms">
+            <span class="platform-badge fb">Facebook</span>
+            <span class="platform-badge ig">Instagram</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campaign 2: Ley 417 -->
+      <div class="campaign-card">
+        <div class="campaign-header">
+          <h3>
+            <span data-lang-en>Campaign: Ley 417 (Tax Incentive)</span>
+            <span data-lang-es>Campa&ntilde;a: Ley 417 (Incentivo Fiscal)</span>
+            <span data-lang-he>קמפיין: חוק 417 (הטבת מס)</span>
+          </h3>
+          <span class="campaign-tag">
+            <span data-lang-en>Business Owners</span>
+            <span data-lang-es>Empresarios</span>
+            <span data-lang-he>בעלי עסקים</span>
+          </span>
+        </div>
+        <div class="campaign-body">
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Budget</span>
+              <span data-lang-es>Presupuesto</span>
+              <span data-lang-he>תקציב</span>
+            </span>
+            <span class="stat-value">$200/mo</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Leads</span>
+              <span data-lang-es>Leads</span>
+              <span data-lang-he>לידים</span>
+            </span>
+            <span class="stat-value">10</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Cost Per Lead</span>
+              <span data-lang-es>Costo por Lead</span>
+              <span data-lang-he>עלות לליד</span>
+            </span>
+            <span class="stat-value">$20</span>
+          </div>
+          <div class="campaign-platforms">
+            <span class="platform-badge fb">Facebook</span>
+            <span class="platform-badge ig">Instagram</span>
+            <span class="platform-badge google">Google</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campaign 3: Social Proof -->
+      <div class="campaign-card">
+        <div class="campaign-header">
+          <h3>
+            <span data-lang-en>Campaign: Social Proof</span>
+            <span data-lang-es>Campa&ntilde;a: Prueba Social</span>
+            <span data-lang-he>קמפיין: הוכחה חברתית</span>
+          </h3>
+          <span class="campaign-tag">
+            <span data-lang-en>Retargeting Visitors</span>
+            <span data-lang-es>Retargeting Visitantes</span>
+            <span data-lang-he>ריטרגטינג מבקרים</span>
+          </span>
+        </div>
+        <div class="campaign-body">
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Budget</span>
+              <span data-lang-es>Presupuesto</span>
+              <span data-lang-he>תקציב</span>
+            </span>
+            <span class="stat-value">$100/mo</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Leads</span>
+              <span data-lang-es>Leads</span>
+              <span data-lang-he>לידים</span>
+            </span>
+            <span class="stat-value">5</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="stat-label">
+              <span data-lang-en>Cost Per Lead</span>
+              <span data-lang-es>Costo por Lead</span>
+              <span data-lang-he>עלות לליד</span>
+            </span>
+            <span class="stat-value">$20</span>
+          </div>
+          <div class="campaign-platforms">
+            <span class="platform-badge ig">Instagram</span>
+            <span class="platform-badge fb">Facebook</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PLATFORM BREAKDOWN ===== -->
+  <div class="section-block">
+    <h2 class="section-title">
+      <span data-lang-en>Platform Breakdown</span>
+      <span data-lang-es>Desglose por Plataforma</span>
+      <span data-lang-he>פילוח לפי פלטפורמה</span>
+    </h2>
+    <table class="platform-table">
+      <thead>
+        <tr>
+          <th data-lang-en>Platform</th>
+          <th data-lang-es>Plataforma</th>
+          <th data-lang-he>פלטפורמה</th>
+
+          <th data-lang-en>CPL Range</th>
+          <th data-lang-es>Rango CPL</th>
+          <th data-lang-he>טווח עלות לליד</th>
+
+          <th data-lang-en>Performance</th>
+          <th data-lang-es>Rendimiento</th>
+          <th data-lang-he>ביצועים</th>
+
+          <th data-lang-en>Rating</th>
+          <th data-lang-es>Calificaci&oacute;n</th>
+          <th data-lang-he>דירוג</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-lang-en>Facebook</td>
+          <td data-lang-es>Facebook</td>
+          <td data-lang-he>Facebook</td>
+
+          <td data-lang-en>$15 – $20</td>
+          <td data-lang-es>$15 – $20</td>
+          <td data-lang-he>$15 – $20</td>
+
+          <td data-lang-en><div class="cpl-bar"><div class="cpl-bar-fill" style="width:85%"></div></div></td>
+          <td data-lang-es><div class="cpl-bar"><div class="cpl-bar-fill" style="width:85%"></div></div></td>
+          <td data-lang-he><div class="cpl-bar"><div class="cpl-bar-fill" style="width:85%"></div></div></td>
+
+          <td data-lang-en>&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+          <td data-lang-es>&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+          <td data-lang-he>&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+        </tr>
+        <tr>
+          <td data-lang-en>Instagram</td>
+          <td data-lang-es>Instagram</td>
+          <td data-lang-he>Instagram</td>
+
+          <td data-lang-en>$20 – $25</td>
+          <td data-lang-es>$20 – $25</td>
+          <td data-lang-he>$20 – $25</td>
+
+          <td data-lang-en><div class="cpl-bar"><div class="cpl-bar-fill" style="width:65%"></div></div></td>
+          <td data-lang-es><div class="cpl-bar"><div class="cpl-bar-fill" style="width:65%"></div></div></td>
+          <td data-lang-he><div class="cpl-bar"><div class="cpl-bar-fill" style="width:65%"></div></div></td>
+
+          <td data-lang-en>&#9733;&#9733;&#9733;&#9733;&#9734;</td>
+          <td data-lang-es>&#9733;&#9733;&#9733;&#9733;&#9734;</td>
+          <td data-lang-he>&#9733;&#9733;&#9733;&#9733;&#9734;</td>
+        </tr>
+        <tr>
+          <td data-lang-en>Google Ads</td>
+          <td data-lang-es>Google Ads</td>
+          <td data-lang-he>Google Ads</td>
+
+          <td data-lang-en>$25 – $35</td>
+          <td data-lang-es>$25 – $35</td>
+          <td data-lang-he>$25 – $35</td>
+
+          <td data-lang-en><div class="cpl-bar"><div class="cpl-bar-fill" style="width:45%"></div></div></td>
+          <td data-lang-es><div class="cpl-bar"><div class="cpl-bar-fill" style="width:45%"></div></div></td>
+          <td data-lang-he><div class="cpl-bar"><div class="cpl-bar-fill" style="width:45%"></div></div></td>
+
+          <td data-lang-en>&#9733;&#9733;&#9733;&#9734;&#9734;</td>
+          <td data-lang-es>&#9733;&#9733;&#9733;&#9734;&#9734;</td>
+          <td data-lang-he>&#9733;&#9733;&#9733;&#9734;&#9734;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== BUDGET PHASES ===== -->
+  <div class="section-block">
+    <h2 class="section-title">
+      <span data-lang-en>Monthly Budget Phases</span>
+      <span data-lang-es>Fases de Presupuesto Mensual</span>
+      <span data-lang-he>שלבי תקציב חודשי</span>
+    </h2>
+    <div class="phases-timeline">
+      <div class="phase-block active">
+        <div class="phase-label">
+          <span data-lang-en>Phase 1 — Current</span>
+          <span data-lang-es>Fase 1 — Actual</span>
+          <span data-lang-he>שלב 1 — נוכחי</span>
+        </div>
+        <div class="phase-amount">$500<span style="font-size:0.6em;opacity:0.7">/mo</span></div>
+        <div class="phase-desc">
+          <span data-lang-en>Validation & Testing</span>
+          <span data-lang-es>Validaci&oacute;n y Pruebas</span>
+          <span data-lang-he>בדיקות ואימות</span>
+        </div>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label">
+          <span data-lang-en>Phase 2</span>
+          <span data-lang-es>Fase 2</span>
+          <span data-lang-he>שלב 2</span>
+        </div>
+        <div class="phase-amount">$1,000<span style="font-size:0.6em;opacity:0.7">/mo</span></div>
+        <div class="phase-desc">
+          <span data-lang-en>Scaling Winners</span>
+          <span data-lang-es>Escalando Ganadores</span>
+          <span data-lang-he>הרחבת מנצחים</span>
+        </div>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label">
+          <span data-lang-en>Phase 3</span>
+          <span data-lang-es>Fase 3</span>
+          <span data-lang-he>שלב 3</span>
+        </div>
+        <div class="phase-amount">$2,000<span style="font-size:0.6em;opacity:0.7">/mo</span></div>
+        <div class="phase-desc">
+          <span data-lang-en>Full Market Saturation</span>
+          <span data-lang-es>Saturaci&oacute;n Total del Mercado</span>
+          <span data-lang-he>רוויית שוק מלאה</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEAD SOURCE PIE + ROI TRACKER ===== -->
+  <div class="section-block">
+    <h2 class="section-title">
+      <span data-lang-en>Lead Sources & ROI</span>
+      <span data-lang-es>Fuentes de Leads y ROI</span>
+      <span data-lang-he>מקורות לידים והחזר השקעה</span>
+    </h2>
+    <div class="chart-row">
+
+      <!-- Pie Chart -->
+      <div class="pie-container">
+        <h3 style="font-size:1.1rem; color:var(--green); margin-bottom:16px;">
+          <span data-lang-en>Lead Sources</span>
+          <span data-lang-es>Fuentes de Leads</span>
+          <span data-lang-he>מקורות לידים</span>
+        </h3>
+        <div class="pie-chart"></div>
+        <div class="pie-legend">
+          <div class="legend-item"><span class="legend-dot facebook"></span>Facebook 40%</div>
+          <div class="legend-item"><span class="legend-dot referral"></span>Referral 25%</div>
+          <div class="legend-item"><span class="legend-dot goog"></span>Google 20%</div>
+          <div class="legend-item"><span class="legend-dot whatsapp"></span>WhatsApp 10%</div>
+          <div class="legend-item"><span class="legend-dot walkin"></span>Walk-in 5%</div>
+        </div>
+      </div>
+
+      <!-- ROI Tracker -->
+      <div class="roi-container">
+        <h3>
+          <span data-lang-en>ROI Tracker</span>
+          <span data-lang-es>Seguimiento de ROI</span>
+          <span data-lang-he>מעקב החזר השקעה</span>
+        </h3>
+        <div class="roi-flow">
+          <div class="roi-box">
+            <div class="roi-amount">$600</div>
+            <div class="roi-label">
+              <span data-lang-en>Monthly Spend</span>
+              <span data-lang-es>Gasto Mensual</span>
+              <span data-lang-he>הוצאה חודשית</span>
+            </div>
+          </div>
+          <div class="roi-arrow">&#10132;</div>
+          <div class="roi-box">
+            <div class="roi-amount">$45K</div>
+            <div class="roi-label">
+              <span data-lang-en>Revenue Pipeline</span>
+              <span data-lang-es>Pipeline de Ingresos</span>
+              <span data-lang-he>צינור הכנסות</span>
+            </div>
+          </div>
+        </div>
+        <div class="roi-result">75x ROAS
+          <span data-lang-en>Target</span>
+          <span data-lang-es>Objetivo</span>
+          <span data-lang-he>יעד</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== CREATIVE LIBRARY ===== -->
+  <div class="section-block">
+    <h2 class="section-title">
+      <span data-lang-en>Creative Library</span>
+      <span data-lang-es>Biblioteca Creativa</span>
+      <span data-lang-he>ספריית קריאייטיב</span>
+    </h2>
+    <div class="creative-grid">
+
+      <a href="/ads-creatives/ad-ahorro.html" class="creative-card">
+        <div class="creative-thumb ahorro">
+          &#9728;
+          <span class="creative-thumb-label">AD CREATIVE</span>
+        </div>
+        <div class="creative-info">
+          <h4>
+            <span data-lang-en>Ahorro Campaign</span>
+            <span data-lang-es>Campa&ntilde;a Ahorro</span>
+            <span data-lang-he>קמפיין חיסכון</span>
+          </h4>
+          <p>
+            <span data-lang-en>Savings-focused ad for homeowners</span>
+            <span data-lang-es>Anuncio de ahorro para propietarios</span>
+            <span data-lang-he>מודעת חיסכון לבעלי בתים</span>
+          </p>
+        </div>
+      </a>
+
+      <a href="/ads-creatives/ad-ley417.html" class="creative-card">
+        <div class="creative-thumb ley417">
+          &#9878;
+          <span class="creative-thumb-label">AD CREATIVE</span>
+        </div>
+        <div class="creative-info">
+          <h4>
+            <span data-lang-en>Ley 417 Campaign</span>
+            <span data-lang-es>Campa&ntilde;a Ley 417</span>
+            <span data-lang-he>קמפיין חוק 417</span>
+          </h4>
+          <p>
+            <span data-lang-en>Tax incentive ad for businesses</span>
+            <span data-lang-es>Anuncio de incentivo fiscal para empresas</span>
+            <span data-lang-he>מודעת הטבת מס לעסקים</span>
+          </p>
+        </div>
+      </a>
+
+      <a href="/ads-creatives/ad-testimonial.html" class="creative-card">
+        <div class="creative-thumb testimonial">
+          &#9733;
+          <span class="creative-thumb-label">AD CREATIVE</span>
+        </div>
+        <div class="creative-info">
+          <h4>
+            <span data-lang-en>Testimonial Campaign</span>
+            <span data-lang-es>Campa&ntilde;a de Testimonios</span>
+            <span data-lang-he>קמפיין המלצות</span>
+          </h4>
+          <p>
+            <span data-lang-en>Social proof retargeting ad</span>
+            <span data-lang-es>Anuncio de retargeting con prueba social</span>
+            <span data-lang-he>מודעת ריטרגטינג עם הוכחה חברתית</span>
+          </p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page-footer">
+  <span data-lang-en>&copy; 2026 Solaris Energy Panam&aacute; — <a href="index.html">Back to Dashboard</a></span>
+  <span data-lang-es>&copy; 2026 Solaris Energy Panam&aacute; — <a href="index.html">Volver al Panel</a></span>
+  <span data-lang-he>&copy; 2026 Solaris Energy Panama — <a href="index.html">חזרה ללוח בקרה</a></span>
+</div>
+
+<!-- ===== LANGUAGE TOGGLE SCRIPT ===== -->
+<script>
+  function setLang(lang) {
+    document.body.setAttribute('data-active-lang', lang);
+    // Update direction for Hebrew
+    if (lang === 'he') {
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.documentElement.setAttribute('lang', 'he');
+    } else {
+      document.documentElement.setAttribute('dir', 'ltr');
+      document.documentElement.setAttribute('lang', lang);
+    }
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+      if (btn.textContent.trim() === lang.toUpperCase()) {
+        btn.classList.add('active');
+      }
+    });
+    // Persist choice
+    try { localStorage.setItem('solaris-lang', lang); } catch(e) {}
+  }
+
+  // Restore saved language
+  (function() {
+    try {
+      var saved = localStorage.getItem('solaris-lang');
+      if (saved && ['en','es','he'].indexOf(saved) !== -1) {
+        setLang(saved);
+      }
+    } catch(e) {}
+  })();
+</script>
+
+</body>
+</html>
