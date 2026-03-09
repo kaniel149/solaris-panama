@@ -26,6 +26,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--pea
 /* Hero */
 .hero{min-height:35vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:80px 24px 60px;background:linear-gradient(150deg,var(--green) 0%,var(--green-canopy) 100%);position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(212,168,67,.1),transparent 55%)}
+.hero .hero-logo{height:80px;filter:drop-shadow(0 4px 20px rgba(212,168,67,.3));margin-bottom:8px}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--pearl);text-align:center}
 .hero p{color:rgba(254,253,251,.6);font-size:16px;text-align:center;max-width:600px}
 
@@ -36,383 +37,678 @@ section{padding:64px 0}
 .section-title{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,36px);font-weight:700;color:var(--green);margin-bottom:8px}
 .section-desc{color:var(--slate);font-size:14px;margin-bottom:32px;max-width:600px}
 .alt-bg{background:var(--sand)}
+.border-top{border-top:1px solid var(--mist)}
+
+/* Logo Grid */
+.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.logo-box{padding:32px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--mist);min-height:140px}
+.logo-box img{max-height:80px;max-width:180px}
+.logo-box.dark{background:var(--green)}
+.logo-box.light{background:var(--pearl);border:1px solid var(--mist)}
+.logo-box.gold{background:linear-gradient(135deg,var(--gold),var(--gold-aged))}
+.logo-box-label{font-size:11px;color:var(--ash);text-align:center;margin-top:6px;font-weight:500;letter-spacing:.04em}
+
+/* Logo Variations */
+.logo-vars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px}
+.logo-var-card{text-align:center;padding:24px;background:var(--cloud);border-radius:12px;border:1px solid var(--mist)}
+.logo-var-card .logo-preview{height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.logo-var-card h4{font-size:14px;font-weight:700;color:var(--charcoal);margin-bottom:4px}
+.logo-var-card p{font-size:12px;color:var(--ash)}
+
+/* Rules */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.rule{padding:16px;border-radius:10px;font-size:13px;line-height:1.5}
+.rule.do{background:rgba(20,87,63,.06);border:1px solid rgba(20,87,63,.15)}
+.rule.dont{background:rgba(200,50,30,.04);border:1px solid rgba(200,50,30,.12)}
+.rule h4{margin-bottom:6px;font-size:14px}
+.rule ul{margin:0;padding-left:18px}
+.rule li{margin-bottom:2px}
+
+/* Specs table */
+.specs-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+.specs-table th{text-align:left;padding:8px 12px;background:var(--green);color:var(--pearl);font-weight:600;font-size:12px;letter-spacing:.04em}
+.specs-table th:first-child{border-radius:8px 0 0 0}
+.specs-table th:last-child{border-radius:0 8px 0 0}
+.specs-table td{padding:8px 12px;border-bottom:1px solid var(--mist)}
+.specs-table tr:last-child td{border-bottom:none}
+.specs-table tr:nth-child(even){background:var(--cloud)}
 
 /* Colors */
 .color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
 .color-swatch{border-radius:12px;overflow:hidden;border:1px solid var(--mist);background:var(--pearl)}
-.color-swatch-top{height:100px}
+.color-swatch-top{height:100px;position:relative}
+.color-swatch-top .ratio{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.3);color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600}
 .color-swatch-info{padding:12px}
 .color-swatch-info h4{font-size:13px;font-weight:700;color:var(--charcoal)}
 .color-swatch-info p{font-size:11px;color:var(--ash)}
 .color-swatch-info .hex{font-family:monospace;font-size:12px;color:var(--slate);margin-top:4px}
+.color-ratio-bar{display:flex;height:40px;border-radius:8px;overflow:hidden;margin-top:20px;border:1px solid var(--mist)}
+.color-ratio-bar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
 
 /* Typography */
 .type-sample{padding:28px;background:var(--pearl);border:1px solid var(--mist);border-radius:12px;margin:12px 0}
-.type-sample h3{margin-bottom:8px;color:var(--green)}
-.type-meta{font-size:12px;color:var(--ash);margin-top:8px}
+.type-sample h3{margin-bottom:8px}
+.type-sample .meta{font-size:11px;color:var(--ash);margin-top:4px}
 
-/* Logo */
-.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.logo-box{padding:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;border:1px solid var(--mist);transition:all .3s}
-.logo-box:hover{box-shadow:0 8px 24px rgba(0,0,0,0.06)}
-.logo-box.dark{background:var(--green)}
-.logo-box.light{background:var(--pearl)}
-.logo-box.gold{background:var(--gold)}
-.logo-text{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;letter-spacing:.08em}
-.logo-tagline{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.2em}
+/* Merchandise */
+.merch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.merch-card{border-radius:16px;overflow:hidden;border:1px solid var(--mist);background:var(--pearl);transition:all .3s}
+.merch-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.merch-visual{height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.merch-card-body{padding:16px}
+.merch-card-body h4{font-size:15px;font-weight:700;color:var(--charcoal);margin-bottom:4px}
+.merch-card-body p{font-size:12px;color:var(--slate);line-height:1.5}
+.merch-card-body .specs{margin-top:8px;font-size:11px;color:var(--gold-aged);font-weight:600}
 
-/* Rules */
-.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.rule{padding:20px;border-radius:12px;font-size:13px;line-height:1.8}
-.rule.do{background:rgba(20,87,63,.06);border:1px solid rgba(20,87,63,.12)}
-.rule.dont{background:rgba(180,60,40,.05);border:1px solid rgba(180,60,40,.1)}
-.rule h4{margin-bottom:8px;font-size:14px}
-.rule h4.green{color:var(--green-canopy)}
-.rule h4.red{color:#B43C28}
+/* CSS Merch Illustrations */
+.polo-illust{width:120px;height:130px;background:var(--green);border-radius:0 0 20px 20px;position:relative}
+.polo-illust::before{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:30px;height:20px;background:var(--green);border-radius:50% 50% 0 0}
+.polo-illust::after{content:'SOLARIS';position:absolute;top:35px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--gold);font-weight:700;letter-spacing:2px}
+.polo-illust .sleeve-l,.polo-illust .sleeve-r{position:absolute;top:0;width:35px;height:50px;background:var(--green)}
+.polo-illust .sleeve-l{left:-30px;border-radius:0 0 0 12px;transform:rotate(15deg);transform-origin:top right}
+.polo-illust .sleeve-r{right:-30px;border-radius:0 0 12px 0;transform:rotate(-15deg);transform-origin:top left}
 
-/* Photo style */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.photo-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;transition:all .3s}
-.photo-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
-.photo-card h4{font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px}
-.photo-card p{font-size:13px;color:var(--slate);line-height:1.6}
+.cap-illust{width:120px;height:70px;position:relative}
+.cap-illust .brim{width:140px;height:12px;background:var(--green);border-radius:0 0 50% 50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.cap-illust .crown{width:120px;height:60px;background:var(--green);border-radius:50% 50% 0 0;position:absolute;bottom:10px;left:50%;transform:translateX(-50%)}
+.cap-illust .crown::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--gold);font-weight:700;letter-spacing:3px}
 
-/* Tone */
-.tone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.tone-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px}
-.tone-card h4{font-size:14px;font-weight:700;color:var(--green);margin-bottom:12px}
-.tone-example{padding:12px;border-radius:8px;font-size:13px;margin:8px 0}
-.tone-example.good{background:rgba(20,87,63,.06);color:var(--green-canopy)}
-.tone-example.bad{background:rgba(180,60,40,.05);color:#B43C28}
+.notebook-illust{width:90px;height:120px;background:var(--green);border-radius:4px;position:relative;box-shadow:3px 3px 0 var(--gold)}
+.notebook-illust::before{content:'S';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);font-weight:700}
+.notebook-illust::after{content:'';position:absolute;left:8px;top:10%;height:80%;width:1px;background:var(--gold);opacity:.5}
 
-/* Spacing table */
-.spacing-table{width:100%;border-collapse:collapse;font-size:13px}
-.spacing-table th{text-align:left;padding:10px 16px;background:var(--sand);color:var(--green);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
-.spacing-table td{padding:10px 16px;border-bottom:1px solid var(--mist);color:var(--slate)}
+.bottle-illust{width:50px;height:140px;position:relative}
+.bottle-illust .cap-part{width:24px;height:18px;background:var(--gold);border-radius:4px 4px 0 0;position:absolute;top:0;left:50%;transform:translateX(-50%)}
+.bottle-illust .neck{width:20px;height:20px;background:var(--green-canopy);position:absolute;top:16px;left:50%;transform:translateX(-50%)}
+.bottle-illust .body-part{width:50px;height:100px;background:var(--green);border-radius:8px 8px 12px 12px;position:absolute;bottom:0;left:0}
+.bottle-illust .body-part::after{content:'☀';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-size:18px;color:var(--gold)}
+
+.bag-illust{width:120px;height:100px;background:var(--green);border-radius:8px;position:relative;border:2px solid var(--green-canopy)}
+.bag-illust::before{content:'';position:absolute;top:-20px;left:30px;width:60px;height:24px;border:3px solid var(--green);border-bottom:none;border-radius:12px 12px 0 0}
+.bag-illust::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--gold);font-weight:700;letter-spacing:2px;background:rgba(0,0,0,.2);padding:4px 10px;border-radius:3px}
+
+.gloves-illust{display:flex;gap:16px;align-items:center}
+.glove{width:45px;height:70px;background:var(--green);border-radius:12px 12px 8px 8px;position:relative;border:2px solid var(--gold)}
+.glove::before{content:'';position:absolute;top:15px;right:-10px;width:15px;height:25px;background:var(--green);border-radius:8px;border:2px solid var(--gold)}
+.glasses{width:80px;height:30px;position:relative}
+.glasses::before,.glasses::after{content:'';position:absolute;top:0;width:32px;height:24px;border:3px solid var(--green);border-radius:4px}
+.glasses::before{left:0}
+.glasses::after{right:0}
+
+.truck-illust{width:180px;height:80px;position:relative}
+.truck-illust .truck-body{width:120px;height:50px;background:var(--green);border-radius:6px 6px 0 0;position:absolute;bottom:12px;left:0}
+.truck-illust .truck-body::after{content:'SOLARIS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--gold);font-weight:700;letter-spacing:3px}
+.truck-illust .truck-cab{width:55px;height:40px;background:var(--green-canopy);border-radius:0 10px 0 0;position:absolute;bottom:12px;right:0}
+.truck-illust .truck-cab::before{content:'';position:absolute;top:5px;right:5px;width:30px;height:20px;background:rgba(212,168,67,.3);border-radius:3px}
+.truck-illust .wheel1,.truck-illust .wheel2{position:absolute;bottom:0;width:24px;height:24px;background:var(--charcoal);border-radius:50%;border:3px solid var(--ash)}
+.truck-illust .wheel1{left:20px}
+.truck-illust .wheel2{right:15px}
+
+.flag-illust{display:flex;gap:20px;align-items:flex-end}
+.feather-flag{width:30px;height:110px;position:relative}
+.feather-flag .pole{width:2px;height:110px;background:var(--ash);position:absolute;left:0;bottom:0}
+.feather-flag .fabric{width:28px;height:90px;background:var(--green);position:absolute;left:2px;top:0;border-radius:0 0 50% 0;clip-path:ellipse(100% 50% at 0% 50%)}
+.feather-flag .fabric::after{content:'S';position:absolute;top:30%;left:40%;color:var(--gold);font-weight:700;font-size:14px}
+.rollup{width:50px;height:100px;background:var(--green);border-radius:2px;position:relative}
+.rollup::after{content:'☀\ASOLARIS';white-space:pre;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--gold);font-size:10px;font-weight:700;text-align:center;letter-spacing:1px}
+.rollup-base{width:56px;height:8px;background:var(--ash);border-radius:2px;position:absolute;bottom:-4px;left:-3px}
+
+.lanyard-illust{position:relative;width:80px;height:120px}
+.lanyard-illust .strap{width:60px;height:80px;border:4px solid var(--green);border-top:none;border-radius:0 0 30px 30px;position:absolute;top:0;left:10px}
+.lanyard-illust .badge{width:54px;height:36px;background:var(--pearl);border:2px solid var(--gold);border-radius:4px;position:absolute;bottom:0;left:13px}
+.lanyard-illust .badge::after{content:'ID';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--green);font-weight:700}
+
+.powerbank-illust{width:70px;height:100px;background:linear-gradient(180deg,var(--green) 0%,var(--green-canopy) 100%);border-radius:10px;position:relative;border:2px solid var(--gold)}
+.powerbank-illust::before{content:'⚡';position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:24px}
+.powerbank-illust::after{content:'OWN YOUR\AENERGY';white-space:pre;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--gold);font-weight:600;text-align:center;letter-spacing:.5px}
+.powerbank-illust .dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:3px}
+.powerbank-illust .dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
+
+.magnet-illust{width:140px;height:60px;background:var(--green);border-radius:6px;position:relative;border:2px solid var(--gold)}
+.magnet-illust::before{content:'☀ SOLARIS';position:absolute;top:12px;left:12px;font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px}
+.magnet-illust::after{content:'+507 6XXX · solarispanama.com';position:absolute;bottom:10px;left:12px;font-size:8px;color:rgba(254,253,251,.6)}
+
+.giftbox-illust{width:100px;height:100px;position:relative}
+.giftbox-illust .box{width:100px;height:70px;background:var(--green);border-radius:4px;position:absolute;bottom:0;border:2px solid var(--gold)}
+.giftbox-illust .lid{width:110px;height:16px;background:var(--green-canopy);border-radius:4px;position:absolute;bottom:68px;left:-5px;border:2px solid var(--gold)}
+.giftbox-illust .ribbon-v{position:absolute;width:8px;height:68px;background:var(--gold);bottom:0;left:46px}
+.giftbox-illust .ribbon-h{position:absolute;width:100px;height:8px;background:var(--gold);bottom:31px;left:0}
+.giftbox-illust .bow{position:absolute;top:0;left:38px;font-size:20px;color:var(--gold)}
+
+/* Photo & Tone cards */
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.guide-card{padding:20px;border-radius:12px;border:1px solid var(--mist);background:var(--pearl)}
+.guide-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--green)}
+.guide-card ul{padding-left:18px;font-size:13px;color:var(--slate)}
+.guide-card li{margin-bottom:4px}
+.guide-card.do{border-left:4px solid var(--green-canopy)}
+.guide-card.dont{border-left:4px solid #c8321e}
 
 /* Footer */
-footer{background:var(--charcoal);padding:3rem 2rem;text-align:center}
-footer p{color:rgba(254,253,251,.4);font-size:.85rem}
-footer a{color:var(--gold);text-decoration:none}
-
-/* Reveal */
-.reveal{opacity:0;transform:translateY(24px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.footer{text-align:center;padding:32px;font-size:12px;color:var(--ash);border-top:1px solid var(--mist)}
 
 @media(max-width:768px){
-    .logo-grid{grid-template-columns:1fr}
-    .rules-grid{grid-template-columns:1fr}
-    section{padding:48px 0}
-    .hero{padding:60px 20px 40px}
+.logo-grid{grid-template-columns:1fr}
+.logo-vars{grid-template-columns:1fr}
+.rules-grid{grid-template-columns:1fr}
+.merch-grid{grid-template-columns:1fr}
+.guide-grid{grid-template-columns:1fr}
 }
-[dir="rtl"]{text-align:right}
 </style>
 </head>
 <body>
 
-<div class="lang-toggle">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('es')">ES</button>
-    <button class="lang-btn" onclick="setLang('he')">HE</button>
-</div>
-
+<!-- Nav -->
 <nav class="top-nav">
-    <a href="index.html" class="logo">SOLARIS <span>ENERGY</span></a>
-    <a href="index.html" class="back" data-en="← Dashboard" data-es="← Panel" data-he="לוח בקרה →">← Dashboard</a>
+<a href="index.html" class="logo">SOLARIS<span>.</span></a>
+<a href="index.html" class="back" data-en="← Dashboard" data-es="← Panel" data-he="לוח בקרה →">← Dashboard</a>
 </nav>
 
-<div class="hero">
-    <h1 data-en="Brand Kit" data-es="Kit de Marca" data-he="ערכת מותג">Brand Kit</h1>
-    <p data-en="Logo, colors, typography, photography, and tone of voice guidelines for Solaris Energy" data-es="Logo, colores, tipografía, fotografía y guías de tono de voz para Solaris Energy" data-he="לוגו, צבעים, טיפוגרפיה, צילום והנחיות טון דיבור עבור סולאריס אנרג׳י">Logo, colors, typography, photography, and tone of voice guidelines for Solaris Energy</p>
+<!-- Language Toggle -->
+<div class="lang-toggle">
+<button class="lang-btn active" onclick="setLang('en')">EN</button>
+<button class="lang-btn" onclick="setLang('es')">ES</button>
+<button class="lang-btn" onclick="setLang('he')">HE</button>
 </div>
 
-<!-- LOGO -->
+<!-- Hero -->
+<div class="hero">
+<img class="hero-logo" src="data:image/png;base64,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" alt="Solaris Energy">
+<h1 data-en="Solaris Energy — Brand Kit" data-es="Solaris Energy — Kit de Marca" data-he="Solaris Energy — ערכת מותג">Solaris Energy — Brand Kit</h1>
+<p data-en="Logo, colors, typography, merchandise mockups, photography style, and tone of voice guidelines." data-es="Logo, colores, tipografía, mockups de merchandising, estilo fotográfico y guías de tono de voz." data-he="לוגו, צבעים, טיפוגרפיה, מוקאפים של מרצ'נדייז, סגנון צילום והנחיות טון דיבור.">Logo, colors, typography, merchandise mockups, photography style, and tone of voice guidelines.</p>
+</div>
+
+<!-- ========== SECTION 1: LOGO ========== -->
 <section>
-    <div class="container">
-        <div class="section-badge" data-en="LOGO" data-es="LOGO" data-he="לוגו">LOGO</div>
-        <h2 class="section-title reveal" data-en="Logo Variations" data-es="Variaciones del Logo" data-he="וריאציות לוגו">Logo Variations</h2>
-        <p class="section-desc reveal" data-en="Sun-over-mountain silhouette in circular badge format. 'SOLARIS' text with 'OWN YOUR ENERGY' tagline." data-es="Silueta de sol sobre montaña en formato de insignia circular. Texto 'SOLARIS' con eslogan 'OWN YOUR ENERGY'." data-he="צללית שמש מעל הר בפורמט תג עגול. טקסט 'SOLARIS' עם סלוגן 'OWN YOUR ENERGY'.">Sun-over-mountain silhouette in circular badge format. "SOLARIS" text with "OWN YOUR ENERGY" tagline.</p>
+<div class="container">
+<div class="section-badge">LOGO</div>
+<h2 class="section-title" data-en="Logo Showcase" data-es="Presentación del Logo" data-he="תצוגת לוגו">Logo Showcase</h2>
+<p class="section-desc" data-en="Sun-over-mountain silhouette in circular badge format. Use on dark, light, or accent backgrounds." data-es="Silueta de sol sobre montaña en formato de insignia circular. Usar sobre fondos oscuros, claros o de acento." data-he="צללית שמש מעל הר בפורמט תג עגול. שימוש על רקע כהה, בהיר או אקסנט.">Sun-over-mountain silhouette in circular badge format. Use on dark, light, or accent backgrounds.</p>
 
-        <div class="logo-grid reveal">
-            <div class="logo-box dark">
-                <div class="logo-text" style="color:var(--pearl)">SOLARIS</div>
-                <div class="logo-tagline" style="color:var(--gold)">OWN YOUR ENERGY</div>
-                <span style="font-size:11px;color:rgba(254,253,251,.4);margin-top:8px" data-en="Pearl on Green" data-es="Perla sobre Verde" data-he="פנינה על ירוק">Pearl on Green</span>
-            </div>
-            <div class="logo-box light">
-                <div class="logo-text" style="color:var(--green)">SOLARIS</div>
-                <div class="logo-tagline" style="color:var(--gold-aged)">OWN YOUR ENERGY</div>
-                <span style="font-size:11px;color:var(--ash);margin-top:8px" data-en="Green on Pearl" data-es="Verde sobre Perla" data-he="ירוק על פנינה">Green on Pearl</span>
-            </div>
-            <div class="logo-box gold">
-                <div class="logo-text" style="color:var(--green)">SOLARIS</div>
-                <div class="logo-tagline" style="color:var(--green)">OWN YOUR ENERGY</div>
-                <span style="font-size:11px;color:rgba(11,61,46,.6);margin-top:8px" data-en="Green on Gold" data-es="Verde sobre Dorado" data-he="ירוק על זהב">Green on Gold</span>
-            </div>
-        </div>
+<div class="logo-grid">
+<div>
+<div class="logo-box dark"><img src="data:image/png;base64,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" alt="Logo on dark background"></div>
+<div class="logo-box-label" data-en="On Dark Background" data-es="Sobre Fondo Oscuro" data-he="על רקע כהה">On Dark Background</div>
+</div>
+<div>
+<div class="logo-box light"><img src="data:image/png;base64,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" alt="Logo on light background"></div>
+<div class="logo-box-label" data-en="On Light Background" data-es="Sobre Fondo Claro" data-he="על רקע בהיר">On Light Background</div>
+</div>
+<div>
+<div class="logo-box gold"><img src="data:image/png;base64,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" alt="Logo on gold accent" style="filter:brightness(1.1)"></div>
+<div class="logo-box-label" data-en="On Gold Accent" data-es="Sobre Acento Dorado" data-he="על אקסנט זהב">On Gold Accent</div>
+</div>
+</div>
 
-        <div style="margin-top:32px;padding:24px;background:var(--cloud);border-radius:12px;border:1px solid var(--mist)" class="reveal">
-            <h4 style="font-size:14px;color:var(--green);margin-bottom:12px" data-en="Logo Rules" data-es="Reglas del Logo" data-he="כללי לוגו">Logo Rules</h4>
-            <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✓ <span data-en="Minimum 48px height (digital), 15mm (print)" data-es="Mínimo 48px de alto (digital), 15mm (impreso)" data-he="מינימום 48px גובה (דיגיטלי), 15 מ״מ (דפוס)">Minimum 48px height (digital), 15mm (print)</span></li>
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✓ <span data-en="Icon only: 24px min (digital), 8mm (print)" data-es="Solo icono: 24px mín (digital), 8mm (impreso)" data-he="אייקון בלבד: 24px מינימום (דיגיטלי), 8 מ״מ (דפוס)">Icon only: 24px min (digital), 8mm (print)</span></li>
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never stretch, rotate, or distort" data-es="Nunca estirar, rotar o distorsionar" data-he="לעולם לא למתוח, לסובב או לעוות">Never stretch, rotate, or distort</span></li>
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never add shadows or effects" data-es="Nunca agregar sombras o efectos" data-he="לעולם לא להוסיף צללים או אפקטים">Never add shadows or effects</span></li>
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never place on busy backgrounds without overlay" data-es="Nunca colocar sobre fondos ocupados sin overlay" data-he="לעולם לא לשים על רקע עמוס ללא שכבת כיסוי">Never place on busy backgrounds without overlay</span></li>
-                <li style="font-size:13px;color:var(--slate);padding:4px 0">✗ <span data-en="Never change the typeface or rearrange elements" data-es="Nunca cambiar la tipografía o reorganizar elementos" data-he="לעולם לא לשנות את הגופן או לסדר מחדש אלמנטים">Never change the typeface or rearrange elements</span></li>
-            </ul>
-        </div>
-    </div>
+<!-- Logo Variations -->
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:32px;margin-bottom:16px" data-en="Logo Variations" data-es="Variaciones del Logo" data-he="וריאציות לוגו">Logo Variations</h3>
+<div class="logo-vars">
+<div class="logo-var-card">
+<div class="logo-preview">
+<img src="data:image/png;base64,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" alt="Full Badge" style="max-height:70px">
+</div>
+<h4 data-en="Full Badge" data-es="Insignia Completa" data-he="תג מלא">Full Badge</h4>
+<p data-en="Circle with icon + text + tagline. Primary use." data-es="Círculo con ícono + texto + eslogan. Uso principal." data-he="עיגול עם אייקון + טקסט + סלוגן. שימוש עיקרי.">Circle with icon + text + tagline. Primary use.</p>
+</div>
+<div class="logo-var-card">
+<div class="logo-preview">
+<span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;letter-spacing:.12em;color:var(--green)">SOLARIS</span>
+</div>
+<h4 data-en="Wordmark Only" data-es="Solo Marca" data-he="שם בלבד">Wordmark Only</h4>
+<p data-en="Playfair Display 700, tracked out. For tight spaces." data-es="Playfair Display 700, espaciado. Para espacios reducidos." data-he="Playfair Display 700, מרווח. למרחבים צרים.">Playfair Display 700, tracked out. For tight spaces.</p>
+</div>
+<div class="logo-var-card">
+<div class="logo-preview">
+<div style="width:60px;height:60px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1)">
+<span style="color:var(--gold);font-size:24px">☀</span>
+</div>
+</div>
+<h4 data-en="Icon Only" data-es="Solo Ícono" data-he="אייקון בלבד">Icon Only</h4>
+<p data-en="Sun-mountain silhouette. Favicons, app icons, small formats." data-es="Silueta sol-montaña. Favicons, íconos de app, formatos pequeños." data-he="צללית שמש-הר. פאביקון, אייקוני אפליקציה, פורמטים קטנים.">Sun-mountain silhouette. Favicons, app icons, small formats.</p>
+</div>
+</div>
+
+<!-- Clear Space & Min Sizes -->
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:32px;margin-bottom:16px" data-en="Clear Space & Minimum Sizes" data-es="Espacio Libre y Tamaños Mínimos" data-he="מרחב פנוי וגדלים מינימליים">Clear Space & Minimum Sizes</h3>
+<table class="specs-table">
+<tr><th data-en="Rule" data-es="Regla" data-he="כלל">Rule</th><th data-en="Specification" data-es="Especificación" data-he="מפרט">Specification</th></tr>
+<tr><td data-en="Clear space" data-es="Espacio libre" data-he="מרחב פנוי">Clear space</td><td data-en="= height of 'S' in SOLARIS on all sides" data-es="= altura de 'S' en SOLARIS en todos los lados" data-he="= גובה ה-S ב-SOLARIS מכל הצדדים">= height of "S" in SOLARIS on all sides</td></tr>
+<tr><td data-en="Full badge minimum (digital)" data-es="Insignia completa mínima (digital)" data-he="תג מלא מינימום (דיגיטל)">Full badge minimum (digital)</td><td>48px height</td></tr>
+<tr><td data-en="Full badge minimum (print)" data-es="Insignia completa mínima (impresión)" data-he="תג מלא מינימום (דפוס)">Full badge minimum (print)</td><td>15mm</td></tr>
+<tr><td data-en="Icon only minimum (digital)" data-es="Solo ícono mínimo (digital)" data-he="אייקון בלבד מינימום (דיגיטל)">Icon only minimum (digital)</td><td>24px height</td></tr>
+<tr><td data-en="Icon only minimum (print)" data-es="Solo ícono mínimo (impresión)" data-he="אייקון בלבד מינימום (דפוס)">Icon only minimum (print)</td><td>8mm</td></tr>
+</table>
+
+<!-- Approved Color Combos -->
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:32px;margin-bottom:16px" data-en="Approved Color Combinations" data-es="Combinaciones de Color Aprobadas" data-he="שילובי צבע מאושרים">Approved Color Combinations</h3>
+<table class="specs-table">
+<tr><th data-en="Logo Color" data-es="Color del Logo" data-he="צבע לוגו">Logo Color</th><th data-en="Background" data-es="Fondo" data-he="רקע">Background</th></tr>
+<tr><td>Pearl White #FEFDFB</td><td>Solaris Green #0B3D2E</td></tr>
+<tr><td>Solaris Green #0B3D2E</td><td>Pearl White / Warm Sand</td></tr>
+<tr><td>Solar Gold #D4A843</td><td>Solaris Green #0B3D2E</td></tr>
+</table>
+
+<!-- Logo Don'ts -->
+<div class="rules-grid" style="margin-top:24px">
+<div class="rule do">
+<h4 style="color:var(--green-canopy)">✓ Do</h4>
+<ul>
+<li data-en="Maintain proportions (1:1 badge)" data-es="Mantener proporciones (insignia 1:1)" data-he="שמור על פרופורציות (תג 1:1)">Maintain proportions (1:1 badge)</li>
+<li data-en="Use on clean, solid backgrounds" data-es="Usar sobre fondos limpios y sólidos" data-he="השתמש על רקעות נקיים וחלקים">Use on clean, solid backgrounds</li>
+<li data-en="Respect minimum clear space" data-es="Respetar el espacio libre mínimo" data-he="כבד את מרחב הפנוי המינימלי">Respect minimum clear space</li>
+<li data-en="Use approved color combinations" data-es="Usar combinaciones de colores aprobadas" data-he="השתמש בשילובי צבע מאושרים">Use approved color combinations</li>
+</ul>
+</div>
+<div class="rule dont">
+<h4 style="color:#c8321e">✕ Don't</h4>
+<ul>
+<li data-en="Stretch or distort" data-es="Estirar o distorsionar" data-he="למתוח או לעוות">Stretch or distort</li>
+<li data-en="Rotate the logo" data-es="Rotar el logo" data-he="לסובב את הלוגו">Rotate the logo</li>
+<li data-en="Add drop shadows or effects" data-es="Agregar sombras o efectos" data-he="להוסיף צללים או אפקטים">Add drop shadows or effects</li>
+<li data-en="Place on busy photographs without overlay" data-es="Colocar sobre fotos concurridas sin overlay" data-he="למקם על צילומים עמוסים ללא שכבת כיסוי">Place on busy photographs without overlay</li>
+<li data-en="Change the typeface or rearrange elements" data-es="Cambiar la tipografía o reorganizar elementos" data-he="לשנות את הפונט או לסדר מחדש אלמנטים">Change the typeface or rearrange elements</li>
+<li data-en="Use below minimum size" data-es="Usar por debajo del tamaño mínimo" data-he="להשתמש מתחת לגודל מינימום">Use below minimum size</li>
+</ul>
+</div>
+</div>
+</div>
 </section>
 
-<!-- COLORS -->
-<section class="alt-bg">
-    <div class="container">
-        <div class="section-badge" data-en="COLORS" data-es="COLORES" data-he="צבעים">COLORS</div>
-        <h2 class="section-title reveal" data-en="Color Palette" data-es="Paleta de Colores" data-he="פלטת צבעים">Color Palette</h2>
-        <p class="section-desc reveal" data-en="60% Pearl White · 25% Solaris Green · 10% Solar Gold · 5% Neutrals" data-es="60% Blanco Perla · 25% Verde Solaris · 10% Dorado Solar · 5% Neutros" data-he="60% לבן פנינה · 25% ירוק סולאריס · 10% זהב סולארי · 5% ניטרליים">60% Pearl White · 25% Solaris Green · 10% Solar Gold · 5% Neutrals</p>
+<!-- ========== SECTION 2: COLORS ========== -->
+<section class="alt-bg border-top">
+<div class="container">
+<div class="section-badge">COLORS</div>
+<h2 class="section-title" data-en="Color Palette" data-es="Paleta de Colores" data-he="פלטת צבעים">Color Palette</h2>
+<p class="section-desc" data-en="Green + Gold — premium, trustworthy, solar energy. Warm Sand for breathing space. Neutrals for text." data-es="Verde + Oro — premium, confiable, energía solar. Arena cálida para espacio. Neutros para texto." data-he="ירוק + זהב — פרימיום, אמין, אנרגיה סולארית. חול חם למרחב נשימה. נייטרלים לטקסט.">Green + Gold — premium, trustworthy, solar energy. Warm Sand for breathing space. Neutrals for text.</p>
 
-        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Primary Colors" data-es="Colores Primarios" data-he="צבעים ראשיים">Primary Colors</h3>
-        <div class="color-grid reveal" style="margin-bottom:32px">
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#0B3D2E"></div>
-                <div class="color-swatch-info"><h4>Solaris Green</h4><p data-en="Headers, CTAs, nav backgrounds" data-es="Encabezados, CTAs, fondos de nav" data-he="כותרות, קריאות לפעולה, רקעי ניווט">Headers, CTAs, nav backgrounds</p><div class="hex">#0B3D2E</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#D4A843"></div>
-                <div class="color-swatch-info"><h4>Solar Gold</h4><p data-en="Accents, highlights, hover states" data-es="Acentos, resaltados, estados hover" data-he="הדגשות, הבלטות, מצבי ריחוף">Accents, highlights, hover states</p><div class="hex">#D4A843</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#FEFDFB"></div>
-                <div class="color-swatch-info"><h4>Pearl White</h4><p data-en="Backgrounds, cards, breathing space" data-es="Fondos, tarjetas, espacio" data-he="רקעים, כרטיסים, מרחב נשימה">Backgrounds, cards, breathing space</p><div class="hex">#FEFDFB</div></div>
-            </div>
-        </div>
+<h3 style="font-size:14px;font-weight:700;color:var(--charcoal);margin-bottom:12px;letter-spacing:.04em" data-en="PRIMARY COLORS" data-es="COLORES PRIMARIOS" data-he="צבעים ראשיים">PRIMARY COLORS</h3>
+<div class="color-grid">
+<div class="color-swatch"><div class="color-swatch-top" style="background:#0B3D2E"><div class="ratio">60%</div></div><div class="color-swatch-info"><h4>Solaris Green</h4><p data-en="Primary. Headers, CTAs, nav." data-es="Primario. Encabezados, CTAs, nav." data-he="ראשי. כותרות, CTA, ניווט.">Primary. Headers, CTAs, nav.</p><div class="hex">#0B3D2E</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#D4A843"><div class="ratio">10%</div></div><div class="color-swatch-info"><h4>Solar Gold</h4><p data-en="Accent. Highlights, icons, hover." data-es="Acento. Resaltes, íconos, hover." data-he="אקסנט. הדגשות, אייקונים, הובר.">Accent. Highlights, icons, hover.</p><div class="hex">#D4A843</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#FEFDFB;border-bottom:1px solid var(--mist)"><div class="ratio">60%</div></div><div class="color-swatch-info"><h4>Pearl White</h4><p data-en="Backgrounds, cards, space." data-es="Fondos, tarjetas, espacio." data-he="רקעים, כרטיסים, מרחב.">Backgrounds, cards, space.</p><div class="hex">#FEFDFB</div></div></div>
+</div>
 
-        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Secondary Colors" data-es="Colores Secundarios" data-he="צבעים משניים">Secondary Colors</h3>
-        <div class="color-grid reveal" style="margin-bottom:32px">
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#14573F"></div>
-                <div class="color-swatch-info"><h4>Canopy Green</h4><p data-en="Secondary buttons, hover" data-es="Botones secundarios, hover" data-he="כפתורים משניים, ריחוף">Secondary buttons, hover</p><div class="hex">#14573F</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#B8912E"></div>
-                <div class="color-swatch-info"><h4>Aged Gold</h4><p data-en="Text on light, secondary accent" data-es="Texto claro, acento secundario" data-he="טקסט על בהיר, הדגשה משנית">Text on light, secondary accent</p><div class="hex">#B8912E</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#F5EFE0"></div>
-                <div class="color-swatch-info"><h4>Warm Sand</h4><p data-en="Warm neutral, section alternation" data-es="Neutro cálido, alternar secciones" data-he="ניטרלי חם, חילופי סקשנים">Warm neutral, section alternation</p><div class="hex">#F5EFE0</div></div>
-            </div>
-        </div>
+<h3 style="font-size:14px;font-weight:700;color:var(--charcoal);margin:24px 0 12px;letter-spacing:.04em" data-en="SECONDARY COLORS" data-es="COLORES SECUNDARIOS" data-he="צבעים משניים">SECONDARY COLORS</h3>
+<div class="color-grid">
+<div class="color-swatch"><div class="color-swatch-top" style="background:#14573F"></div><div class="color-swatch-info"><h4>Canopy Green</h4><p data-en="Secondary buttons, hover states." data-es="Botones secundarios, estados hover." data-he="כפתורים משניים, מצבי הובר.">Secondary buttons, hover states.</p><div class="hex">#14573F</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#B8912E"></div><div class="color-swatch-info"><h4>Aged Gold</h4><p data-en="Text on light, secondary accent." data-es="Texto sobre claro, acento secundario." data-he="טקסט על בהיר, אקסנט משני.">Text on light, secondary accent.</p><div class="hex">#B8912E</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#F5EFE0"></div><div class="color-swatch-info"><h4>Warm Sand</h4><p data-en="Warm neutral background." data-es="Fondo neutro cálido." data-he="רקע ניטרלי חם.">Warm neutral background.</p><div class="hex">#F5EFE0</div></div></div>
+</div>
 
-        <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px" data-en="Neutrals" data-es="Neutros" data-he="ניטרליים">Neutrals</h3>
-        <div class="color-grid reveal">
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#1A1A1A"></div>
-                <div class="color-swatch-info"><h4>Charcoal</h4><p data-en="Primary text" data-es="Texto principal" data-he="טקסט ראשי">Primary text</p><div class="hex">#1A1A1A</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#4A4A4A"></div>
-                <div class="color-swatch-info"><h4>Slate</h4><p data-en="Body text" data-es="Texto del cuerpo" data-he="טקסט גוף">Body text</p><div class="hex">#4A4A4A</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#8A8A8A"></div>
-                <div class="color-swatch-info"><h4>Ash</h4><p data-en="Captions, placeholders" data-es="Subtítulos, placeholders" data-he="כיתובים, מצייני מקום">Captions, placeholders</p><div class="hex">#8A8A8A</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#E8E4DC"></div>
-                <div class="color-swatch-info"><h4>Mist</h4><p data-en="Borders, dividers" data-es="Bordes, divisores" data-he="גבולות, מפרידים">Borders, dividers</p><div class="hex">#E8E4DC</div></div>
-            </div>
-            <div class="color-swatch">
-                <div class="color-swatch-top" style="background:#F9F7F3"></div>
-                <div class="color-swatch-info"><h4>Cloud</h4><p data-en="Alt card backgrounds" data-es="Fondos alternos" data-he="רקעי כרטיסים חלופיים">Alt card backgrounds</p><div class="hex">#F9F7F3</div></div>
-            </div>
-        </div>
-    </div>
+<h3 style="font-size:14px;font-weight:700;color:var(--charcoal);margin:24px 0 12px;letter-spacing:.04em" data-en="NEUTRALS" data-es="NEUTROS" data-he="נייטרלים">NEUTRALS</h3>
+<div class="color-grid">
+<div class="color-swatch"><div class="color-swatch-top" style="background:#1A1A1A"><div class="ratio">5%</div></div><div class="color-swatch-info"><h4>Charcoal</h4><p data-en="Primary text" data-es="Texto principal" data-he="טקסט ראשי">Primary text</p><div class="hex">#1A1A1A</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#4A4A4A"></div><div class="color-swatch-info"><h4>Slate</h4><p data-en="Body text, secondary" data-es="Cuerpo, secundario" data-he="גוף טקסט, משני">Body text, secondary</p><div class="hex">#4A4A4A</div></div></div>
+<div class="color-swatch"><div class="color-swatch-top" style="background:#8A8A8A"></div><div class="color-swatch-info"><h4>Ash</h4><p data-en="Captions, disabled" data-es="Subtítulos, deshabilitado" data-he="כיתובים, מושבת">Captions, disabled</p><div class="hex">#8A8A8A</div></div></div>
+</div>
+
+<h3 style="font-size:14px;font-weight:700;color:var(--charcoal);margin:24px 0 12px;letter-spacing:.04em" data-en="COLOR RATIO" data-es="PROPORCIÓN DE COLOR" data-he="יחס צבעים">COLOR RATIO</h3>
+<div class="color-ratio-bar">
+<div style="width:60%;background:var(--pearl);color:var(--charcoal);border-right:1px solid var(--mist)">60% Pearl</div>
+<div style="width:25%;background:var(--green);color:var(--pearl)">25% Green</div>
+<div style="width:10%;background:var(--gold);color:var(--green)">10% Gold</div>
+<div style="width:5%;background:var(--charcoal);color:var(--pearl)">5%</div>
+</div>
+</div>
 </section>
 
-<!-- TYPOGRAPHY -->
-<section>
-    <div class="container">
-        <div class="section-badge" data-en="TYPOGRAPHY" data-es="TIPOGRAFÍA" data-he="טיפוגרפיה">TYPOGRAPHY</div>
-        <h2 class="section-title reveal" data-en="Type System" data-es="Sistema Tipográfico" data-he="מערכת טיפוגרפית">Type System</h2>
-        <p class="section-desc reveal" data-en="Playfair Display for headings (premium, editorial). DM Sans for body (modern, legible)." data-es="Playfair Display para títulos (premium, editorial). DM Sans para cuerpo (moderno, legible)." data-he="Playfair Display לכותרות (פרימיום, אדיטוריאלי). DM Sans לגוף (מודרני, קריא).">Playfair Display for headings (premium, editorial). DM Sans for body (modern, legible).</p>
+<!-- ========== SECTION 3: TYPOGRAPHY ========== -->
+<section class="border-top">
+<div class="container">
+<div class="section-badge">TYPOGRAPHY</div>
+<h2 class="section-title" data-en="Typography" data-es="Tipografía" data-he="טיפוגרפיה">Typography</h2>
+<p class="section-desc" data-en="Playfair Display for headings (premium, editorial). DM Sans for body (clean, modern, legible)." data-es="Playfair Display para encabezados (premium, editorial). DM Sans para cuerpo (limpio, moderno, legible)." data-he="Playfair Display לכותרות (פרימיום, עריכתי). DM Sans לגוף (נקי, מודרני, קריא).">Playfair Display for headings (premium, editorial). DM Sans for body (clean, modern, legible).</p>
 
-        <div class="reveal">
-            <div class="type-sample">
-                <h3 style="font-family:'Playfair Display',serif;font-size:48px;font-weight:700;letter-spacing:-0.02em;color:var(--green)">Own Your Energy</h3>
-                <div class="type-meta">H1 — Playfair Display Bold · 48px / 3rem · Letter-spacing: -0.02em</div>
-            </div>
-            <div class="type-sample">
-                <h3 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-0.01em;color:var(--green)">Solar for the Azuero Peninsula</h3>
-                <div class="type-meta">H2 — Playfair Display Bold · 36px / 2.25rem · Letter-spacing: -0.01em</div>
-            </div>
-            <div class="type-sample">
-                <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--green)">Law 417 Benefits</h3>
-                <div class="type-meta">H3 — Playfair Display SemiBold · 28px / 1.75rem</div>
-            </div>
-            <div class="type-sample">
-                <h3 style="font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:var(--charcoal)">System Configuration</h3>
-                <div class="type-meta">H4 — DM Sans Bold · 22px / 1.375rem</div>
-            </div>
-            <div class="type-sample">
-                <p style="font-size:18px;color:var(--slate);line-height:1.6">Your system will produce 1,200 kWh per month — enough to cover your entire electricity bill and then some. With Panama's Law 417, you also get 100% tax deduction on the equipment.</p>
-                <div class="type-meta">Body Large — DM Sans Regular · 18px / 1.125rem · Line-height: 1.6</div>
-            </div>
-            <div class="type-sample">
-                <p style="font-size:16px;color:var(--slate);line-height:1.6">At $0.195/kWh, Panama has some of the highest electricity rates in Central America. Solar panels pay for themselves in under 4 years.</p>
-                <div class="type-meta">Body — DM Sans Regular · 16px / 1rem · Line-height: 1.6</div>
-            </div>
-            <div class="type-sample" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-                <button style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;background:var(--gold);color:var(--green);border:none;padding:12px 28px;border-radius:6px;cursor:pointer">GET A QUOTE</button>
-                <button style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;background:var(--green);color:var(--pearl);border:none;padding:12px 28px;border-radius:6px;cursor:pointer">LEARN MORE</button>
-                <div class="type-meta" style="margin:0">Button — DM Sans Bold · 14px · Letter-spacing: 0.08em</div>
-            </div>
-        </div>
-    </div>
+<div class="type-sample">
+<h3 style="font-family:'Playfair Display',serif;font-size:48px;font-weight:700;color:var(--green);letter-spacing:-.02em;line-height:1.2">Own Your Energy</h3>
+<div class="meta">Playfair Display Bold 48px · H1 · Letter-spacing: -0.02em</div>
+</div>
+<div class="type-sample">
+<h3 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--green);letter-spacing:-.01em;line-height:1.2">Premium Solar Solutions</h3>
+<div class="meta">Playfair Display Bold 36px · H2 · Letter-spacing: -0.01em</div>
+</div>
+<div class="type-sample">
+<h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--green);line-height:1.2">Azuero Peninsula, Panamá</h3>
+<div class="meta">Playfair Display SemiBold 28px · H3</div>
+</div>
+<div class="type-sample">
+<p style="font-family:'DM Sans',sans-serif;font-size:18px;color:var(--charcoal);line-height:1.6">Your system will produce 1,200 kWh per month — enough to cover your entire electricity bill. With Law 417 tax incentives, the payback period is just 2.5 to 3.5 years.</p>
+<div class="meta">DM Sans Regular 18px · Body Large · Line-height: 1.6</div>
+</div>
+<div class="type-sample">
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);display:inline-block;padding:10px 24px;border:2px solid var(--green);border-radius:6px">GET A FREE QUOTE</p>
+<div class="meta">DM Sans Bold 14px · Button · Letter-spacing: 0.08em · Uppercase</div>
+</div>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:32px;margin-bottom:16px" data-en="Type Scale" data-es="Escala Tipográfica" data-he="סולם טיפוגרפי">Type Scale</h3>
+<table class="specs-table">
+<tr><th>Element</th><th>Font</th><th>Size</th><th>Weight</th><th>Spacing</th></tr>
+<tr><td>H1</td><td>Playfair Display</td><td>48px / 3rem</td><td>700</td><td>-0.02em</td></tr>
+<tr><td>H2</td><td>Playfair Display</td><td>36px / 2.25rem</td><td>700</td><td>-0.01em</td></tr>
+<tr><td>H3</td><td>Playfair Display</td><td>28px / 1.75rem</td><td>600</td><td>0</td></tr>
+<tr><td>H4</td><td>DM Sans</td><td>22px / 1.375rem</td><td>700</td><td>0</td></tr>
+<tr><td>Body Large</td><td>DM Sans</td><td>18px / 1.125rem</td><td>400</td><td>0.01em</td></tr>
+<tr><td>Body</td><td>DM Sans</td><td>16px / 1rem</td><td>400</td><td>0.01em</td></tr>
+<tr><td>Small</td><td>DM Sans</td><td>14px / 0.875rem</td><td>400</td><td>0.02em</td></tr>
+<tr><td>Caption</td><td>DM Sans</td><td>12px / 0.75rem</td><td>500</td><td>0.04em</td></tr>
+<tr><td>Button</td><td>DM Sans</td><td>14px / 0.875rem</td><td>700</td><td>0.08em</td></tr>
+</table>
+</div>
 </section>
 
-<!-- PHOTOGRAPHY -->
-<section class="alt-bg">
-    <div class="container">
-        <div class="section-badge" data-en="PHOTOGRAPHY" data-es="FOTOGRAFÍA" data-he="צילום">PHOTOGRAPHY</div>
-        <h2 class="section-title reveal" data-en="Photography Style" data-es="Estilo Fotográfico" data-he="סגנון צילום">Photography Style</h2>
-        <p class="section-desc reveal" data-en="Tropical but not touristy. Natural light, golden hour preferred. Architecture matters." data-es="Tropical pero no turístico. Luz natural, preferiblemente hora dorada. La arquitectura importa." data-he="טרופי אבל לא תיירותי. אור טבעי, שעת הזהב מועדפת. אדריכלות חשובה.">Tropical but not touristy. Natural light, golden hour preferred. Architecture matters.</p>
+<!-- ========== SECTION 4: MERCHANDISE ========== -->
+<section class="alt-bg border-top">
+<div class="container">
+<div class="section-badge">MERCHANDISE</div>
+<h2 class="section-title" data-en="Merchandise Mockups" data-es="Mockups de Merchandising" data-he="מוקאפים של מרצ'נדייז">Merchandise Mockups</h2>
+<p class="section-desc" data-en="12 branded items — from installer gear to client gifts. All Solaris Green + Solar Gold." data-es="12 artículos de marca — desde equipo de instaladores hasta regalos para clientes. Todo Verde Solaris + Oro Solar." data-he="12 פריטים ממותגים — מציוד מתקינים ועד מתנות ללקוחות. הכל ירוק סולאריס + זהב סולארי.">12 branded items — from installer gear to client gifts. All Solaris Green + Solar Gold.</p>
 
-        <div class="photo-grid reveal">
-            <div class="photo-card">
-                <h4 data-en="✓ Ideal Subjects" data-es="✓ Sujetos Ideales" data-he="✓ נושאים אידיאליים">✓ Ideal Subjects</h4>
-                <p data-en="Solar panels on beautiful buildings — beach houses, boutique hotels, modern homes. The Azuero coastline. Installation crews at work (professional, safety-focused). Happy clients." data-es="Paneles solares en edificios hermosos — casas de playa, hoteles boutique, casas modernas. La costa del Azuero. Equipos de instalación en trabajo (profesional). Clientes felices." data-he="פאנלים סולאריים על מבנים יפים — בתי חוף, מלונות בוטיק, בתים מודרניים. חופי אזוארו. צוותי התקנה בעבודה (מקצועי, בטיחותי). לקוחות מרוצים.">Solar panels on beautiful buildings — beach houses, boutique hotels, modern homes. The Azuero coastline. Installation crews at work (professional, safety-focused). Happy clients.</p>
-            </div>
-            <div class="photo-card">
-                <h4 data-en="✓ Color Treatment" data-es="✓ Tratamiento de Color" data-he="✓ עיבוד צבע">✓ Color Treatment</h4>
-                <p data-en="Warm color temperature with a slight golden cast. High contrast, not flat. Shadows should be rich, not crushed. Never over-saturated — keep it natural." data-es="Temperatura de color cálida con un ligero tono dorado. Alto contraste, no plano. Sombras ricas, no aplastadas. Nunca sobre-saturado — mantenlo natural." data-he="טמפרטורת צבע חמה עם נגיעה זהובה קלה. ניגודיות גבוהה, לא שטוח. צללים עשירים, לא מרוסקים. לעולם לא מרווי יתר — טבעי.">Warm color temperature with a slight golden cast. High contrast, not flat. Shadows should be rich, not crushed. Never over-saturated — keep it natural.</p>
-            </div>
-            <div class="photo-card">
-                <h4 style="color:#B43C28" data-en="✗ Never Use" data-es="✗ Nunca Usar" data-he="✗ לעולם לא להשתמש">✗ Never Use</h4>
-                <p data-en="No stock photos of generic solar farms in deserts. No cheesy thumbs-up or handshake photos. No cold/blue color grading. No drone shots that make panels look like an afterthought." data-es="No fotos de stock de granjas solares genéricas en desiertos. No fotos cursis de pulgares arriba o apretones de manos. No gradación de color fría/azul. No tomas de drone donde los paneles parezcan secundarios." data-he="לא תמונות סטוק של חוות סולאריות גנריות במדבריות. לא תמונות קלישאתיות של אגודל למעלה או לחיצות יד. לא עיבוד צבע קר/כחול. לא צילומי רחפן שבהם הפאנלים נראים כמחשבה שנייה.">No stock photos of generic solar farms in deserts. No cheesy thumbs-up or handshake photos. No cold/blue color grading. No drone shots that make panels look like an afterthought.</p>
-            </div>
-        </div>
-    </div>
+<div class="merch-grid">
+
+<!-- 1. Polo Shirt -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="polo-illust">
+<div class="sleeve-l"></div>
+<div class="sleeve-r"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>👕 Polo Shirt</h4>
+<p data-en="Solaris Green polo with Solar Gold embroidered logo on chest. Professional installer uniform. OWN YOUR ENERGY on back." data-es="Polo Verde Solaris con logo bordado en Oro Solar en el pecho. Uniforme profesional de instalador. OWN YOUR ENERGY en la espalda." data-he="פולו ירוק סולאריס עם לוגו רקום בזהב סולארי על החזה. מדי מתקין מקצועי. OWN YOUR ENERGY בגב.">Solaris Green polo with Solar Gold embroidered logo on chest. Professional installer uniform. OWN YOUR ENERGY on back.</p>
+<div class="specs">Cotton piqué 220gsm · Embroidery · S–3XL</div>
+</div>
+</div>
+
+<!-- 2. Cap -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="cap-illust">
+<div class="crown"></div>
+<div class="brim"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🧢 Cap</h4>
+<p data-en="Solaris Green cap with gold 'SOLARIS' embroidery on front. 'OWN YOUR ENERGY' on side panel. Adjustable strap." data-es="Gorra Verde Solaris con bordado dorado 'SOLARIS' al frente. 'OWN YOUR ENERGY' en panel lateral. Correa ajustable." data-he="כובע ירוק סולאריס עם רקמת 'SOLARIS' זהובה בחזית. 'OWN YOUR ENERGY' בצד. רצועה מתכווננת.">Solaris Green cap with gold "SOLARIS" embroidery on front. "OWN YOUR ENERGY" on side panel. Adjustable strap.</p>
+<div class="specs">Cotton/polyester blend · Embroidery · One-size</div>
+</div>
+</div>
+
+<!-- 3. Stationery Kit -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="notebook-illust"></div>
+</div>
+<div class="merch-card-body">
+<h4>📓 Stationery Kit</h4>
+<p data-en="A5 hardcover notebook (Solaris Green, Gold foil logo), A4 presentation folder, branded metal pen. Premium client-facing materials." data-es="Cuaderno A5 tapa dura (Verde Solaris, logo en foil dorado), carpeta A4, bolígrafo de metal. Materiales premium para clientes." data-he="מחברת A5 כריכה קשה (ירוק סולאריס, לוגו פויל זהב), תיקייה A4, עט מתכת ממותג. חומרים פרימיום ללקוחות.">A5 hardcover notebook (Solaris Green, Gold foil logo), A4 presentation folder, branded metal pen. Premium client-facing materials.</p>
+<div class="specs">Notebook hardcover · A4 folder · Metal pen · Gold foil stamp</div>
+</div>
+</div>
+
+<!-- 4. Water Bottle -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="bottle-illust">
+<div class="cap-part"></div>
+<div class="neck"></div>
+<div class="body-part"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🥤 Water Bottle</h4>
+<p data-en="750ml stainless steel, Solaris Green matte with Gold logo. Tropical climate essential. Keeps cold 24h. Double-wall insulation." data-es="750ml acero inoxidable, Verde Solaris mate con logo dorado. Esencial para clima tropical. Mantiene frío 24h. Doble pared." data-he="750 מ״ל נירוסטה, ירוק סולאריס מאט עם לוגו זהב. חיוני לאקלים טרופי. שומר קור 24 שעות. בידוד דו-שכבתי.">750ml stainless steel, Solaris Green matte with Gold logo. Tropical climate essential. Keeps cold 24h. Double-wall insulation.</p>
+<div class="specs">Stainless steel 18/8 · 750ml · Double-wall · BPA-free</div>
+</div>
+</div>
+
+<!-- 5. Installer Bag -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="bag-illust"></div>
+</div>
+<div class="merch-card-body">
+<h4>🎒 Installer Bag</h4>
+<p data-en="Heavy-duty tool bag, Solaris Green with reflective SOLARIS patch. Multiple compartments for installation tools. Water-resistant base." data-es="Bolsa de herramientas resistente, Verde Solaris con parche reflectante SOLARIS. Múltiples compartimentos. Base resistente al agua." data-he="תיק כלים כבד, ירוק סולאריס עם פאטש SOLARIS מחזיר אור. תאים מרובים לכלי התקנה. בסיס עמיד למים.">Heavy-duty tool bag, Solaris Green with reflective SOLARIS patch. Multiple compartments for installation tools. Water-resistant base.</p>
+<div class="specs">600D nylon · Reflective patch · Reinforced base · 30L</div>
+</div>
+</div>
+
+<!-- 6. Work Gloves + Safety Glasses -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="gloves-illust">
+<div class="glove"></div>
+<div class="glasses"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🧤 Work Gloves + Safety Glasses</h4>
+<p data-en="Branded safety gear for installation crews. Green mechanic gloves with Gold logo. UV safety glasses with Green frame and SOLARIS on arms." data-es="Equipo de seguridad de marca para equipos de instalación. Guantes mecánicos verdes con logo dorado. Gafas UV con marco verde y SOLARIS en patillas." data-he="ציוד בטיחות ממותג לצוותי התקנה. כפפות מכניקאי ירוקות עם לוגו זהב. משקפי בטיחות UV עם מסגרת ירוקה ו-SOLARIS על הזרועות.">Branded safety gear for installation crews. Green mechanic gloves with Gold logo. UV safety glasses with Green frame and SOLARIS on arms.</p>
+<div class="specs">Mechanic gloves · UV safety glasses · Anti-fog · CE certified</div>
+</div>
+</div>
+
+<!-- 7. Vehicle Wrap -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="truck-illust">
+<div class="truck-body"></div>
+<div class="truck-cab"></div>
+<div class="wheel1"></div>
+<div class="wheel2"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🚗 Vehicle Wrap</h4>
+<p data-en="Pickup truck full Solaris wrap. Green base, Gold logo on doors, contact info on tailgate. Mobile billboard across the Azuero Peninsula." data-es="Rotulación completa de camioneta Solaris. Base verde, logo dorado en puertas, contacto en portón trasero. Cartelera móvil en la Península de Azuero." data-he="עיטוף מלא לטנדר סולאריס. בסיס ירוק, לוגו זהב על דלתות, פרטי קשר על הדלת האחורית. שלט נייד ברחבי חצי האי אזוארו.">Pickup truck full Solaris wrap. Green base, Gold logo on doors, contact info on tailgate. Mobile billboard across the Azuero Peninsula.</p>
+<div class="specs">3M vinyl wrap · 300 DPI · UV laminated · 5-year outdoor</div>
+</div>
+</div>
+
+<!-- 8. Feather Flag + Roll-up Banner -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="flag-illust">
+<div class="feather-flag">
+<div class="pole"></div>
+<div class="fabric"></div>
+</div>
+<div style="position:relative">
+<div class="rollup">
+<div class="rollup-base"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🚩 Feather Flag + Roll-up Banner</h4>
+<p data-en="For events, trade shows, and site installations. 3m feather flag + 85×200cm roll-up banner. Green base with Gold logo and sun motif." data-es="Para eventos, ferias y sitios de instalación. Bandera pluma 3m + banner roll-up 85×200cm. Base verde con logo dorado y motivo solar." data-he="לאירועים, תערוכות והתקנות באתר. דגל נוצה 3 מ' + באנר רול-אפ 85×200 ס״מ. בסיס ירוק עם לוגו זהב ומוטיב שמש.">For events, trade shows, and site installations. 3m feather flag + 85×200cm roll-up banner. Green base with Gold logo and sun motif.</p>
+<div class="specs">Feather flag 3m · Roll-up 85×200cm · PVC 440gsm · Carry case</div>
+</div>
+</div>
+
+<!-- 9. Lanyard + ID Badge -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="lanyard-illust">
+<div class="strap"></div>
+<div class="badge"></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🪪 Lanyard + ID Badge</h4>
+<p data-en="For team members. Green polyester lanyard with repeating Gold 'SOLARIS' text. PVC badge with photo, name, role, and emergency contact." data-es="Para miembros del equipo. Lanyard de poliéster verde con texto dorado 'SOLARIS' repetido. Badge PVC con foto, nombre, rol y contacto de emergencia." data-he="לחברי צוות. שרוך פוליאסטר ירוק עם טקסט 'SOLARIS' זהוב חוזר. תג PVC עם צילום, שם, תפקיד ואיש קשר חירום.">For team members. Green polyester lanyard with repeating Gold "SOLARIS" text. PVC badge with photo, name, role, and emergency contact.</p>
+<div class="specs">Polyester lanyard 20mm · PVC badge 86×54mm · Safety breakaway</div>
+</div>
+</div>
+
+<!-- 10. Solar Power Bank -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="powerbank-illust">
+<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🔋 Solar Power Bank</h4>
+<p data-en="20,000mAh branded gift for clients. 'OWN YOUR ENERGY' laser-engraved. Solar panel built-in. USB-C + USB-A. The brand promise made tangible." data-es="Regalo de 20,000mAh para clientes. 'OWN YOUR ENERGY' grabado láser. Panel solar integrado. USB-C + USB-A. La promesa de marca hecha tangible." data-he="מתנה ממותגת 20,000mAh ללקוחות. 'OWN YOUR ENERGY' חקוק בלייזר. פאנל סולארי מובנה. USB-C + USB-A. הבטחת המותג בפועל.">20,000mAh branded gift for clients. "OWN YOUR ENERGY" laser-engraved. Solar panel built-in. USB-C + USB-A. The brand promise made tangible.</p>
+<div class="specs">20000mAh · Solar panel · USB-C + USB-A · Laser engraving</div>
+</div>
+</div>
+
+<!-- 11. Car Magnet -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="magnet-illust"></div>
+</div>
+<div class="merch-card-body">
+<h4>🧲 Car Magnet</h4>
+<p data-en="60×30cm removable magnetic sign for vehicles. Logo + phone + website. UV resistant vinyl. Reusable — swap between fleet vehicles." data-es="Letrero magnético removible 60×30cm para vehículos. Logo + teléfono + web. Vinilo resistente UV. Reutilizable — intercambiar entre vehículos." data-he="שלט מגנטי נשלף 60×30 ס״מ לרכבים. לוגו + טלפון + אתר. ויניל עמיד UV. לשימוש חוזר — להחליף בין רכבי הצי.">60×30cm removable magnetic sign for vehicles. Logo + phone + website. UV resistant vinyl. Reusable — swap between fleet vehicles.</p>
+<div class="specs">Magnetic vinyl · 60×30cm · UV resistant · Reusable</div>
+</div>
+</div>
+
+<!-- 12. Client Gift Box -->
+<div class="merch-card">
+<div class="merch-visual" style="background:var(--sand)">
+<div class="giftbox-illust">
+<div class="box"></div>
+<div class="lid"></div>
+<div class="ribbon-v"></div>
+<div class="ribbon-h"></div>
+<div class="bow">🎀</div>
+</div>
+</div>
+<div class="merch-card-body">
+<h4>🎁 Client Gift Box</h4>
+<p data-en="Premium welcome box: power bank + water bottle + cap. Green box with Gold foil stamping. Includes handwritten thank-you card. The perfect onboarding gift." data-es="Caja de bienvenida premium: power bank + botella + gorra. Caja verde con estampado en foil dorado. Incluye tarjeta de agradecimiento escrita a mano. El regalo perfecto de bienvenida." data-he="קופסת ברוכים הבאים פרימיום: סוללת גיבוי + בקבוק + כובע. קופסה ירוקה עם הטבעת פויל זהב. כולל כרטיס תודה בכתב יד. מתנת הצטרפות מושלמת.">Premium welcome box: power bank + water bottle + cap. Green box with Gold foil stamping. Includes handwritten thank-you card. The perfect onboarding gift.</p>
+<div class="specs">Premium rigid box · Gold foil · Magnetic closure · Tissue wrap</div>
+</div>
+</div>
+
+</div>
+</div>
 </section>
 
-<!-- TONE OF VOICE -->
-<section>
-    <div class="container">
-        <div class="section-badge" data-en="TONE OF VOICE" data-es="TONO DE VOZ" data-he="טון דיבור">TONE OF VOICE</div>
-        <h2 class="section-title reveal" data-en="How We Sound" data-es="Cómo Hablamos" data-he="איך אנחנו נשמעים">How We Sound</h2>
-        <p class="section-desc reveal" data-en="Like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor." data-es="Como un amigo conocedor que resulta ser experto en energía solar. No un vendedor. No un libro de texto. Un asesor de confianza." data-he="כמו חבר בעל ידע שבמקרה הוא מומחה סולארי. לא איש מכירות. לא ספר לימוד. יועץ אמין.">Like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor.</p>
+<!-- ========== SECTION 5: PHOTOGRAPHY ========== -->
+<section class="border-top">
+<div class="container">
+<div class="section-badge">PHOTOGRAPHY</div>
+<h2 class="section-title" data-en="Photography Style Guide" data-es="Guía de Estilo Fotográfico" data-he="מדריך סגנון צילום">Photography Style Guide</h2>
+<p class="section-desc" data-en="Warm golden hour aesthetic. Tropical but not touristy. The real Panama — lush, warm, authentic." data-es="Estética cálida de hora dorada. Tropical pero no turístico. El Panamá real — exuberante, cálido, auténtico." data-he="אסתטיקה חמה של שעת הזהב. טרופי אבל לא תיירותי. פנמה האמיתית — שופעת, חמה, אותנטית.">Warm golden hour aesthetic. Tropical but not touristy. The real Panama — lush, warm, authentic.</p>
 
-        <div class="tone-grid reveal">
-            <div class="tone-card">
-                <h4 data-en="Confident, not arrogant" data-es="Confiado, no arrogante" data-he="בטוח, לא יהיר">Confident, not arrogant</h4>
-                <div class="tone-example good">✓ <span data-en="We've designed the optimal system for your property." data-es="Hemos diseñado el sistema óptimo para su propiedad." data-he="עיצבנו את המערכת האופטימלית לנכס שלך.">We've designed the optimal system for your property.</span></div>
-                <div class="tone-example bad">✗ <span data-en="We're the best solar company in Panama." data-es="Somos la mejor empresa solar de Panamá." data-he="אנחנו חברת הסולאר הטובה ביותר בפנמה.">We're the best solar company in Panama.</span></div>
-            </div>
-            <div class="tone-card">
-                <h4 data-en="Clear, not dumbed down" data-es="Claro, no simplificado" data-he="ברור, לא מטומטם">Clear, not dumbed down</h4>
-                <div class="tone-example good">✓ <span data-en="Your system will produce 1,200 kWh/month — enough to cover your entire bill." data-es="Su sistema producirá 1,200 kWh/mes — suficiente para cubrir toda su factura." data-he="המערכת שלך תייצר 1,200 קוט״ש/חודש — מספיק לכסות את כל החשבון.">Your system will produce 1,200 kWh/month — enough to cover your entire bill.</span></div>
-                <div class="tone-example bad">✗ <span data-en="Solar panels make electricity from the sun!" data-es="¡Los paneles solares generan electricidad del sol!" data-he="פאנלים סולאריים מייצרים חשמל מהשמש!">Solar panels make electricity from the sun!</span></div>
-            </div>
-            <div class="tone-card">
-                <h4 data-en="Warm, not casual" data-es="Cálido, no casual" data-he="חם, לא רשלני">Warm, not casual</h4>
-                <div class="tone-example good">✓ <span data-en="Let's find the right solution for your home." data-es="Encontremos la solución adecuada para su hogar." data-he="בוא נמצא את הפתרון הנכון לבית שלך.">Let's find the right solution for your home.</span></div>
-                <div class="tone-example bad">✗ <span data-en="Yo, ready to go solar??" data-es="¡Ey, listo para usar solar??" data-he="יו, מוכן לסולאר??">Yo, ready to go solar??</span></div>
-            </div>
-            <div class="tone-card">
-                <h4 data-en="Premium, not exclusive" data-es="Premium, no exclusivo" data-he="פרימיום, לא אקסקלוסיבי">Premium, not exclusive</h4>
-                <div class="tone-example good">✓ <span data-en="Invest in your property's energy independence." data-es="Invierta en la independencia energética de su propiedad." data-he="השקע בעצמאות האנרגטית של הנכס שלך.">Invest in your property's energy independence.</span></div>
-                <div class="tone-example bad">✗ <span data-en="For discerning clients only." data-es="Solo para clientes exigentes." data-he="ללקוחות בררנים בלבד.">For discerning clients only.</span></div>
-            </div>
-        </div>
-
-        <div style="margin-top:24px;padding:20px;background:var(--cloud);border-radius:12px;border:1px solid var(--mist)" class="reveal">
-            <h4 style="font-size:14px;color:var(--green);margin-bottom:8px" data-en="Bilingual Notes" data-es="Notas Bilingües" data-he="הערות דו-לשוניות">Bilingual Notes</h4>
-            <p style="font-size:13px;color:var(--slate);line-height:1.7" data-en="All client-facing materials in English and Spanish. Spanish should feel native, not translated. Use 'usted' form (professional, respectful). Key terms: energía solar, paneles solares, independencia energética." data-es="Todos los materiales para clientes en inglés y español. El español debe sentirse nativo, no traducido. Usar forma 'usted' (profesional, respetuoso). Términos clave: energía solar, paneles solares, independencia energética." data-he="כל החומרים ללקוחות באנגלית וספרדית. הספרדית צריכה להרגיש מקורית, לא מתורגמת. להשתמש בנוסח 'usted' (מקצועי, מכבד). מונחי מפתח: energía solar, paneles solares, independencia energética.">All client-facing materials in English and Spanish. Spanish should feel native, not translated. Use "usted" form (professional, respectful). Key terms: energía solar, paneles solares, independencia energética.</p>
-        </div>
-    </div>
+<div class="guide-grid">
+<div class="guide-card do">
+<h4 style="color:var(--green-canopy)" data-en="✓ Do" data-es="✓ Sí" data-he="✓ כן">✓ Do</h4>
+<ul>
+<li data-en="Natural light, golden hour preferred" data-es="Luz natural, hora dorada preferida" data-he="תאורה טבעית, עדיפות לשעת הזהב">Natural light, golden hour preferred</li>
+<li data-en="Solar panels on beautiful buildings (beach houses, hotels, modern homes)" data-es="Paneles solares en edificios hermosos (casas de playa, hoteles, casas modernas)" data-he="פנלים סולאריים על מבנים יפים (בתי חוף, מלונות, בתים מודרניים)">Solar panels on beautiful buildings (beach houses, hotels, modern homes)</li>
+<li data-en="People in context: homeowners, installers at work" data-es="Personas en contexto: propietarios, instaladores trabajando" data-he="אנשים בהקשר: בעלי בתים, מתקינים בעבודה">People in context: homeowners, installers at work</li>
+<li data-en="Frame panels as a design element, not an eyesore" data-es="Enmarcar paneles como elemento de diseño, no como algo feo" data-he="למסגר פנלים כאלמנט עיצובי, לא כמפגע">Frame panels as a design element, not an eyesore</li>
+<li data-en="Warm color temperature, slight golden cast" data-es="Temperatura de color cálida, ligero tono dorado" data-he="טמפרטורת צבע חמה, גוון זהוב קל">Warm color temperature, slight golden cast</li>
+<li data-en="High contrast, rich shadows (not crushed)" data-es="Alto contraste, sombras ricas (no aplastadas)" data-he="ניגודיות גבוהה, צללים עשירים (לא מעוכים)">High contrast, rich shadows (not crushed)</li>
+</ul>
+</div>
+<div class="guide-card dont">
+<h4 style="color:#c8321e" data-en="✕ Don't" data-es="✕ No" data-he="✕ לא">✕ Don't</h4>
+<ul>
+<li data-en="No stock photos of generic solar farms in deserts" data-es="Sin fotos de stock de granjas solares genéricas en desiertos" data-he="בלי תמונות סטוק של חוות סולאריות גנריות במדבריות">No stock photos of generic solar farms in deserts</li>
+<li data-en="No cheesy thumbs-up or handshake photos" data-es="Sin fotos cursis de pulgares arriba o apretones de manos" data-he="בלי תמונות גבינתיות של אגודלים למעלה או לחיצות יד">No cheesy thumbs-up or handshake photos</li>
+<li data-en="No cold/blue color grading" data-es="Sin gradación de color fría/azul" data-he="בלי גרידינג צבע קר/כחול">No cold/blue color grading</li>
+<li data-en="No drone shots that make panels look like an afterthought" data-es="Sin fotos de dron que hagan que los paneles se vean como algo secundario" data-he="בלי צילומי רחפן שגורמים לפנלים להיראות כמחשבה שלאחר מעשה">No drone shots that make panels look like an afterthought</li>
+<li data-en="Never over-saturated — natural palette only" data-es="Nunca sobre-saturado — solo paleta natural" data-he="אף פעם לא רוויה יתר — פלטה טבעית בלבד">Never over-saturated — natural palette only</li>
+</ul>
+</div>
+</div>
+</div>
 </section>
 
-<!-- DO'S AND DON'TS -->
-<section class="alt-bg">
-    <div class="container">
-        <div class="section-badge" data-en="GUIDELINES" data-es="DIRECTRICES" data-he="הנחיות">GUIDELINES</div>
-        <h2 class="section-title reveal" data-en="Do's and Don'ts" data-es="Lo Que Sí y Lo Que No" data-he="עשה ואל תעשה">Do's and Don'ts</h2>
+<!-- ========== SECTION 6: TONE OF VOICE ========== -->
+<section class="alt-bg border-top">
+<div class="container">
+<div class="section-badge">VOICE</div>
+<h2 class="section-title" data-en="Tone of Voice" data-es="Tono de Voz" data-he="טון דיבור">Tone of Voice</h2>
+<p class="section-desc" data-en="We speak like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor." data-es="Hablamos como un amigo experto en solar. No un vendedor. No un libro de texto. Un asesor de confianza." data-he="אנחנו מדברים כמו חבר בקיא שבמקרה הוא מומחה סולארי. לא איש מכירות. לא ספר לימוד. יועץ מהימן.">We speak like a knowledgeable friend who happens to be a solar expert. Not a salesman. Not a textbook. A trusted advisor.</p>
 
-        <div class="rules-grid reveal">
-            <div class="rule do">
-                <h4 class="green" data-en="✓ Do" data-es="✓ Sí" data-he="✓ עשה">✓ Do</h4>
-                <span data-en="Use generous whitespace — let the design breathe" data-es="Usar espacio generoso — dejar que el diseño respire" data-he="השתמש ברווח לבן נדיב — תן לעיצוב לנשום">Use generous whitespace — let the design breathe</span><br>
-                <span data-en="Pair Solaris Green with Solar Gold sparingly" data-es="Combinar Verde Solaris con Dorado Solar con moderación" data-he="שלב ירוק סולאריס עם זהב סולארי במשורה">Pair Solaris Green with Solar Gold sparingly</span><br>
-                <span data-en="Use warm, golden-toned photography" data-es="Usar fotografía con tonos cálidos y dorados" data-he="השתמש בצילום בגוונים חמים וזהובים">Use warm, golden-toned photography</span><br>
-                <span data-en="Maintain consistent 8px spacing grid" data-es="Mantener grid de espaciado consistente de 8px" data-he="שמור על רשת ריווח עקבית של 8px">Maintain consistent 8px spacing grid</span><br>
-                <span data-en="Cards: 12px radius · Buttons: 6px · Badges: pill" data-es="Tarjetas: 12px radio · Botones: 6px · Insignias: pill" data-he="כרטיסים: 12px · כפתורים: 6px · תגיות: גלולה">Cards: 12px radius · Buttons: 6px · Badges: pill</span><br>
-                <span data-en="Reference Law 417 in commercial materials" data-es="Referenciar Ley 417 en materiales comerciales" data-he="הפנה לחוק 417 בחומרים מסחריים">Reference Law 417 in commercial materials</span>
-            </div>
-            <div class="rule dont">
-                <h4 class="red" data-en="✗ Don't" data-es="✗ No" data-he="✗ אל תעשה">✗ Don't</h4>
-                <span data-en="Use more than 3 colors in a single layout" data-es="Usar más de 3 colores en un solo diseño" data-he="השתמש ביותר מ-3 צבעים בעיצוב אחד">Use more than 3 colors in a single layout</span><br>
-                <span data-en="Center-align body text" data-es="Centrar texto del cuerpo" data-he="ישר טקסט גוף למרכז">Center-align body text</span><br>
-                <span data-en="Use gradients (subtle hero backgrounds excepted)" data-es="Usar gradientes (excepto fondos hero sutiles)" data-he="השתמש בגרדיאנטים (חוץ מרקעי hero עדינים)">Use gradients (subtle hero backgrounds excepted)</span><br>
-                <span data-en="Mix brand fonts with system fonts" data-es="Mezclar fuentes de marca con fuentes del sistema" data-he="ערבב גופני מותג עם גופני מערכת">Mix brand fonts with system fonts</span><br>
-                <span data-en="Use pure black (#000) — use Charcoal (#1A1A1A)" data-es="Usar negro puro (#000) — usar Charcoal (#1A1A1A)" data-he="השתמש בשחור טהור (#000) — השתמש ב-Charcoal (#1A1A1A)">Use pure black (#000) — use Charcoal (#1A1A1A)</span><br>
-                <span data-en="Overuse gold — it's an accent, not a primary" data-es="Abusar del dorado — es acento, no primario" data-he="תשתמש בזהב ביתר — זה הדגשה, לא ראשי">Overuse gold — it's an accent, not a primary</span>
-            </div>
-        </div>
-    </div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px">
+<div class="type-sample" style="border-left:4px solid var(--gold)">
+<h3 style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px" data-en="Confident, not arrogant" data-es="Confiado, no arrogante" data-he="בטוח, לא יהיר">Confident, not arrogant</h3>
+<p style="font-size:13px;color:var(--slate)" data-en="✓ 'We've designed the optimal system for your property.'" data-es="✓ 'Hemos diseñado el sistema óptimo para su propiedad.'" data-he="✓ 'עיצבנו את המערכת האופטימלית לנכס שלך.'">✓ "We've designed the optimal system for your property."</p>
+<p style="font-size:13px;color:var(--ash)" data-en="✗ 'We're the best solar company in Panama.'" data-es="✗ 'Somos la mejor empresa solar en Panamá.'" data-he="✗ 'אנחנו חברת הסולאר הכי טובה בפנמה.'">✗ "We're the best solar company in Panama."</p>
+</div>
+<div class="type-sample" style="border-left:4px solid var(--gold)">
+<h3 style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px" data-en="Clear, not dumbed down" data-es="Claro, no simplificado" data-he="ברור, לא מפושט">Clear, not dumbed down</h3>
+<p style="font-size:13px;color:var(--slate)" data-en="✓ 'Your system will produce 1,200 kWh per month.'" data-es="✓ 'Su sistema producirá 1,200 kWh por mes.'" data-he="✓ 'המערכת שלך תייצר 1,200 קוט״ש בחודש.'">✓ "Your system will produce 1,200 kWh per month."</p>
+<p style="font-size:13px;color:var(--ash)" data-en="✗ 'Solar panels make electricity from the sun!'" data-es="✗ '¡Los paneles solares generan electricidad del sol!'" data-he="✗ 'פנלים סולאריים עושים חשמל מהשמש!'">✗ "Solar panels make electricity from the sun!"</p>
+</div>
+<div class="type-sample" style="border-left:4px solid var(--gold)">
+<h3 style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px" data-en="Warm, not casual" data-es="Cálido, no casual" data-he="חם, לא אגבי">Warm, not casual</h3>
+<p style="font-size:13px;color:var(--slate)" data-en="✓ 'Let's find the right solution for your home.'" data-es="✓ 'Encontremos la solución adecuada para su hogar.'" data-he="✓ 'בוא נמצא את הפתרון הנכון לבית שלך.'">✓ "Let's find the right solution for your home."</p>
+<p style="font-size:13px;color:var(--ash)" data-en="✗ 'Yo, ready to go solar??'" data-es="✗ 'Ey, ¿listo para ir solar??'" data-he="✗ 'יו, מוכן לסולאר??'">✗ "Yo, ready to go solar??"</p>
+</div>
+<div class="type-sample" style="border-left:4px solid var(--gold)">
+<h3 style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px" data-en="Premium, not exclusive" data-es="Premium, no exclusivo" data-he="פרימיום, לא אקסקלוסיבי">Premium, not exclusive</h3>
+<p style="font-size:13px;color:var(--slate)" data-en="✓ 'Invest in your property's energy independence.'" data-es="✓ 'Invierta en la independencia energética de su propiedad.'" data-he="✓ 'השקיעו בעצמאות האנרגטית של הנכס שלכם.'">✓ "Invest in your property's energy independence."</p>
+<p style="font-size:13px;color:var(--ash)" data-en="✗ 'For discerning clients only.'" data-es="✗ 'Solo para clientes selectos.'" data-he="✗ 'ללקוחות נבחרים בלבד.'">✗ "For discerning clients only."</p>
+</div>
+</div>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:16px;margin-bottom:16px" data-en="Bilingual Guidelines" data-es="Pautas Bilingües" data-he="הנחיות דו-לשוניות">Bilingual Guidelines</h3>
+<div class="guide-grid">
+<div class="guide-card do">
+<h4 style="color:var(--green-canopy)" data-en="English + Spanish" data-es="Inglés + Español" data-he="אנגלית + ספרדית">English + Spanish</h4>
+<ul>
+<li data-en="All client-facing materials in both languages" data-es="Todos los materiales para clientes en ambos idiomas" data-he="כל החומרים ללקוחות בשתי השפות">All client-facing materials in both languages</li>
+<li data-en="Spanish should feel native, not translated" data-es="El español debe sentirse nativo, no traducido" data-he="ספרדית צריכה להרגיש מקומית, לא מתורגמת">Spanish should feel native, not translated</li>
+<li data-en="Use 'usted' form (professional, respectful)" data-es="Usar forma 'usted' (profesional, respetuoso)" data-he="להשתמש בצורת 'usted' (מקצועי, מכובד)">Use "usted" form (professional, respectful)</li>
+</ul>
+</div>
+<div class="guide-card do">
+<h4 style="color:var(--green-canopy)" data-en="Key Terms" data-es="Términos Clave" data-he="מונחי מפתח">Key Terms</h4>
+<ul>
+<li>energía solar / solar energy</li>
+<li>paneles solares / solar panels</li>
+<li>independencia energética / energy independence</li>
+<li>Ley 417 / Law 417</li>
+<li>OWN YOUR ENERGY (always English)</li>
+</ul>
+</div>
+</div>
+
+<!-- Taglines -->
+<h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-top:32px;margin-bottom:16px" data-en="Taglines" data-es="Eslóganes" data-he="סלוגנים">Taglines</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+<div class="type-sample"><h3 style="color:var(--gold);font-family:'Playfair Display',serif;font-size:22px">OWN YOUR ENERGY</h3><p style="font-size:12px;color:var(--ash)" data-en="Primary tagline — always English" data-es="Eslogan principal — siempre en inglés" data-he="סלוגן ראשי — תמיד באנגלית">Primary tagline — always English</p></div>
+<div class="type-sample"><h3 style="color:var(--gold);font-family:'Playfair Display',serif;font-size:22px">Solaris Energy</h3><p style="font-size:12px;color:var(--ash)" data-en="Brand name — Premium Solar for Panama" data-es="Nombre de marca — Solar Premium para Panamá" data-he="שם מותג — סולאר פרימיום לפנמה">Brand name — Premium Solar for Panama</p></div>
+<div class="type-sample"><h3 style="color:var(--gold);font-family:'Playfair Display',serif;font-size:22px">Powering the Azuero Peninsula</h3><p style="font-size:12px;color:var(--ash)" data-en="Location tagline" data-es="Eslogan de ubicación" data-he="סלוגן מיקום">Location tagline</p></div>
+</div>
+</div>
 </section>
 
-<!-- SPACING -->
-<section>
-    <div class="container">
-        <div class="section-badge" data-en="SPACING" data-es="ESPACIADO" data-he="ריווח">SPACING</div>
-        <h2 class="section-title reveal" data-en="Spacing & Shadows" data-es="Espaciado y Sombras" data-he="ריווח וצללים">Spacing & Shadows</h2>
+<!-- Footer -->
+<div class="footer">
+<p>© 2026 Solaris Energy · Playa Venao, Azuero Peninsula, Panamá · <a href="index.html" style="color:var(--gold-aged)">Dashboard</a></p>
+</div>
 
-        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
-            <div>
-                <h4 style="font-size:14px;color:var(--green);margin-bottom:16px" data-en="Shadow Levels" data-es="Niveles de Sombra" data-he="רמות צל">Shadow Levels</h4>
-                <table class="spacing-table" style="border-radius:12px;overflow:hidden;border:1px solid var(--mist)">
-                    <tr><th data-en="Name" data-es="Nombre" data-he="שם">Name</th><th data-en="Value" data-es="Valor" data-he="ערך">Value</th></tr>
-                    <tr><td>Subtle</td><td><code>0 1px 3px rgba(0,0,0,0.04)</code></td></tr>
-                    <tr><td>Card</td><td><code>0 2px 8px rgba(0,0,0,0.06)</code></td></tr>
-                    <tr><td>Elevated</td><td><code>0 8px 24px rgba(0,0,0,0.08)</code></td></tr>
-                    <tr><td>Modal</td><td><code>0 16px 48px rgba(0,0,0,0.12)</code></td></tr>
-                </table>
-            </div>
-            <div>
-                <h4 style="font-size:14px;color:var(--green);margin-bottom:16px" data-en="Border Radius" data-es="Radio de Borde" data-he="עיגול פינות">Border Radius</h4>
-                <table class="spacing-table" style="border-radius:12px;overflow:hidden;border:1px solid var(--mist)">
-                    <tr><th data-en="Element" data-es="Elemento" data-he="אלמנט">Element</th><th data-en="Radius" data-es="Radio" data-he="רדיוס">Radius</th></tr>
-                    <tr><td data-en="Cards" data-es="Tarjetas" data-he="כרטיסים">Cards</td><td>12px</td></tr>
-                    <tr><td data-en="Buttons" data-es="Botones" data-he="כפתורים">Buttons</td><td>6px</td></tr>
-                    <tr><td data-en="Inputs" data-es="Campos" data-he="שדות">Inputs</td><td>6px</td></tr>
-                    <tr><td data-en="Badges" data-es="Insignias" data-he="תגיות">Badges</td><td>100px (pill)</td></tr>
-                    <tr><td data-en="Images" data-es="Imágenes" data-he="תמונות">Images</td><td>8px</td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <p>
-        <span data-en="© 2026 Solaris Energy · Brand Guidelines v1.0 · " data-es="© 2026 Solaris Energy · Guías de Marca v1.0 · " data-he="© 2026 Solaris Energy · הנחיות מותג v1.0 · ">© 2026 Solaris Energy · Brand Guidelines v1.0 · </span>
-        <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a>
-    </p>
-</footer>
-
+<!-- Language toggle script -->
 <script>
-function setLang(lang){
-    localStorage.setItem('solaris-lang',lang);
-    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
-    document.documentElement.dir=lang==='he'?'rtl':'ltr';
-    document.documentElement.lang=lang;
-    document.querySelectorAll('[data-'+lang+']').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  if (lang === 'he') {
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'he';
+  } else {
+    document.documentElement.dir = 'ltr';
+    document.documentElement.lang = lang;
+  }
+  document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if (val) el.textContent = val;
+  });
 }
-const savedLang=localStorage.getItem('solaris-lang')||'en';
-setLang(savedLang);
-const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible')})},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 </script>
 </body>
 </html>
