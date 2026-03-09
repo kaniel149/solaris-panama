@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring & Maintenance — Solaris Energy Panama</title>
+    <meta name="description" content="Solar monitoring and maintenance operations guide for Panama. Performance tracking, maintenance schedules, and service tiers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.12);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+            --red: #C0392B;
+            --orange: #E67E22;
+            --emerald: #27AE60;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; overflow-x: hidden; }
+
+        /* Lang Toggle */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* Back Nav */
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-nav a { display: flex; align-items: center; gap: 8px; color: var(--pearl); background: var(--green); padding: 8px 18px; border-radius: var(--radius-pill); text-decoration: none; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-elevated); transition: all 0.3s; }
+        .back-nav a:hover { background: var(--green-canopy); transform: translateY(-1px); }
+
+        /* Hero */
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%); padding: 8rem 2rem 4rem; text-align: center; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero .icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); color: var(--pearl); margin-bottom: 0.8rem; }
+        .page-hero p { color: rgba(254,253,251,0.7); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+
+        /* Section Headers */
+        .section-badge { display: inline-block; background: rgba(212,168,67,0.15); color: var(--gold); padding: 0.4rem 1rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.4rem); color: var(--green); margin-bottom: 0.6rem; }
+        .section-sub { color: var(--ash); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; }
+
+        /* KPI Dashboard */
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+        .kpi-card { background: var(--green); border-radius: var(--radius-card); padding: 1.8rem; text-align: center; position: relative; overflow: hidden; }
+        .kpi-card::after { content: ''; position: absolute; top: -30%; right: -20%; width: 80px; height: 80px; background: rgba(212,168,67,0.1); border-radius: 50%; }
+        .kpi-value { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); display: block; margin-bottom: 0.3rem; }
+        .kpi-label { color: rgba(254,253,251,0.6); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+        .kpi-target { color: rgba(254,253,251,0.4); font-size: 0.7rem; margin-top: 0.4rem; display: block; }
+
+        /* Monitoring Overview Cards */
+        .monitor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .monitor-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); overflow: hidden; transition: all 0.3s; }
+        .monitor-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-3px); }
+        .monitor-card-header { background: var(--green); padding: 1.3rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+        .monitor-card-header .m-icon { width: 42px; height: 42px; background: rgba(212,168,67,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+        .monitor-card-header h3 { color: var(--pearl); font-size: 1rem; font-weight: 700; }
+        .monitor-card-body { padding: 1.5rem; }
+        .monitor-card-body p { color: var(--slate); font-size: 0.88rem; line-height: 1.7; margin-bottom: 0.8rem; }
+        .monitor-card-body ul { list-style: none; }
+        .monitor-card-body ul li { padding: 0.35rem 0; padding-left: 1.4rem; position: relative; color: var(--slate); font-size: 0.88rem; }
+        .monitor-card-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+        /* Maintenance Schedule */
+        .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .schedule-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.8rem; position: relative; overflow: hidden; transition: all 0.3s; }
+        .schedule-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-3px); }
+        .schedule-card .freq-badge { position: absolute; top: 1rem; right: 1rem; background: var(--green); color: var(--gold); padding: 0.3rem 0.8rem; border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; }
+        .schedule-card .s-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .schedule-card h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--green); margin-bottom: 0.5rem; }
+        .schedule-card p { color: var(--slate); font-size: 0.85rem; line-height: 1.6; }
+        .schedule-card ul { list-style: none; margin-top: 0.6rem; }
+        .schedule-card ul li { padding: 0.3rem 0; padding-left: 1.2rem; position: relative; color: var(--slate); font-size: 0.82rem; }
+        .schedule-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+        /* Troubleshooting */
+        .trouble-section { background: var(--sand); border-radius: var(--radius-card); padding: 2.5rem; margin: 2rem 0; }
+        .trouble-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .trouble-card { background: var(--pearl); border-radius: var(--radius-card); padding: 1.5rem; border-left: 4px solid var(--orange); transition: all 0.3s; }
+        .trouble-card:hover { box-shadow: var(--shadow-card); }
+        .trouble-card h4 { color: var(--green); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; }
+        .trouble-card .severity { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); font-weight: 700; }
+        .severity-high { background: rgba(192,57,43,0.12); color: var(--red); }
+        .severity-med { background: rgba(230,126,34,0.12); color: var(--orange); }
+        .severity-low { background: rgba(39,174,96,0.12); color: var(--emerald); }
+        .trouble-card p { color: var(--slate); font-size: 0.85rem; margin-top: 0.4rem; }
+        .trouble-card .cause { color: var(--ash); font-size: 0.8rem; margin-top: 0.5rem; }
+        .trouble-card .fix { color: var(--green); font-size: 0.8rem; font-weight: 600; margin-top: 0.3rem; }
+
+        /* Service Tiers */
+        .tiers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .tier-card { background: var(--pearl); border: 2px solid var(--mist); border-radius: var(--radius-card); overflow: hidden; transition: all 0.3s; position: relative; }
+        .tier-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-4px); }
+        .tier-card.featured { border-color: var(--gold); }
+        .tier-card.featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gold), var(--gold-aged)); }
+        .tier-header { padding: 2rem 1.5rem 1rem; text-align: center; }
+        .tier-header .tier-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--green); }
+        .tier-header .tier-price { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--gold); margin: 0.5rem 0; }
+        .tier-header .tier-price span { font-size: 0.9rem; color: var(--ash); font-family: 'DM Sans', sans-serif; }
+        .tier-header .tier-desc { color: var(--ash); font-size: 0.85rem; }
+        .tier-body { padding: 0 1.5rem 2rem; }
+        .tier-body ul { list-style: none; }
+        .tier-body ul li { padding: 0.5rem 0; padding-left: 1.5rem; position: relative; color: var(--slate); font-size: 0.88rem; border-bottom: 1px solid var(--cloud); }
+        .tier-body ul li:last-child { border-bottom: none; }
+        .tier-body ul li::before { content: '✓'; position: absolute; left: 0; color: var(--emerald); font-weight: 700; }
+        .tier-body ul li.not-included::before { content: '✗'; color: var(--ash); }
+        .tier-body ul li.not-included { color: var(--ash); }
+        .tier-popular { position: absolute; top: 1rem; right: 1rem; background: var(--gold); color: var(--green); padding: 0.3rem 0.8rem; border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; }
+
+        /* Alert System */
+        .alert-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .alert-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.5rem; display: flex; gap: 1rem; transition: all 0.3s; }
+        .alert-card:hover { box-shadow: var(--shadow-card); }
+        .alert-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .alert-icon.critical { background: rgba(192,57,43,0.1); }
+        .alert-icon.warning { background: rgba(230,126,34,0.1); }
+        .alert-icon.info { background: rgba(39,174,96,0.1); }
+        .alert-content h4 { font-size: 0.95rem; color: var(--green); font-weight: 700; margin-bottom: 0.3rem; }
+        .alert-content p { font-size: 0.82rem; color: var(--slate); }
+        .alert-content .response-time { font-size: 0.75rem; color: var(--gold-aged); font-weight: 600; margin-top: 0.4rem; display: inline-block; background: rgba(212,168,67,0.1); padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); }
+
+        /* Performance Metrics */
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .metric-card { background: var(--pearl); border: 1px solid var(--mist); border-radius: var(--radius-card); padding: 1.8rem; text-align: center; transition: all 0.3s; }
+        .metric-card:hover { box-shadow: var(--shadow-elevated); transform: translateY(-3px); }
+        .metric-card .metric-icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; }
+        .metric-card .metric-name { font-size: 0.8rem; color: var(--ash); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.4rem; }
+        .metric-card .metric-val { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green); display: block; }
+        .metric-card .metric-target { font-size: 0.8rem; color: var(--gold-aged); margin-top: 0.3rem; }
+        .metric-bar { height: 6px; background: var(--mist); border-radius: 3px; margin-top: 1rem; overflow: hidden; }
+        .metric-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--green), var(--emerald)); }
+
+        /* Footer */
+        .page-footer { background: var(--green); color: rgba(254,253,251,0.5); text-align: center; padding: 2rem; font-size: 0.8rem; }
+        .page-footer a { color: var(--gold); text-decoration: none; }
+
+        /* RTL */
+        [dir="rtl"] .monitor-card-body ul li { padding-left: 0; padding-right: 1.4rem; }
+        [dir="rtl"] .monitor-card-body ul li::before { left: auto; right: 0; }
+        [dir="rtl"] .schedule-card ul li { padding-left: 0; padding-right: 1.2rem; }
+        [dir="rtl"] .schedule-card ul li::before { left: auto; right: 0; }
+        [dir="rtl"] .schedule-card .freq-badge { right: auto; left: 1rem; }
+        [dir="rtl"] .trouble-card { border-left: none; border-right: 4px solid var(--orange); }
+        [dir="rtl"] .tier-body ul li { padding-left: 0; padding-right: 1.5rem; }
+        [dir="rtl"] .tier-body ul li::before { left: auto; right: 0; }
+        [dir="rtl"] .tier-popular { right: auto; left: 1rem; }
+        [dir="rtl"] .alert-card { flex-direction: row-reverse; }
+
+        @media (max-width: 768px) {
+            .container { padding: 2.5rem 1.2rem; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .monitor-grid { grid-template-columns: 1fr; }
+            .schedule-grid { grid-template-columns: 1fr; }
+            .trouble-grid { grid-template-columns: 1fr; }
+            .tiers-grid { grid-template-columns: 1fr; }
+            .alert-grid { grid-template-columns: 1fr; }
+            .metrics-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back Navigation -->
+<div class="back-nav">
+    <a href="index.html">
+        <span>←</span>
+        <span data-en="Dashboard" data-es="Panel" data-he="לוח בקרה">Dashboard</span>
+    </a>
+</div>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('he')">HE</button>
+</div>
+
+<!-- Hero -->
+<section class="page-hero">
+    <span class="icon">📊</span>
+    <h1 data-en="Monitoring & Maintenance" data-es="Monitoreo y Mantenimiento" data-he="ניטור ותחזוקה">Monitoring & Maintenance</h1>
+    <p data-en="Operations guide for maximizing solar system performance in Panama's tropical climate" data-es="Guía de operaciones para maximizar el rendimiento del sistema solar en el clima tropical de Panamá" data-he="מדריך תפעול למיצוי ביצועי מערכת סולארית באקלים הטרופי של פנמה">Operations guide for maximizing solar system performance in Panama's tropical climate</p>
+</section>
+
+<!-- ===== KPI DASHBOARD ===== -->
+<div class="container">
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <span class="kpi-value">>80%</span>
+            <span class="kpi-label" data-en="Performance Ratio" data-es="Ratio de Rendimiento" data-he="יחס ביצועים">Performance Ratio</span>
+            <span class="kpi-target" data-en="Target: 80-85%" data-es="Objetivo: 80-85%" data-he="יעד: 80-85%">Target: 80-85%</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-value">1,800+</span>
+            <span class="kpi-label" data-en="kWh/kWp/year" data-es="kWh/kWp/año" data-he="kWh/kWp/שנה">kWh/kWp/year</span>
+            <span class="kpi-target" data-en="Specific Yield Target" data-es="Objetivo de Rendimiento" data-he="יעד תפוקה סגולית">Specific Yield Target</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-value">>99%</span>
+            <span class="kpi-label" data-en="System Availability" data-es="Disponibilidad" data-he="זמינות מערכת">System Availability</span>
+            <span class="kpi-target" data-en="Uptime Target" data-es="Objetivo de Tiempo Activo" data-he="יעד זמן פעילות">Uptime Target</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-value"><15%</span>
+            <span class="kpi-label" data-en="Max Drop Before Alert" data-es="Caída Máx. Antes de Alerta" data-he="ירידה מקס' לפני התראה">Max Drop Before Alert</span>
+            <span class="kpi-target" data-en="Production Variance" data-es="Variación de Producción" data-he="שונות ייצור">Production Variance</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MONITORING OVERVIEW ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="REAL-TIME MONITORING" data-es="MONITOREO EN TIEMPO REAL" data-he="ניטור בזמן אמת">REAL-TIME MONITORING</span>
+    <h2 class="section-title" data-en="Monitoring Overview" data-es="Descripción del Monitoreo" data-he="סקירת ניטור">Monitoring Overview</h2>
+    <p class="section-sub" data-en="What the FusionSolar and SolarEdge monitoring platforms show your clients" data-es="Lo que las plataformas de monitoreo FusionSolar y SolarEdge muestran a sus clientes" data-he="מה פלטפורמות הניטור FusionSolar ו-SolarEdge מציגות ללקוחות">What the FusionSolar and SolarEdge monitoring platforms show your clients</p>
+
+    <div class="monitor-grid">
+        <div class="monitor-card">
+            <div class="monitor-card-header">
+                <div class="m-icon">⚡</div>
+                <h3 data-en="Real-Time Production" data-es="Producción en Tiempo Real" data-he="ייצור בזמן אמת">Real-Time Production</h3>
+            </div>
+            <div class="monitor-card-body">
+                <p data-en="Live power output in kW, updated every 5 minutes. Daily, monthly, and lifetime energy graphs." data-es="Producción en vivo en kW, actualizada cada 5 minutos. Gráficos de energía diarios, mensuales y de por vida." data-he="הספק חי ב-kW, מתעדכן כל 5 דקות. גרפי אנרגיה יומיים, חודשיים ומצטברים.">Live power output in kW, updated every 5 minutes. Daily, monthly, and lifetime energy graphs.</p>
+                <ul>
+                    <li data-en="Current power output (kW)" data-es="Producción actual (kW)" data-he="הספק נוכחי (kW)">Current power output (kW)</li>
+                    <li data-en="Daily energy yield (kWh)" data-es="Rendimiento energético diario (kWh)" data-he="תפוקת אנרגיה יומית (kWh)">Daily energy yield (kWh)</li>
+                    <li data-en="Monthly/annual production trends" data-es="Tendencias de producción mensual/anual" data-he="מגמות ייצור חודשי/שנתי">Monthly/annual production trends</li>
+                    <li data-en="Per-panel performance (SolarEdge optimizers)" data-es="Rendimiento por panel (optimizadores SolarEdge)" data-he="ביצועים לפי פאנל (אופטימייזרים SolarEdge)">Per-panel performance (SolarEdge optimizers)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="monitor-card">
+            <div class="monitor-card-header">
+                <div class="m-icon">💰</div>
+                <h3 data-en="Financial Savings" data-es="Ahorros Financieros" data-he="חיסכון כספי">Financial Savings</h3>
+            </div>
+            <div class="monitor-card-body">
+                <p data-en="Track accumulated savings based on local electricity rates and net metering credits." data-es="Seguimiento de ahorros acumulados basados en tarifas eléctricas locales y créditos de medición neta." data-he="מעקב חיסכון מצטבר לפי תעריפי חשמל מקומיים וזיכויי מדידה נטו.">Track accumulated savings based on local electricity rates and net metering credits.</p>
+                <ul>
+                    <li data-en="Daily/monthly savings in USD" data-es="Ahorros diarios/mensuales en USD" data-he="חיסכון יומי/חודשי בדולרים">Daily/monthly savings in USD</li>
+                    <li data-en="Self-consumption vs. export ratio" data-es="Autoconsumo vs. ratio de exportación" data-he="צריכה עצמית מול יחס ייצוא">Self-consumption vs. export ratio</li>
+                    <li data-en="Payback period progress tracker" data-es="Seguimiento de progreso del período de retorno" data-he="מעקב התקדמות תקופת החזר">Payback period progress tracker</li>
+                    <li data-en="CO₂ offset calculations (kg avoided)" data-es="Cálculos de compensación de CO₂ (kg evitados)" data-he="חישובי קיזוז CO₂ (ק&quot;ג שנחסכו)">CO₂ offset calculations (kg avoided)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="monitor-card">
+            <div class="monitor-card-header">
+                <div class="m-icon">🔔</div>
+                <h3 data-en="Alerts & Notifications" data-es="Alertas y Notificaciones" data-he="התראות והודעות">Alerts & Notifications</h3>
+            </div>
+            <div class="monitor-card-body">
+                <p data-en="Automatic alerts via app push, email, and SMS for system anomalies and faults." data-es="Alertas automáticas por push, email y SMS para anomalías y fallas del sistema." data-he="התראות אוטומטיות דרך אפליקציה, מייל ו-SMS על תקלות וחריגות.">Automatic alerts via app push, email, and SMS for system anomalies and faults.</p>
+                <ul>
+                    <li data-en="Inverter fault codes and descriptions" data-es="Códigos de falla del inversor y descripciones" data-he="קודי תקלת ממיר ותיאורים">Inverter fault codes and descriptions</li>
+                    <li data-en="Production drop alerts (>15% variance)" data-es="Alertas de caída de producción (>15% variación)" data-he="התראות ירידת ייצור (שונות >15%)">Production drop alerts (>15% variance)</li>
+                    <li data-en="Communication loss notifications" data-es="Notificaciones de pérdida de comunicación" data-he="הודעות על אובדן תקשורת">Communication loss notifications</li>
+                    <li data-en="Grid event logging" data-es="Registro de eventos de la red" data-he="רישום אירועי רשת">Grid event logging</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="monitor-card">
+            <div class="monitor-card-header">
+                <div class="m-icon">🌡️</div>
+                <h3 data-en="Environmental Data" data-es="Datos Ambientales" data-he="נתוני סביבה">Environmental Data</h3>
+            </div>
+            <div class="monitor-card-body">
+                <p data-en="Weather station data integration for performance correlation and forecasting." data-es="Integración de datos de estación meteorológica para correlación de rendimiento y pronóstico." data-he="שילוב נתוני תחנה מטאורולוגית לתאום ביצועים ותחזית.">Weather station data integration for performance correlation and forecasting.</p>
+                <ul>
+                    <li data-en="Irradiance (W/m²) vs. production correlation" data-es="Irradiancia (W/m²) vs. correlación de producción" data-he="קרינה (W/m²) מול מתאם ייצור">Irradiance (W/m²) vs. production correlation</li>
+                    <li data-en="Module temperature tracking" data-es="Seguimiento de temperatura del módulo" data-he="מעקב טמפרטורת מודול">Module temperature tracking</li>
+                    <li data-en="Humidity and rainfall impact analysis" data-es="Análisis de impacto de humedad y lluvia" data-he="ניתוח השפעת לחות וגשם">Humidity and rainfall impact analysis</li>
+                    <li data-en="Wind speed monitoring" data-es="Monitoreo de velocidad del viento" data-he="ניטור מהירות רוח">Wind speed monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAINTENANCE SCHEDULE ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="PREVENTIVE CARE" data-es="CUIDADO PREVENTIVO" data-he="תחזוקה מונעת">PREVENTIVE CARE</span>
+    <h2 class="section-title" data-en="Maintenance Schedule" data-es="Calendario de Mantenimiento" data-he="לוח זמנים לתחזוקה">Maintenance Schedule</h2>
+    <p class="section-sub" data-en="Proactive maintenance maximizes system lifespan and ROI" data-es="El mantenimiento proactivo maximiza la vida útil del sistema y el ROI" data-he="תחזוקה יזומה ממקסמת חיי מערכת והחזר השקעה">Proactive maintenance maximizes system lifespan and ROI</p>
+
+    <div class="schedule-grid">
+        <div class="schedule-card">
+            <span class="freq-badge" data-en="QUARTERLY" data-es="TRIMESTRAL" data-he="רבעוני">QUARTERLY</span>
+            <span class="s-icon">🧹</span>
+            <h4 data-en="Panel Cleaning" data-es="Limpieza de Paneles" data-he="ניקוי פאנלים">Panel Cleaning</h4>
+            <p data-en="Remove dust, bird droppings, and organic debris. Critical in Panama's dry season (December-April)." data-es="Remover polvo, excrementos de aves y residuos orgánicos. Crítico en la temporada seca de Panamá (diciembre-abril)." data-he="הסרת אבק, צואת ציפורים ופסולת אורגנית. קריטי בעונה היבשה של פנמה (דצמבר-אפריל).">Remove dust, bird droppings, and organic debris. Critical in Panama's dry season (December-April).</p>
+            <ul>
+                <li data-en="De-ionized water wash (no chemicals)" data-es="Lavado con agua desionizada (sin químicos)" data-he="שטיפה במים מפוזרי יונים (ללא כימיקלים)">De-ionized water wash (no chemicals)</li>
+                <li data-en="Soft brush for stubborn deposits" data-es="Cepillo suave para depósitos difíciles" data-he="מברשת רכה למשקעים עקשנים">Soft brush for stubborn deposits</li>
+                <li data-en="Before/after production comparison" data-es="Comparación de producción antes/después" data-he="השוואת ייצור לפני/אחרי">Before/after production comparison</li>
+                <li data-en="Photo documentation" data-es="Documentación fotográfica" data-he="תיעוד צילומי">Photo documentation</li>
+            </ul>
+        </div>
+
+        <div class="schedule-card">
+            <span class="freq-badge" data-en="ANNUAL" data-es="ANUAL" data-he="שנתי">ANNUAL</span>
+            <span class="s-icon">🔍</span>
+            <h4 data-en="Full System Inspection" data-es="Inspección Completa" data-he="בדיקה מלאה">Full System Inspection</h4>
+            <p data-en="Comprehensive visual and electrical inspection of all system components." data-es="Inspección visual y eléctrica integral de todos los componentes del sistema." data-he="בדיקה חזותית וחשמלית מקיפה של כל רכיבי המערכת.">Comprehensive visual and electrical inspection of all system components.</p>
+            <ul>
+                <li data-en="IR thermography scan for hotspots" data-es="Escaneo termográfico IR para puntos calientes" data-he="סריקת תרמוגרפיה IR לנקודות חמות">IR thermography scan for hotspots</li>
+                <li data-en="Torque check on all mechanical connections" data-es="Revisión de torque en todas las conexiones mecánicas" data-he="בדיקת מומנט בכל החיבורים המכניים">Torque check on all mechanical connections</li>
+                <li data-en="Insulation resistance re-test" data-es="Re-prueba de resistencia de aislamiento" data-he="בדיקה חוזרת של התנגדות בידוד">Insulation resistance re-test</li>
+                <li data-en="Grounding system continuity test" data-es="Prueba de continuidad del sistema de tierra" data-he="בדיקת רציפות מערכת הארקה">Grounding system continuity test</li>
+                <li data-en="Full performance ratio analysis report" data-es="Informe completo de análisis de ratio de rendimiento" data-he="דוח ניתוח יחס ביצועים מלא">Full performance ratio analysis report</li>
+            </ul>
+        </div>
+
+        <div class="schedule-card">
+            <span class="freq-badge" data-en="BI-ANNUAL" data-es="SEMESTRAL" data-he="חצי שנתי">BI-ANNUAL</span>
+            <span class="s-icon">🔄</span>
+            <h4 data-en="Inverter Firmware" data-es="Firmware del Inversor" data-he="קושחת ממיר">Inverter Firmware</h4>
+            <p data-en="Keep inverter software current for optimal performance and security patches." data-es="Mantener el software del inversor actualizado para rendimiento óptimo y parches de seguridad." data-he="שמירת תוכנת ממיר מעודכנת לביצועים אופטימליים ותיקוני אבטחה.">Keep inverter software current for optimal performance and security patches.</p>
+            <ul>
+                <li data-en="Firmware version check against latest" data-es="Verificación de versión de firmware" data-he="בדיקת גרסת קושחה מול אחרונה">Firmware version check against latest</li>
+                <li data-en="OTA update when available" data-es="Actualización OTA cuando esté disponible" data-he="עדכון OTA כשזמין">OTA update when available</li>
+                <li data-en="Performance log review post-update" data-es="Revisión de registro de rendimiento post-actualización" data-he="סקירת יומן ביצועים לאחר עדכון">Performance log review post-update</li>
+            </ul>
+        </div>
+
+        <div class="schedule-card">
+            <span class="freq-badge" data-en="QUARTERLY" data-es="TRIMESTRAL" data-he="רבעוני">QUARTERLY</span>
+            <span class="s-icon">🔌</span>
+            <h4 data-en="Cable & Connection Check" data-es="Revisión de Cables" data-he="בדיקת כבלים">Cable & Connection Check</h4>
+            <p data-en="Verify cable integrity, connector condition, and conduit sealing in Panama's humid climate." data-es="Verificar integridad de cables, condición de conectores y sellado de conductos en el clima húmedo de Panamá." data-he="אימות שלמות כבלים, מצב מחברים ואיטום תעלות באקלים הלח של פנמה.">Verify cable integrity, connector condition, and conduit sealing in Panama's humid climate.</p>
+            <ul>
+                <li data-en="MC4 connector inspection (no corrosion)" data-es="Inspección de conectores MC4 (sin corrosión)" data-he="בדיקת מחברי MC4 (ללא קורוזיה)">MC4 connector inspection (no corrosion)</li>
+                <li data-en="Cable tie replacement if degraded" data-es="Reemplazo de amarres si están degradados" data-he="החלפת אזיקונים אם התדרדרו">Cable tie replacement if degraded</li>
+                <li data-en="Conduit seal verification" data-es="Verificación del sellado de conductos" data-he="אימות איטום תעלות">Conduit seal verification</li>
+                <li data-en="Junction box inspection" data-es="Inspección de cajas de conexión" data-he="בדיקת קופסאות חיבור">Junction box inspection</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TROUBLESHOOTING ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="DIAGNOSTICS" data-es="DIAGNÓSTICOS" data-he="אבחון">DIAGNOSTICS</span>
+    <h2 class="section-title" data-en="Troubleshooting Guide" data-es="Guía de Solución de Problemas" data-he="מדריך פתרון תקלות">Troubleshooting Guide</h2>
+    <p class="section-sub" data-en="Common issues and resolution procedures for Panama solar installations" data-es="Problemas comunes y procedimientos de resolución para instalaciones solares en Panamá" data-he="בעיות נפוצות ונהלי פתרון להתקנות סולאריות בפנמה">Common issues and resolution procedures for Panama solar installations</p>
+
+    <div class="trouble-section">
+        <div class="trouble-grid">
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="Low Production Output" data-es="Producción Baja" data-he="ייצור נמוך">Low Production Output</span>
+                    <span class="severity severity-high" data-en="HIGH" data-es="ALTO" data-he="גבוה">HIGH</span>
+                </h4>
+                <p data-en="System producing less than expected for weather conditions." data-es="El sistema produce menos de lo esperado para las condiciones climáticas." data-he="המערכת מייצרת פחות מהצפוי לתנאי מזג האוויר.">System producing less than expected for weather conditions.</p>
+                <div class="cause" data-en="Common causes: soiling, shading from new construction/vegetation, degraded panel, failed optimizer" data-es="Causas comunes: suciedad, sombras de nueva construcción/vegetación, panel degradado, optimizador fallido" data-he="סיבות נפוצות: לכלוך, הצללה מבנייה חדשה/צמחייה, פאנל מדורדר, אופטימייזר תקול">Common causes: soiling, shading from new construction/vegetation, degraded panel, failed optimizer</div>
+                <div class="fix" data-en="→ Clean panels, trim vegetation, check per-panel data, replace failed components" data-es="→ Limpiar paneles, podar vegetación, revisar datos por panel, reemplazar componentes" data-he="→ נקות פאנלים, גזום צמחייה, בדוק נתונים לפי פאנל, החלף רכיבים תקולים">→ Clean panels, trim vegetation, check per-panel data, replace failed components</div>
+            </div>
+
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="Inverter Fault" data-es="Falla del Inversor" data-he="תקלת ממיר">Inverter Fault</span>
+                    <span class="severity severity-high" data-en="HIGH" data-es="ALTO" data-he="גבוה">HIGH</span>
+                </h4>
+                <p data-en="Inverter displaying error code or not producing AC output." data-es="Inversor mostrando código de error o sin producción AC." data-he="ממיר מציג קוד שגיאה או לא מייצר מתח AC.">Inverter displaying error code or not producing AC output.</p>
+                <div class="cause" data-en="Common causes: grid voltage out of range, overtemperature, isolation fault, internal component failure" data-es="Causas comunes: voltaje de red fuera de rango, sobretemperatura, falla de aislamiento, falla de componente interno" data-he="סיבות נפוצות: מתח רשת מחוץ לטווח, חום יתר, תקלת בידוד, כשל רכיב פנימי">Common causes: grid voltage out of range, overtemperature, isolation fault, internal component failure</div>
+                <div class="fix" data-en="→ Check error code in manual, verify grid voltage, ensure ventilation, cycle power, contact manufacturer" data-es="→ Verificar código de error, comprobar voltaje de red, asegurar ventilación, reiniciar, contactar fabricante" data-he="→ בדוק קוד שגיאה במדריך, אמת מתח רשת, ודא אוורור, הפעל מחדש, פנה ליצרן">→ Check error code in manual, verify grid voltage, ensure ventilation, cycle power, contact manufacturer</div>
+            </div>
+
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="Hotspots Detected" data-es="Puntos Calientes" data-he="נקודות חמות">Hotspots Detected</span>
+                    <span class="severity severity-med" data-en="MEDIUM" data-es="MEDIO" data-he="בינוני">MEDIUM</span>
+                </h4>
+                <p data-en="IR scan reveals abnormally hot cells or connections." data-es="Escaneo IR revela celdas o conexiones anormalmente calientes." data-he="סריקת IR חושפת תאים או חיבורים חמים באופן חריג.">IR scan reveals abnormally hot cells or connections.</p>
+                <div class="cause" data-en="Common causes: micro-cracks, poor soldering, bypass diode failure, partial shading" data-es="Causas comunes: micro-grietas, soldadura deficiente, falla de diodo de bypass, sombreado parcial" data-he="סיבות נפוצות: סדקים זעירים, הלחמה לקויה, כשל דיודת מעקף, הצללה חלקית">Common causes: micro-cracks, poor soldering, bypass diode failure, partial shading</div>
+                <div class="fix" data-en="→ Identify affected panel via IR, check bypass diodes, replace panel if warranted" data-es="→ Identificar panel afectado por IR, verificar diodos, reemplazar panel si corresponde" data-he="→ זהה פאנל פגוע באמצעות IR, בדוק דיודות מעקף, החלף פאנל במידת הצורך">→ Identify affected panel via IR, check bypass diodes, replace panel if warranted</div>
+            </div>
+
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="Shading Issues" data-es="Problemas de Sombra" data-he="בעיות הצללה">Shading Issues</span>
+                    <span class="severity severity-med" data-en="MEDIUM" data-es="MEDIO" data-he="בינוני">MEDIUM</span>
+                </h4>
+                <p data-en="New shading sources affecting system after installation." data-es="Nuevas fuentes de sombra que afectan el sistema después de la instalación." data-he="מקורות הצללה חדשים המשפיעים על המערכת לאחר ההתקנה.">New shading sources affecting system after installation.</p>
+                <div class="cause" data-en="Common causes: tree growth, new construction nearby, antenna/satellite dish installed" data-es="Causas comunes: crecimiento de árboles, nueva construcción cercana, antena/satélite instalados" data-he="סיבות נפוצות: צמיחת עצים, בנייה חדשה בסביבה, התקנת אנטנה/צלחת לוויין">Common causes: tree growth, new construction nearby, antenna/satellite dish installed</div>
+                <div class="fix" data-en="→ Trim vegetation, re-analyze shading profile, consider optimizer upgrade if needed" data-es="→ Podar vegetación, re-analizar perfil de sombra, considerar actualización de optimizadores" data-he="→ גזום צמחייה, נתח מחדש פרופיל הצללה, שקול שדרוג אופטימייזרים">→ Trim vegetation, re-analyze shading profile, consider optimizer upgrade if needed</div>
+            </div>
+
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="String Failure" data-es="Falla de Cadena" data-he="כשל שרשרת">String Failure</span>
+                    <span class="severity severity-high" data-en="HIGH" data-es="ALTO" data-he="גבוה">HIGH</span>
+                </h4>
+                <p data-en="One or more strings not producing power or showing zero voltage." data-es="Una o más cadenas sin producir energía o mostrando voltaje cero." data-he="שרשרת אחת או יותר לא מייצרת חשמל או מציגה מתח אפס.">One or more strings not producing power or showing zero voltage.</p>
+                <div class="cause" data-en="Common causes: blown fuse, loose MC4 connector, damaged cable, failed optimizer in series" data-es="Causas comunes: fusible quemado, conector MC4 suelto, cable dañado, optimizador en serie fallido" data-he="סיבות נפוצות: נתיך שרוף, מחבר MC4 רופף, כבל פגום, אופטימייזר תקול בטור">Common causes: blown fuse, loose MC4 connector, damaged cable, failed optimizer in series</div>
+                <div class="fix" data-en="→ Check fuses, inspect all MC4 connections, trace cable for damage, test each panel individually" data-es="→ Verificar fusibles, inspeccionar conexiones MC4, rastrear cable por daños, probar cada panel" data-he="→ בדוק נתיכים, בדוק כל חיבורי MC4, עקוב אחרי כבל לנזק, בדוק כל פאנל בנפרד">→ Check fuses, inspect all MC4 connections, trace cable for damage, test each panel individually</div>
+            </div>
+
+            <div class="trouble-card">
+                <h4>
+                    <span data-en="Communication Loss" data-es="Pérdida de Comunicación" data-he="אובדן תקשורת">Communication Loss</span>
+                    <span class="severity severity-low" data-en="LOW" data-es="BAJO" data-he="נמוך">LOW</span>
+                </h4>
+                <p data-en="Monitoring platform shows system offline or no data transmission." data-es="Plataforma de monitoreo muestra sistema sin conexión o sin transmisión de datos." data-he="פלטפורמת ניטור מציגה מערכת לא מקוונת או ללא העברת נתונים.">Monitoring platform shows system offline or no data transmission.</p>
+                <div class="cause" data-en="Common causes: WiFi router issue, inverter WiFi module reset, internet outage, firewall blocking" data-es="Causas comunes: problema de router WiFi, reinicio de módulo WiFi del inversor, corte de internet, firewall" data-he="סיבות נפוצות: בעיית נתב WiFi, איפוס מודול WiFi ממיר, הפסקת אינטרנט, חסימת חומת אש">Common causes: WiFi router issue, inverter WiFi module reset, internet outage, firewall blocking</div>
+                <div class="fix" data-en="→ Restart router, re-pair inverter WiFi, verify internet, check firewall rules" data-es="→ Reiniciar router, reconectar WiFi del inversor, verificar internet, revisar reglas de firewall" data-he="→ הפעל נתב מחדש, צמד WiFi ממיר מחדש, אמת אינטרנט, בדוק חוקי חומת אש">→ Restart router, re-pair inverter WiFi, verify internet, check firewall rules</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SERVICE TIERS ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="O&M PACKAGES" data-es="PAQUETES O&M" data-he="חבילות תפעול">O&M PACKAGES</span>
+    <h2 class="section-title" data-en="Service Tiers" data-es="Niveles de Servicio" data-he="חבילות שירות">Service Tiers</h2>
+    <p class="section-sub" data-en="Flexible maintenance plans for every client need" data-es="Planes de mantenimiento flexibles para cada necesidad" data-he="תוכניות תחזוקה גמישות לכל צורך">Flexible maintenance plans for every client need</p>
+
+    <div class="tiers-grid">
+        <div class="tier-card">
+            <div class="tier-header">
+                <div class="tier-name" data-en="Basic" data-es="Básico" data-he="בסיסי">Basic</div>
+                <div class="tier-price">$50<span data-en="/month" data-es="/mes" data-he="/חודש">/month</span></div>
+                <div class="tier-desc" data-en="Remote monitoring only" data-es="Solo monitoreo remoto" data-he="ניטור מרחוק בלבד">Remote monitoring only</div>
+            </div>
+            <div class="tier-body">
+                <ul>
+                    <li data-en="24/7 remote system monitoring" data-es="Monitoreo remoto 24/7" data-he="ניטור מערכת מרחוק 24/7">24/7 remote system monitoring</li>
+                    <li data-en="Monthly performance reports" data-es="Informes de rendimiento mensuales" data-he="דוחות ביצועים חודשיים">Monthly performance reports</li>
+                    <li data-en="Email alerts for critical faults" data-es="Alertas por email para fallas críticas" data-he="התראות מייל לתקלות קריטיות">Email alerts for critical faults</li>
+                    <li data-en="Phone support (business hours)" data-es="Soporte telefónico (horario laboral)" data-he="תמיכה טלפונית (שעות עבודה)">Phone support (business hours)</li>
+                    <li class="not-included" data-en="Site visits not included" data-es="Visitas al sitio no incluidas" data-he="ביקורי אתר לא כלולים">Site visits not included</li>
+                    <li class="not-included" data-en="Panel cleaning not included" data-es="Limpieza de paneles no incluida" data-he="ניקוי פאנלים לא כלול">Panel cleaning not included</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tier-card featured">
+            <span class="tier-popular" data-en="MOST POPULAR" data-es="MÁS POPULAR" data-he="הכי פופולרי">MOST POPULAR</span>
+            <div class="tier-header">
+                <div class="tier-name" data-en="Standard" data-es="Estándar" data-he="סטנדרט">Standard</div>
+                <div class="tier-price">$100<span data-en="/month" data-es="/mes" data-he="/חודש">/month</span></div>
+                <div class="tier-desc" data-en="Monitoring + quarterly maintenance" data-es="Monitoreo + mantenimiento trimestral" data-he="ניטור + תחזוקה רבעונית">Monitoring + quarterly maintenance</div>
+            </div>
+            <div class="tier-body">
+                <ul>
+                    <li data-en="Everything in Basic" data-es="Todo en Básico" data-he="הכל מהבסיסי">Everything in Basic</li>
+                    <li data-en="Quarterly panel cleaning" data-es="Limpieza trimestral de paneles" data-he="ניקוי פאנלים רבעוני">Quarterly panel cleaning</li>
+                    <li data-en="Quarterly cable inspection" data-es="Inspección trimestral de cables" data-he="בדיקת כבלים רבעונית">Quarterly cable inspection</li>
+                    <li data-en="Annual full system inspection" data-es="Inspección anual completa" data-he="בדיקה שנתית מלאה">Annual full system inspection</li>
+                    <li data-en="Priority phone + WhatsApp support" data-es="Soporte prioritario teléfono + WhatsApp" data-he="תמיכה עדיפה טלפון + WhatsApp">Priority phone + WhatsApp support</li>
+                    <li data-en="48-hour on-site response time" data-es="Tiempo de respuesta en sitio: 48 horas" data-he="זמן תגובה באתר: 48 שעות">48-hour on-site response time</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tier-card">
+            <div class="tier-header">
+                <div class="tier-name" data-en="Premium" data-es="Premium" data-he="פרימיום">Premium</div>
+                <div class="tier-price">$200<span data-en="/month" data-es="/mes" data-he="/חודש">/month</span></div>
+                <div class="tier-desc" data-en="Full-service O&M" data-es="O&M servicio completo" data-he="שירות תפעול מלא">Full-service O&M</div>
+            </div>
+            <div class="tier-body">
+                <ul>
+                    <li data-en="Everything in Standard" data-es="Todo en Estándar" data-he="הכל מהסטנדרט">Everything in Standard</li>
+                    <li data-en="Monthly panel cleaning" data-es="Limpieza mensual de paneles" data-he="ניקוי פאנלים חודשי">Monthly panel cleaning</li>
+                    <li data-en="Bi-annual inverter firmware updates" data-es="Actualización semestral de firmware" data-he="עדכוני קושחת ממיר חצי שנתיים">Bi-annual inverter firmware updates</li>
+                    <li data-en="IR thermography included" data-es="Termografía IR incluida" data-he="תרמוגרפיה IR כלולה">IR thermography included</li>
+                    <li data-en="24/7 emergency support line" data-es="Línea de emergencia 24/7" data-he="קו חירום 24/7">24/7 emergency support line</li>
+                    <li data-en="24-hour on-site response time" data-es="Tiempo de respuesta: 24 horas" data-he="זמן תגובה באתר: 24 שעות">24-hour on-site response time</li>
+                    <li data-en="Parts warranty coverage coordination" data-es="Coordinación de cobertura de garantía" data-he="תיאום כיסוי אחריות חלפים">Parts warranty coverage coordination</li>
+                    <li data-en="Annual performance optimization report" data-es="Informe anual de optimización" data-he="דוח אופטימיזציית ביצועים שנתי">Annual performance optimization report</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PERFORMANCE METRICS ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="KEY METRICS" data-es="MÉTRICAS CLAVE" data-he="מדדי מפתח">KEY METRICS</span>
+    <h2 class="section-title" data-en="Performance Metrics" data-es="Métricas de Rendimiento" data-he="מדדי ביצועים">Performance Metrics</h2>
+    <p class="section-sub" data-en="The numbers that matter for system health and client satisfaction" data-es="Los números que importan para la salud del sistema y la satisfacción del cliente" data-he="המספרים שחשובים לבריאות המערכת ושביעות רצון הלקוח">The numbers that matter for system health and client satisfaction</p>
+
+    <div class="metrics-row">
+        <div class="metric-card">
+            <span class="metric-icon">⚡</span>
+            <div class="metric-name" data-en="Performance Ratio (PR)" data-es="Ratio de Rendimiento (PR)" data-he="יחס ביצועים (PR)">Performance Ratio (PR)</div>
+            <span class="metric-val">>80%</span>
+            <div class="metric-target" data-en="Industry benchmark: 75-85% in tropical climates" data-es="Benchmark: 75-85% en climas tropicales" data-he="אמת מידה: 75-85% באקלים טרופי">Industry benchmark: 75-85% in tropical climates</div>
+            <div class="metric-bar"><div class="metric-bar-fill" style="width: 82%;"></div></div>
+        </div>
+
+        <div class="metric-card">
+            <span class="metric-icon">☀️</span>
+            <div class="metric-name" data-en="Specific Yield" data-es="Rendimiento Específico" data-he="תפוקה סגולית">Specific Yield</div>
+            <span class="metric-val">1,800+</span>
+            <div class="metric-target" data-en="kWh/kWp/year — Panama average irradiance" data-es="kWh/kWp/año — irradiancia promedio de Panamá" data-he="kWh/kWp/שנה — קרינה ממוצעת בפנמה">kWh/kWp/year — Panama average irradiance</div>
+            <div class="metric-bar"><div class="metric-bar-fill" style="width: 90%;"></div></div>
+        </div>
+
+        <div class="metric-card">
+            <span class="metric-icon">🔄</span>
+            <div class="metric-name" data-en="System Availability" data-es="Disponibilidad del Sistema" data-he="זמינות מערכת">System Availability</div>
+            <span class="metric-val">>99%</span>
+            <div class="metric-target" data-en="Target uptime excluding grid outages" data-es="Objetivo sin contar cortes de red" data-he="יעד זמן פעילות לא כולל הפסקות רשת">Target uptime excluding grid outages</div>
+            <div class="metric-bar"><div class="metric-bar-fill" style="width: 99%;"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ALERT SYSTEM ===== -->
+<div class="container" style="padding-top: 0;">
+    <span class="section-badge" data-en="ALERT PROTOCOLS" data-es="PROTOCOLOS DE ALERTA" data-he="פרוטוקולי התראה">ALERT PROTOCOLS</span>
+    <h2 class="section-title" data-en="Alert System" data-es="Sistema de Alertas" data-he="מערכת התראות">Alert System</h2>
+    <p class="section-sub" data-en="What triggers alerts, how they're classified, and response time commitments" data-es="Qué activa las alertas, cómo se clasifican y compromisos de tiempo de respuesta" data-he="מה מפעיל התראות, איך הן מסווגות והתחייבויות זמן תגובה">What triggers alerts, how they're classified, and response time commitments</p>
+
+    <div class="alert-grid">
+        <div class="alert-card">
+            <div class="alert-icon critical">🔴</div>
+            <div class="alert-content">
+                <h4 data-en="Inverter Offline" data-es="Inversor Desconectado" data-he="ממיר לא מקוון">Inverter Offline</h4>
+                <p data-en="Inverter stops producing AC power. Zero output during daylight hours. System completely down." data-es="El inversor deja de producir energía AC. Cero producción durante horas de luz. Sistema completamente caído." data-he="ממיר מפסיק לייצר חשמל AC. ייצור אפס בשעות אור. מערכת מושבתת לחלוטין.">Inverter stops producing AC power. Zero output during daylight hours. System completely down.</p>
+                <span class="response-time" data-en="Response: 4 hours (Premium) / 24 hours (Standard)" data-es="Respuesta: 4h (Premium) / 24h (Estándar)" data-he="תגובה: 4 שעות (פרימיום) / 24 שעות (סטנדרט)">Response: 4 hours (Premium) / 24 hours (Standard)</span>
+            </div>
+        </div>
+
+        <div class="alert-card">
+            <div class="alert-icon critical">🔴</div>
+            <div class="alert-content">
+                <h4 data-en="Grid Fault Detected" data-es="Falla de Red Detectada" data-he="תקלת רשת זוהתה">Grid Fault Detected</h4>
+                <p data-en="Grid voltage or frequency out of acceptable range. Inverter anti-islanding triggered. System shuts down for safety." data-es="Voltaje o frecuencia de red fuera del rango aceptable. Anti-islanding del inversor activado." data-he="מתח או תדר רשת מחוץ לטווח מקובל. הגנת אנטי-איילנדינג של ממיר הופעלה.">Grid voltage or frequency out of acceptable range. Inverter anti-islanding triggered. System shuts down for safety.</p>
+                <span class="response-time" data-en="Response: Monitor — usually auto-recovers" data-es="Respuesta: Monitorear — usualmente se recupera solo" data-he="תגובה: ניטור — בדרך כלל מתאושש אוטומטית">Response: Monitor — usually auto-recovers</span>
+            </div>
+        </div>
+
+        <div class="alert-card">
+            <div class="alert-icon warning">🟡</div>
+            <div class="alert-content">
+                <h4 data-en="Production Drop >15%" data-es="Caída de Producción >15%" data-he="ירידת ייצור >15%">Production Drop >15%</h4>
+                <p data-en="System producing 15%+ less than expected based on irradiance data. May indicate soiling, shading, or component degradation." data-es="Sistema produciendo 15%+ menos de lo esperado. Puede indicar suciedad, sombra o degradación." data-he="מערכת מייצרת 15%+ פחות מהצפוי. עשוי להצביע על לכלוך, הצללה או דרדור רכיבים.">System producing 15%+ less than expected based on irradiance data. May indicate soiling, shading, or component degradation.</p>
+                <span class="response-time" data-en="Response: 48 hours investigation" data-es="Respuesta: investigación en 48 horas" data-he="תגובה: חקירה תוך 48 שעות">Response: 48 hours investigation</span>
+            </div>
+        </div>
+
+        <div class="alert-card">
+            <div class="alert-icon warning">🟡</div>
+            <div class="alert-content">
+                <h4 data-en="String Underperformance" data-es="Bajo Rendimiento de Cadena" data-he="ביצוע נמוך של שרשרת">String Underperformance</h4>
+                <p data-en="One string producing significantly less than others. Indicates potential panel, optimizer, or wiring issue." data-es="Una cadena produciendo significativamente menos que las demás. Indica posible problema de panel, optimizador o cableado." data-he="שרשרת אחת מייצרת משמעותית פחות מאחרות. מצביע על בעיה פוטנציאלית בפאנל, אופטימייזר או חיווט.">One string producing significantly less than others. Indicates potential panel, optimizer, or wiring issue.</p>
+                <span class="response-time" data-en="Response: Next scheduled visit" data-es="Respuesta: próxima visita programada" data-he="תגובה: ביקור מתוכנן הבא">Response: Next scheduled visit</span>
+            </div>
+        </div>
+
+        <div class="alert-card">
+            <div class="alert-icon info">🟢</div>
+            <div class="alert-content">
+                <h4 data-en="Communication Loss" data-es="Pérdida de Comunicación" data-he="אובדן תקשורת">Communication Loss</h4>
+                <p data-en="Monitoring data not received for 2+ hours during daylight. System may still be producing normally." data-es="Datos de monitoreo no recibidos por 2+ horas. El sistema puede estar produciendo normalmente." data-he="נתוני ניטור לא התקבלו 2+ שעות ביום. ייתכן שהמערכת עדיין מייצרת כרגיל.">Monitoring data not received for 2+ hours during daylight. System may still be producing normally.</p>
+                <span class="response-time" data-en="Response: Remote troubleshoot within 24h" data-es="Respuesta: diagnóstico remoto en 24h" data-he="תגובה: אבחון מרחוק תוך 24 שעות">Response: Remote troubleshoot within 24h</span>
+            </div>
+        </div>
+
+        <div class="alert-card">
+            <div class="alert-icon info">🟢</div>
+            <div class="alert-content">
+                <h4 data-en="Firmware Update Available" data-es="Actualización Disponible" data-he="עדכון קושחה זמין">Firmware Update Available</h4>
+                <p data-en="New inverter firmware released by manufacturer. Schedule update during low-production hours." data-es="Nuevo firmware del inversor lanzado por el fabricante. Programar actualización en horas de baja producción." data-he="קושחת ממיר חדשה שוחררה על ידי היצרן. תזמן עדכון בשעות ייצור נמוך.">New inverter firmware released by manufacturer. Schedule update during low-production hours.</p>
+                <span class="response-time" data-en="Response: Schedule within 2 weeks" data-es="Respuesta: programar dentro de 2 semanas" data-he="תגובה: תזמון תוך שבועיים">Response: Schedule within 2 weeks</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="page-footer">
+    <p>© 2025 Solaris Energy Panama — <a href="index.html" data-en="Back to Dashboard" data-es="Volver al Panel" data-he="חזרה ללוח בקרה">Back to Dashboard</a></p>
+</footer>
+
+<script>
+function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+}
+</script>
+
+</body>
+</html>
