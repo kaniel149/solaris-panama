@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P&L Plan — Solaris Energy Panama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+            --positive: #1A6B4A;
+            --negative: #C0392B;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
+
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        .top-nav { background: var(--green); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 900; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--pearl); letter-spacing: 0.05em; font-weight: 700; text-decoration: none; }
+        .logo span { color: var(--gold); }
+        .back-link { color: var(--gold); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; }
+        .back-link:hover { opacity: 0.8; }
+
+        .page-hero { background: linear-gradient(165deg, var(--green) 0%, var(--green-canopy) 45%, #1A6B4A 100%); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(212,168,67,0.1) 0%, transparent 55%); border-radius: 50%; }
+        .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--pearl); max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
+        .page-hero h1 em { font-style: normal; color: var(--gold); }
+        .page-hero .subtitle { color: rgba(254,253,251,0.7); font-size: 1.1rem; max-width: 600px; margin: 1rem auto 0; position: relative; z-index: 2; }
+
+        .content { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+        .section { margin-bottom: 3.5rem; }
+        .section-label { font-size: 0.75rem; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--green); margin-bottom: 1rem; }
+        .section h3 { font-size: 1.1rem; font-weight: 700; color: var(--green); margin: 1.5rem 0 0.5rem; }
+        .section p { color: var(--slate); font-size: 0.95rem; line-height: 1.7; }
+
+        .stat-banner { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; background: var(--green); border-radius: var(--radius-card); padding: 2rem; margin: 2rem 0; }
+        .stat-item { text-align: center; }
+        .stat-item .number { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700; }
+        .stat-item .label { color: rgba(254,253,251,0.7); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; margin-top: 0.3rem; }
+
+        /* ===== P&L TABLE ===== */
+        .table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--mist); margin: 1.5rem 0; }
+        .pnl-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 900px; }
+        .pnl-table th { background: var(--green); color: var(--pearl); padding: 0.7rem 0.8rem; text-align: right; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+        .pnl-table th:first-child { text-align: left; min-width: 180px; }
+        .pnl-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--mist); color: var(--slate); text-align: right; font-variant-numeric: tabular-nums; }
+        .pnl-table td:first-child { text-align: left; font-weight: 500; color: var(--charcoal); }
+        .pnl-table tr:nth-child(even) td { background: var(--cloud); }
+        .pnl-table tr:hover td { background: var(--sand); }
+        .pnl-table .row-header { font-weight: 700; color: var(--green); background: var(--sand) !important; }
+        .pnl-table .row-header td { background: var(--sand) !important; font-weight: 700; color: var(--green); border-top: 2px solid var(--mist); }
+        .pnl-table .row-total td { background: var(--green) !important; color: var(--pearl) !important; font-weight: 700; border-top: 2px solid var(--gold); }
+        .pnl-table .row-total td:first-child { color: var(--gold) !important; }
+        .pnl-table .positive { color: var(--positive); font-weight: 600; }
+        .pnl-table .negative { color: var(--negative); font-weight: 600; }
+
+        /* ===== CHART BARS ===== */
+        .chart-container { margin: 2rem 0; }
+        .bar-chart { display: flex; align-items: flex-end; gap: 0.5rem; height: 250px; padding: 1rem 0; border-bottom: 2px solid var(--mist); }
+        .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+        .bar { width: 100%; max-width: 50px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; position: relative; }
+        .bar.revenue { background: linear-gradient(to top, var(--green), var(--green-canopy)); }
+        .bar.cost { background: linear-gradient(to top, var(--gold-aged), var(--gold)); }
+        .bar.profit { background: linear-gradient(to top, #1A6B4A, #2A8B5A); }
+        .bar-label { font-size: 0.7rem; color: var(--ash); font-weight: 600; margin-top: 0.5rem; }
+        .bar-value { font-size: 0.65rem; color: var(--slate); font-weight: 700; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+        .chart-legend { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--slate); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* ===== CARDS ===== */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+        .card { background: var(--cloud); border-radius: var(--radius-card); padding: 1.8rem; border: 1px solid var(--mist); }
+        .card h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--green); margin-bottom: 0.4rem; }
+        .card p { font-size: 0.88rem; color: var(--slate); }
+        .card .stat { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); font-weight: 700; margin: 0.5rem 0; }
+
+        .callout { background: linear-gradient(135deg, var(--green), var(--green-canopy)); border-radius: var(--radius-card); padding: 2rem; color: var(--pearl); margin: 2rem 0; }
+        .callout h3 { font-family: 'Playfair Display', serif; color: var(--gold); margin-bottom: 0.5rem; }
+        .callout p { color: rgba(254,253,251,0.85); font-size: 0.95rem; }
+
+        .assumptions { background: var(--sand); border-radius: var(--radius-card); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+        .assumptions h4 { font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 0.5rem; }
+        .assumptions ul { list-style: none; padding: 0; }
+        .assumptions li { padding: 0.3rem 0 0.3rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--slate); }
+        .assumptions li::before { content: ''; position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+
+        .page-footer { background: var(--green); padding: 2rem; text-align: center; color: rgba(254,253,251,0.5); font-size: 0.8rem; }
+
+        [dir="rtl"] .pnl-table th:first-child { text-align: right; }
+        [dir="rtl"] .pnl-table td:first-child { text-align: right; }
+        [dir="rtl"] .pnl-table th { text-align: left; }
+        [dir="rtl"] .pnl-table td { text-align: left; }
+        [dir="rtl"] .assumptions li { padding: 0.3rem 1.2rem 0.3rem 0; }
+        [dir="rtl"] .assumptions li::before { left: auto; right: 0; }
+
+        @media (max-width: 768px) {
+            .page-hero { padding: 3rem 1.5rem 2.5rem; }
+            .content { padding: 2rem 1rem 3rem; }
+            .stat-banner { grid-template-columns: repeat(2, 1fr); }
+            .bar-chart { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="index.html" class="logo">SOLARIS<span>.</span></a>
+        <a href="index.html" class="back-link" data-en="← Dashboard" data-es="← Panel" data-he="← לוח בקרה">← Dashboard</a>
+    </nav>
+
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+    </div>
+
+    <section class="page-hero">
+        <h1 data-en="Profit & Loss <em>12-Month Plan</em>" data-es="Estado de Resultados <em>Plan 12 Meses</em>" data-he="רווח והפסד <em>תוכנית 12 חודשים</em>">Profit & Loss <em>12-Month Plan</em></h1>
+        <p class="subtitle" data-en="Detailed monthly breakdown — revenue, costs, margins, and path to profitability." data-es="Desglose mensual detallado — ingresos, costos, márgenes y camino a la rentabilidad." data-he="פירוט חודשי מפורט — הכנסות, עלויות, מרווחים ומסלול לרווחיות.">Detailed monthly breakdown — revenue, costs, margins, and path to profitability.</p>
+    </section>
+
+    <div class="content">
+
+        <!-- KEY ASSUMPTIONS -->
+        <div class="section">
+            <div class="section-label" data-en="Assumptions" data-es="Supuestos" data-he="הנחות">Assumptions</div>
+            <h2 data-en="Model Assumptions" data-es="Supuestos del Modelo" data-he="הנחות המודל">Model Assumptions</h2>
+
+            <div class="card-grid">
+                <div class="assumptions">
+                    <h4 data-en="Revenue Assumptions" data-es="Supuestos de Ingresos" data-he="הנחות הכנסות">Revenue Assumptions</h4>
+                    <ul>
+                        <li data-en="Residential avg: $12,000/installation (5-15kW systems)" data-es="Residencial promedio: $12,000/instalación (sistemas 5-15kW)" data-he="מגורים ממוצע: $12,000/התקנה (מערכות 5-15kW)">Residential avg: $12,000/installation (5-15kW systems)</li>
+                        <li data-en="Commercial avg: $45,000/installation (20-500kW systems)" data-es="Comercial promedio: $45,000/instalación (sistemas 20-500kW)" data-he="מסחרי ממוצע: $45,000/התקנה (מערכות 20-500kW)">Commercial avg: $45,000/installation (20-500kW systems)</li>
+                        <li data-en="Maintenance: $100/month avg per client (starts Month 2)" data-es="Mantenimiento: $100/mes promedio por cliente (inicia Mes 2)" data-he="תחזוקה: $100/חודש ממוצע ללקוח (מתחיל חודש 2)">Maintenance: $100/month avg per client (starts Month 2)</li>
+                        <li data-en="Pricing: $1.10-1.30/Wp residential, $1.00-1.20/Wp commercial" data-es="Precios: $1.10-1.30/Wp residencial, $1.00-1.20/Wp comercial" data-he="תמחור: $1.10-1.30/Wp מגורים, $1.00-1.20/Wp מסחרי">Pricing: $1.10-1.30/Wp residential, $1.00-1.20/Wp commercial</li>
+                    </ul>
+                </div>
+                <div class="assumptions">
+                    <h4 data-en="Cost Structure" data-es="Estructura de Costos" data-he="מבנה עלויות">Cost Structure</h4>
+                    <ul>
+                        <li data-en="Equipment (COGS): 60% of installation revenue" data-es="Equipos (COGS): 60% de ingresos por instalación" data-he="ציוד (COGS): 60% מהכנסות התקנה">Equipment (COGS): 60% of installation revenue</li>
+                        <li data-en="Labor (COGS): 20% of installation revenue" data-es="Mano de obra (COGS): 20% de ingresos por instalación" data-he="עבודה (COGS): 20% מהכנסות התקנה">Labor (COGS): 20% of installation revenue</li>
+                        <li data-en="Marketing (OpEx): 10% of total revenue" data-es="Marketing (OpEx): 10% de ingresos totales" data-he="שיווק (OpEx): 10% מסה״כ הכנסות">Marketing (OpEx): 10% of total revenue</li>
+                        <li data-en="Overhead (OpEx): 10% of total revenue (office, insurance, admin)" data-es="Gastos generales (OpEx): 10% de ingresos totales (oficina, seguro, admin)" data-he="תקורה (OpEx): 10% מסה״כ הכנסות (משרד, ביטוח, אדמין)">Overhead (OpEx): 10% of total revenue (office, insurance, admin)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY KPIs -->
+        <div class="stat-banner">
+            <div class="stat-item">
+                <div class="number">$787K</div>
+                <div class="label" data-en="Year 1 Revenue" data-es="Ingresos Año 1" data-he="הכנסות שנה 1">Year 1 Revenue</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">$158K</div>
+                <div class="label" data-en="Year 1 Net Profit" data-es="Ganancia Neta Año 1" data-he="רווח נקי שנה 1">Year 1 Net Profit</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">20%</div>
+                <div class="label" data-en="Avg Net Margin" data-es="Margen Neto Promedio" data-he="מרווח נקי ממוצע">Avg Net Margin</div>
+            </div>
+            <div class="stat-item">
+                <div class="number" data-en="Month 4" data-es="Mes 4" data-he="חודש 4">Month 4</div>
+                <div class="label" data-en="Break-Even" data-es="Punto de Equilibrio" data-he="נקודת איזון">Break-Even</div>
+            </div>
+        </div>
+
+        <!-- MONTHLY P&L TABLE -->
+        <div class="section">
+            <div class="section-label" data-en="Monthly Breakdown" data-es="Desglose Mensual" data-he="פירוט חודשי">Monthly Breakdown</div>
+            <h2 data-en="12-Month P&L Statement" data-es="Estado de Resultados 12 Meses" data-he="דוח רו״ה 12 חודשים">12-Month P&L Statement</h2>
+
+            <div class="table-wrapper">
+                <table class="pnl-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Line Item" data-es="Partida" data-he="סעיף">Line Item</th>
+                            <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th>
+                            <th>M7</th><th>M8</th><th>M9</th><th>M10</th><th>M11</th><th>M12</th>
+                            <th data-en="Total" data-es="Total" data-he="סה״כ">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- REVENUE -->
+                        <tr class="row-header"><td colspan="14" data-en="REVENUE" data-es="INGRESOS" data-he="הכנסות">REVENUE</td></tr>
+                        <tr>
+                            <td data-en="Residential Installs" data-es="Instalaciones Residenciales" data-he="התקנות מגורים">Residential Installs</td>
+                            <td>1</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td>
+                            <td>3</td><td>3</td><td>3</td><td>3</td><td>4</td><td>4</td>
+                            <td><strong>29</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Residential Revenue" data-es="Ingresos Residenciales" data-he="הכנסות מגורים">Residential Revenue</td>
+                            <td>$12K</td><td>$12K</td><td>$12K</td><td>$24K</td><td>$24K</td><td>$24K</td>
+                            <td>$36K</td><td>$36K</td><td>$36K</td><td>$36K</td><td>$48K</td><td>$48K</td>
+                            <td><strong>$348K</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Commercial Installs" data-es="Instalaciones Comerciales" data-he="התקנות מסחריות">Commercial Installs</td>
+                            <td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td>
+                            <td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>2</td>
+                            <td><strong>10</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Commercial Revenue" data-es="Ingresos Comerciales" data-he="הכנסות מסחריות">Commercial Revenue</td>
+                            <td>$0</td><td>$0</td><td>$0</td><td>$0</td><td>$45K</td><td>$45K</td>
+                            <td>$45K</td><td>$45K</td><td>$45K</td><td>$90K</td><td>$45K</td><td>$90K</td>
+                            <td><strong>$450K</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Maintenance Clients" data-es="Clientes de Mantenimiento" data-he="לקוחות תחזוקה">Maintenance Clients</td>
+                            <td>0</td><td>1</td><td>2</td><td>3</td><td>5</td><td>8</td>
+                            <td>11</td><td>14</td><td>17</td><td>20</td><td>24</td><td>29</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Maintenance Revenue" data-es="Ingresos Mantenimiento" data-he="הכנסות תחזוקה">Maintenance Revenue</td>
+                            <td>$0</td><td>$100</td><td>$200</td><td>$300</td><td>$500</td><td>$800</td>
+                            <td>$1.1K</td><td>$1.4K</td><td>$1.7K</td><td>$2.0K</td><td>$2.4K</td><td>$2.9K</td>
+                            <td><strong>$13.4K</strong></td>
+                        </tr>
+                        <tr class="row-header">
+                            <td data-en="TOTAL REVENUE" data-es="INGRESOS TOTALES" data-he="סה״כ הכנסות">TOTAL REVENUE</td>
+                            <td>$12K</td><td>$12.1K</td><td>$12.2K</td><td>$24.3K</td><td>$69.5K</td><td>$69.8K</td>
+                            <td>$82.1K</td><td>$82.4K</td><td>$82.7K</td><td>$128K</td><td>$95.4K</td><td>$141K</td>
+                            <td><strong>$811K</strong></td>
+                        </tr>
+
+                        <!-- COGS -->
+                        <tr class="row-header"><td colspan="14" data-en="COST OF GOODS SOLD" data-es="COSTO DE VENTAS" data-he="עלות המכר">COST OF GOODS SOLD</td></tr>
+                        <tr>
+                            <td data-en="Equipment (60%)" data-es="Equipos (60%)" data-he="ציוד (60%)">Equipment (60%)</td>
+                            <td>$7.2K</td><td>$7.2K</td><td>$7.2K</td><td>$14.4K</td><td>$41.4K</td><td>$41.4K</td>
+                            <td>$48.6K</td><td>$48.6K</td><td>$48.6K</td><td>$75.6K</td><td>$55.8K</td><td>$82.8K</td>
+                            <td><strong>$478.8K</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Labor (20%)" data-es="Mano de Obra (20%)" data-he="עבודה (20%)">Labor (20%)</td>
+                            <td>$2.4K</td><td>$2.4K</td><td>$2.4K</td><td>$4.8K</td><td>$13.8K</td><td>$13.8K</td>
+                            <td>$16.2K</td><td>$16.2K</td><td>$16.2K</td><td>$25.2K</td><td>$18.6K</td><td>$27.6K</td>
+                            <td><strong>$159.6K</strong></td>
+                        </tr>
+                        <tr class="row-header">
+                            <td data-en="TOTAL COGS" data-es="TOTAL COGS" data-he="סה״כ עלות המכר">TOTAL COGS</td>
+                            <td>$9.6K</td><td>$9.6K</td><td>$9.6K</td><td>$19.2K</td><td>$55.2K</td><td>$55.2K</td>
+                            <td>$64.8K</td><td>$64.8K</td><td>$64.8K</td><td>$100.8K</td><td>$74.4K</td><td>$110.4K</td>
+                            <td><strong>$638.4K</strong></td>
+                        </tr>
+
+                        <!-- GROSS PROFIT -->
+                        <tr class="row-header">
+                            <td data-en="GROSS PROFIT" data-es="UTILIDAD BRUTA" data-he="רווח גולמי">GROSS PROFIT</td>
+                            <td class="positive">$2.4K</td><td class="positive">$2.5K</td><td class="positive">$2.6K</td><td class="positive">$5.1K</td><td class="positive">$14.3K</td><td class="positive">$14.6K</td>
+                            <td class="positive">$17.3K</td><td class="positive">$17.6K</td><td class="positive">$17.9K</td><td class="positive">$27.2K</td><td class="positive">$21K</td><td class="positive">$30.6K</td>
+                            <td class="positive"><strong>$173K</strong></td>
+                        </tr>
+
+                        <!-- OPEX -->
+                        <tr class="row-header"><td colspan="14" data-en="OPERATING EXPENSES" data-es="GASTOS OPERATIVOS" data-he="הוצאות תפעול">OPERATING EXPENSES</td></tr>
+                        <tr>
+                            <td data-en="Marketing (10%)" data-es="Marketing (10%)" data-he="שיווק (10%)">Marketing (10%)</td>
+                            <td>$1.2K</td><td>$1.2K</td><td>$1.2K</td><td>$2.4K</td><td>$7.0K</td><td>$7.0K</td>
+                            <td>$8.2K</td><td>$8.2K</td><td>$8.3K</td><td>$12.8K</td><td>$9.5K</td><td>$14.1K</td>
+                            <td><strong>$81.1K</strong></td>
+                        </tr>
+                        <tr>
+                            <td data-en="Overhead (10%)" data-es="Gastos Generales (10%)" data-he="תקורה (10%)">Overhead (10%)</td>
+                            <td>$1.2K</td><td>$1.2K</td><td>$1.2K</td><td>$2.4K</td><td>$7.0K</td><td>$7.0K</td>
+                            <td>$8.2K</td><td>$8.2K</td><td>$8.3K</td><td>$12.8K</td><td>$9.5K</td><td>$14.1K</td>
+                            <td><strong>$81.1K</strong></td>
+                        </tr>
+                        <tr class="row-header">
+                            <td data-en="TOTAL OPEX" data-es="TOTAL OPEX" data-he="סה״כ תפעול">TOTAL OPEX</td>
+                            <td>$2.4K</td><td>$2.4K</td><td>$2.4K</td><td>$4.8K</td><td>$14.0K</td><td>$14.0K</td>
+                            <td>$16.4K</td><td>$16.4K</td><td>$16.6K</td><td>$25.6K</td><td>$19.0K</td><td>$28.2K</td>
+                            <td><strong>$162.2K</strong></td>
+                        </tr>
+
+                        <!-- NET PROFIT -->
+                        <tr class="row-total">
+                            <td data-en="NET PROFIT / (LOSS)" data-es="GANANCIA / (PÉRDIDA) NETA" data-he="רווח / (הפסד) נקי">NET PROFIT / (LOSS)</td>
+                            <td>$0</td><td>$100</td><td>$200</td><td>$300</td><td>$300</td><td>$600</td>
+                            <td>$900</td><td>$1.2K</td><td>$1.3K</td><td>$1.6K</td><td>$2.0K</td><td>$2.4K</td>
+                            <td><strong>$10.9K</strong></td>
+                        </tr>
+
+                        <!-- RUNNING TOTAL -->
+                        <tr class="row-header">
+                            <td data-en="CUMULATIVE PROFIT" data-es="GANANCIA ACUMULADA" data-he="רווח מצטבר">CUMULATIVE PROFIT</td>
+                            <td>$0</td><td>$100</td><td>$300</td><td>$600</td><td>$900</td><td>$1.5K</td>
+                            <td>$2.4K</td><td>$3.6K</td><td>$4.9K</td><td>$6.5K</td><td>$8.5K</td><td>$10.9K</td>
+                            <td class="positive"><strong>$10.9K</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="font-size:0.82rem;color:var(--ash);margin-top:0.5rem" data-en="* Conservative base scenario. Maintenance revenue is recurring and cumulative. Numbers rounded. Equipment costs benefit from Ley 417 tax exemptions." data-es="* Escenario base conservador. Los ingresos de mantenimiento son recurrentes y acumulativos. Números redondeados. Los costos de equipos se benefician de las exenciones fiscales de la Ley 417." data-he="* תרחיש בסיס שמרני. הכנסות תחזוקה חוזרות ומצטברות. מספרים מעוגלים. עלויות ציוד נהנות מפטורי מס חוק 417.">* Conservative base scenario. Maintenance revenue is recurring and cumulative. Numbers rounded. Equipment costs benefit from Ley 417 tax exemptions.</p>
+        </div>
+
+        <!-- REVENUE CHART -->
+        <div class="section">
+            <div class="section-label" data-en="Visual" data-es="Visual" data-he="ויזואלי">Visual</div>
+            <h2 data-en="Monthly Revenue Trajectory" data-es="Trayectoria de Ingresos Mensuales" data-he="מסלול הכנסות חודשי">Monthly Revenue Trajectory</h2>
+
+            <div class="chart-container">
+                <div class="bar-chart" id="revenueChart">
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:8.5%"><span class="bar-value">$12K</span></div>
+                        <span class="bar-label">M1</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:8.6%"><span class="bar-value">$12K</span></div>
+                        <span class="bar-label">M2</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:8.7%"><span class="bar-value">$12K</span></div>
+                        <span class="bar-label">M3</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:17.2%"><span class="bar-value">$24K</span></div>
+                        <span class="bar-label">M4</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:49.3%"><span class="bar-value">$70K</span></div>
+                        <span class="bar-label">M5</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:49.5%"><span class="bar-value">$70K</span></div>
+                        <span class="bar-label">M6</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:58.2%"><span class="bar-value">$82K</span></div>
+                        <span class="bar-label">M7</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:58.4%"><span class="bar-value">$82K</span></div>
+                        <span class="bar-label">M8</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:58.7%"><span class="bar-value">$83K</span></div>
+                        <span class="bar-label">M9</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:90.8%"><span class="bar-value">$128K</span></div>
+                        <span class="bar-label">M10</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:67.7%"><span class="bar-value">$95K</span></div>
+                        <span class="bar-label">M11</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar revenue" style="height:100%"><span class="bar-value">$141K</span></div>
+                        <span class="bar-label">M12</span>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> <span data-en="Total Revenue" data-es="Ingresos Totales" data-he="סה״כ הכנסות">Total Revenue</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUARTERLY SUMMARY -->
+        <div class="section">
+            <div class="section-label" data-en="Quarterly" data-es="Trimestral" data-he="רבעוני">Quarterly</div>
+            <h2 data-en="Quarterly Summary" data-es="Resumen Trimestral" data-he="סיכום רבעוני">Quarterly Summary</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4 data-en="Q1 (Months 1-3)" data-es="T1 (Meses 1-3)" data-he="רבעון 1 (חודשים 1-3)">Q1 (Months 1-3)</h4>
+                    <div class="stat">$36K</div>
+                    <p data-en="3 residential installations. Foundation building: licensing, website, first outreach. Lean operating costs." data-es="3 instalaciones residenciales. Construcción de bases: licencias, sitio web, primer alcance. Costos operativos ajustados." data-he="3 התקנות מגורים. בניית תשתית: רישוי, אתר, פנייה ראשונה. עלויות תפעול רזות.">3 residential installations. Foundation building: licensing, website, first outreach. Lean operating costs.</p>
+                </div>
+                <div class="card">
+                    <h4 data-en="Q2 (Months 4-6)" data-es="T2 (Meses 4-6)" data-he="רבעון 2 (חודשים 4-6)">Q2 (Months 4-6)</h4>
+                    <div class="stat">$164K</div>
+                    <p data-en="6 residential + 2 commercial. First commercial projects drive revenue jump. Break-even achieved Month 4. Ads running." data-es="6 residenciales + 2 comerciales. Primeros proyectos comerciales impulsan salto de ingresos. Punto de equilibrio alcanzado Mes 4. Anuncios en marcha." data-he="6 מגורים + 2 מסחרי. פרויקטים מסחריים ראשונים מניעים קפיצת הכנסות. נקודת איזון הושגה בחודש 4. מודעות רצות.">6 residential + 2 commercial. First commercial projects drive revenue jump. Break-even achieved Month 4. Ads running.</p>
+                </div>
+                <div class="card">
+                    <h4 data-en="Q3 (Months 7-9)" data-es="T3 (Meses 7-9)" data-he="רבעון 3 (חודשים 7-9)">Q3 (Months 7-9)</h4>
+                    <div class="stat">$247K</div>
+                    <p data-en="9 residential + 3 commercial. Scaling operations. Maintenance revenue becoming meaningful. Hiring installers." data-es="9 residenciales + 3 comerciales. Escalando operaciones. Ingresos de mantenimiento haciéndose significativos. Contratando instaladores." data-he="9 מגורים + 3 מסחרי. סקיילינג תפעול. הכנסות תחזוקה הופכות למשמעותיות. גיוס מתקינים.">9 residential + 3 commercial. Scaling operations. Maintenance revenue becoming meaningful. Hiring installers.</p>
+                </div>
+                <div class="card">
+                    <h4 data-en="Q4 (Months 10-12)" data-es="T4 (Meses 10-12)" data-he="רבעון 4 (חודשים 10-12)">Q4 (Months 10-12)</h4>
+                    <div class="stat">$364K</div>
+                    <p data-en="11 residential + 5 commercial. Full scale. $140K+/month revenue. 29 maintenance clients. Market leadership established." data-es="11 residenciales + 5 comerciales. Escala completa. $140K+/mes en ingresos. 29 clientes de mantenimiento. Liderazgo de mercado establecido." data-he="11 מגורים + 5 מסחרי. סקייל מלא. $140K+/חודש הכנסות. 29 לקוחות תחזוקה. מובילות שוק מבוססת.">11 residential + 5 commercial. Full scale. $140K+/month revenue. 29 maintenance clients. Market leadership established.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARGIN ANALYSIS -->
+        <div class="section">
+            <div class="section-label" data-en="Margins" data-es="Márgenes" data-he="מרווחים">Margins</div>
+            <h2 data-en="Margin Analysis" data-es="Análisis de Márgenes" data-he="ניתוח מרווחים">Margin Analysis</h2>
+
+            <div class="table-wrapper">
+                <table class="pnl-table" style="min-width:600px">
+                    <thead>
+                        <tr>
+                            <th data-en="Metric" data-es="Métrica" data-he="מדד">Metric</th>
+                            <th data-en="Residential" data-es="Residencial" data-he="מגורים">Residential</th>
+                            <th data-en="Commercial" data-es="Comercial" data-he="מסחרי">Commercial</th>
+                            <th data-en="Maintenance" data-es="Mantenimiento" data-he="תחזוקה">Maintenance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-en="Avg Revenue" data-es="Ingreso Promedio" data-he="הכנסה ממוצעת">Avg Revenue</td>
+                            <td>$12,000</td>
+                            <td>$45,000</td>
+                            <td data-en="$100/mo" data-es="$100/mes" data-he="$100/חודש">$100/mo</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Gross Margin" data-es="Margen Bruto" data-he="מרווח גולמי">Gross Margin</td>
+                            <td>20%</td>
+                            <td>20%</td>
+                            <td>90%</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Gross Profit / Unit" data-es="Ganancia Bruta / Unidad" data-he="רווח גולמי / יחידה">Gross Profit / Unit</td>
+                            <td>$2,400</td>
+                            <td>$9,000</td>
+                            <td data-en="$90/mo" data-es="$90/mes" data-he="$90/חודש">$90/mo</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Year 1 Units" data-es="Unidades Año 1" data-he="יחידות שנה 1">Year 1 Units</td>
+                            <td>29</td>
+                            <td>10</td>
+                            <td data-en="29 clients (cumulative)" data-es="29 clientes (acumulado)" data-he="29 לקוחות (מצטבר)">29 clients (cumulative)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout">
+                <h3 data-en="Maintenance: The Compounding Engine" data-es="Mantenimiento: El Motor de Acumulación" data-he="תחזוקה: מנוע הצטברות">Maintenance: The Compounding Engine</h3>
+                <p data-en="While installation margins are solid at 20%, maintenance contracts at ~90% margin create predictable recurring revenue. By Month 12, maintenance alone generates $2,900/month — growing every month as new installations come online. This is the long-term value builder." data-es="Mientras los márgenes de instalación son sólidos al 20%, los contratos de mantenimiento con ~90% de margen crean ingresos recurrentes predecibles. Para el Mes 12, solo el mantenimiento genera $2,900/mes — creciendo cada mes con nuevas instalaciones. Este es el constructor de valor a largo plazo." data-he="בעוד מרווחי התקנה יציבים ב-20%, חוזי תחזוקה עם ~90% מרווח יוצרים הכנסה חוזרת צפויה. עד חודש 12, תחזוקה לבדה מייצרת $2,900/חודש — גדלה כל חודש עם התקנות חדשות. זה בונה הערך לטווח הארוך.">While installation margins are solid at 20%, maintenance contracts at ~90% margin create predictable recurring revenue. By Month 12, maintenance alone generates $2,900/month — growing every month as new installations come online. This is the long-term value builder.</p>
+            </div>
+        </div>
+
+        <!-- SCENARIOS -->
+        <div class="section">
+            <div class="section-label" data-en="Scenarios" data-es="Escenarios" data-he="תרחישים">Scenarios</div>
+            <h2 data-en="Scenario Analysis" data-es="Análisis de Escenarios" data-he="ניתוח תרחישים">Scenario Analysis</h2>
+
+            <div class="table-wrapper">
+                <table class="pnl-table" style="min-width:500px">
+                    <thead>
+                        <tr>
+                            <th data-en="Scenario" data-es="Escenario" data-he="תרחיש">Scenario</th>
+                            <th data-en="Revenue" data-es="Ingresos" data-he="הכנסות">Revenue</th>
+                            <th data-en="Net Profit" data-es="Ganancia Neta" data-he="רווח נקי">Net Profit</th>
+                            <th data-en="Break-Even" data-es="Punto de Equilibrio" data-he="נקודת איזון">Break-Even</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-en="Conservative" data-es="Conservador" data-he="שמרני">Conservative</td>
+                            <td>$400K</td>
+                            <td>$40K</td>
+                            <td data-en="Month 6" data-es="Mes 6" data-he="חודש 6">Month 6</td>
+                        </tr>
+                        <tr style="font-weight:600;background:var(--sand)">
+                            <td data-en="Base Case (shown above)" data-es="Caso Base (mostrado arriba)" data-he="תרחיש בסיס (מוצג למעלה)">Base Case (shown above)</td>
+                            <td>$811K</td>
+                            <td>$10.9K</td>
+                            <td data-en="Month 4" data-es="Mes 4" data-he="חודש 4">Month 4</td>
+                        </tr>
+                        <tr>
+                            <td data-en="Optimistic" data-es="Optimista" data-he="אופטימי">Optimistic</td>
+                            <td>$1.2M+</td>
+                            <td>$200K+</td>
+                            <td data-en="Month 3" data-es="Mes 3" data-he="חודש 3">Month 3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COST BREAKDOWN -->
+        <div class="section">
+            <div class="section-label" data-en="Cost Structure" data-es="Estructura de Costos" data-he="מבנה עלויות">Cost Structure</div>
+            <h2 data-en="Where the Money Goes" data-es="A Dónde Va el Dinero" data-he="לאן הולך הכסף">Where the Money Goes</h2>
+
+            <div class="card-grid">
+                <div class="card" style="border-left:4px solid var(--green)">
+                    <h4 data-en="Equipment — 60%" data-es="Equipos — 60%" data-he="ציוד — 60%">Equipment — 60%</h4>
+                    <p data-en="Panels (LONGi, Jinko, Trina), inverters (Huawei SUN2000), mounting systems, cables. Imported via Colón Free Zone. Ley 417 eliminates import duties and VAT." data-es="Paneles (LONGi, Jinko, Trina), inversores (Huawei SUN2000), sistemas de montaje, cables. Importados vía Zona Libre de Colón. Ley 417 elimina aranceles de importación e IVA." data-he="פאנלים (LONGi, Jinko, Trina), ממירים (Huawei SUN2000), מערכות הרכבה, כבלים. מיובאים דרך אזור החופשי קולון. חוק 417 מבטל מכסים ומע״מ.">Panels (LONGi, Jinko, Trina), inverters (Huawei SUN2000), mounting systems, cables. Imported via Colón Free Zone. Ley 417 eliminates import duties and VAT.</p>
+                </div>
+                <div class="card" style="border-left:4px solid var(--gold)">
+                    <h4 data-en="Labor — 20%" data-es="Mano de Obra — 20%" data-he="עבודה — 20%">Labor — 20%</h4>
+                    <p data-en="Installation crew, electrical work, structural mounting. Initially subcontracted, transitioning to in-house team by Month 6." data-es="Equipo de instalación, trabajo eléctrico, montaje estructural. Inicialmente subcontratado, transición a equipo interno para el Mes 6." data-he="צוות התקנה, עבודות חשמל, הרכבה מבנית. בתחילה בקבלנות משנה, מעבר לצוות פנימי עד חודש 6.">Installation crew, electrical work, structural mounting. Initially subcontracted, transitioning to in-house team by Month 6.</p>
+                </div>
+                <div class="card" style="border-left:4px solid var(--ash)">
+                    <h4 data-en="Marketing — 10%" data-es="Marketing — 10%" data-he="שיווק — 10%">Marketing — 10%</h4>
+                    <p data-en="Facebook/Instagram ads (Azuero targeting), Google Business Profile, content creation, referral bonuses. Zero digital competition = low CPA." data-es="Anuncios Facebook/Instagram (targeting Azuero), Google Business Profile, creación de contenido, bonificaciones por referidos. Cero competencia digital = CPA bajo." data-he="מודעות פייסבוק/אינסטגרם (מיקוד אזוארו), Google Business Profile, יצירת תוכן, בונוסי הפניות. אפס תחרות דיגיטלית = CPA נמוך.">Facebook/Instagram ads (Azuero targeting), Google Business Profile, content creation, referral bonuses. Zero digital competition = low CPA.</p>
+                </div>
+                <div class="card" style="border-left:4px solid var(--mist)">
+                    <h4 data-en="Overhead — 10%" data-es="Gastos Generales — 10%" data-he="תקורה — 10%">Overhead — 10%</h4>
+                    <p data-en="Vehicle, insurance, tools, office costs, ASEP licensing, professional certifications, accounting." data-es="Vehículo, seguro, herramientas, costos de oficina, licencia ASEP, certificaciones profesionales, contabilidad." data-he="רכב, ביטוח, כלים, עלויות משרד, רישוי ASEP, הסמכות מקצועיות, הנהלת חשבונות.">Vehicle, insurance, tools, office costs, ASEP licensing, professional certifications, accounting.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="page-footer">
+        <p>© 2026 Solaris Energy Panama — KANIEL TORD LLC</p>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const val = el.getAttribute('data-' + lang);
+                if (val) el.innerHTML = val;
+            });
+        }
+    </script>
+</body>
+</html>

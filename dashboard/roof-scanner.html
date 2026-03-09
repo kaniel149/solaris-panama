@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roof Assessment Guide — Solaris Energy Panama</title>
+    <meta name="description" content="Comprehensive roof assessment guide for solar installations in Panama. Roof types, orientation, shading analysis, and system sizing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+        /* Lang Toggle */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; background: var(--green); border-radius: var(--radius-pill); padding: 4px; box-shadow: var(--shadow-elevated); }
+        .lang-btn { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: var(--radius-pill); transition: all 0.3s; letter-spacing: 0.08em; }
+        .lang-btn.active { background: var(--gold); color: var(--green); }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* Nav */
+        .top-nav { background: var(--green); padding: 14px 32px; display: flex; align-items: center; gap: 16px; }
+        .top-nav a { color: var(--gold); text-decoration: none; font-weight: 600; font-size: 14px; transition: opacity 0.2s; }
+        .top-nav a:hover { opacity: 0.8; }
+        .top-nav .sep { color: rgba(255,255,255,0.3); }
+        .top-nav .current { color: var(--pearl); }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%); padding: 80px 32px 60px; text-align: center; color: var(--pearl); }
+        .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: 12px; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { font-size: 1.1rem; opacity: 0.85; max-width: 650px; margin: 0 auto; }
+
+        /* Content */
+        .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Section */
+        .section-card {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+        .section-header {
+            background: var(--green);
+            color: var(--pearl);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .section-header .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 1.3rem; }
+        .section-body { padding: 28px; }
+        .section-body p { margin-bottom: 16px; color: var(--slate); }
+        .section-body h3 { color: var(--green); margin-bottom: 10px; font-size: 1.1rem; }
+        .section-body h4 { font-family: 'DM Sans', sans-serif; font-weight: 700; color: var(--charcoal); margin: 16px 0 8px; font-size: 15px; }
+
+        /* Lists */
+        .check-list { list-style: none; padding: 0; }
+        .check-list li {
+            padding: 10px 0 10px 32px;
+            position: relative;
+            border-bottom: 1px solid var(--cloud);
+            color: var(--slate);
+        }
+        .check-list li:last-child { border-bottom: none; }
+        .check-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Steps */
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .step-num {
+            width: 36px;
+            height: 36px;
+            background: var(--green);
+            color: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-content strong { color: var(--charcoal); }
+        .step-content p { margin: 4px 0 0; font-size: 14px; color: var(--ash); }
+
+        /* Roof Type Cards */
+        .roof-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+        .roof-type {
+            background: var(--cloud);
+            border-radius: var(--radius-btn);
+            padding: 20px;
+            border-left: 4px solid var(--gold);
+        }
+        .roof-type h4 { margin: 0 0 8px; color: var(--green); font-family: 'Playfair Display', serif; }
+        .roof-type .rating { display: flex; gap: 2px; margin: 8px 0; }
+        .roof-type .rating span { color: var(--gold); font-size: 16px; }
+        .roof-type p { font-size: 13px; color: var(--slate); margin: 0; }
+
+        /* Orientation diagram */
+        .orientation-box {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 28px;
+            text-align: center;
+            margin: 16px 0;
+        }
+        .compass {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid var(--green);
+            margin: 16px auto;
+            position: relative;
+            background: white;
+        }
+        .compass-label {
+            position: absolute;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--green);
+        }
+        .compass-label.n { top: 8px; left: 50%; transform: translateX(-50%); }
+        .compass-label.s { bottom: 8px; left: 50%; transform: translateX(-50%); }
+        .compass-label.e { right: 8px; top: 50%; transform: translateY(-50%); }
+        .compass-label.w { left: 8px; top: 50%; transform: translateY(-50%); }
+        .compass-best {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 32px;
+            margin-top: -16px;
+            background: rgba(212, 168, 67, 0.3);
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* Sizing table */
+        .sizing-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        .sizing-table th, .sizing-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--mist); font-size: 14px; }
+        .sizing-table th { background: var(--green); color: var(--pearl); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .sizing-table tr:nth-child(even) { background: var(--cloud); }
+        .sizing-table td { color: var(--slate); }
+        .sizing-table .highlight-cell { color: var(--green); font-weight: 700; }
+
+        /* Photo guide */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0; }
+        .photo-item {
+            background: var(--cloud);
+            border-radius: var(--radius-btn);
+            padding: 20px;
+            text-align: center;
+        }
+        .photo-item .photo-icon { font-size: 36px; margin-bottom: 8px; }
+        .photo-item h4 { margin: 0 0 6px; font-size: 14px; color: var(--green); }
+        .photo-item p { font-size: 13px; color: var(--ash); margin: 0; }
+
+        /* CTA */
+        .cta-card {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .cta-card h3 { color: var(--green); margin-bottom: 8px; }
+        .cta-card p { color: var(--slate); margin-bottom: 20px; }
+        .wa-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .wa-btn:hover { background: #20BD5A; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,211,102,0.4); }
+        .wa-btn svg { width: 22px; height: 22px; fill: white; }
+
+        /* Footer */
+        .footer { background: var(--green); color: rgba(255,255,255,0.6); text-align: center; padding: 24px; font-size: 13px; }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* RTL */
+        [dir="rtl"] .check-list li { padding-left: 0; padding-right: 32px; }
+        [dir="rtl"] .check-list li::before { left: auto; right: 0; }
+        [dir="rtl"] .roof-type { border-left: none; border-right: 4px solid var(--gold); }
+        [dir="rtl"] .sizing-table th, [dir="rtl"] .sizing-table td { text-align: right; }
+        [dir="rtl"] .comparison-row .row-label { text-align: right; }
+
+        @media (max-width: 600px) {
+            .roof-types { grid-template-columns: 1fr; }
+            .photo-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">עב</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-i18n="nav_dashboard">Dashboard</a>
+        <span class="sep">›</span>
+        <span class="current" data-i18n="nav_roof">Roof Assessment</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 data-i18n="hero_title">Roof <span>Assessment Guide</span></h1>
+        <p data-i18n="hero_sub">A comprehensive guide to evaluating your roof for solar installation in Panama — from satellite analysis to structural assessment.</p>
+    </section>
+
+    <div class="content">
+
+        <!-- Section 1: Satellite Analysis -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">🛰</div>
+                <h2 data-i18n="s1_title">How Satellite Analysis Works</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s1_intro">Before a technician ever visits your property, we perform a detailed satellite assessment using aerial imagery. This gives us accurate measurements and a preliminary system design.</p>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <strong data-i18n="s1_step1_t">Locate Your Property</strong>
+                            <p data-i18n="s1_step1_d">Using Google Maps satellite view, we pinpoint your exact roof and property boundaries.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <strong data-i18n="s1_step2_t">Measure Roof Area</strong>
+                            <p data-i18n="s1_step2_d">We calculate usable roof area in square meters, excluding vents, skylights, and setback zones.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <strong data-i18n="s1_step3_t">Identify Obstructions</strong>
+                            <p data-i18n="s1_step3_d">Trees, neighboring buildings, water tanks, and antenna towers that could cast shadows are mapped.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-content">
+                            <strong data-i18n="s1_step4_t">Preliminary Layout</strong>
+                            <p data-i18n="s1_step4_d">Panel layout is drafted with optimal spacing, orientation, and access paths for maintenance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Roof Types -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">🏠</div>
+                <h2 data-i18n="s2_title">Roof Types in Panama</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s2_intro">Panama's tropical climate means specific roof materials dominate. Each type has different considerations for solar mounting.</p>
+                <div class="roof-types">
+                    <div class="roof-type">
+                        <h4 data-i18n="rt_galv_t">Galvanized Metal</h4>
+                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                        <p data-i18n="rt_galv_d">Most common in Panama. Excellent for solar — lightweight clamps attach directly to standing seams or through-bolt to purlins. Fast installation, no roof penetration needed for standing seam.</p>
+                    </div>
+                    <div class="roof-type">
+                        <h4 data-i18n="rt_stand_t">Standing Seam Metal</h4>
+                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                        <p data-i18n="rt_stand_d">Premium metal roofing. S-5! or similar clamps grip the seam — zero penetrations. Ideal for solar. Common on commercial buildings and upscale residential.</p>
+                    </div>
+                    <div class="roof-type">
+                        <h4 data-i18n="rt_conc_t">Concrete / Flat Roof</h4>
+                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span></div>
+                        <p data-i18n="rt_conc_d">Common in commercial and modern residential. Requires tilt mounting frames (5-10°). Chemical anchor bolts used. Must verify waterproofing membrane integrity.</p>
+                    </div>
+                    <div class="roof-type">
+                        <h4 data-i18n="rt_tile_t">Clay / Concrete Tile</h4>
+                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>☆</span><span>☆</span></div>
+                        <p data-i18n="rt_tile_d">Found in traditional and Spanish-style homes. Requires tile hooks and careful handling — tiles can crack. More labor-intensive. Structural assessment critical.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Orientation -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">🧭</div>
+                <h2 data-i18n="s3_title">Panel Orientation in the Tropics</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s3_intro">Panama sits at ~8°N latitude — nearly on the equator. This changes the optimal panel orientation compared to northern or southern hemisphere installations.</p>
+                <div class="orientation-box">
+                    <div class="compass">
+                        <span class="compass-label n">N</span>
+                        <span class="compass-label s">S</span>
+                        <span class="compass-label e">E</span>
+                        <span class="compass-label w">W</span>
+                        <div class="compass-best" data-i18n="compass_best">E ↔ W BEST</div>
+                    </div>
+                    <p style="margin-top:12px;color:var(--slate);font-size:14px;" data-i18n="s3_compass_note">Near the equator, the sun passes almost directly overhead. East-West orientation captures morning and afternoon sun evenly.</p>
+                </div>
+                <ul class="check-list">
+                    <li data-i18n="s3_l1"><strong>Near-flat is ideal:</strong> 5-10° tilt is optimal for Panama's latitude. Steeper roofs lose production.</li>
+                    <li data-i18n="s3_l2"><strong>East-West split:</strong> Spreading panels E-W on flat roofs gives more consistent generation throughout the day.</li>
+                    <li data-i18n="s3_l3"><strong>North or South facing:</strong> Both work well at 8°N — the difference is only 2-3% annually. Don't overthink it.</li>
+                    <li data-i18n="s3_l4"><strong>Avoid pure vertical walls:</strong> BIPV on walls loses 40%+ production at this latitude.</li>
+                    <li data-i18n="s3_l5"><strong>Rain drainage:</strong> Minimum 5° tilt recommended so tropical rain cleans panels naturally.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 4: Shading Analysis -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">🌳</div>
+                <h2 data-i18n="s4_title">Shading Analysis</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s4_intro">Even partial shading can significantly reduce solar output. In Panama, common shading sources include tropical trees, water tanks, and neighboring structures.</p>
+                <h3 data-i18n="s4_sources_t">Common Shading Sources in Panama</h3>
+                <ul class="check-list">
+                    <li data-i18n="s4_src1"><strong>Mango & almond trees:</strong> Large canopy, often close to houses. May need trimming or removal.</li>
+                    <li data-i18n="s4_src2"><strong>Palm trees:</strong> Thin trunk but tall — can cast long morning/evening shadows.</li>
+                    <li data-i18n="s4_src3"><strong>Neighboring buildings:</strong> Especially in urban areas. Check shadow patterns at 9 AM, noon, and 3 PM.</li>
+                    <li data-i18n="s4_src4"><strong>Water tanks (tinaco):</strong> Roof-mounted tanks are everywhere in Panama. May need relocation.</li>
+                    <li data-i18n="s4_src5"><strong>Satellite dishes & antennas:</strong> Small but close — can shade 1-2 panels significantly.</li>
+                    <li data-i18n="s4_src6"><strong>Power lines:</strong> Thin but cast moving shadows. Usually not critical unless directly over the roof.</li>
+                </ul>
+                <h3 data-i18n="s4_time_t">Time-of-Day Shadow Check</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num">☀</div>
+                        <div class="step-content">
+                            <strong data-i18n="s4_morning_t">Morning (7-9 AM)</strong>
+                            <p data-i18n="s4_morning_d">Check for objects to the east — trees, hills, buildings casting long westward shadows.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">☀</div>
+                        <div class="step-content">
+                            <strong data-i18n="s4_noon_t">Midday (11 AM-1 PM)</strong>
+                            <p data-i18n="s4_noon_d">Sun is nearly overhead. Only very close, tall objects cast shadows. Best production window.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">☀</div>
+                        <div class="step-content">
+                            <strong data-i18n="s4_afternoon_t">Afternoon (3-5 PM)</strong>
+                            <p data-i18n="s4_afternoon_d">Check for objects to the west. Afternoon production is important for peak-demand offset.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Structural Checklist -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">🔧</div>
+                <h2 data-i18n="s5_title">Structural Assessment Checklist</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s5_intro">A solar array adds 12-15 kg/m² of load. Most Panama roofs handle this easily, but verification is essential for safety and permitting.</p>
+                <ul class="check-list">
+                    <li data-i18n="s5_l1"><strong>Roof age:</strong> If galvanized metal is >15 years, check for rust and thinning. May need replacement before solar.</li>
+                    <li data-i18n="s5_l2"><strong>Purlin spacing:</strong> Standard 1.2m spacing supports panel clamps. Wider spacing may need additional rails.</li>
+                    <li data-i18n="s5_l3"><strong>Structural integrity:</strong> No sagging beams, cracked concrete, or rotting wood supports.</li>
+                    <li data-i18n="s5_l4"><strong>Wind load:</strong> Panama's Caribbean coast gets tropical storms. Verify mounting can handle 160 km/h winds per ASEP code.</li>
+                    <li data-i18n="s5_l5"><strong>Waterproofing:</strong> For concrete/flat roofs, verify membrane condition. Penetrations must be sealed with proper flashing.</li>
+                    <li data-i18n="s5_l6"><strong>Access:</strong> Ensure at least 1m walkway around array perimeter for maintenance and fire safety.</li>
+                    <li data-i18n="s5_l7"><strong>Electrical pathway:</strong> Route from roof to main electrical panel. Conduit path, junction box location, breaker space.</li>
+                    <li data-i18n="s5_l8"><strong>Ground mount option:</strong> If roof is unsuitable, ground-mounted systems are viable where land is available.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 6: Photo Upload Guide -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">📸</div>
+                <h2 data-i18n="s6_title">Photo Guide for Remote Assessment</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s6_intro">Can't wait for a site visit? Send us these photos via WhatsApp and we can start your assessment remotely.</p>
+                <div class="photo-grid">
+                    <div class="photo-item">
+                        <div class="photo-icon">🏠</div>
+                        <h4 data-i18n="ph1_t">Full Roof View</h4>
+                        <p data-i18n="ph1_d">Stand across the street. Capture the entire roof from the front.</p>
+                    </div>
+                    <div class="photo-item">
+                        <div class="photo-icon">📐</div>
+                        <h4 data-i18n="ph2_t">Roof Close-Up</h4>
+                        <p data-i18n="ph2_d">Material type, condition, any rust or damage visible.</p>
+                    </div>
+                    <div class="photo-item">
+                        <div class="photo-icon">⚡</div>
+                        <h4 data-i18n="ph3_t">Electrical Panel</h4>
+                        <p data-i18n="ph3_d">Main breaker panel — open door, show breakers and available space.</p>
+                    </div>
+                    <div class="photo-item">
+                        <div class="photo-icon">🔌</div>
+                        <h4 data-i18n="ph4_t">Meter Location</h4>
+                        <p data-i18n="ph4_d">ENSA/EDEMET meter — we need this for net metering application.</p>
+                    </div>
+                    <div class="photo-item">
+                        <div class="photo-icon">🌳</div>
+                        <h4 data-i18n="ph5_t">Surroundings</h4>
+                        <p data-i18n="ph5_d">Trees, nearby buildings — anything that could cast shadows on the roof.</p>
+                    </div>
+                    <div class="photo-item">
+                        <div class="photo-icon">📄</div>
+                        <h4 data-i18n="ph6_t">Latest Bill</h4>
+                        <p data-i18n="ph6_d">Photo of your most recent electricity bill showing kWh and amount.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: System Sizing Table -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="icon">📊</div>
+                <h2 data-i18n="s7_title">System Sizing Reference</h2>
+            </div>
+            <div class="section-body">
+                <p data-i18n="s7_intro">Based on Panama's average solar irradiance of 5.3 kWh/m²/day and 85% system efficiency. Using 550W panels (2.3m × 1.1m each).</p>
+                <div style="overflow-x:auto;">
+                    <table class="sizing-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="st_area">Roof Area (m²)</th>
+                                <th data-i18n="st_kwp">System (kWp)</th>
+                                <th data-i18n="st_panels">Panels</th>
+                                <th data-i18n="st_gen">Monthly Gen. (kWh)</th>
+                                <th data-i18n="st_savings">Est. Monthly Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>15-20</td><td>3.0</td><td>6</td><td>405</td><td class="highlight-cell">$73</td></tr>
+                            <tr><td>20-30</td><td>5.5</td><td>10</td><td>743</td><td class="highlight-cell">$134</td></tr>
+                            <tr><td>30-45</td><td>8.0</td><td>15</td><td>1,080</td><td class="highlight-cell">$194</td></tr>
+                            <tr><td>45-60</td><td>11.0</td><td>20</td><td>1,485</td><td class="highlight-cell">$267</td></tr>
+                            <tr><td>60-80</td><td>16.5</td><td>30</td><td>2,228</td><td class="highlight-cell">$401</td></tr>
+                            <tr><td>80-120</td><td>22.0</td><td>40</td><td>2,970</td><td class="highlight-cell">$534</td></tr>
+                            <tr><td>120+</td><td>33.0+</td><td>60+</td><td>4,455+</td><td class="highlight-cell">$802+</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:13px;color:var(--ash);margin-top:8px;" data-i18n="s7_note">* Savings calculated at $0.18/kWh residential rate. Actual production varies by orientation, shading, and equipment. Use our <a href="bill-scanner.html" style="color:var(--gold);">Bill Scanner</a> for a personalized calculation.</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-card">
+            <h3 data-i18n="cta_title">Ready for a Roof Assessment?</h3>
+            <p data-i18n="cta_sub">Send us your roof photos and electricity bill — we'll prepare a preliminary solar proposal within 24 hours.</p>
+            <a href="https://wa.me/50765831822?text=I'd%20like%20a%20roof%20assessment%20for%20solar%20installation" class="wa-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span data-i18n="cta_btn">Request Roof Assessment</span>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 <a href="index.html">Solaris Energy Panama</a>. <span data-i18n="footer_text">Professional solar installations in the Azuero Peninsula.</span></p>
+    </footer>
+
+    <script>
+        const i18n = {
+            en: {
+                nav_dashboard: 'Dashboard', nav_roof: 'Roof Assessment',
+                hero_title: 'Roof <span>Assessment Guide</span>',
+                hero_sub: 'A comprehensive guide to evaluating your roof for solar installation in Panama — from satellite analysis to structural assessment.',
+                s1_title: 'How Satellite Analysis Works',
+                s1_intro: 'Before a technician ever visits your property, we perform a detailed satellite assessment using aerial imagery. This gives us accurate measurements and a preliminary system design.',
+                s1_step1_t: 'Locate Your Property', s1_step1_d: 'Using Google Maps satellite view, we pinpoint your exact roof and property boundaries.',
+                s1_step2_t: 'Measure Roof Area', s1_step2_d: 'We calculate usable roof area in square meters, excluding vents, skylights, and setback zones.',
+                s1_step3_t: 'Identify Obstructions', s1_step3_d: 'Trees, neighboring buildings, water tanks, and antenna towers that could cast shadows are mapped.',
+                s1_step4_t: 'Preliminary Layout', s1_step4_d: 'Panel layout is drafted with optimal spacing, orientation, and access paths for maintenance.',
+                s2_title: 'Roof Types in Panama',
+                s2_intro: "Panama's tropical climate means specific roof materials dominate. Each type has different considerations for solar mounting.",
+                rt_galv_t: 'Galvanized Metal', rt_galv_d: 'Most common in Panama. Excellent for solar — lightweight clamps attach directly to standing seams or through-bolt to purlins. Fast installation, no roof penetration needed for standing seam.',
+                rt_stand_t: 'Standing Seam Metal', rt_stand_d: 'Premium metal roofing. S-5! or similar clamps grip the seam — zero penetrations. Ideal for solar. Common on commercial buildings and upscale residential.',
+                rt_conc_t: 'Concrete / Flat Roof', rt_conc_d: 'Common in commercial and modern residential. Requires tilt mounting frames (5-10°). Chemical anchor bolts used. Must verify waterproofing membrane integrity.',
+                rt_tile_t: 'Clay / Concrete Tile', rt_tile_d: 'Found in traditional and Spanish-style homes. Requires tile hooks and careful handling — tiles can crack. More labor-intensive. Structural assessment critical.',
+                s3_title: 'Panel Orientation in the Tropics',
+                s3_intro: "Panama sits at ~8°N latitude — nearly on the equator. This changes the optimal panel orientation compared to northern or southern hemisphere installations.",
+                compass_best: 'E ↔ W BEST',
+                s3_compass_note: 'Near the equator, the sun passes almost directly overhead. East-West orientation captures morning and afternoon sun evenly.',
+                s3_l1: '<strong>Near-flat is ideal:</strong> 5-10° tilt is optimal for Panama\'s latitude. Steeper roofs lose production.',
+                s3_l2: '<strong>East-West split:</strong> Spreading panels E-W on flat roofs gives more consistent generation throughout the day.',
+                s3_l3: '<strong>North or South facing:</strong> Both work well at 8°N — the difference is only 2-3% annually. Don\'t overthink it.',
+                s3_l4: '<strong>Avoid pure vertical walls:</strong> BIPV on walls loses 40%+ production at this latitude.',
+                s3_l5: '<strong>Rain drainage:</strong> Minimum 5° tilt recommended so tropical rain cleans panels naturally.',
+                s4_title: 'Shading Analysis',
+                s4_intro: "Even partial shading can significantly reduce solar output. In Panama, common shading sources include tropical trees, water tanks, and neighboring structures.",
+                s4_sources_t: 'Common Shading Sources in Panama',
+                s4_src1: '<strong>Mango & almond trees:</strong> Large canopy, often close to houses. May need trimming or removal.',
+                s4_src2: '<strong>Palm trees:</strong> Thin trunk but tall — can cast long morning/evening shadows.',
+                s4_src3: '<strong>Neighboring buildings:</strong> Especially in urban areas. Check shadow patterns at 9 AM, noon, and 3 PM.',
+                s4_src4: '<strong>Water tanks (tinaco):</strong> Roof-mounted tanks are everywhere in Panama. May need relocation.',
+                s4_src5: '<strong>Satellite dishes & antennas:</strong> Small but close — can shade 1-2 panels significantly.',
+                s4_src6: '<strong>Power lines:</strong> Thin but cast moving shadows. Usually not critical unless directly over the roof.',
+                s4_time_t: 'Time-of-Day Shadow Check',
+                s4_morning_t: 'Morning (7-9 AM)', s4_morning_d: 'Check for objects to the east — trees, hills, buildings casting long westward shadows.',
+                s4_noon_t: 'Midday (11 AM-1 PM)', s4_noon_d: 'Sun is nearly overhead. Only very close, tall objects cast shadows. Best production window.',
+                s4_afternoon_t: 'Afternoon (3-5 PM)', s4_afternoon_d: 'Check for objects to the west. Afternoon production is important for peak-demand offset.',
+                s5_title: 'Structural Assessment Checklist',
+                s5_intro: 'A solar array adds 12-15 kg/m² of load. Most Panama roofs handle this easily, but verification is essential for safety and permitting.',
+                s5_l1: '<strong>Roof age:</strong> If galvanized metal is >15 years, check for rust and thinning. May need replacement before solar.',
+                s5_l2: '<strong>Purlin spacing:</strong> Standard 1.2m spacing supports panel clamps. Wider spacing may need additional rails.',
+                s5_l3: '<strong>Structural integrity:</strong> No sagging beams, cracked concrete, or rotting wood supports.',
+                s5_l4: "<strong>Wind load:</strong> Panama's Caribbean coast gets tropical storms. Verify mounting can handle 160 km/h winds per ASEP code.",
+                s5_l5: '<strong>Waterproofing:</strong> For concrete/flat roofs, verify membrane condition. Penetrations must be sealed with proper flashing.',
+                s5_l6: '<strong>Access:</strong> Ensure at least 1m walkway around array perimeter for maintenance and fire safety.',
+                s5_l7: '<strong>Electrical pathway:</strong> Route from roof to main electrical panel. Conduit path, junction box location, breaker space.',
+                s5_l8: '<strong>Ground mount option:</strong> If roof is unsuitable, ground-mounted systems are viable where land is available.',
+                s6_title: 'Photo Guide for Remote Assessment',
+                s6_intro: "Can't wait for a site visit? Send us these photos via WhatsApp and we can start your assessment remotely.",
+                ph1_t: 'Full Roof View', ph1_d: 'Stand across the street. Capture the entire roof from the front.',
+                ph2_t: 'Roof Close-Up', ph2_d: 'Material type, condition, any rust or damage visible.',
+                ph3_t: 'Electrical Panel', ph3_d: 'Main breaker panel — open door, show breakers and available space.',
+                ph4_t: 'Meter Location', ph4_d: 'ENSA/EDEMET meter — we need this for net metering application.',
+                ph5_t: 'Surroundings', ph5_d: 'Trees, nearby buildings — anything that could cast shadows on the roof.',
+                ph6_t: 'Latest Bill', ph6_d: 'Photo of your most recent electricity bill showing kWh and amount.',
+                s7_title: 'System Sizing Reference',
+                s7_intro: "Based on Panama's average solar irradiance of 5.3 kWh/m²/day and 85% system efficiency. Using 550W panels (2.3m × 1.1m each).",
+                st_area: 'Roof Area (m²)', st_kwp: 'System (kWp)', st_panels: 'Panels', st_gen: 'Monthly Gen. (kWh)', st_savings: 'Est. Monthly Savings',
+                s7_note: '* Savings calculated at $0.18/kWh residential rate. Actual production varies by orientation, shading, and equipment. Use our <a href="bill-scanner.html" style="color:var(--gold);">Bill Scanner</a> for a personalized calculation.',
+                cta_title: 'Ready for a Roof Assessment?',
+                cta_sub: "Send us your roof photos and electricity bill — we'll prepare a preliminary solar proposal within 24 hours.",
+                cta_btn: 'Request Roof Assessment',
+                footer_text: 'Professional solar installations in the Azuero Peninsula.'
+            },
+            es: {
+                nav_dashboard: 'Panel', nav_roof: 'Evaluación de Techo',
+                hero_title: 'Guía de <span>Evaluación de Techo</span>',
+                hero_sub: 'Una guía completa para evaluar su techo para instalación solar en Panamá — desde análisis satelital hasta evaluación estructural.',
+                s1_title: 'Cómo Funciona el Análisis Satelital',
+                s1_intro: 'Antes de que un técnico visite su propiedad, realizamos una evaluación satelital detallada. Esto nos da mediciones precisas y un diseño preliminar.',
+                s1_step1_t: 'Localizar Su Propiedad', s1_step1_d: 'Usando la vista satelital de Google Maps, ubicamos su techo y los límites de su propiedad.',
+                s1_step2_t: 'Medir Área del Techo', s1_step2_d: 'Calculamos el área útil en metros cuadrados, excluyendo ventilaciones, tragaluces y zonas de retiro.',
+                s1_step3_t: 'Identificar Obstrucciones', s1_step3_d: 'Árboles, edificios vecinos, tanques de agua y antenas que podrían proyectar sombras.',
+                s1_step4_t: 'Diseño Preliminar', s1_step4_d: 'Se diseña la distribución de paneles con espaciado, orientación y accesos óptimos.',
+                s2_title: 'Tipos de Techo en Panamá',
+                s2_intro: 'El clima tropical de Panamá significa que ciertos materiales de techo predominan. Cada tipo tiene consideraciones diferentes para el montaje solar.',
+                rt_galv_t: 'Metal Galvanizado', rt_galv_d: 'El más común en Panamá. Excelente para solar — abrazaderas se fijan directamente a las costuras o se atornillan a las correas. Instalación rápida.',
+                rt_stand_t: 'Metal de Junta Alzada', rt_stand_d: 'Techado premium. Abrazaderas S-5! sujetan la junta — cero perforaciones. Ideal para solar. Común en edificios comerciales.',
+                rt_conc_t: 'Concreto / Techo Plano', rt_conc_d: 'Común en comercial y residencial moderno. Requiere marcos con inclinación (5-10°). Pernos de anclaje químico. Verificar impermeabilización.',
+                rt_tile_t: 'Teja de Barro / Concreto', rt_tile_d: 'En casas tradicionales y estilo español. Requiere ganchos para tejas y manejo cuidadoso. Evaluación estructural crítica.',
+                s3_title: 'Orientación de Paneles en los Trópicos',
+                s3_intro: 'Panamá está a ~8°N de latitud — casi en el ecuador. Esto cambia la orientación óptima de paneles comparado con instalaciones en hemisferios norte o sur.',
+                compass_best: 'E ↔ O MEJOR',
+                s3_compass_note: 'Cerca del ecuador, el sol pasa casi directamente sobre nosotros. La orientación Este-Oeste captura el sol de mañana y tarde uniformemente.',
+                s3_l1: '<strong>Casi plano es ideal:</strong> 5-10° de inclinación es óptimo para la latitud de Panamá.',
+                s3_l2: '<strong>División Este-Oeste:</strong> Distribuir paneles E-O en techos planos da generación más consistente durante el día.',
+                s3_l3: '<strong>Norte o Sur:</strong> Ambos funcionan bien a 8°N — la diferencia es solo 2-3% anualmente.',
+                s3_l4: '<strong>Evitar paredes verticales:</strong> BIPV en paredes pierde 40%+ de producción a esta latitud.',
+                s3_l5: '<strong>Drenaje de lluvia:</strong> Mínimo 5° de inclinación para que la lluvia tropical limpie los paneles naturalmente.',
+                s4_title: 'Análisis de Sombras',
+                s4_intro: 'Incluso la sombra parcial puede reducir significativamente la producción solar. En Panamá, las fuentes comunes incluyen árboles tropicales, tanques de agua y edificios vecinos.',
+                s4_sources_t: 'Fuentes Comunes de Sombra en Panamá',
+                s4_src1: '<strong>Árboles de mango y almendro:</strong> Dosel grande, frecuentemente cerca de casas. Pueden necesitar poda o remoción.',
+                s4_src2: '<strong>Palmeras:</strong> Tronco delgado pero altas — pueden proyectar sombras largas por la mañana y tarde.',
+                s4_src3: '<strong>Edificios vecinos:</strong> Especialmente en zonas urbanas. Revise patrones de sombra a las 9 AM, mediodía y 3 PM.',
+                s4_src4: '<strong>Tanques de agua (tinaco):</strong> Los tanques en el techo están en todas partes en Panamá. Pueden necesitar reubicación.',
+                s4_src5: '<strong>Antenas satelitales:</strong> Pequeñas pero cercanas — pueden dar sombra a 1-2 paneles significativamente.',
+                s4_src6: '<strong>Líneas eléctricas:</strong> Delgadas pero proyectan sombras móviles. Usualmente no críticas a menos que estén directamente sobre el techo.',
+                s4_time_t: 'Revisión de Sombras por Hora',
+                s4_morning_t: 'Mañana (7-9 AM)', s4_morning_d: 'Revise objetos al este — árboles, cerros, edificios que proyectan sombras largas hacia el oeste.',
+                s4_noon_t: 'Mediodía (11 AM-1 PM)', s4_noon_d: 'El sol está casi vertical. Solo objetos muy cercanos y altos proyectan sombras. Mejor ventana de producción.',
+                s4_afternoon_t: 'Tarde (3-5 PM)', s4_afternoon_d: 'Revise objetos al oeste. La producción vespertina es importante para compensar la demanda pico.',
+                s5_title: 'Lista de Verificación Estructural',
+                s5_intro: 'Un sistema solar agrega 12-15 kg/m² de carga. La mayoría de techos en Panamá lo manejan fácilmente, pero la verificación es esencial.',
+                s5_l1: '<strong>Edad del techo:</strong> Si el metal galvanizado tiene >15 años, revise oxidación. Puede necesitar reemplazo antes del solar.',
+                s5_l2: '<strong>Espaciado de correas:</strong> El estándar de 1.2m soporta abrazaderas. Espaciado mayor puede necesitar rieles adicionales.',
+                s5_l3: '<strong>Integridad estructural:</strong> Sin vigas combadas, concreto agrietado o soportes de madera podridos.',
+                s5_l4: '<strong>Carga de viento:</strong> La costa caribeña recibe tormentas tropicales. Verificar que el montaje soporte vientos de 160 km/h según código ASEP.',
+                s5_l5: '<strong>Impermeabilización:</strong> Para techos planos, verificar membrana. Las penetraciones deben sellarse con tapajuntas apropiados.',
+                s5_l6: '<strong>Acceso:</strong> Asegurar al menos 1m de pasillo alrededor del perímetro del sistema para mantenimiento.',
+                s5_l7: '<strong>Ruta eléctrica:</strong> Trayecto del techo al panel eléctrico principal. Ruta de conductos, ubicación de cajas, espacio en breakers.',
+                s5_l8: '<strong>Opción de montaje en suelo:</strong> Si el techo no es apto, sistemas en suelo son viables donde hay terreno disponible.',
+                s6_title: 'Guía de Fotos para Evaluación Remota',
+                s6_intro: '¿No puede esperar una visita? Envíenos estas fotos por WhatsApp y comenzamos su evaluación remotamente.',
+                ph1_t: 'Vista Completa del Techo', ph1_d: 'Párese al frente. Capture todo el techo desde la calle.',
+                ph2_t: 'Detalle del Techo', ph2_d: 'Tipo de material, condición, oxidación o daños visibles.',
+                ph3_t: 'Panel Eléctrico', ph3_d: 'Panel de breakers principal — puerta abierta, mostrando breakers y espacio disponible.',
+                ph4_t: 'Ubicación del Medidor', ph4_d: 'Medidor ENSA/EDEMET — necesario para la solicitud de medición neta.',
+                ph5_t: 'Alrededores', ph5_d: 'Árboles, edificios cercanos — cualquier cosa que proyecte sombra.',
+                ph6_t: 'Última Factura', ph6_d: 'Foto de su factura eléctrica más reciente mostrando kWh y monto.',
+                s7_title: 'Referencia de Dimensionamiento',
+                s7_intro: 'Basado en la irradiancia solar promedio de Panamá de 5.3 kWh/m²/día y 85% de eficiencia del sistema. Usando paneles de 550W.',
+                st_area: 'Área Techo (m²)', st_kwp: 'Sistema (kWp)', st_panels: 'Paneles', st_gen: 'Gen. Mensual (kWh)', st_savings: 'Ahorro Mensual Est.',
+                s7_note: '* Ahorros calculados a $0.18/kWh tarifa residencial. Use nuestro <a href="bill-scanner.html" style="color:var(--gold);">Escáner de Factura</a> para un cálculo personalizado.',
+                cta_title: '¿Listo para una Evaluación de Techo?',
+                cta_sub: 'Envíenos fotos de su techo y factura eléctrica — prepararemos una propuesta solar preliminar en 24 horas.',
+                cta_btn: 'Solicitar Evaluación de Techo',
+                footer_text: 'Instalaciones solares profesionales en la Península de Azuero.'
+            },
+            he: {
+                nav_dashboard: 'לוח בקרה', nav_roof: 'הערכת גג',
+                hero_title: 'מדריך <span>הערכת גג</span>',
+                hero_sub: 'מדריך מקיף להערכת הגג שלכם להתקנה סולארית בפנמה — מניתוח לוויני ועד הערכה מבנית.',
+                s1_title: 'כיצד פועל הניתוח הלוויני',
+                s1_intro: 'לפני שטכנאי מגיע לנכס, אנו מבצעים הערכה לוויינית מפורטת באמצעות תצלומי אוויר. זה נותן לנו מדידות מדויקות ותכנון מערכת ראשוני.',
+                s1_step1_t: 'איתור הנכס', s1_step1_d: 'באמצעות תצוגת הלוויין של Google Maps, אנו מאתרים את הגג והגבולות של הנכס.',
+                s1_step2_t: 'מדידת שטח הגג', s1_step2_d: 'אנו מחשבים שטח גג שמיש במטרים רבועים, לא כולל פתחי אוורור וצוהרים.',
+                s1_step3_t: 'זיהוי חסימות', s1_step3_d: 'עצים, בניינים שכנים, מכלי מים ואנטנות שעלולים להטיל צל.',
+                s1_step4_t: 'פריסה ראשונית', s1_step4_d: 'פריסת פאנלים מתוכננת עם ריווח, כיוון ונתיבי גישה אופטימליים לתחזוקה.',
+                s2_title: 'סוגי גגות בפנמה',
+                s2_intro: 'האקלים הטרופי של פנמה משמעו שחומרי גג מסוימים שולטים. לכל סוג שיקולים שונים להרכבה סולארית.',
+                rt_galv_t: 'מתכת מגולוונת', rt_galv_d: 'הנפוץ ביותר בפנמה. מצוין לסולאר — מהדקים קלים נצמדים ישירות לתפרים. התקנה מהירה.',
+                rt_stand_t: 'מתכת תפר עומד', rt_stand_d: 'גג מתכת פרימיום. מהדקי S-5! אוחזים בתפר — אפס חדירות. אידיאלי לסולאר.',
+                rt_conc_t: 'בטון / גג שטוח', rt_conc_d: 'נפוץ במסחרי ומגורים מודרניים. דורש מסגרות הטיה (5-10°). יש לוודא שלמות איטום.',
+                rt_tile_t: 'רעפי חרס / בטון', rt_tile_d: 'בבתים מסורתיים בסגנון ספרדי. דורש ווי רעפים וטיפול זהיר. הערכה מבנית קריטית.',
+                s3_title: 'כיוון פאנלים באזור הטרופי',
+                s3_intro: 'פנמה נמצאת ב-~8°N — כמעט על קו המשווה. זה משנה את כיוון הפאנלים האופטימלי.',
+                compass_best: 'מזרח ↔ מערב הכי טוב',
+                s3_compass_note: 'קרוב לקו המשווה, השמש עוברת כמעט ישירות מעל. כיוון מזרח-מערב לוכד שמש בוקר וצהריים באופן שווה.',
+                s3_l1: '<strong>כמעט שטוח אידיאלי:</strong> הטיה של 5-10° אופטימלית לקו הרוחב של פנמה.',
+                s3_l2: '<strong>חלוקה מזרח-מערב:</strong> פריסת פאנלים מ-מ על גגות שטוחים נותנת ייצור עקבי יותר.',
+                s3_l3: '<strong>צפון או דרום:</strong> שניהם עובדים היטב ב-8°N — ההבדל רק 2-3% שנתי.',
+                s3_l4: '<strong>להימנע מקירות אנכיים:</strong> BIPV על קירות מפסיד 40%+ בייצור בקו רוחב זה.',
+                s3_l5: '<strong>ניקוז גשם:</strong> הטיה מינימלית של 5° מומלצת כדי שגשם טרופי ינקה פאנלים באופן טבעי.',
+                s4_title: 'ניתוח הצללה',
+                s4_intro: 'אפילו הצללה חלקית יכולה להפחית משמעותית את תפוקת הסולאר. בפנמה, מקורות הצללה נפוצים כוללים עצים טרופיים ומכלי מים.',
+                s4_sources_t: 'מקורות הצללה נפוצים בפנמה',
+                s4_src1: '<strong>עצי מנגו ושקד:</strong> חופה גדולה, לעתים קרובות קרובים לבתים. עשויים לדרוש גיזום.',
+                s4_src2: '<strong>דקלים:</strong> גזע דק אך גבוהים — יכולים להטיל צללים ארוכים בבוקר/ערב.',
+                s4_src3: '<strong>בניינים שכנים:</strong> במיוחד באזורים עירוניים. בדקו דפוסי צל ב-9 בבוקר, צהריים ו-3 אחה"צ.',
+                s4_src4: '<strong>מכלי מים:</strong> מכלים על הגג נמצאים בכל מקום בפנמה. עשויים לדרוש העברה.',
+                s4_src5: '<strong>צלחות לוויין ואנטנות:</strong> קטנות אך קרובות — יכולות להצליל 1-2 פאנלים משמעותית.',
+                s4_src6: '<strong>קווי חשמל:</strong> דקים אך מטילים צללים נעים. בדרך כלל לא קריטיים.',
+                s4_time_t: 'בדיקת צל לפי שעה',
+                s4_morning_t: 'בוקר (7-9)', s4_morning_d: 'בדקו עצמים במזרח — עצים, גבעות, בניינים שמטילים צללים ארוכים מערבה.',
+                s4_noon_t: 'צהריים (11-13)', s4_noon_d: 'השמש כמעט אנכית. רק עצמים קרובים מאוד מטילים צל. חלון הייצור הטוב ביותר.',
+                s4_afternoon_t: 'אחר הצהריים (15-17)', s4_afternoon_d: 'בדקו עצמים במערב. ייצור אחה"צ חשוב לקיזוז ביקוש שיא.',
+                s5_title: 'רשימת בדיקה מבנית',
+                s5_intro: 'מערכת סולארית מוסיפה 12-15 ק"ג/מ"ר. רוב הגגות בפנמה מתמודדים בקלות, אך אימות חיוני.',
+                s5_l1: '<strong>גיל הגג:</strong> אם מתכת מגולוונת מעל 15 שנה, בדקו חלודה. ייתכן צורך בהחלפה לפני סולאר.',
+                s5_l2: '<strong>ריווח גלמים:</strong> ריווח סטנדרטי של 1.2 מ\' תומך במהדקים. ריווח רחב יותר עשוי לדרוש מסילות.',
+                s5_l3: '<strong>שלמות מבנית:</strong> ללא קורות שוקעות, בטון סדוק או תמיכות עץ רקובות.',
+                s5_l4: '<strong>עומס רוח:</strong> חוף הקריביים מקבל סופות. ודאו שההרכבה מחזיקה ברוחות 160 קמ"ש לפי קוד ASEP.',
+                s5_l5: '<strong>איטום:</strong> לגגות שטוחים, ודאו מצב ממברנה. חדירות חייבות להיות אטומות.',
+                s5_l6: '<strong>גישה:</strong> ודאו לפחות 1 מ\' מעבר סביב המערכת לתחזוקה ובטיחות אש.',
+                s5_l7: '<strong>נתיב חשמלי:</strong> מסלול מהגג ללוח החשמל הראשי.',
+                s5_l8: '<strong>אפשרות הרכבה קרקעית:</strong> אם הגג לא מתאים, מערכות קרקעיות אפשריות כשיש קרקע.',
+                s6_title: 'מדריך צילום להערכה מרחוק',
+                s6_intro: 'לא יכולים לחכות לביקור? שלחו לנו תמונות אלה בוואטסאפ ונתחיל את ההערכה מרחוק.',
+                ph1_t: 'תצוגה מלאה של הגג', ph1_d: 'עמדו ממול. צלמו את כל הגג מהחזית.',
+                ph2_t: 'תקריב של הגג', ph2_d: 'סוג חומר, מצב, חלודה או נזק.',
+                ph3_t: 'לוח חשמל', ph3_d: 'לוח מפסקים ראשי — דלת פתוחה, מציג מפסקים ומקום פנוי.',
+                ph4_t: 'מיקום המונה', ph4_d: 'מונה ENSA/EDEMET — נדרש לבקשת מדידה נטו.',
+                ph5_t: 'סביבה', ph5_d: 'עצים, בניינים סמוכים — כל דבר שיכול להצליל.',
+                ph6_t: 'חשבון אחרון', ph6_d: 'צילום חשבון החשמל האחרון המציג קוט"ש וסכום.',
+                s7_title: 'טבלת התאמת גודל מערכת',
+                s7_intro: 'מבוסס על הקרנה סולארית ממוצעת בפנמה של 5.3 קוט"ש/מ"ר/יום ו-85% יעילות. פאנלים של 550W.',
+                st_area: 'שטח גג (מ"ר)', st_kwp: 'מערכת (kWp)', st_panels: 'פאנלים', st_gen: 'ייצור חודשי (קוט"ש)', st_savings: 'חיסכון חודשי מוערך',
+                s7_note: '* חיסכון מחושב ב-$0.18/קוט"ש תעריף ביתי. השתמשו ב<a href="bill-scanner.html" style="color:var(--gold);">סורק החשבון</a> לחישוב מותאם אישית.',
+                cta_title: 'מוכנים להערכת גג?',
+                cta_sub: 'שלחו לנו תמונות גג וחשבון חשמל — נכין הצעה סולארית ראשונית תוך 24 שעות.',
+                cta_btn: 'בקשת הערכת גג',
+                footer_text: 'התקנות סולאריות מקצועיות בחצי האי אסוארו.'
+            }
+        };
+
+        let currentLang = 'en';
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerHTML = i18n[lang][key];
+            });
+        }
+    </script>
+</body>
+</html>
