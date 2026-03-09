@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Scanner — Solaris Energy Panama</title>
+    <meta name="description" content="Analyze your electricity bill and discover how much you can save with solar in Panama. Interactive calculator with Ley 417 benefits.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0B3D2E;
+            --green-canopy: #14573F;
+            --gold: #D4A843;
+            --gold-aged: #B8912E;
+            --pearl: #FEFDFB;
+            --sand: #F5EFE0;
+            --charcoal: #1A1A1A;
+            --slate: #4A4A4A;
+            --ash: #8A8A8A;
+            --mist: #E8E4DC;
+            --cloud: #F9F7F3;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-card: 12px;
+            --radius-btn: 6px;
+            --radius-pill: 100px;
+            --red-savings: #C0392B;
+            --green-savings: #27AE60;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--charcoal);
+            background: var(--pearl);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: var(--green);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            box-shadow: var(--shadow-elevated);
+        }
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.3s;
+            letter-spacing: 0.08em;
+        }
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--green);
+        }
+        .lang-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+        /* ===== NAV BAR ===== */
+        .top-nav {
+            background: var(--green);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .top-nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .top-nav a:hover { opacity: 0.8; }
+        .top-nav .sep { color: rgba(255,255,255,0.3); }
+        .top-nav .current { color: var(--pearl); }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            padding: 80px 32px 60px;
+            text-align: center;
+            color: var(--pearl);
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            margin-bottom: 12px;
+        }
+        .hero h1 span { color: var(--gold); }
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== CALCULATOR SECTION ===== */
+        .calculator-section {
+            max-width: 900px;
+            margin: -30px auto 40px;
+            padding: 0 20px;
+        }
+        .calc-card {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-elevated);
+            overflow: hidden;
+        }
+        .calc-header {
+            background: var(--sand);
+            padding: 24px 32px;
+            border-bottom: 2px solid var(--mist);
+        }
+        .calc-header h2 {
+            font-size: 1.5rem;
+            color: var(--green);
+        }
+        .calc-body {
+            padding: 32px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--slate);
+        }
+        .form-group input, .form-group select {
+            padding: 12px 16px;
+            border: 2px solid var(--mist);
+            border-radius: var(--radius-btn);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            background: var(--cloud);
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: white;
+        }
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--ash);
+        }
+        .type-toggle {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--mist);
+            background: var(--cloud);
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--slate);
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .type-btn.active {
+            border-color: var(--green);
+            background: var(--green);
+            color: var(--pearl);
+        }
+        .calc-btn {
+            display: block;
+            width: 100%;
+            margin-top: 28px;
+            padding: 16px;
+            background: var(--gold);
+            color: var(--green);
+            border: none;
+            border-radius: var(--radius-btn);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.02em;
+        }
+        .calc-btn:hover {
+            background: var(--gold-aged);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ===== RESULTS ===== */
+        .results-section {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+        }
+        .results-section.visible { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .result-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-card);
+            border-top: 3px solid var(--gold);
+        }
+        .result-card .label {
+            font-size: 13px;
+            color: var(--ash);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .result-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .result-card .unit {
+            font-size: 14px;
+            color: var(--slate);
+        }
+        .result-card.highlight {
+            background: var(--green);
+            border-top-color: var(--gold);
+        }
+        .result-card.highlight .label { color: rgba(255,255,255,0.7); }
+        .result-card.highlight .value { color: var(--gold); }
+        .result-card.highlight .unit { color: rgba(255,255,255,0.8); }
+
+        /* ===== COMPARISON TABLE ===== */
+        .comparison-card {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+        }
+        .comparison-header div {
+            padding: 16px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .comparison-header .col-label { background: var(--sand); color: var(--slate); }
+        .comparison-header .col-before { background: var(--red-savings); color: white; }
+        .comparison-header .col-after { background: var(--green-savings); color: white; }
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+            border-bottom: 1px solid var(--mist);
+        }
+        .comparison-row:last-child { border-bottom: none; }
+        .comparison-row div {
+            padding: 14px 16px;
+            font-size: 15px;
+        }
+        .comparison-row .row-label { font-weight: 600; color: var(--slate); text-align: left; padding-left: 24px; }
+
+        /* ===== 25-YEAR PROJECTION ===== */
+        .projection-card {
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        .projection-card h3 {
+            color: var(--green);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        .projection-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .projection-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .projection-bar .year-label {
+            width: 60px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .projection-bar .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--cloud);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .projection-bar .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: 4px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+        .projection-bar .bar-fill span {
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ===== LEY 417 ===== */
+        .ley-card {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-canopy) 100%);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            color: var(--pearl);
+            margin-bottom: 32px;
+        }
+        .ley-card h3 {
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+        .ley-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .ley-card li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        .ley-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ===== WHATSAPP CTA ===== */
+        .whatsapp-cta {
+            background: var(--sand);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .whatsapp-cta h3 {
+            color: var(--green);
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+        .whatsapp-cta p {
+            color: var(--slate);
+            margin-bottom: 20px;
+        }
+        .wa-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .wa-btn:hover {
+            background: #20BD5A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+        }
+        .wa-btn svg { width: 22px; height: 22px; fill: white; }
+
+        /* ===== RATE INFO SECTION ===== */
+        .info-section {
+            max-width: 900px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 700px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
+        .info-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+        }
+        .info-card h3 {
+            color: var(--green);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        .info-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .info-card th, .info-card td {
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--mist);
+        }
+        .info-card th {
+            font-weight: 700;
+            color: var(--green);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .info-card td { color: var(--slate); }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--green);
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* ===== RTL ===== */
+        [dir="rtl"] .comparison-row .row-label { text-align: right; padding-left: 16px; padding-right: 24px; }
+        [dir="rtl"] .projection-bar .year-label { text-align: left; }
+        [dir="rtl"] .ley-card li { padding-left: 0; padding-right: 28px; }
+        [dir="rtl"] .ley-card li::before { left: auto; right: 0; }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">עב</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" data-i18n="nav_dashboard">Dashboard</a>
+        <span class="sep">›</span>
+        <span class="current" data-i18n="nav_bill">Bill Scanner</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 data-i18n="hero_title">Electricity <span>Bill Scanner</span></h1>
+        <p data-i18n="hero_sub">Enter your electricity bill details and discover how much you can save with solar energy in Panama.</p>
+    </section>
+
+    <!-- Calculator -->
+    <section class="calculator-section">
+        <div class="calc-card">
+            <div class="calc-header">
+                <h2 data-i18n="calc_title">Your Electricity Details</h2>
+            </div>
+            <div class="calc-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label data-i18n="label_kwh">Monthly Consumption (kWh)</label>
+                        <input type="number" id="inputKwh" placeholder="e.g. 800" min="0" step="10">
+                        <span class="hint" data-i18n="hint_kwh">Find this on your ENSA/EDEMET bill</span>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_bill">Monthly Bill Amount (USD)</label>
+                        <input type="number" id="inputBill" placeholder="e.g. 150" min="0" step="1">
+                        <span class="hint" data-i18n="hint_bill">Total amount on your electricity bill</span>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_distributor">Electricity Distributor</label>
+                        <select id="inputDistributor">
+                            <option value="ENSA">ENSA (Naturgy) — Most of Panama</option>
+                            <option value="EDEMET">EDEMET — Western Panama City</option>
+                            <option value="EDECHI">EDECHI — Chiriquí, Bocas del Toro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_type">Customer Type</label>
+                        <div class="type-toggle">
+                            <button class="type-btn active" onclick="setType('residential', this)" data-i18n="type_res">Residential</button>
+                            <button class="type-btn" onclick="setType('commercial', this)" data-i18n="type_com">Commercial</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calculate()" data-i18n="btn_calculate">Analyze My Bill</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section class="results-section" id="resultsSection">
+        <!-- Summary Cards -->
+        <div class="results-grid" id="resultsGrid">
+            <div class="result-card">
+                <div class="label" data-i18n="res_rate">Effective Rate</div>
+                <div class="value" id="resRate">—</div>
+                <div class="unit" data-i18n="res_rate_unit">USD / kWh</div>
+            </div>
+            <div class="result-card">
+                <div class="label" data-i18n="res_system">Recommended System</div>
+                <div class="value" id="resSystem">—</div>
+                <div class="unit">kWp</div>
+            </div>
+            <div class="result-card">
+                <div class="label" data-i18n="res_panels">Panels Needed</div>
+                <div class="value" id="resPanels">—</div>
+                <div class="unit" data-i18n="res_panels_unit">× 550W panels</div>
+            </div>
+            <div class="result-card highlight">
+                <div class="label" data-i18n="res_savings">Monthly Savings</div>
+                <div class="value" id="resSavings">—</div>
+                <div class="unit" data-i18n="res_savings_unit">USD / month</div>
+            </div>
+            <div class="result-card">
+                <div class="label" data-i18n="res_cost">Estimated System Cost</div>
+                <div class="value" id="resCost">—</div>
+                <div class="unit">USD</div>
+            </div>
+            <div class="result-card highlight">
+                <div class="label" data-i18n="res_payback">Payback Period</div>
+                <div class="value" id="resPayback">—</div>
+                <div class="unit" data-i18n="res_payback_unit">years</div>
+            </div>
+        </div>
+
+        <!-- Before / After Comparison -->
+        <div class="comparison-card">
+            <div class="comparison-header">
+                <div class="col-label" data-i18n="comp_metric">Metric</div>
+                <div class="col-before" data-i18n="comp_before">Without Solar</div>
+                <div class="col-after" data-i18n="comp_after">With Solar</div>
+            </div>
+            <div id="comparisonRows"></div>
+        </div>
+
+        <!-- 25-Year Projection -->
+        <div class="projection-card">
+            <h3 data-i18n="proj_title">25-Year Savings Projection</h3>
+            <div class="projection-bar-container" id="projectionBars"></div>
+        </div>
+
+        <!-- Ley 417 -->
+        <div class="ley-card">
+            <h3 data-i18n="ley_title">Ley 417 Tax Benefits (December 2023)</h3>
+            <ul>
+                <li data-i18n="ley_1">100% import duty exemption on solar equipment</li>
+                <li data-i18n="ley_2">100% ITBMS (7% VAT) exemption on panels, inverters, and batteries</li>
+                <li data-i18n="ley_3">5% selective consumption tax eliminated</li>
+                <li data-i18n="ley_4">Equipment effectively 12-15% cheaper than pre-Ley 417</li>
+                <li data-i18n="ley_5">Full investment deductible from income tax for businesses</li>
+                <li data-i18n="ley_6">Net metering up to 500 kW — excess credited on next bill</li>
+            </ul>
+        </div>
+
+        <!-- WhatsApp CTA -->
+        <div class="whatsapp-cta">
+            <h3 data-i18n="cta_title">Ready to Save on Your Electricity?</h3>
+            <p data-i18n="cta_sub">Share your results with our team for a personalized solar proposal.</p>
+            <a href="#" id="whatsappLink" class="wa-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span data-i18n="cta_btn">Send Results via WhatsApp</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Rate Info -->
+    <section class="info-section">
+        <div class="info-grid">
+            <div class="info-card">
+                <h3 data-i18n="info_rates_title">Panama Electricity Rates (2025-2026)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="th_segment">Segment</th>
+                            <th data-i18n="th_rate">Rate ($/kWh)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td data-i18n="rate_res">Residential ≤300 kWh</td><td>$0.180</td></tr>
+                        <tr><td data-i18n="rate_com">Commercial</td><td>$0.195</td></tr>
+                        <tr><td data-i18n="rate_high">High consumption >300 kWh</td><td>$0.195+</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-card">
+                <h3 data-i18n="info_dist_title">Distributors Coverage</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="th_dist">Distributor</th>
+                            <th data-i18n="th_area">Coverage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>ENSA (Naturgy)</td><td data-i18n="dist_ensa">Panama City, Azuero, most of country</td></tr>
+                        <tr><td>EDEMET</td><td data-i18n="dist_edemet">Western Panama City metro</td></tr>
+                        <tr><td>EDECHI</td><td data-i18n="dist_edechi">Chiriquí, Bocas del Toro</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 <a href="index.html">Solaris Energy Panama</a>. <span data-i18n="footer_text">Data based on ASEP published rates and Ley 417 provisions.</span></p>
+    </footer>
+
+    <script>
+        /* ===== I18N ===== */
+        const i18n = {
+            en: {
+                nav_dashboard: 'Dashboard', nav_bill: 'Bill Scanner',
+                hero_title: 'Electricity <span>Bill Scanner</span>',
+                hero_sub: 'Enter your electricity bill details and discover how much you can save with solar energy in Panama.',
+                calc_title: 'Your Electricity Details',
+                label_kwh: 'Monthly Consumption (kWh)', label_bill: 'Monthly Bill Amount (USD)',
+                label_distributor: 'Electricity Distributor', label_type: 'Customer Type',
+                hint_kwh: 'Find this on your ENSA/EDEMET bill', hint_bill: 'Total amount on your electricity bill',
+                type_res: 'Residential', type_com: 'Commercial',
+                btn_calculate: 'Analyze My Bill',
+                res_rate: 'Effective Rate', res_rate_unit: 'USD / kWh',
+                res_system: 'Recommended System', res_panels: 'Panels Needed', res_panels_unit: '× 550W panels',
+                res_savings: 'Monthly Savings', res_savings_unit: 'USD / month',
+                res_cost: 'Estimated System Cost', res_payback: 'Payback Period', res_payback_unit: 'years',
+                comp_metric: 'Metric', comp_before: 'Without Solar', comp_after: 'With Solar',
+                comp_monthly: 'Monthly Bill', comp_annual: 'Annual Cost', comp_5yr: '5-Year Cost', comp_co2: 'CO₂ / Year',
+                proj_title: '25-Year Savings Projection',
+                ley_title: 'Ley 417 Tax Benefits (December 2023)',
+                ley_1: '100% import duty exemption on solar equipment',
+                ley_2: '100% ITBMS (7% VAT) exemption on panels, inverters, and batteries',
+                ley_3: '5% selective consumption tax eliminated',
+                ley_4: 'Equipment effectively 12-15% cheaper than pre-Ley 417',
+                ley_5: 'Full investment deductible from income tax for businesses',
+                ley_6: 'Net metering up to 500 kW — excess credited on next bill',
+                cta_title: 'Ready to Save on Your Electricity?',
+                cta_sub: 'Share your results with our team for a personalized solar proposal.',
+                cta_btn: 'Send Results via WhatsApp',
+                info_rates_title: 'Panama Electricity Rates (2025-2026)',
+                th_segment: 'Segment', th_rate: 'Rate ($/kWh)',
+                rate_res: 'Residential ≤300 kWh', rate_com: 'Commercial', rate_high: 'High consumption >300 kWh',
+                info_dist_title: 'Distributors Coverage',
+                th_dist: 'Distributor', th_area: 'Coverage',
+                dist_ensa: 'Panama City, Azuero, most of country',
+                dist_edemet: 'Western Panama City metro',
+                dist_edechi: 'Chiriquí, Bocas del Toro',
+                footer_text: 'Data based on ASEP published rates and Ley 417 provisions.',
+                yr: 'Year'
+            },
+            es: {
+                nav_dashboard: 'Panel', nav_bill: 'Escáner de Factura',
+                hero_title: 'Escáner de <span>Factura Eléctrica</span>',
+                hero_sub: 'Ingrese los datos de su factura eléctrica y descubra cuánto puede ahorrar con energía solar en Panamá.',
+                calc_title: 'Datos de Su Electricidad',
+                label_kwh: 'Consumo Mensual (kWh)', label_bill: 'Monto Mensual (USD)',
+                label_distributor: 'Distribuidora Eléctrica', label_type: 'Tipo de Cliente',
+                hint_kwh: 'Encuéntrelo en su factura de ENSA/EDEMET', hint_bill: 'Monto total en su factura de luz',
+                type_res: 'Residencial', type_com: 'Comercial',
+                btn_calculate: 'Analizar Mi Factura',
+                res_rate: 'Tarifa Efectiva', res_rate_unit: 'USD / kWh',
+                res_system: 'Sistema Recomendado', res_panels: 'Paneles Necesarios', res_panels_unit: '× paneles de 550W',
+                res_savings: 'Ahorro Mensual', res_savings_unit: 'USD / mes',
+                res_cost: 'Costo Estimado del Sistema', res_payback: 'Período de Retorno', res_payback_unit: 'años',
+                comp_metric: 'Métrica', comp_before: 'Sin Solar', comp_after: 'Con Solar',
+                comp_monthly: 'Factura Mensual', comp_annual: 'Costo Anual', comp_5yr: 'Costo a 5 Años', comp_co2: 'CO₂ / Año',
+                proj_title: 'Proyección de Ahorros a 25 Años',
+                ley_title: 'Ley 417 Beneficios Fiscales (Diciembre 2023)',
+                ley_1: '100% exención de aranceles de importación en equipos solares',
+                ley_2: '100% exención de ITBMS (7% IVA) en paneles, inversores y baterías',
+                ley_3: 'Eliminado el impuesto selectivo de consumo del 5%',
+                ley_4: 'Equipos efectivamente 12-15% más baratos que antes de la Ley 417',
+                ley_5: 'Inversión total deducible del impuesto sobre la renta para empresas',
+                ley_6: 'Medición neta hasta 500 kW — excedentes acreditados en la próxima factura',
+                cta_title: '¿Listo para Ahorrar en su Electricidad?',
+                cta_sub: 'Comparta sus resultados con nuestro equipo para una propuesta solar personalizada.',
+                cta_btn: 'Enviar Resultados por WhatsApp',
+                info_rates_title: 'Tarifas Eléctricas de Panamá (2025-2026)',
+                th_segment: 'Segmento', th_rate: 'Tarifa ($/kWh)',
+                rate_res: 'Residencial ≤300 kWh', rate_com: 'Comercial', rate_high: 'Alto consumo >300 kWh',
+                info_dist_title: 'Cobertura de Distribuidoras',
+                th_dist: 'Distribuidora', th_area: 'Cobertura',
+                dist_ensa: 'Ciudad de Panamá, Azuero, la mayor parte del país',
+                dist_edemet: 'Oeste de la Ciudad de Panamá',
+                dist_edechi: 'Chiriquí, Bocas del Toro',
+                footer_text: 'Datos basados en tarifas publicadas por ASEP y disposiciones de la Ley 417.',
+                yr: 'Año'
+            },
+            he: {
+                nav_dashboard: 'לוח בקרה', nav_bill: 'סורק חשבון',
+                hero_title: 'סורק <span>חשבון חשמל</span>',
+                hero_sub: 'הזינו את פרטי חשבון החשמל שלכם וגלו כמה תוכלו לחסוך עם אנרגיה סולארית בפנמה.',
+                calc_title: 'פרטי החשמל שלכם',
+                label_kwh: 'צריכה חודשית (קוט"ש)', label_bill: 'סכום חשבון חודשי (דולר)',
+                label_distributor: 'חברת חשמל', label_type: 'סוג לקוח',
+                hint_kwh: 'מופיע בחשבון ENSA/EDEMET שלכם', hint_bill: 'הסכום הכולל בחשבון החשמל',
+                type_res: 'ביתי', type_com: 'מסחרי',
+                btn_calculate: 'נתח את החשבון שלי',
+                res_rate: 'תעריף אפקטיבי', res_rate_unit: 'דולר / קוט"ש',
+                res_system: 'מערכת מומלצת', res_panels: 'פאנלים נדרשים', res_panels_unit: '× פאנלים 550W',
+                res_savings: 'חיסכון חודשי', res_savings_unit: 'דולר / חודש',
+                res_cost: 'עלות מערכת משוערת', res_payback: 'תקופת החזר', res_payback_unit: 'שנים',
+                comp_metric: 'מדד', comp_before: 'ללא סולארי', comp_after: 'עם סולארי',
+                comp_monthly: 'חשבון חודשי', comp_annual: 'עלות שנתית', comp_5yr: 'עלות ל-5 שנים', comp_co2: 'CO₂ / שנה',
+                proj_title: 'תחזית חיסכון ל-25 שנה',
+                ley_title: 'חוק 417 הטבות מס (דצמבר 2023)',
+                ley_1: '100% פטור ממכס על ציוד סולארי',
+                ley_2: '100% פטור ממע"מ (7% ITBMS) על פאנלים, ממירים וסוללות',
+                ley_3: 'ביטול מס צריכה סלקטיבי של 5%',
+                ley_4: 'ציוד זול ב-12-15% בפועל לעומת לפני חוק 417',
+                ley_5: 'ההשקעה המלאה ניתנת לניכוי ממס הכנסה לעסקים',
+                ley_6: 'מדידה נטו עד 500 קילוואט — עודפים מזוכים בחשבון הבא',
+                cta_title: 'מוכנים לחסוך בחשמל?',
+                cta_sub: 'שתפו את התוצאות עם הצוות שלנו לקבלת הצעת מחיר סולארית מותאמת.',
+                cta_btn: 'שלח תוצאות בוואטסאפ',
+                info_rates_title: 'תעריפי חשמל בפנמה (2025-2026)',
+                th_segment: 'מגזר', th_rate: 'תעריף ($/קוט"ש)',
+                rate_res: 'ביתי ≤300 קוט"ש', rate_com: 'מסחרי', rate_high: 'צריכה גבוהה >300 קוט"ש',
+                info_dist_title: 'אזורי כיסוי מפיצים',
+                th_dist: 'מפיץ', th_area: 'כיסוי',
+                dist_ensa: 'פנמה סיטי, אסוארו, רוב המדינה',
+                dist_edemet: 'מערב פנמה סיטי',
+                dist_edechi: "צ'יריקי, בוקאס דל טורו",
+                footer_text: 'נתונים מבוססים על תעריפים שפורסמו ע"י ASEP והוראות חוק 417.',
+                yr: 'שנה'
+            }
+        };
+
+        let currentLang = 'en';
+        let customerType = 'residential';
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerHTML = i18n[lang][key];
+            });
+        }
+
+        function setType(type, btn) {
+            customerType = type;
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function calculate() {
+            const kwh = parseFloat(document.getElementById('inputKwh').value);
+            const bill = parseFloat(document.getElementById('inputBill').value);
+            const dist = document.getElementById('inputDistributor').value;
+
+            if (!kwh || kwh <= 0) { alert(currentLang === 'es' ? 'Ingrese su consumo en kWh' : currentLang === 'he' ? 'הזינו צריכה בקוט"ש' : 'Please enter your kWh consumption'); return; }
+            if (!bill || bill <= 0) { alert(currentLang === 'es' ? 'Ingrese el monto de su factura' : currentLang === 'he' ? 'הזינו סכום חשבון' : 'Please enter your bill amount'); return; }
+
+            const t = i18n[currentLang];
+
+            // Rates
+            const baseRate = customerType === 'commercial' ? 0.195 : 0.180;
+            const effectiveRate = bill / kwh;
+
+            // System sizing: Panama irradiance 5.3 kWh/m²/day, 85% system efficiency
+            const dailyKwh = kwh / 30;
+            const systemKwp = dailyKwh / (5.3 * 0.85);
+            const systemKwpRounded = Math.ceil(systemKwp * 2) / 2; // round up to nearest 0.5
+            const panelCount = Math.ceil((systemKwpRounded * 1000) / 550);
+
+            // Costs
+            const costPerWp = customerType === 'commercial' ? 1.10 : 1.20;
+            const systemCost = systemKwpRounded * 1000 * costPerWp;
+
+            // Savings (assume 90% offset)
+            const solarOffset = 0.90;
+            const monthlySavings = bill * solarOffset;
+            const annualSavings = monthlySavings * 12;
+            const paybackYears = systemCost / annualSavings;
+
+            // CO2: ~0.5 kg CO2/kWh for Panama grid
+            const annualCO2saved = (kwh * 12 * solarOffset * 0.5) / 1000; // tons
+
+            // Update results
+            document.getElementById('resRate').textContent = '$' + effectiveRate.toFixed(3);
+            document.getElementById('resSystem').textContent = systemKwpRounded.toFixed(1);
+            document.getElementById('resPanels').textContent = panelCount;
+            document.getElementById('resSavings').textContent = '$' + Math.round(monthlySavings);
+            document.getElementById('resCost').textContent = '$' + Math.round(systemCost).toLocaleString();
+            document.getElementById('resPayback').textContent = paybackYears.toFixed(1);
+
+            // Comparison
+            const afterMonthly = bill - monthlySavings;
+            const compRows = [
+                [t.comp_monthly, '$' + Math.round(bill), '$' + Math.round(afterMonthly)],
+                [t.comp_annual, '$' + Math.round(bill * 12).toLocaleString(), '$' + Math.round(afterMonthly * 12).toLocaleString()],
+                [t.comp_5yr, '$' + Math.round(bill * 60).toLocaleString(), '$' + Math.round(afterMonthly * 60).toLocaleString()],
+                [t.comp_co2, (kwh * 12 * 0.5 / 1000).toFixed(1) + ' t', ((kwh * 12 * (1 - solarOffset) * 0.5) / 1000).toFixed(1) + ' t']
+            ];
+            let compHTML = '';
+            compRows.forEach(r => {
+                compHTML += `<div class="comparison-row">
+                    <div class="row-label">${r[0]}</div>
+                    <div>${r[1]}</div>
+                    <div>${r[2]}</div>
+                </div>`;
+            });
+            document.getElementById('comparisonRows').innerHTML = compHTML;
+
+            // 25-year projection bars
+            const years = [1, 3, 5, 10, 15, 20, 25];
+            const maxSavings = annualSavings * 25 - systemCost; // net at 25
+            let projHTML = '';
+            years.forEach(yr => {
+                const cumSavings = annualSavings * yr - systemCost;
+                const net = Math.max(0, cumSavings);
+                const pct = Math.min(100, Math.max(5, (net / maxSavings) * 100));
+                const label = net > 0 ? '+$' + Math.round(net).toLocaleString() : '-$' + Math.abs(Math.round(cumSavings)).toLocaleString();
+                const color = cumSavings >= 0 ? 'var(--green)' : 'var(--red-savings)';
+                projHTML += `<div class="projection-bar">
+                    <div class="year-label">${t.yr} ${yr}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:${pct}%;background:${color}"><span>${label}</span></div>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('projectionBars').innerHTML = projHTML;
+
+            // WhatsApp link
+            const msg = encodeURIComponent(
+                `Solar Analysis Results:\n` +
+                `Consumption: ${kwh} kWh/month\n` +
+                `Current bill: $${bill}/month\n` +
+                `Distributor: ${dist}\n` +
+                `Recommended: ${systemKwpRounded} kWp (${panelCount} panels)\n` +
+                `Monthly savings: $${Math.round(monthlySavings)}\n` +
+                `Payback: ${paybackYears.toFixed(1)} years\n` +
+                `25-year net savings: $${Math.round(annualSavings * 25 - systemCost).toLocaleString()}\n\n` +
+                `I'd like a personalized solar proposal.`
+            );
+            document.getElementById('whatsappLink').href = `https://wa.me/50765831822?text=${msg}`;
+
+            // Show results
+            document.getElementById('resultsSection').classList.add('visible');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
