@@ -34,8 +34,9 @@ section{padding:64px 0}
 .alt-bg{background:var(--sand)}
 
 .asset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.asset-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;text-decoration:none;color:inherit;transition:all .4s;display:flex;flex-direction:column;gap:10px;cursor:pointer}
-.asset-card:hover{transform:translateY(-5px);box-shadow:0 8px 24px rgba(0,0,0,0.06);border-color:var(--gold)}
+a.asset-link{text-decoration:none;color:inherit;display:block;border-radius:12px;transition:transform .4s,box-shadow .4s}
+a.asset-link:hover .asset-card{transform:translateY(-4px);box-shadow:0 8px 24px rgba(11,61,46,0.12);border-color:var(--gold)}
+.asset-card{background:var(--pearl);border:1px solid var(--mist);border-radius:12px;padding:24px;color:inherit;transition:all .4s;display:flex;flex-direction:column;gap:10px;cursor:pointer;height:100%}
 .asset-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
 .asset-icon.research{background:rgba(20,87,63,.08)}
 .asset-icon.sales{background:rgba(212,168,67,.1)}
@@ -88,30 +89,38 @@ footer a{color:var(--gold);text-decoration:none}
         <h2 class="section-title reveal" data-en="Market Intelligence" data-es="Inteligencia de Mercado" data-he="מודיעין שוק">Market Intelligence</h2>
         <p class="section-desc reveal" data-en="Competitive landscape, regulations, and market data for the Azuero solar market." data-es="Panorama competitivo, regulaciones y datos de mercado para el mercado solar del Azuero." data-he="נוף תחרותי, רגולציה ונתוני שוק לשוק הסולארי באזוארו.">Competitive landscape, regulations, and market data for the Azuero solar market.</p>
         <div class="asset-grid reveal">
-            <div class="asset-card">
-                <div class="asset-icon research">🔍</div>
-                <h3 data-en="Competitor Analysis" data-es="Análisis de Competencia" data-he="ניתוח מתחרים">Competitor Analysis</h3>
-                <p data-en="Prodeo Azuero & enSight — their pricing, services, strengths, and weaknesses. How we differentiate." data-es="Prodeo Azuero y enSight — sus precios, servicios, fortalezas y debilidades. Cómo nos diferenciamos." data-he="Prodeo Azuero ו-enSight — תמחור, שירותים, חוזקות וחולשות. איך אנחנו נבדלים.">Prodeo Azuero & enSight — their pricing, services, strengths, and weaknesses. How we differentiate.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon research">⚖️</div>
-                <h3 data-en="Law 417 Summary" data-es="Resumen Ley 417" data-he="תקציר חוק 417">Law 417 Summary</h3>
-                <p data-en="Complete breakdown of Panama's Incentivos para Energía Solar law. Tax deductions, import exemptions, requirements." data-es="Desglose completo de la ley de Incentivos para Energía Solar de Panamá. Deducciones fiscales, exenciones, requisitos." data-he="פירוט מלא של חוק תמריצי אנרגיה סולארית בפנמה. ניכויי מס, פטורים מיבוא, דרישות.">Complete breakdown of Panama's Incentivos para Energía Solar law. Tax deductions, import exemptions, requirements.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon research">📊</div>
-                <h3 data-en="Market Size Report" data-es="Informe Tamaño de Mercado" data-he="דוח גודל שוק">Market Size Report</h3>
-                <p data-en="$50M+ addressable market in Azuero. Segment breakdown: residential, commercial, hospitality, agriculture." data-es="Mercado direccionable de $50M+ en Azuero. Desglose por segmento: residencial, comercial, hospitalidad, agricultura." data-he="שוק ניתן לפנייה של $50M+ באזוארו. פירוט לפי סגמנט: מגורים, מסחרי, אירוח, חקלאות.">$50M+ addressable market in Azuero. Segment breakdown: residential, commercial, hospitality, agriculture.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon research">🌍</div>
-                <h3 data-en="Solar Irradiance Data" data-es="Datos de Irradiación Solar" data-he="נתוני קרינת שמש">Solar Irradiance Data</h3>
-                <p data-en="5.3 peak sun hours daily. Monthly variation, rainy season impact, optimal panel orientation for Azuero." data-es="5.3 horas sol pico diarias. Variación mensual, impacto de temporada lluviosa, orientación óptima de paneles." data-he="5.3 שעות שיא שמש ביום. שונות חודשית, השפעת עונת הגשמים, כיוון אופטימלי לפאנלים באזוארו.">5.3 peak sun hours daily. Monthly variation, rainy season impact, optimal panel orientation for Azuero.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
+            <a href="strategy.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon research">🔍</div>
+                    <h3 data-en="Competitor Analysis" data-es="Análisis de Competencia" data-he="ניתוח מתחרים">Competitor Analysis</h3>
+                    <p data-en="Prodeo Azuero & enSight — their pricing, services, strengths, and weaknesses. How we differentiate." data-es="Prodeo Azuero y enSight — sus precios, servicios, fortalezas y debilidades. Cómo nos diferenciamos." data-he="Prodeo Azuero ו-enSight — תמחור, שירותים, חוזקות וחולשות. איך אנחנו נבדלים.">Prodeo Azuero & enSight — their pricing, services, strengths, and weaknesses. How we differentiate.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="licensing.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon research">⚖️</div>
+                    <h3 data-en="Law 417 Summary" data-es="Resumen Ley 417" data-he="תקציר חוק 417">Law 417 Summary</h3>
+                    <p data-en="Complete breakdown of Panama's Incentivos para Energía Solar law. Tax deductions, import exemptions, requirements." data-es="Desglose completo de la ley de Incentivos para Energía Solar de Panamá. Deducciones fiscales, exenciones, requisitos." data-he="פירוט מלא של חוק תמריצי אנרגיה סולארית בפנמה. ניכויי מס, פטורים מיבוא, דרישות.">Complete breakdown of Panama's Incentivos para Energía Solar law. Tax deductions, import exemptions, requirements.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="business-plan.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon research">📊</div>
+                    <h3 data-en="Market Size Report" data-es="Informe Tamaño de Mercado" data-he="דוח גודל שוק">Market Size Report</h3>
+                    <p data-en="$50M+ addressable market in Azuero. Segment breakdown: residential, commercial, hospitality, agriculture." data-es="Mercado direccionable de $50M+ en Azuero. Desglose por segmento: residencial, comercial, hospitalidad, agricultura." data-he="שוק ניתן לפנייה של $50M+ באזוארו. פירוט לפי סגמנט: מגורים, מסחרי, אירוח, חקלאות.">$50M+ addressable market in Azuero. Segment breakdown: residential, commercial, hospitality, agriculture.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="bill-scanner.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon research">🌍</div>
+                    <h3 data-en="Solar Irradiance Data" data-es="Datos de Irradiación Solar" data-he="נתוני קרינת שמש">Solar Irradiance Data</h3>
+                    <p data-en="5.3 peak sun hours daily. Monthly variation, rainy season impact, optimal panel orientation for Azuero." data-es="5.3 horas sol pico diarias. Variación mensual, impacto de temporada lluviosa, orientación óptima de paneles." data-he="5.3 שעות שיא שמש ביום. שונות חודשית, השפעת עונת הגשמים, כיוון אופטימלי לפאנלים באזוארו.">5.3 peak sun hours daily. Monthly variation, rainy season impact, optimal panel orientation for Azuero.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
@@ -123,36 +132,46 @@ footer a{color:var(--gold);text-decoration:none}
         <h2 class="section-title reveal" data-en="Sales & Marketing Tools" data-es="Herramientas de Ventas y Marketing" data-he="כלי מכירות ושיווק">Sales & Marketing Tools</h2>
         <p class="section-desc reveal" data-en="Ad creatives, outreach scripts, lead magnets, and sales collateral." data-es="Creatividades publicitarias, guiones de contacto, lead magnets y material de ventas." data-he="קריאייטיבים לפרסום, סקריפטים להסברה, ליד מגנטים וחומרי מכירות.">Ad creatives, outreach scripts, lead magnets, and sales collateral.</p>
         <div class="asset-grid reveal">
-            <div class="asset-card">
-                <div class="asset-icon sales">📣</div>
-                <h3 data-en="Ad Creatives" data-es="Creatividades Publicitarias" data-he="קריאייטיבים">Ad Creatives</h3>
-                <p data-en="Facebook, Instagram, and Google ad sets. English & Spanish versions. Targeting by persona." data-es="Conjuntos de anuncios para Facebook, Instagram y Google. Versiones en inglés y español. Segmentación por persona." data-he="סטים לפייסבוק, אינסטגרם וגוגל. גרסאות אנגלית וספרדית. טרגוט לפי פרסונה.">Facebook, Instagram, and Google ad sets. English & Spanish versions. Targeting by persona.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon sales">📧</div>
-                <h3 data-en="Outreach Sequences" data-es="Secuencias de Contacto" data-he="סדרות הסברה">Outreach Sequences</h3>
-                <p data-en="Cold email + WhatsApp templates for each persona. Follow-up cadence and objection handlers." data-es="Plantillas de email frío + WhatsApp para cada persona. Cadencia de seguimiento y manejo de objeciones." data-he="תבניות מייל קר + WhatsApp לכל פרסונה. מקצב פולו-אפ וטיפול בהתנגדויות.">Cold email + WhatsApp templates for each persona. Follow-up cadence and objection handlers.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon sales">🧲</div>
-                <h3 data-en="Lead Magnets" data-es="Lead Magnets" data-he="ליד מגנטים">Lead Magnets</h3>
-                <p data-en="'How Much Can You Save?' calculator. 'Law 417 Tax Guide' PDF. 'Solar ROI for Hotels' whitepaper." data-es="Calculadora '¿Cuánto puede ahorrar?'. PDF 'Guía Fiscal Ley 417'. Whitepaper 'ROI Solar para Hoteles'." data-he="מחשבון 'כמה תחסוך?'. PDF 'מדריך מס חוק 417'. וייטפייפר 'ROI סולארי למלונות'.">How Much Can You Save? calculator. Law 417 Tax Guide PDF. Solar ROI for Hotels whitepaper.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon sales">🎯</div>
-                <h3 data-en="Sales Deck" data-es="Presentación de Ventas" data-he="מצגת מכירות">Sales Deck</h3>
-                <p data-en="10-slide premium presentation. ROI focused. Bilingual. Includes case study from Tipi POC." data-es="Presentación premium de 10 diapositivas. Enfoque en ROI. Bilingüe. Incluye caso de estudio del POC Tipi." data-he="מצגת פרימיום של 10 שקופיות. מוכוונת ROI. דו-לשונית. כולל תיאור מקרה מ-Tipi POC.">10-slide premium presentation. ROI focused. Bilingual. Includes case study from Tipi POC.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon sales">🌐</div>
-                <h3 data-en="Website Content" data-es="Contenido del Sitio Web" data-he="תוכן אתר">Website Content</h3>
-                <p data-en="solaris-panama.com pages: home, services, about, law-417, contact. SEO-optimized. EN/ES." data-es="Páginas de solaris-panama.com: inicio, servicios, nosotros, ley-417, contacto. Optimizado para SEO. EN/ES." data-he="דפי solaris-panama.com: בית, שירותים, אודות, חוק-417, צור קשר. אופטימיזציית SEO. EN/ES.">solaris-panama.com pages: home, services, about, law-417, contact. SEO-optimized. EN/ES.</p>
-                <span class="asset-tag tag-planned" data-en="PLANNED" data-es="PLANIFICADO" data-he="מתוכנן">PLANNED</span>
-            </div>
+            <a href="ads-dashboard.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon sales">📣</div>
+                    <h3 data-en="Ad Creatives" data-es="Creatividades Publicitarias" data-he="קריאייטיבים">Ad Creatives</h3>
+                    <p data-en="Facebook, Instagram, and Google ad sets. English & Spanish versions. Targeting by persona." data-es="Conjuntos de anuncios para Facebook, Instagram y Google. Versiones en inglés y español. Segmentación por persona." data-he="סטים לפייסבוק, אינסטגרם וגוגל. גרסאות אנגלית וספרדית. טרגוט לפי פרסונה.">Facebook, Instagram, and Google ad sets. English & Spanish versions. Targeting by persona.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="sales-marketing.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon sales">📧</div>
+                    <h3 data-en="Outreach Sequences" data-es="Secuencias de Contacto" data-he="סדרות הסברה">Outreach Sequences</h3>
+                    <p data-en="Cold email + WhatsApp templates for each persona. Follow-up cadence and objection handlers." data-es="Plantillas de email frío + WhatsApp para cada persona. Cadencia de seguimiento y manejo de objeciones." data-he="תבניות מייל קר + WhatsApp לכל פרסונה. מקצב פולו-אפ וטיפול בהתנגדויות.">Cold email + WhatsApp templates for each persona. Follow-up cadence and objection handlers.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="bill-scanner.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon sales">🧲</div>
+                    <h3 data-en="Lead Magnets" data-es="Lead Magnets" data-he="ליד מגנטים">Lead Magnets</h3>
+                    <p data-en="'How Much Can You Save?' calculator. 'Law 417 Tax Guide' PDF. 'Solar ROI for Hotels' whitepaper." data-es="Calculadora '¿Cuánto puede ahorrar?'. PDF 'Guía Fiscal Ley 417'. Whitepaper 'ROI Solar para Hoteles'." data-he="מחשבון 'כמה תחסוך?'. PDF 'מדריך מס חוק 417'. וייטפייפר 'ROI סולארי למלונות'.">How Much Can You Save? calculator. Law 417 Tax Guide PDF. Solar ROI for Hotels whitepaper.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="proposal.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon sales">🎯</div>
+                    <h3 data-en="Sales Deck" data-es="Presentación de Ventas" data-he="מצגת מכירות">Sales Deck</h3>
+                    <p data-en="10-slide premium presentation. ROI focused. Bilingual. Includes case study from Tipi POC." data-es="Presentación premium de 10 diapositivas. Enfoque en ROI. Bilingüe. Incluye caso de estudio del POC Tipi." data-he="מצגת פרימיום של 10 שקופיות. מוכוונת ROI. דו-לשונית. כולל תיאור מקרה מ-Tipi POC.">10-slide premium presentation. ROI focused. Bilingual. Includes case study from Tipi POC.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="https://solaris-panama.com" target="_blank" rel="noopener" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon sales">🌐</div>
+                    <h3 data-en="Website Content" data-es="Contenido del Sitio Web" data-he="תוכן אתר">Website Content</h3>
+                    <p data-en="solaris-panama.com pages: home, services, about, law-417, contact. SEO-optimized. EN/ES." data-es="Páginas de solaris-panama.com: inicio, servicios, nosotros, ley-417, contacto. Optimizado para SEO. EN/ES." data-he="דפי solaris-panama.com: בית, שירותים, אודות, חוק-417, צור קשר. אופטימיזציית SEO. EN/ES.">solaris-panama.com pages: home, services, about, law-417, contact. SEO-optimized. EN/ES.</p>
+                    <span class="asset-tag tag-ready" data-en="LIVE ↗" data-es="EN VIVO ↗" data-he="באוויר ↗">LIVE ↗</span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
@@ -164,30 +183,54 @@ footer a{color:var(--gold);text-decoration:none}
         <h2 class="section-title reveal" data-en="Operations & Licensing" data-es="Operaciones y Licencias" data-he="תפעול ורישוי">Operations & Licensing</h2>
         <p class="section-desc reveal" data-en="ASEP licensing, equipment specs, installation procedures, and safety protocols." data-es="Licencia ASEP, especificaciones de equipos, procedimientos de instalación y protocolos de seguridad." data-he="רישוי ASEP, מפרטי ציוד, נהלי התקנה ופרוטוקולי בטיחות.">ASEP licensing, equipment specs, installation procedures, and safety protocols.</p>
         <div class="asset-grid reveal">
-            <div class="asset-card">
-                <div class="asset-icon ops">📋</div>
-                <h3 data-en="ASEP Licensing Guide" data-es="Guía de Licencias ASEP" data-he="מדריך רישוי ASEP">ASEP Licensing Guide</h3>
-                <p data-en="Step-by-step process for ASEP solar installation permits. Required documents, timeline, fees, and contacts." data-es="Proceso paso a paso para permisos de instalación solar ASEP. Documentos requeridos, plazos, tarifas y contactos." data-he="תהליך צעד-אחר-צעד להיתרי התקנה סולארית ASEP. מסמכים נדרשים, לו״ז, עלויות ואנשי קשר.">Step-by-step process for ASEP solar installation permits. Required documents, timeline, fees, and contacts.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon ops">⚡</div>
-                <h3 data-en="Equipment List" data-es="Lista de Equipos" data-he="רשימת ציוד">Equipment List</h3>
-                <p data-en="Approved panels, inverters, mounting systems, and cables. Supplier contacts and lead times for Panama." data-es="Paneles aprobados, inversores, sistemas de montaje y cables. Contactos de proveedores y tiempos de entrega." data-he="פאנלים מאושרים, ממירים, מערכות הרכבה וכבלים. ספקים וזמני אספקה לפנמה.">Approved panels, inverters, mounting systems, and cables. Supplier contacts and lead times for Panama.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon ops">🔧</div>
-                <h3 data-en="Installation SOP" data-es="SOP de Instalación" data-he="נוהל התקנה">Installation SOP</h3>
-                <p data-en="Standard operating procedures for residential and commercial installs. Safety checklist, quality standards." data-es="Procedimientos operativos estándar para instalaciones residenciales y comerciales. Lista de seguridad, estándares." data-he="נהלי עבודה סטנדרטיים להתקנות מגורים ומסחריות. רשימת בטיחות, תקני איכות.">Standard operating procedures for residential and commercial installs. Safety checklist, quality standards.</p>
-                <span class="asset-tag tag-planned" data-en="PLANNED" data-es="PLANIFICADO" data-he="מתוכנן">PLANNED</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon ops">📦</div>
-                <h3 data-en="Import & Logistics" data-es="Importación y Logística" data-he="יבוא ולוגיסטיקה">Import & Logistics</h3>
-                <p data-en="Import duty exemption process under Law 417. Customs procedures, shipping routes, warehouse requirements." data-es="Proceso de exención arancelaria bajo Ley 417. Procedimientos aduaneros, rutas de envío, requisitos de almacén." data-he="תהליך פטור מכס תחת חוק 417. נהלי מכס, מסלולי משלוח, דרישות מחסן.">Import duty exemption process under Law 417. Customs procedures, shipping routes, warehouse requirements.</p>
-                <span class="asset-tag tag-planned" data-en="PLANNED" data-es="PLANIFICADO" data-he="מתוכנן">PLANNED</span>
-            </div>
+            <a href="equipment-list.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">⚡</div>
+                    <h3 data-en="Equipment Catalog" data-es="Catálogo de Equipos" data-he="קטלוג ציוד">Equipment Catalog</h3>
+                    <p data-en="Approved panels, inverters, mounting systems, and cables. Supplier contacts and lead times for Panama." data-es="Paneles aprobados, inversores, sistemas de montaje y cables. Contactos de proveedores y tiempos de entrega." data-he="פאנלים מאושרים, ממירים, מערכות הרכבה וכבלים. ספקים וזמני אספקה לפנמה.">Approved panels, inverters, mounting systems, and cables. Supplier contacts and lead times for Panama.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="installation.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">🔧</div>
+                    <h3 data-en="Installation Guide" data-es="Guía de Instalación" data-he="מדריך התקנה">Installation Guide</h3>
+                    <p data-en="Standard operating procedures for residential and commercial installs. Safety checklist, quality standards." data-es="Procedimientos operativos estándar para instalaciones residenciales y comerciales. Lista de seguridad, estándares." data-he="נהלי עבודה סטנדרטיים להתקנות מגורים ומסחריות. רשימת בטיחות, תקני איכות.">Standard operating procedures for residential and commercial installs. Safety checklist, quality standards.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="licensing.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">📋</div>
+                    <h3 data-en="Licensing & Permits" data-es="Licencias y Permisos" data-he="רישוי והיתרים">Licensing & Permits</h3>
+                    <p data-en="Step-by-step process for ASEP solar installation permits. Required documents, timeline, fees, and contacts." data-es="Proceso paso a paso para permisos de instalación solar ASEP. Documentos requeridos, plazos, tarifas y contactos." data-he="תהליך צעד-אחר-צעד להיתרי התקנה סולארית ASEP. מסמכים נדרשים, לו״ז, עלויות ואנשי קשר.">Step-by-step process for ASEP solar installation permits. Required documents, timeline, fees, and contacts.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="drone-guide.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">🚁</div>
+                    <h3 data-en="Drone Survey Guide" data-es="Guía de Inspección con Drones" data-he="מדריך סקר רחפן">Drone Survey Guide</h3>
+                    <p data-en="Drone-based roof and site surveys. Flight planning, image capture protocols, and 3D modeling workflow." data-es="Inspecciones de techos y sitios con drones. Planificación de vuelo, protocolos de captura y modelado 3D." data-he="סקרי גגות ואתרים מבוססי רחפן. תכנון טיסה, פרוטוקולי צילום ותהליך מידול תלת-ממד.">Drone-based roof and site surveys. Flight planning, image capture protocols, and 3D modeling workflow.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="procurement-engineering.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">📦</div>
+                    <h3 data-en="Procurement" data-es="Adquisiciones" data-he="רכש">Procurement</h3>
+                    <p data-en="Import duty exemption process under Law 417. Customs procedures, shipping routes, warehouse requirements." data-es="Proceso de exención arancelaria bajo Ley 417. Procedimientos aduaneros, rutas de envío, requisitos de almacén." data-he="תהליך פטור מכס תחת חוק 417. נהלי מכס, מסלולי משלוח, דרישות מחסן.">Import duty exemption process under Law 417. Customs procedures, shipping routes, warehouse requirements.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="roof-scanner.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon ops">🏠</div>
+                    <h3 data-en="Roof Assessment" data-es="Evaluación de Techo" data-he="הערכת גג">Roof Assessment</h3>
+                    <p data-en="AI-powered roof analysis tool. Upload satellite or drone imagery to get area, orientation, and shading analysis." data-es="Herramienta de análisis de techo con IA. Suba imágenes satelitales o de drones para área, orientación y análisis de sombras." data-he="כלי ניתוח גגות מבוסס AI. העלה תמונות לוויין או רחפן לניתוח שטח, כיוון והצללה.">AI-powered roof analysis tool. Upload satellite or drone imagery to get area, orientation, and shading analysis.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
@@ -199,65 +242,97 @@ footer a{color:var(--gold);text-decoration:none}
         <h2 class="section-title reveal" data-en="Financial Tools" data-es="Herramientas Financieras" data-he="כלים פיננסיים">Financial Tools</h2>
         <p class="section-desc reveal" data-en="Pricing models, ROI calculators, P&L projections, and investor materials." data-es="Modelos de precios, calculadoras ROI, proyecciones P&L y materiales para inversionistas." data-he="מודלי תמחור, מחשבוני ROI, תחזיות רווח והפסד וחומרים למשקיעים.">Pricing models, ROI calculators, P&L projections, and investor materials.</p>
         <div class="asset-grid reveal">
-            <div class="asset-card">
-                <div class="asset-icon finance">💰</div>
-                <h3 data-en="Pricing Calculator" data-es="Calculadora de Precios" data-he="מחשבון תמחור">Pricing Calculator</h3>
-                <p data-en="Residential: $1.10-1.30/Wp. Commercial: $1.00-1.20/Wp. Input system size, get total cost + monthly savings." data-es="Residencial: $1.10-1.30/Wp. Comercial: $1.00-1.20/Wp. Ingrese tamaño del sistema, obtenga costo + ahorro mensual." data-he="מגורים: $1.10-1.30/Wp. מסחרי: $1.00-1.20/Wp. הכנס גודל מערכת, קבל עלות + חיסכון חודשי.">Residential: $1.10-1.30/Wp. Commercial: $1.00-1.20/Wp. Input system size, get total cost + monthly savings.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon finance">📈</div>
-                <h3 data-en="ROI Calculator" data-es="Calculadora ROI" data-he="מחשבון ROI">ROI Calculator</h3>
-                <p data-en="Customer-facing ROI tool. Inputs: monthly bill, roof size, usage. Outputs: savings, payback period, 25-year value." data-es="Herramienta ROI para clientes. Entradas: factura mensual, tamaño de techo, uso. Salidas: ahorro, período de retorno, valor a 25 años." data-he="כלי ROI ללקוחות. קלט: חשבון חודשי, שטח גג, צריכה. פלט: חיסכון, תקופת החזר, ערך ל-25 שנים.">Customer-facing ROI tool. Inputs: monthly bill, roof size, usage. Outputs: savings, payback period, 25-year value.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon finance">📊</div>
-                <h3 data-en="P&L Projection" data-es="Proyección P&L" data-he="תחזית רווח והפסד">P&L Projection</h3>
-                <p data-en="5-year financial model. Revenue streams, COGS, operating expenses, margin targets, breakeven analysis." data-es="Modelo financiero a 5 años. Fuentes de ingreso, COGS, gastos operativos, márgenes, análisis de punto de equilibrio." data-he="מודל פיננסי ל-5 שנים. זרמי הכנסות, עלות סחורה, הוצאות תפעול, יעדי מרווח, ניתוח איזון.">5-year financial model. Revenue streams, COGS, operating expenses, margin targets, breakeven analysis.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon finance">🏦</div>
-                <h3 data-en="Bank Presentation" data-es="Presentación Bancaria" data-he="מצגת לבנק">Bank Presentation</h3>
-                <p data-en="Financing pitch for Panamanian banks. Credit facility request, collateral structure, repayment projections." data-es="Pitch de financiamiento para bancos panameños. Solicitud de crédito, estructura de garantías, proyecciones de pago." data-he="מצגת מימון לבנקים פנמיים. בקשת מסגרת אשראי, מבנה בטחונות, תחזיות החזר.">Financing pitch for Panamanian banks. Credit facility request, collateral structure, repayment projections.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
+            <a href="financial-dashboard.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon finance">💰</div>
+                    <h3 data-en="Financial Dashboard" data-es="Panel Financiero" data-he="לוח בקרה פיננסי">Financial Dashboard</h3>
+                    <p data-en="Real-time financial overview. Revenue tracking, expense management, cash flow projections, and KPI monitoring." data-es="Visión financiera en tiempo real. Seguimiento de ingresos, gestión de gastos, proyecciones de flujo de caja y monitoreo de KPIs." data-he="סקירה פיננסית בזמן אמת. מעקב הכנסות, ניהול הוצאות, תחזיות תזרים מזומנים ומעקב KPI.">Real-time financial overview. Revenue tracking, expense management, cash flow projections, and KPI monitoring.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="pnl-plan.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon finance">📈</div>
+                    <h3 data-en="P&L Projections" data-es="Proyecciones P&L" data-he="תחזיות רווח והפסד">P&L Projections</h3>
+                    <p data-en="5-year financial model. Revenue streams, COGS, operating expenses, margin targets, breakeven analysis." data-es="Modelo financiero a 5 años. Fuentes de ingreso, COGS, gastos operativos, márgenes, análisis de punto de equilibrio." data-he="מודל פיננסי ל-5 שנים. זרמי הכנסות, עלות סחורה, הוצאות תפעול, יעדי מרווח, ניתוח איזון.">5-year financial model. Revenue streams, COGS, operating expenses, margin targets, breakeven analysis.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="financing.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon finance">🏦</div>
+                    <h3 data-en="Financing Options" data-es="Opciones de Financiamiento" data-he="אפשרויות מימון">Financing Options</h3>
+                    <p data-en="Financing pitch for Panamanian banks. Credit facility request, collateral structure, repayment projections." data-es="Pitch de financiamiento para bancos panameños. Solicitud de crédito, estructura de garantías, proyecciones de pago." data-he="מצגת מימון לבנקים פנמיים. בקשת מסגרת אשראי, מבנה בטחונות, תחזיות החזר.">Financing pitch for Panamanian banks. Credit facility request, collateral structure, repayment projections.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="bill-scanner.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon finance">🧮</div>
+                    <h3 data-en="ROI Calculator" data-es="Calculadora ROI" data-he="מחשבון ROI">ROI Calculator</h3>
+                    <p data-en="Customer-facing ROI tool. Inputs: monthly bill, roof size, usage. Outputs: savings, payback period, 25-year value." data-es="Herramienta ROI para clientes. Entradas: factura mensual, tamaño de techo, uso. Salidas: ahorro, período de retorno, valor a 25 años." data-he="כלי ROI ללקוחות. קלט: חשבון חודשי, שטח גג, צריכה. פלט: חיסכון, תקופת החזר, ערך ל-25 שנים.">Customer-facing ROI tool. Inputs: monthly bill, roof size, usage. Outputs: savings, payback period, 25-year value.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
 
-<!-- CRM TOOLS -->
+<!-- CRM & TOOLS -->
 <section>
     <div class="container">
         <div class="section-badge" data-en="CRM & TOOLS" data-es="CRM Y HERRAMIENTAS" data-he="CRM וכלים">CRM & TOOLS</div>
         <h2 class="section-title reveal" data-en="CRM & Sales Tools" data-es="CRM y Herramientas de Ventas" data-he="CRM וכלי מכירות">CRM & Sales Tools</h2>
         <p class="section-desc reveal" data-en="Lead capture, proposals, contracts, and client management systems." data-es="Captura de leads, propuestas, contratos y sistemas de gestión de clientes." data-he="לכידת לידים, הצעות מחיר, חוזים ומערכות ניהול לקוחות.">Lead capture, proposals, contracts, and client management systems.</p>
         <div class="asset-grid reveal">
-            <div class="asset-card">
-                <div class="asset-icon crm">📝</div>
-                <h3 data-en="Lead Capture Form" data-es="Formulario de Captura" data-he="טופס לכידת לידים">Lead Capture Form</h3>
-                <p data-en="Embeddable form for website and landing pages. Feeds into CRM. WhatsApp notification on new lead." data-es="Formulario integrable para sitio web y landing pages. Alimenta el CRM. Notificación WhatsApp al nuevo lead." data-he="טופס להטמעה באתר ודפי נחיתה. מזין ל-CRM. התראת WhatsApp בליד חדש.">Embeddable form for website and landing pages. Feeds into CRM. WhatsApp notification on new lead.</p>
-                <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon crm">📄</div>
-                <h3 data-en="Proposal Generator" data-es="Generador de Propuestas" data-he="מחולל הצעות">Proposal Generator</h3>
-                <p data-en="Auto-generate branded proposals. Input: client data + system size. Output: PDF with ROI, timeline, pricing." data-es="Generar propuestas de marca automáticamente. Entrada: datos del cliente + tamaño del sistema. Salida: PDF con ROI, cronograma, precios." data-he="יצירת הצעות ממותגות אוטומטית. קלט: נתוני לקוח + גודל מערכת. פלט: PDF עם ROI, לו״ז, תמחור.">Auto-generate branded proposals. Input: client data + system size. Output: PDF with ROI, timeline, pricing.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon crm">📑</div>
-                <h3 data-en="Contract Templates" data-es="Plantillas de Contrato" data-he="תבניות חוזה">Contract Templates</h3>
-                <p data-en="Installation agreement, PPA template, maintenance SLA. Spanish legal language reviewed by local attorney." data-es="Acuerdo de instalación, plantilla PPA, SLA de mantenimiento. Lenguaje legal en español revisado por abogado local." data-he="הסכם התקנה, תבנית PPA, SLA תחזוקה. שפה משפטית בספרדית בבדיקת עו״ד מקומי.">Installation agreement, PPA template, maintenance SLA. Spanish legal language reviewed by local attorney.</p>
-                <span class="asset-tag tag-progress" data-en="IN PROGRESS" data-es="EN PROGRESO" data-he="בתהליך">IN PROGRESS</span>
-            </div>
-            <div class="asset-card">
-                <div class="asset-icon crm">📱</div>
-                <h3 data-en="WhatsApp Automation" data-es="Automatización WhatsApp" data-he="אוטומציית WhatsApp">WhatsApp Automation</h3>
-                <p data-en="Automated follow-up messages via WhatsApp Business. Lead nurturing sequences and appointment reminders." data-es="Mensajes de seguimiento automatizados vía WhatsApp Business. Secuencias de nurturing y recordatorios de citas." data-he="הודעות פולו-אפ אוטומטיות דרך WhatsApp Business. סדרות טיפוח לידים ותזכורות פגישות.">Automated follow-up messages via WhatsApp Business. Lead nurturing sequences and appointment reminders.</p>
-                <span class="asset-tag tag-planned" data-en="PLANNED" data-es="PLANIFICADO" data-he="מתוכנן">PLANNED</span>
-            </div>
+            <a href="crm-value-chain.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">📊</div>
+                    <h3 data-en="CRM Pipeline" data-es="Pipeline CRM" data-he="צינור CRM">CRM Pipeline</h3>
+                    <p data-en="Full lead-to-close pipeline. Track prospects, proposals, contracts, and installations in one view." data-es="Pipeline completo de lead a cierre. Rastree prospectos, propuestas, contratos e instalaciones en una vista." data-he="צינור מלא מליד לסגירה. מעקב פניות, הצעות, חוזים והתקנות בתצוגה אחת.">Full lead-to-close pipeline. Track prospects, proposals, contracts, and installations in one view.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="proposal.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">📄</div>
+                    <h3 data-en="Proposal Generator" data-es="Generador de Propuestas" data-he="מחולל הצעות">Proposal Generator</h3>
+                    <p data-en="Auto-generate branded proposals. Input: client data + system size. Output: PDF with ROI, timeline, pricing." data-es="Generar propuestas de marca automáticamente. Entrada: datos del cliente + tamaño del sistema. Salida: PDF con ROI, cronograma, precios." data-he="יצירת הצעות ממותגות אוטומטית. קלט: נתוני לקוח + גודל מערכת. פלט: PDF עם ROI, לו״ז, תמחור.">Auto-generate branded proposals. Input: client data + system size. Output: PDF with ROI, timeline, pricing.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="legal-contracts.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">📑</div>
+                    <h3 data-en="Contract Templates" data-es="Plantillas de Contrato" data-he="תבניות חוזה">Contract Templates</h3>
+                    <p data-en="Installation agreement, PPA template, maintenance SLA. Spanish legal language reviewed by local attorney." data-es="Acuerdo de instalación, plantilla PPA, SLA de mantenimiento. Lenguaje legal en español revisado por abogado local." data-he="הסכם התקנה, תבנית PPA, SLA תחזוקה. שפה משפטית בספרדית בבדיקת עו״ד מקומי.">Installation agreement, PPA template, maintenance SLA. Spanish legal language reviewed by local attorney.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="epc-contract.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">🏗️</div>
+                    <h3 data-en="EPC Contract" data-es="Contrato EPC" data-he="חוזה EPC">EPC Contract</h3>
+                    <p data-en="Engineering, Procurement & Construction contract template. Scope, milestones, warranties, and payment terms." data-es="Plantilla de contrato de Ingeniería, Adquisición y Construcción. Alcance, hitos, garantías y términos de pago." data-he="תבנית חוזה הנדסה, רכש ובנייה. היקף, אבני דרך, אחריות ותנאי תשלום.">Engineering, Procurement & Construction contract template. Scope, milestones, warranties, and payment terms.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="ppa-contract.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">⚡</div>
+                    <h3 data-en="PPA Contract" data-es="Contrato PPA" data-he="חוזה PPA">PPA Contract</h3>
+                    <p data-en="Power Purchase Agreement template. Rate structure, escalation terms, duration, and termination clauses." data-es="Plantilla de Acuerdo de Compra de Energía. Estructura de tarifas, términos de escalación, duración y cláusulas de terminación." data-he="תבנית הסכם רכישת חשמל. מבנה תעריפים, תנאי הצמדה, משך וסעיפי סיום.">Power Purchase Agreement template. Rate structure, escalation terms, duration, and termination clauses.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
+            <a href="monitoring-maintenance.html" class="asset-link">
+                <div class="asset-card">
+                    <div class="asset-icon crm">📡</div>
+                    <h3 data-en="Monitoring & O&M" data-es="Monitoreo y O&M" data-he="ניטור ותחזוקה">Monitoring & O&M</h3>
+                    <p data-en="System monitoring dashboard and maintenance scheduling. Performance tracking, alerts, and service protocols." data-es="Panel de monitoreo del sistema y programación de mantenimiento. Seguimiento de rendimiento, alertas y protocolos de servicio." data-he="לוח ניטור מערכת ותזמון תחזוקה. מעקב ביצועים, התראות ופרוטוקולי שירות.">System monitoring dashboard and maintenance scheduling. Performance tracking, alerts, and service protocols.</p>
+                    <span class="asset-tag tag-ready" data-en="READY" data-es="LISTO" data-he="מוכן">READY</span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
