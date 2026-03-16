@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Energy — Site Sign 2000×1500mm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: 2000mm 1500mm;
+    margin: 0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 2000mm;
+    height: 1500mm;
+    overflow: hidden;
+    background: #0B3D2E;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sign {
+    width: 2000mm;
+    height: 1500mm;
+    background: #0B3D2E;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* === Photo strip at top === */
+  .photo-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 480mm;
+    overflow: hidden;
+  }
+
+  .photo-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+  }
+
+  /* Gradient overlay: photo fades into green */
+  .photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 480mm;
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 61, 46, 0.15) 0%,
+      rgba(11, 61, 46, 0.3) 30%,
+      rgba(11, 61, 46, 0.7) 70%,
+      rgba(11, 61, 46, 1) 100%
+    );
+    z-index: 1;
+  }
+
+  /* Gold accent lines */
+  .top-gold-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 14mm;
+    background: linear-gradient(90deg, #D4A843 0%, #B8912E 40%, #D4A843 60%, #B8912E 100%);
+    z-index: 3;
+  }
+
+  .bottom-accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 14mm;
+    background: linear-gradient(90deg, #B8912E 0%, #D4A843 40%, #B8912E 60%, #D4A843 100%);
+    z-index: 3;
+  }
+
+  /* Inner border */
+  .inner-border {
+    position: absolute;
+    top: 30mm;
+    left: 30mm;
+    right: 30mm;
+    bottom: 30mm;
+    border: 2.5mm solid rgba(212, 168, 67, 0.2);
+    border-radius: 10mm;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* Corners */
+  .corner {
+    position: absolute;
+    width: 70mm;
+    height: 70mm;
+    border-color: #D4A843;
+    border-style: solid;
+    border-width: 0;
+    z-index: 4;
+  }
+  .corner-tl { top: 42mm; left: 42mm; border-top-width: 3.5mm; border-left-width: 3.5mm; border-top-left-radius: 14mm; }
+  .corner-tr { top: 42mm; right: 42mm; border-top-width: 3.5mm; border-right-width: 3.5mm; border-top-right-radius: 14mm; }
+  .corner-bl { bottom: 42mm; left: 42mm; border-bottom-width: 3.5mm; border-left-width: 3.5mm; border-bottom-left-radius: 14mm; }
+  .corner-br { bottom: 42mm; right: 42mm; border-bottom-width: 3.5mm; border-right-width: 3.5mm; border-bottom-right-radius: 14mm; }
+
+  /* === Content area (below photo) === */
+  .content {
+    position: absolute;
+    top: 340mm;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 100mm;
+    text-align: center;
+  }
+
+  /* Logo section - overlaps photo */
+  .logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 35mm;
+  }
+
+  .logo-img {
+    height: 200mm;
+    width: auto;
+    max-width: 700mm;
+    object-fit: contain;
+    filter: drop-shadow(0 4mm 12mm rgba(0,0,0,0.4));
+  }
+
+  /* Divider */
+  .divider {
+    width: 350mm;
+    height: 2mm;
+    background: linear-gradient(90deg, transparent, #D4A843, transparent);
+    margin: 35mm 0;
+  }
+
+  /* Main message */
+  .main-message {
+    margin-bottom: 30mm;
+  }
+
+  .main-text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 62mm;
+    color: #FEFDFB;
+    line-height: 1.25;
+    letter-spacing: 2mm;
+  }
+
+  .sub-text {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 32mm;
+    color: rgba(254, 253, 251, 0.7);
+    margin-top: 18mm;
+    line-height: 1.4;
+  }
+
+  .highlight {
+    color: #D4A843;
+    font-weight: 700;
+  }
+
+  /* Feature pills */
+  .feature-pills {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25mm;
+    margin: 25mm 0;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 10mm;
+    padding: 12mm 28mm;
+    background: rgba(212, 168, 67, 0.08);
+    border: 1.5mm solid rgba(212, 168, 67, 0.2);
+    border-radius: 100mm;
+  }
+
+  .pill svg {
+    width: 28mm;
+    height: 28mm;
+    flex-shrink: 0;
+  }
+
+  .pill span {
+    font-size: 20mm;
+    color: rgba(254, 253, 251, 0.7);
+    font-weight: 600;
+  }
+
+  /* Contact bar */
+  .contact-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 45mm;
+    padding: 18mm 50mm;
+    background: rgba(212, 168, 67, 0.06);
+    border: 1.5mm solid rgba(212, 168, 67, 0.12);
+    border-radius: 8mm;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10mm;
+    color: rgba(254, 253, 251, 0.8);
+    font-size: 22mm;
+    font-weight: 500;
+  }
+
+  .contact-item svg {
+    width: 26mm;
+    height: 26mm;
+    flex-shrink: 0;
+  }
+
+  .contact-item .value {
+    color: #FEFDFB;
+    font-weight: 700;
+  }
+
+  .contact-separator {
+    width: 1.5mm;
+    height: 30mm;
+    background: rgba(212, 168, 67, 0.25);
+  }
+
+  /* QR section */
+  .qr-section {
+    position: absolute;
+    bottom: 65mm;
+    right: 80mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8mm;
+    z-index: 6;
+  }
+
+  .qr-whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    font-size: 16mm;
+    color: #25D366;
+    font-weight: 700;
+  }
+
+  .qr-whatsapp svg {
+    width: 22mm;
+    height: 22mm;
+  }
+
+  .qr-box {
+    width: 120mm;
+    height: 120mm;
+    background: #FEFDFB;
+    border-radius: 8mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6mm;
+    box-shadow: 0 3mm 12mm rgba(0,0,0,0.3);
+  }
+
+  .qr-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .qr-label {
+    font-size: 14mm;
+    color: rgba(254, 253, 251, 0.5);
+    font-weight: 600;
+    letter-spacing: 1.5mm;
+    text-transform: uppercase;
+  }
+
+  /* Law 417 badge */
+  .law-badge {
+    position: absolute;
+    bottom: 65mm;
+    left: 80mm;
+    padding: 12mm 28mm;
+    background: rgba(212, 168, 67, 0.08);
+    border: 1.5mm solid rgba(212, 168, 67, 0.2);
+    border-radius: 8mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4mm;
+    z-index: 6;
+  }
+
+  .law-badge .law-title {
+    font-size: 18mm;
+    color: #D4A843;
+    font-weight: 700;
+    letter-spacing: 3mm;
+    text-transform: uppercase;
+  }
+
+  .law-badge .law-desc {
+    font-size: 13mm;
+    color: rgba(254, 253, 251, 0.5);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="sign">
+  <!-- Photo strip with solar panels -->
+  <div class="photo-strip">
+    <img src="solar-panels-banner.png" alt="Solar Panels Installation"/>
+  </div>
+  <div class="photo-overlay"></div>
+  <div class="top-gold-line"></div>
+  <div class="bottom-accent"></div>
+  <div class="inner-border"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <!-- Logo -->
+    <div class="logo-section">
+      <img class="logo-img" src="solaris-logo-dark.png" alt="Solaris Energy - Own Your Energy" />
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Main message -->
+    <div class="main-message">
+      <div class="main-text">Sistema Solar en Instalación</div>
+      <div class="sub-text">
+        Este sitio cuenta con un sistema de energía solar<br>
+        diseñado e instalado por <span class="highlight">Solaris Energy</span>
+      </div>
+    </div>
+
+    <!-- Feature pills -->
+    <div class="feature-pills">
+      <div class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round">
+          <rect x="3" y="8" width="18" height="13" rx="1" />
+          <line x1="12" y1="8" x2="12" y2="21" />
+          <line x1="7.5" y1="8" x2="7.5" y2="21" />
+          <line x1="16.5" y1="8" x2="16.5" y2="21" />
+          <line x1="3" y1="13" x2="21" y2="13" />
+          <line x1="3" y1="17" x2="21" y2="17" />
+          <circle cx="12" cy="4.5" r="2" fill="#D4A843" />
+          <line x1="12" y1="1.5" x2="12" y2="0.5" />
+          <line x1="15" y1="3" x2="16" y2="2" />
+          <line x1="9" y1="3" x2="8" y2="2" />
+          <line x1="15" y1="6" x2="16" y2="7" />
+          <line x1="9" y1="6" x2="8" y2="7" />
+        </svg>
+        <span>Energía Limpia</span>
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round">
+          <path d="M12 2 L12 5 M19 5 L17 7 M22 12 L19 12 M19 19 L17 17 M12 22 L12 19 M5 19 L7 17 M2 12 L5 12 M5 5 L7 7"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="12" cy="12" r="3" fill="#D4A843" opacity="0.25"/>
+        </svg>
+        <span>Ahorro Garantizado</span>
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round">
+          <path d="M6 20 L6 14 M10 20 L10 10 M14 20 L14 16 M18 20 L18 6" stroke-width="3" opacity="0.4"/>
+          <path d="M4 8 L10 12 L14 9 L20 4"/>
+          <polygon points="20,3 21,7 17,6" fill="#D4A843"/>
+        </svg>
+        <span>Retorno de Inversión</span>
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round">
+          <path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10"/>
+          <path d="M12 6 L12 12 L16 14"/>
+          <path d="M17 17 L21 21" stroke-width="2"/>
+          <circle cx="19" cy="16" r="4" fill="none"/>
+        </svg>
+        <span>25 Años de Garantía</span>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-bar">
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="value">Playa Venao, Azuero</span>
+      </div>
+      <div class="contact-separator"></div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="value">+507 6583-1822</span>
+      </div>
+      <div class="contact-separator"></div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span class="value">solaris-panama.com</span>
+      </div>
+      <div class="contact-separator"></div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+        </svg>
+        <span class="value">@solarispanama</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Law 417 badge -->
+  <div class="law-badge">
+    <div class="law-title">Ley 417</div>
+    <div class="law-desc">Incentivos para Energía Solar</div>
+  </div>
+
+  <!-- QR Code - WhatsApp -->
+  <div class="qr-section">
+    <div class="qr-whatsapp">
+      <svg viewBox="0 0 24 24" fill="#25D366">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      <span>WhatsApp</span>
+    </div>
+    <div class="qr-box">
+      <img src="whatsapp-qr.png" alt="QR WhatsApp"/>
+    </div>
+    <div class="qr-label">Escanea para cotización</div>
+  </div>
+</div>
+
+</body>
+</html>

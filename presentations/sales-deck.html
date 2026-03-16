@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panamá — Presentación Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#1A1A1A;color:#FEFDFB;padding:20px}
+.controls{text-align:center;padding:16px;margin-bottom:16px}
+.controls button{background:#0B3D2E;color:#FEFDFB;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;margin:0 4px}
+.controls button:hover{background:#14573F}
+.controls .counter{color:#8A8A8A;font-size:13px;margin:0 12px}
+.slide{width:960px;height:540px;margin:0 auto 40px;border-radius:12px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.3);position:relative;display:none;flex-direction:column;page-break-after:always}
+.slide.active{display:flex}
+.slide-num{position:absolute;bottom:12px;right:20px;font-size:10px;color:rgba(255,255,255,0.15);font-weight:500}
+.top-bar{padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.top-bar .logo{font-family:'Playfair Display',serif;font-size:13px;font-weight:700}
+.top-bar .tag{font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#D4A843}
+.section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:12px}
+h2{font-family:'Playfair Display',serif;font-size:30px;line-height:1.2;margin-bottom:20px}
+h3{font-family:'Playfair Display',serif;font-size:20px;line-height:1.3}
+.gold{color:#D4A843}
+.green-bg{background:#0B3D2E}
+.white-bg{background:#FEFDFB;color:#1A1A1A}
+
+/* Slide 1: Title */
+.s-title{background:#0B3D2E;align-items:center;justify-content:center;text-align:center;padding:60px}
+.s-title .logo-circle{width:64px;height:64px;background:rgba(254,253,251,0.1);border:2px solid rgba(212,168,67,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.s-title .logo-circle span{font-family:'Playfair Display',serif;font-size:28px;color:#D4A843;font-weight:700}
+.s-title h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;margin-bottom:6px}
+.s-title .tagline{font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#D4A843;margin-bottom:24px}
+.s-title .gold-line{width:48px;height:2px;background:#D4A843;margin:16px auto}
+.s-title .meta{font-size:13px;color:rgba(254,253,251,0.5)}
+
+/* Content layouts */
+.body-split{flex:1;padding:40px 48px;display:flex;gap:40px;align-items:center}
+.body-full{flex:1;padding:40px 48px;display:flex;flex-direction:column;justify-content:center}
+.col{flex:1}
+.stat-card{background:rgba(0,0,0,0.04);border-radius:8px;padding:16px 20px;border-left:3px solid #D4A843;margin-bottom:12px}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#0B3D2E}
+.stat-card .label{font-size:11px;color:#8A8A8A;margin-top:2px}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.feature{background:rgba(254,253,251,0.05);border-radius:8px;padding:20px;border:1px solid rgba(212,168,67,0.1)}
+.feature .icon{font-size:20px;margin-bottom:8px;color:#D4A843}
+.feature h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.feature p{font-size:11px;color:rgba(254,253,251,0.6);line-height:1.5}
+.white-bg .feature{background:#F9F7F3;border-color:#E8E4DC}
+.white-bg .feature h4{color:#0B3D2E}
+.white-bg .feature p{color:#4A4A4A}
+ul{list-style:none;padding:0}
+ul li{padding:6px 0;font-size:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+ul li::before{content:'';width:6px;height:6px;background:#D4A843;border-radius:50%;flex-shrink:0;margin-top:6px}
+.white-bg ul li::before{background:#D4A843}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+table th{text-align:left;padding:8px 12px;background:#0B3D2E;color:#FEFDFB;font-weight:600;font-size:11px;letter-spacing:0.05em;text-transform:uppercase}
+table td{padding:8px 12px;border-bottom:1px solid #E8E4DC}
+.cta-box{background:#0B3D2E;border-radius:12px;padding:32px;text-align:center;color:#FEFDFB}
+.cta-box h2{color:#FEFDFB;margin-bottom:8px}
+.cta-box .tagline{color:#D4A843;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase}
+.cta-box .contact{margin-top:16px;font-size:14px;color:rgba(254,253,251,0.7)}
+
+@media print{
+  body{background:white;padding:0}
+  .controls{display:none}
+  .slide{display:flex!important;margin:0;border-radius:0;box-shadow:none;page-break-after:always}
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <button onclick="nav(-1)">← Anterior</button>
+  <span class="counter"><span id="curr">1</span> / <span id="total">10</span></span>
+  <button onclick="nav(1)">Siguiente →</button>
+  <button onclick="printAll()" style="margin-left:16px;background:#4A4A4A">🖨 Imprimir</button>
+</div>
+
+<!-- Slide 1: Title -->
+<div class="slide active s-title">
+  <div class="logo-circle"><span>S</span></div>
+  <h1>Solaris Panamá</h1>
+  <div class="tagline">Own Your Energy</div>
+  <div class="gold-line"></div>
+  <div class="meta">Energía Solar Premium para la Península de Azuero</div>
+  <div class="meta" style="margin-top:8px;font-size:11px">Presentación Comercial · 2026</div>
+  <div class="slide-num">1</div>
+</div>
+
+<!-- Slide 2: The Problem -->
+<div class="slide white-bg">
+  <div class="top-bar" style="background:#0B3D2E">
+    <div class="logo" style="color:#FEFDFB">SOLARIS</div>
+    <div class="tag">El Problema</div>
+  </div>
+  <div class="body-split">
+    <div class="col">
+      <div class="section-label">La Realidad</div>
+      <h2 style="color:#0B3D2E">Su factura eléctrica es su segundo mayor gasto operativo</h2>
+      <p style="font-size:14px;color:#4A4A4A;line-height:1.7">Hoteles, comercios y residencias en Azuero pagan miles de dólares mensuales en electricidad. Las tarifas han aumentado más de 30% en 5 años. Los apagones frecuentes afectan la productividad y la experiencia del cliente.</p>
+    </div>
+    <div class="col">
+      <div class="stat-card"><div class="num">$3,000–$8,000</div><div class="label">Factura mensual promedio — hoteles en Azuero</div></div>
+      <div class="stat-card"><div class="num">+30%</div><div class="label">Aumento en tarifas eléctricas en 5 años</div></div>
+      <div class="stat-card"><div class="num">24/7</div><div class="label">AC, refrigeración, iluminación — sin pausa</div></div>
+    </div>
+  </div>
+  <div class="slide-num" style="color:rgba(0,0,0,0.15)">2</div>
+</div>
+
+<!-- Slide 3: The Opportunity -->
+<div class="slide green-bg">
+  <div class="top-bar" style="border-bottom:1px solid rgba(212,168,67,0.15)">
+    <div class="logo">SOLARIS</div>
+    <div class="tag">La Oportunidad</div>
+  </div>
+  <div class="body-split">
+    <div class="col">
+      <div class="section-label">Recurso Solar</div>
+      <h2>Panamá recibe 5–6 kWh/m² de radiación solar por día</h2>
+      <p style="font-size:14px;color:rgba(254,253,251,0.7);line-height:1.7">Eso es clase mundial. Su techo es una planta eléctrica sin aprovechar. Un techo de 400 m² puede generar 80–120 kW de capacidad solar.</p>
+    </div>
+    <div class="col">
+      <div class="stat-card" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)">
+        <div class="num" style="color:#D4A843">$1,500–$4,000</div>
+        <div class="label" style="color:rgba(254,253,251,0.5)">Ahorro mensual potencial en electricidad</div>
+      </div>
+      <div class="stat-card" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)">
+        <div class="num" style="color:#D4A843">2.5–3.5 años</div>
+        <div class="label" style="color:rgba(254,253,251,0.5)">Período de retorno de inversión</div>
+      </div>
+      <div class="stat-card" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)">
+        <div class="num" style="color:#D4A843">25+ años</div>
+        <div class="label" style="color:rgba(254,253,251,0.5)">Vida útil de los paneles solares</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">3</div>
+</div>
+
+<!-- Slide 4: Law 417 -->
+<div class="slide white-bg">
+  <div class="top-bar" style="background:#0B3D2E">
+    <div class="logo" style="color:#FEFDFB">SOLARIS</div>
+    <div class="tag">Ley 417</div>
+  </div>
+  <div class="body-full">
+    <div class="section-label">Incentivos del Gobierno</div>
+    <h2 style="color:#0B3D2E">Ley 417 — Panamá quiere que usted vaya solar</h2>
+    <div class="feature-grid" style="margin-top:24px">
+      <div class="feature">
+        <div class="icon">🏛</div>
+        <h4>Exención Fiscal</h4>
+        <p>Exención de impuestos sobre equipos e instalación solar.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🚢</div>
+        <h4>Libre de Aranceles</h4>
+        <p>Importación libre de impuestos para todos los componentes solares.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⚡</div>
+        <h4>Net Metering</h4>
+        <p>Venda el exceso de energía de vuelta a la red eléctrica.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📋</div>
+        <h4>Hasta 500 kW</h4>
+        <p>Cubre cualquier edificio comercial o residencial.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">💰</div>
+        <h4>12–18 meses menos</h4>
+        <p>Los beneficios fiscales aceleran el retorno de inversión.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🏗</div>
+        <h4>Sin Restricciones</h4>
+        <p>Aplicable a nuevas construcciones y edificios existentes.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num" style="color:rgba(0,0,0,0.15)">4</div>
+</div>
+
+<!-- Slide 5: Our Solution -->
+<div class="slide green-bg">
+  <div class="top-bar" style="border-bottom:1px solid rgba(212,168,67,0.15)">
+    <div class="logo">SOLARIS</div>
+    <div class="tag">Nuestra Solución</div>
+  </div>
+  <div class="body-full">
+    <div class="section-label">Servicio Integral</div>
+    <h2>Nosotros nos encargamos de todo. Usted solo ahorra.</h2>
+    <div class="feature-grid" style="margin-top:20px">
+      <div class="feature">
+        <div class="icon">📡</div>
+        <h4>Evaluación Gratuita</h4>
+        <p>Análisis satelital + inspección presencial del techo y consumo eléctrico.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📐</div>
+        <h4>Diseño Personalizado</h4>
+        <p>Sistema optimizado para su perfil de consumo y tipo de techo.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔧</div>
+        <h4>Instalación Llave en Mano</h4>
+        <p>Permisos, instalación y conexión a la red — todo incluido.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📄</div>
+        <h4>Trámites ASEP</h4>
+        <p>Net metering y documentación ante la autoridad reguladora.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📊</div>
+        <h4>Monitoreo 24/7</h4>
+        <p>Dashboard en tiempo real para ver su producción y ahorro.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🛡</div>
+        <h4>Garantía 25 Años</h4>
+        <p>Garantía de paneles + mantenimiento preventivo incluido.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">5</div>
+</div>
+
+<!-- Slide 6: ROI Example -->
+<div class="slide white-bg">
+  <div class="top-bar" style="background:#0B3D2E">
+    <div class="logo" style="color:#FEFDFB">SOLARIS</div>
+    <div class="tag">Retorno de Inversión</div>
+  </div>
+  <div class="body-split">
+    <div class="col">
+      <div class="section-label">Ejemplo: Hotel Mediano en Azuero</div>
+      <h2 style="color:#0B3D2E">Su inversión se paga sola en menos de 3 años</h2>
+      <p style="font-size:13px;color:#4A4A4A;line-height:1.6;margin-top:8px">Cada propuesta es personalizada. Estos números son un ejemplo representativo para un hotel de tamaño mediano en la Península de Azuero.</p>
+    </div>
+    <div class="col">
+      <table>
+        <tr><th colspan="2">Análisis Financiero</th></tr>
+        <tr><td>Factura mensual actual</td><td style="font-weight:700;color:#0B3D2E">$4,500</td></tr>
+        <tr><td>Tamaño del sistema</td><td style="font-weight:700;color:#0B3D2E">100 kW</td></tr>
+        <tr><td>Ahorro mensual</td><td style="font-weight:700;color:#D4A843">$3,200 (71%)</td></tr>
+        <tr><td>Costo del sistema</td><td style="font-weight:700;color:#0B3D2E">$120,000</td></tr>
+        <tr><td>Período de retorno</td><td style="font-weight:700;color:#D4A843">3.1 años</td></tr>
+        <tr><td>Ahorro en 25 años</td><td style="font-weight:700;color:#D4A843">$840,000+</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="slide-num" style="color:rgba(0,0,0,0.15)">6</div>
+</div>
+
+<!-- Slide 7: Payment Options -->
+<div class="slide green-bg">
+  <div class="top-bar" style="border-bottom:1px solid rgba(212,168,67,0.15)">
+    <div class="logo">SOLARIS</div>
+    <div class="tag">Opciones de Pago</div>
+  </div>
+  <div class="body-full">
+    <div class="section-label">Flexibilidad</div>
+    <h2>Opciones de financiamiento para cada necesidad</h2>
+    <div class="feature-grid" style="margin-top:24px">
+      <div class="feature" style="text-align:center;padding:28px 20px">
+        <div class="icon" style="font-size:28px">💎</div>
+        <h4 style="font-size:15px;margin:8px 0">Compra Directa</h4>
+        <p>Pague una vez, sea dueño para siempre. ROI más rápido. Ideal para propietarios con capital disponible.</p>
+      </div>
+      <div class="feature" style="text-align:center;padding:28px 20px;border-color:rgba(212,168,67,0.3)">
+        <div class="icon" style="font-size:28px">⚡</div>
+        <h4 style="font-size:15px;margin:8px 0">PPA</h4>
+        <p>$0 inicial. Pague por kWh a tarifa menor que la red. Ahorro inmediato sin inversión.</p>
+      </div>
+      <div class="feature" style="text-align:center;padding:28px 20px">
+        <div class="icon" style="font-size:28px">📊</div>
+        <h4 style="font-size:15px;margin:8px 0">Leasing</h4>
+        <p>Pago mensual fijo, costos predecibles. Flexibilidad en el balance contable.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">7</div>
+</div>
+
+<!-- Slide 8: Why Solaris -->
+<div class="slide white-bg">
+  <div class="top-bar" style="background:#0B3D2E">
+    <div class="logo" style="color:#FEFDFB">SOLARIS</div>
+    <div class="tag">¿Por Qué Solaris?</div>
+  </div>
+  <div class="body-split">
+    <div class="col">
+      <div class="section-label">Nuestra Diferencia</div>
+      <h2 style="color:#0B3D2E">La única empresa enfocada en solar residencial y comercial en Azuero</h2>
+    </div>
+    <div class="col">
+      <ul>
+        <li>Especialistas exclusivos en techos solares del Azuero</li>
+        <li>Evaluación gratuita con tecnología satelital y dron</li>
+        <li>Equipos tier-1 con garantía internacional</li>
+        <li>Trámites y permisos ASEP incluidos</li>
+        <li>Monitoreo remoto 24/7 post-instalación</li>
+        <li>Experiencia binacional (Israel + Panamá)</li>
+        <li>Soporte bilingüe (español + inglés)</li>
+        <li>Mantenimiento preventivo incluido por 5 años</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-num" style="color:rgba(0,0,0,0.15)">8</div>
+</div>
+
+<!-- Slide 9: Process -->
+<div class="slide green-bg">
+  <div class="top-bar" style="border-bottom:1px solid rgba(212,168,67,0.15)">
+    <div class="logo">SOLARIS</div>
+    <div class="tag">Nuestro Proceso</div>
+  </div>
+  <div class="body-full">
+    <div class="section-label">De consulta a ahorro en 6–8 semanas</div>
+    <h2>Un proceso simple y transparente</h2>
+    <div style="display:flex;gap:12px;margin-top:24px">
+      <div style="flex:1;text-align:center;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border:1px solid rgba(212,168,67,0.1)">
+        <div style="font-size:24px;color:#D4A843;font-family:'Playfair Display',serif;font-weight:700">1</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 4px">Consulta</div>
+        <div style="font-size:10px;color:rgba(254,253,251,0.5)">Evaluación gratuita de su propiedad</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border:1px solid rgba(212,168,67,0.1)">
+        <div style="font-size:24px;color:#D4A843;font-family:'Playfair Display',serif;font-weight:700">2</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 4px">Diseño</div>
+        <div style="font-size:10px;color:rgba(254,253,251,0.5)">Sistema personalizado + propuesta</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border:1px solid rgba(212,168,67,0.1)">
+        <div style="font-size:24px;color:#D4A843;font-family:'Playfair Display',serif;font-weight:700">3</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 4px">Permisos</div>
+        <div style="font-size:10px;color:rgba(254,253,251,0.5)">Trámites ASEP y municipales</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border:1px solid rgba(212,168,67,0.1)">
+        <div style="font-size:24px;color:#D4A843;font-family:'Playfair Display',serif;font-weight:700">4</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 4px">Instalación</div>
+        <div style="font-size:10px;color:rgba(254,253,251,0.5)">Instalación profesional (3–5 días)</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border:1px solid rgba(212,168,67,0.1)">
+        <div style="font-size:24px;color:#D4A843;font-family:'Playfair Display',serif;font-weight:700">5</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 4px">Ahorro</div>
+        <div style="font-size:10px;color:rgba(254,253,251,0.5)">Empiece a ahorrar desde el día 1</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">9</div>
+</div>
+
+<!-- Slide 10: CTA -->
+<div class="slide white-bg" style="align-items:center;justify-content:center;padding:60px">
+  <div class="cta-box" style="max-width:600px;width:100%">
+    <div class="logo-circle" style="width:48px;height:48px;background:rgba(254,253,251,0.1);border:2px solid rgba(212,168,67,0.3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
+      <span style="font-family:'Playfair Display',serif;font-size:20px;color:#D4A843;font-weight:700">S</span>
+    </div>
+    <h2 style="font-size:28px">Comience a ahorrar hoy</h2>
+    <div class="tagline">Own Your Energy</div>
+    <div class="contact">
+      <div style="margin-top:16px">info@solarispanama.com</div>
+      <div>+507 6XXX-XXXX</div>
+      <div style="margin-top:8px;font-size:12px;color:rgba(254,253,251,0.4)">solarispanama.com</div>
+    </div>
+  </div>
+  <div class="slide-num" style="color:rgba(0,0,0,0.15)">10</div>
+</div>
+
+<script>
+let current=0;
+const slides=document.querySelectorAll('.slide');
+const total=slides.length;
+document.getElementById('total').textContent=total;
+
+function nav(dir){
+  slides[current].classList.remove('active');
+  current=(current+dir+total)%total;
+  slides[current].classList.add('active');
+  document.getElementById('curr').textContent=current+1;
+}
+
+function printAll(){
+  slides.forEach(s=>s.style.display='flex');
+  window.print();
+  slides.forEach((s,i)=>{s.style.display=i===current?'flex':'none'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')nav(1);
+  if(e.key==='ArrowLeft')nav(-1);
+});
+</script>
+</body>
+</html>
