@@ -21,6 +21,7 @@ import { ConfidenceScore } from '@/components/scanner/ConfidenceScore';
 import type { EnrichedOwnerResult, ProgressStatus } from '@/types/enrichment';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { SuitabilityResult } from '@/services/roofClassifier';
+import ScanActions from '@/components/scanner/ScanActions';
 
 // ===== TYPES =====
 
@@ -966,8 +967,9 @@ export default function BuildingDetail({
               {isLeadSaved ? 'Saved as Lead' : 'Save as Lead'}
             </Button>
           )}
-          {building.analyzed && (
+          {building.analyzed && analysis && (
             <>
+              <ScanActions scanResult={analysis} className="mb-1" />
               <Button
                 variant="primary"
                 fullWidth

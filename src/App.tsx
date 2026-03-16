@@ -20,6 +20,7 @@ import SettingsPage from '@/pages/SettingsPage';
 import LeadsPage from '@/pages/LeadsPage';
 import LeadDetailPage from '@/pages/LeadDetailPage';
 import NotFoundPage from '@/pages/NotFoundPage';
+import SharedScanPage from '@/pages/SharedScanPage';
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
             <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
+            <Route path="/scan/:token" element={<SharedScanPage />} />
             <Route element={<Layout />}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/projects" element={<ProjectsPage />} />

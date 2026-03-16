@@ -7,6 +7,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import ZoneSelector from '@/components/scanner/ZoneSelector';
 import BatchActions from '@/components/scanner/BatchActions';
+import SavedScansPanel from '@/components/scanner/SavedScansPanel';
 import type { LeadZone } from '@/types/lead';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
@@ -407,6 +408,11 @@ export default function ScanPanel({
             </p>
           </div>
         )}
+      </div>
+
+      {/* Saved Scans (collapsible, bottom) */}
+      <div className="border-t border-white/[0.06]">
+        <SavedScansPanel />
       </div>
     </div>
   );
