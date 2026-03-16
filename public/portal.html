@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -150,6 +150,36 @@
     color: var(--gold);
     white-space: nowrap;
     letter-spacing: 0.03em;
+  }
+
+  /* ── Language Toggle ── */
+  .lang-toggle {
+    display: flex;
+    background: rgba(212,168,67,0.15);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .lang-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.3s;
+    letter-spacing: 0.08em;
+  }
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--green-dark);
+  }
+  .lang-btn:hover:not(.active) {
+    color: rgba(255,255,255,0.9);
+    background: rgba(212,168,67,0.08);
   }
 
   /* ── Main ── */
@@ -343,10 +373,26 @@
     text-decoration: none;
   }
 
+  /* ── RTL Support ── */
+  [dir="rtl"] .header-inner { flex-direction: row-reverse; }
+  [dir="rtl"] .logo-area { flex-direction: row-reverse; }
+  [dir="rtl"] .section-header { flex-direction: row-reverse; }
+  [dir="rtl"] .section-count { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .card-title { text-align: right; }
+  [dir="rtl"] .card-desc { text-align: right; }
+  [dir="rtl"] .card-top { flex-direction: row-reverse; }
+  [dir="rtl"] .search-box input { padding: 0.55rem 2.4rem 0.55rem 1rem; }
+  [dir="rtl"] .search-icon { left: auto; right: 0.8rem; }
+  [dir="rtl"] .kbd-hint { right: auto !important; left: 0.7rem !important; }
+  [dir="rtl"] .card-path { text-align: right; direction: ltr; }
+  [dir="rtl"] .stats-bar { flex-direction: row-reverse; }
+  [dir="rtl"] .header-right { flex-direction: row-reverse; }
+
   /* ── Responsive ── */
   @media (max-width: 640px) {
     .header { padding: 1.25rem 1rem 1rem; }
     .header-inner { flex-direction: column; align-items: stretch; }
+    [dir="rtl"] .header-inner { flex-direction: column; }
     .search-box input { width: 100%; }
     .stats-bar { justify-content: center; }
     .cards { grid-template-columns: 1fr; }
@@ -373,20 +419,25 @@
     <div class="logo-area">
       <div class="logo-mark">S</div>
       <div class="logo-text">
-        <h1>Solaris Panama</h1>
-        <p>Project Command Center</p>
+        <h1 data-i18n="header_title">Solaris Panama</h1>
+        <p data-i18n="header_subtitle">Project Command Center</p>
       </div>
     </div>
     <div class="header-right">
       <div class="stats-bar">
-        <span class="stat-chip">8 Tools</span>
-        <span class="stat-chip">3 Proposals</span>
-        <span class="stat-chip">8 Ad Images</span>
-        <span class="stat-chip">300+ Leads</span>
+        <span class="stat-chip" data-i18n="stats_tools">8 Tools</span>
+        <span class="stat-chip" data-i18n="stats_proposals">3 Proposals</span>
+        <span class="stat-chip" data-i18n="stats_images">8 Ad Images</span>
+        <span class="stat-chip" data-i18n="stats_leads">300+ Leads</span>
+      </div>
+      <div class="lang-toggle">
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn active" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('he')">עב</button>
       </div>
       <div class="search-box">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="search" placeholder="Search everything..." autocomplete="off">
+        <input type="text" id="search" data-i18n="search_placeholder" placeholder="Search everything..." autocomplete="off">
         <span class="kbd-hint" style="position:absolute;right:0.7rem;top:50%;transform:translateY(-50%)">⌘K</span>
       </div>
     </div>
@@ -394,43 +445,43 @@
 </header>
 
 <main class="main">
-  <div id="no-results" class="no-results">No items match your search.</div>
+  <div id="no-results" class="no-results" data-i18n="no_results">No items match your search.</div>
 
   <!-- ── 1. Live Websites ── -->
   <section class="section" data-section="live-websites">
     <div class="section-header">
       <div class="section-icon">🌐</div>
-      <h2 class="section-title">Live Websites</h2>
-      <span class="section-count">3 sites</span>
+      <h2 class="section-title" data-i18n="section_live_title">Live Websites</h2>
+      <span class="section-count" data-i18n="section_live_count">3 sites</span>
     </div>
     <div class="cards">
       <a class="card" href="https://solaris-panama.com" target="_blank"
          data-keywords="landing page website homepage main">
         <div class="card-top">
           <span class="card-emoji">☀️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Landing Page</div>
-        <div class="card-desc">Main marketing website for Solaris Panama solar energy services</div>
+        <div class="card-title" data-i18n="card_landing_title">Landing Page</div>
+        <div class="card-desc" data-i18n="card_landing_desc">Main marketing website for Solaris Panama solar energy services</div>
         <div class="card-path">solaris-panama.com</div>
       </a>
       <a class="card" href="https://crm.solaris-panama.com" target="_blank"
          data-keywords="crm customer management leads pipeline sales">
         <div class="card-top">
           <span class="card-emoji">📋</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">CRM Dashboard</div>
-        <div class="card-desc">Customer relationship management — leads, pipeline, and project tracking</div>
+        <div class="card-title" data-i18n="card_crm_title">CRM Dashboard</div>
+        <div class="card-desc" data-i18n="card_crm_desc">Customer relationship management — leads, pipeline, and project tracking</div>
         <div class="card-path">crm.solaris-panama.com</div>
       </a>
       <a class="card" href="/towns/" data-keywords="blog towns pedasi canas chitre las tablas playa venao seo">
         <div class="card-top">
           <span class="card-emoji">📰</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Town Blog Pages</div>
-        <div class="card-desc">SEO-optimized solar guides for Pedasi, Canas, Chitre, Las Tablas, Playa Venao</div>
+        <div class="card-title" data-i18n="card_towns_title">Town Blog Pages</div>
+        <div class="card-desc" data-i18n="card_towns_desc">SEO-optimized solar guides for Pedasi, Canas, Chitre, Las Tablas, Playa Venao</div>
         <div class="card-path">/towns/</div>
       </a>
     </div>
@@ -440,80 +491,80 @@
   <section class="section" data-section="tools">
     <div class="section-header">
       <div class="section-icon">🛠️</div>
-      <h2 class="section-title">Interactive Tools</h2>
-      <span class="section-count">8 tools</span>
+      <h2 class="section-title" data-i18n="section_tools_title">Interactive Tools</h2>
+      <span class="section-count" data-i18n="section_tools_count">8 tools</span>
     </div>
     <div class="cards">
       <a class="card" href="/tools/gis-mapper.html" data-keywords="gis mapper map satellite geospatial location">
         <div class="card-top">
           <span class="card-emoji">🛰️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">GIS Mapper</div>
-        <div class="card-desc">Satellite-based mapping tool for site analysis and geospatial data</div>
+        <div class="card-title" data-i18n="card_gis_title">GIS Mapper</div>
+        <div class="card-desc" data-i18n="card_gis_desc">Satellite-based mapping tool for site analysis and geospatial data</div>
         <div class="card-path">/tools/gis-mapper.html</div>
       </a>
       <a class="card" href="/tools/solar-atlas.html" data-keywords="atlas solar irradiance radiation map panama">
         <div class="card-top">
           <span class="card-emoji">🗺️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Solar Atlas</div>
-        <div class="card-desc">Solar irradiance data and energy potential atlas for Panama</div>
+        <div class="card-title" data-i18n="card_atlas_title">Solar Atlas</div>
+        <div class="card-desc" data-i18n="card_atlas_desc">Solar irradiance data and energy potential atlas for Panama</div>
         <div class="card-path">/tools/solar-atlas.html</div>
       </a>
       <a class="card" href="/dashboard/roof-scanner.html" data-keywords="roof scanner scan analyze assessment guide">
         <div class="card-top">
           <span class="card-emoji">🏠</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Roof Scanner Guide</div>
-        <div class="card-desc">AI-powered roof assessment and solar panel placement guide</div>
+        <div class="card-title" data-i18n="card_roof_title">Roof Scanner Guide</div>
+        <div class="card-desc" data-i18n="card_roof_desc">AI-powered roof assessment and solar panel placement guide</div>
         <div class="card-path">/dashboard/roof-scanner.html</div>
       </a>
       <a class="card" href="/tools/financing.html" data-keywords="financing calculator payment roi investment">
         <div class="card-top">
           <span class="card-emoji">💰</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Financing Calculator</div>
-        <div class="card-desc">ROI calculator and financing options for solar installations</div>
+        <div class="card-title" data-i18n="card_financing_title">Financing Calculator</div>
+        <div class="card-desc" data-i18n="card_financing_desc">ROI calculator and financing options for solar installations</div>
         <div class="card-path">/tools/financing.html</div>
       </a>
       <a class="card" href="/dashboard/bill-scanner.html" data-keywords="bill scanner electricity utility analyze">
         <div class="card-top">
           <span class="card-emoji">⚡</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Bill Scanner</div>
-        <div class="card-desc">Electricity bill analyzer — upload and get savings estimate</div>
+        <div class="card-title" data-i18n="card_bill_title">Bill Scanner</div>
+        <div class="card-desc" data-i18n="card_bill_desc">Electricity bill analyzer — upload and get savings estimate</div>
         <div class="card-path">/dashboard/bill-scanner.html</div>
       </a>
       <a class="card" href="/dashboard/drone-guide.html" data-keywords="drone guide aerial site survey photography">
         <div class="card-top">
           <span class="card-emoji">🚁</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Drone Guide</div>
-        <div class="card-desc">Aerial site survey guide using drone photography</div>
+        <div class="card-title" data-i18n="card_drone_title">Drone Guide</div>
+        <div class="card-desc" data-i18n="card_drone_desc">Aerial site survey guide using drone photography</div>
         <div class="card-path">/dashboard/drone-guide.html</div>
       </a>
       <a class="card" href="/dashboard/equipment-list.html" data-keywords="equipment inventory panels inverters batteries">
         <div class="card-top">
           <span class="card-emoji">📦</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Equipment List</div>
-        <div class="card-desc">Catalog of panels, inverters, batteries, and mounting hardware</div>
+        <div class="card-title" data-i18n="card_equipment_title">Equipment List</div>
+        <div class="card-desc" data-i18n="card_equipment_desc">Catalog of panels, inverters, batteries, and mounting hardware</div>
         <div class="card-path">/dashboard/equipment-list.html</div>
       </a>
       <a class="card" href="/dashboard/monitoring-maintenance.html" data-keywords="monitoring maintenance system performance">
         <div class="card-top">
           <span class="card-emoji">📡</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Monitoring & Maintenance</div>
-        <div class="card-desc">System monitoring dashboard and maintenance scheduling</div>
+        <div class="card-title" data-i18n="card_monitoring_title">Monitoring & Maintenance</div>
+        <div class="card-desc" data-i18n="card_monitoring_desc">System monitoring dashboard and maintenance scheduling</div>
         <div class="card-path">/dashboard/monitoring-maintenance.html</div>
       </a>
     </div>
@@ -523,38 +574,38 @@
   <section class="section" data-section="proposals">
     <div class="section-header">
       <div class="section-icon">📑</div>
-      <h2 class="section-title">Proposals & Templates</h2>
-      <span class="section-count">3 proposals</span>
+      <h2 class="section-title" data-i18n="section_proposals_title">Proposals & Templates</h2>
+      <span class="section-count" data-i18n="section_proposals_count">3 proposals</span>
     </div>
     <div class="cards">
       <a class="card" href="/proposals/commercial-proposal-template.html"
          data-keywords="commercial proposal template business enterprise">
         <div class="card-top">
           <span class="card-emoji">🏢</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Commercial Proposal</div>
-        <div class="card-desc">Professional proposal template for commercial and enterprise clients</div>
+        <div class="card-title" data-i18n="card_commercial_title">Commercial Proposal</div>
+        <div class="card-desc" data-i18n="card_commercial_desc">Professional proposal template for commercial and enterprise clients</div>
         <div class="card-path">/proposals/commercial-proposal-template.html</div>
       </a>
       <a class="card" href="/proposals/residential-proposal-template.html"
          data-keywords="residential proposal template home homeowner">
         <div class="card-top">
           <span class="card-emoji">🏡</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Residential Proposal</div>
-        <div class="card-desc">Solar proposal template for residential homeowner clients</div>
+        <div class="card-title" data-i18n="card_residential_title">Residential Proposal</div>
+        <div class="card-desc" data-i18n="card_residential_desc">Solar proposal template for residential homeowner clients</div>
         <div class="card-path">/proposals/residential-proposal-template.html</div>
       </a>
       <a class="card" href="/proposals/financing-options.html"
          data-keywords="financing options payment plan lease ppa loan">
         <div class="card-top">
           <span class="card-emoji">💳</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Financing Options</div>
-        <div class="card-desc">Financing plans — lease, PPA, loan, and cash purchase comparisons</div>
+        <div class="card-title" data-i18n="card_finoptions_title">Financing Options</div>
+        <div class="card-desc" data-i18n="card_finoptions_desc">Financing plans — lease, PPA, loan, and cash purchase comparisons</div>
         <div class="card-path">/proposals/financing-options.html</div>
       </a>
     </div>
@@ -564,73 +615,73 @@
   <section class="section" data-section="marketing">
     <div class="section-header">
       <div class="section-icon">📣</div>
-      <h2 class="section-title">Marketing Materials</h2>
-      <span class="section-count">5 categories</span>
+      <h2 class="section-title" data-i18n="section_marketing_title">Marketing Materials</h2>
+      <span class="section-count" data-i18n="section_marketing_count">5 categories</span>
     </div>
     <div class="cards">
       <a class="card" href="/sales/" data-keywords="sales strategy pricing objection playbook icp">
         <div class="card-top">
           <span class="card-emoji">📊</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Sales Strategy Docs</div>
-        <div class="card-desc">Pricing model, ICP, objection playbook, and sales strategy</div>
+        <div class="card-title" data-i18n="card_sales_title">Sales Strategy Docs</div>
+        <div class="card-desc" data-i18n="card_sales_desc">Pricing model, ICP, objection playbook, and sales strategy</div>
         <div class="card-path">/sales/</div>
       </a>
       <a class="card" href="/ads-creatives/" data-keywords="ads creatives facebook instagram google advertising">
         <div class="card-top">
           <span class="card-emoji">📱</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Ad Creatives</div>
-        <div class="card-desc">Ad templates — Ley 417, savings, testimonial, WhatsApp flyer, one-pager</div>
+        <div class="card-title" data-i18n="card_adcreatives_title">Ad Creatives</div>
+        <div class="card-desc" data-i18n="card_adcreatives_desc">Ad templates — Ley 417, savings, testimonial, WhatsApp flyer, one-pager</div>
         <div class="card-path">/ads-creatives/</div>
       </a>
       <a class="card" href="/ads-creatives/images/" data-keywords="ad images photos visuals creative assets">
         <div class="card-top">
           <span class="card-emoji">🖼️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Ad Images (8)</div>
-        <div class="card-desc">Professional ad imagery — tropical homes, ROI charts, storm-proof systems</div>
+        <div class="card-title" data-i18n="card_adimages_title">Ad Images (8)</div>
+        <div class="card-desc" data-i18n="card_adimages_desc">Professional ad imagery — tropical homes, ROI charts, storm-proof systems</div>
         <div class="card-path">/ads-creatives/images/</div>
       </a>
       <a class="card" href="/towns/" data-keywords="blog posts seo content towns local pages">
         <div class="card-top">
           <span class="card-emoji">📰</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Blog Posts (5 Towns)</div>
-        <div class="card-desc">Location-specific solar guides for key Azuero Peninsula towns</div>
+        <div class="card-title" data-i18n="card_blogposts_title">Blog Posts (5 Towns)</div>
+        <div class="card-desc" data-i18n="card_blogposts_desc">Location-specific solar guides for key Azuero Peninsula towns</div>
         <div class="card-path">/towns/</div>
       </a>
       <a class="card" href="/brand/" data-keywords="brand assets logo colors typography identity kit">
         <div class="card-top">
           <span class="card-emoji">🎨</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Brand Assets</div>
-        <div class="card-desc">Logos, color palette, typography, and brand identity kit</div>
+        <div class="card-title" data-i18n="card_brand_title">Brand Assets</div>
+        <div class="card-desc" data-i18n="card_brand_desc">Logos, color palette, typography, and brand identity kit</div>
         <div class="card-path">/brand/</div>
       </a>
       <a class="card" href="/presentations/investor-deck.html"
          data-keywords="investor deck presentation pitch funding">
         <div class="card-top">
           <span class="card-emoji">💼</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Investor Deck</div>
-        <div class="card-desc">Pitch presentation for potential investors and partners</div>
+        <div class="card-title" data-i18n="card_investor_title">Investor Deck</div>
+        <div class="card-desc" data-i18n="card_investor_desc">Pitch presentation for potential investors and partners</div>
         <div class="card-path">/presentations/investor-deck.html</div>
       </a>
       <a class="card" href="/presentations/sales-deck.html"
          data-keywords="sales deck presentation client pitch">
         <div class="card-top">
           <span class="card-emoji">📈</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Sales Deck</div>
-        <div class="card-desc">Client-facing sales presentation deck</div>
+        <div class="card-title" data-i18n="card_salesdeck_title">Sales Deck</div>
+        <div class="card-desc" data-i18n="card_salesdeck_desc">Client-facing sales presentation deck</div>
         <div class="card-path">/presentations/sales-deck.html</div>
       </a>
     </div>
@@ -640,67 +691,67 @@
   <section class="section" data-section="research">
     <div class="section-header">
       <div class="section-icon">🔬</div>
-      <h2 class="section-title">Research & Data</h2>
-      <span class="section-count">6 resources</span>
+      <h2 class="section-title" data-i18n="section_research_title">Research & Data</h2>
+      <span class="section-count" data-i18n="section_research_count">6 resources</span>
     </div>
     <div class="cards">
       <a class="card" href="https://crm.solaris-panama.com" target="_blank"
          data-keywords="leads database contacts prospects crm pipeline 300">
         <div class="card-top">
           <span class="card-emoji">🏨</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Leads Database (300+)</div>
-        <div class="card-desc">Expat properties, hotels, and commercial leads across Azuero Peninsula</div>
+        <div class="card-title" data-i18n="card_leads_title">Leads Database (300+)</div>
+        <div class="card-desc" data-i18n="card_leads_desc">Expat properties, hotels, and commercial leads across Azuero Peninsula</div>
         <div class="card-path">crm.solaris-panama.com</div>
       </a>
       <a class="card" href="/research/" data-keywords="market research competitors economics regulations supply">
         <div class="card-top">
           <span class="card-emoji">📈</span>
-          <span class="badge badge-docs">Docs</span>
+          <span class="badge badge-docs" data-i18n="badge_docs">Docs</span>
         </div>
-        <div class="card-title">Market Research</div>
-        <div class="card-desc">Competitor analysis, economics, regulations, and equipment supply chain</div>
+        <div class="card-title" data-i18n="card_market_title">Market Research</div>
+        <div class="card-desc" data-i18n="card_market_desc">Competitor analysis, economics, regulations, and equipment supply chain</div>
         <div class="card-path">/research/</div>
       </a>
       <a class="card" href="/brand/business-card.html"
          data-keywords="business card kaniel contact print">
         <div class="card-top">
           <span class="card-emoji">📄</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Business Card — Kaniel</div>
-        <div class="card-desc">Digital business card for Kaniel Tordjman</div>
+        <div class="card-title" data-i18n="card_bizcard_kaniel_title">Business Card — Kaniel</div>
+        <div class="card-desc" data-i18n="card_bizcard_kaniel_desc">Digital business card for Kaniel Tordjman</div>
         <div class="card-path">/brand/business-card.html</div>
       </a>
       <a class="card" href="/brand/business-card-omri.html"
          data-keywords="business card omri contact print">
         <div class="card-top">
           <span class="card-emoji">📄</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Business Card — Omri</div>
-        <div class="card-desc">Digital business card for Omri</div>
+        <div class="card-title" data-i18n="card_bizcard_omri_title">Business Card — Omri</div>
+        <div class="card-desc" data-i18n="card_bizcard_omri_desc">Digital business card for Omri</div>
         <div class="card-path">/brand/business-card-omri.html</div>
       </a>
       <a class="card" href="/brand/email-signature.html"
          data-keywords="email signature kaniel footer">
         <div class="card-top">
           <span class="card-emoji">✉️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Email Signature — Kaniel</div>
-        <div class="card-desc">Professional email signature template</div>
+        <div class="card-title" data-i18n="card_emailsig_kaniel_title">Email Signature — Kaniel</div>
+        <div class="card-desc" data-i18n="card_emailsig_kaniel_desc">Professional email signature template</div>
         <div class="card-path">/brand/email-signature.html</div>
       </a>
       <a class="card" href="/brand/email-signature-omri.html"
          data-keywords="email signature omri footer">
         <div class="card-top">
           <span class="card-emoji">✉️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Email Signature — Omri</div>
-        <div class="card-desc">Professional email signature template for Omri</div>
+        <div class="card-title" data-i18n="card_emailsig_omri_title">Email Signature — Omri</div>
+        <div class="card-desc" data-i18n="card_emailsig_omri_desc">Professional email signature template for Omri</div>
         <div class="card-path">/brand/email-signature-omri.html</div>
       </a>
     </div>
@@ -710,68 +761,68 @@
   <section class="section" data-section="crm-workflow">
     <div class="section-header">
       <div class="section-icon">⚙️</div>
-      <h2 class="section-title">CRM Workflow Steps</h2>
-      <span class="section-count">10 steps</span>
+      <h2 class="section-title" data-i18n="section_crm_title">CRM Workflow Steps</h2>
+      <span class="section-count" data-i18n="section_crm_count">10 steps</span>
     </div>
     <div class="cards">
       <a class="card" href="/dashboard/crm-step1-lead-capture.html" data-keywords="crm step 1 lead capture intake">
-        <div class="card-top"><span class="card-emoji">1️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 1 — Lead Capture</div>
-        <div class="card-desc">Intake form and lead qualification</div>
+        <div class="card-top"><span class="card-emoji">1️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step1_title">Step 1 — Lead Capture</div>
+        <div class="card-desc" data-i18n="card_step1_desc">Intake form and lead qualification</div>
         <div class="card-path">/dashboard/crm-step1-lead-capture.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step2-site-survey.html" data-keywords="crm step 2 site survey assessment">
-        <div class="card-top"><span class="card-emoji">2️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 2 — Site Survey</div>
-        <div class="card-desc">On-site assessment and measurements</div>
+        <div class="card-top"><span class="card-emoji">2️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step2_title">Step 2 — Site Survey</div>
+        <div class="card-desc" data-i18n="card_step2_desc">On-site assessment and measurements</div>
         <div class="card-path">/dashboard/crm-step2-site-survey.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step3-electricity.html" data-keywords="crm step 3 electricity bill analysis">
-        <div class="card-top"><span class="card-emoji">3️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 3 — Electricity Analysis</div>
-        <div class="card-desc">Utility bill analysis and consumption profiling</div>
+        <div class="card-top"><span class="card-emoji">3️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step3_title">Step 3 — Electricity Analysis</div>
+        <div class="card-desc" data-i18n="card_step3_desc">Utility bill analysis and consumption profiling</div>
         <div class="card-path">/dashboard/crm-step3-electricity.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step4-design.html" data-keywords="crm step 4 system design layout">
-        <div class="card-top"><span class="card-emoji">4️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 4 — System Design</div>
-        <div class="card-desc">Panel layout and system sizing</div>
+        <div class="card-top"><span class="card-emoji">4️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step4_title">Step 4 — System Design</div>
+        <div class="card-desc" data-i18n="card_step4_desc">Panel layout and system sizing</div>
         <div class="card-path">/dashboard/crm-step4-design.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step5-sld.html" data-keywords="crm step 5 sld single line diagram electrical">
-        <div class="card-top"><span class="card-emoji">5️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 5 — SLD</div>
-        <div class="card-desc">Single line diagram and electrical planning</div>
+        <div class="card-top"><span class="card-emoji">5️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step5_title">Step 5 — SLD</div>
+        <div class="card-desc" data-i18n="card_step5_desc">Single line diagram and electrical planning</div>
         <div class="card-path">/dashboard/crm-step5-sld.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step6-proposal.html" data-keywords="crm step 6 proposal quote pricing">
-        <div class="card-top"><span class="card-emoji">6️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 6 — Proposal</div>
-        <div class="card-desc">Generate client proposal and pricing</div>
+        <div class="card-top"><span class="card-emoji">6️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step6_title">Step 6 — Proposal</div>
+        <div class="card-desc" data-i18n="card_step6_desc">Generate client proposal and pricing</div>
         <div class="card-path">/dashboard/crm-step6-proposal.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step7-contract.html" data-keywords="crm step 7 contract agreement signing">
-        <div class="card-top"><span class="card-emoji">7️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 7 — Contract</div>
-        <div class="card-desc">Contract generation and e-signature</div>
+        <div class="card-top"><span class="card-emoji">7️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step7_title">Step 7 — Contract</div>
+        <div class="card-desc" data-i18n="card_step7_desc">Contract generation and e-signature</div>
         <div class="card-path">/dashboard/crm-step7-contract.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step8-inventory.html" data-keywords="crm step 8 inventory procurement ordering">
-        <div class="card-top"><span class="card-emoji">8️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 8 — Inventory</div>
-        <div class="card-desc">Equipment procurement and ordering</div>
+        <div class="card-top"><span class="card-emoji">8️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step8_title">Step 8 — Inventory</div>
+        <div class="card-desc" data-i18n="card_step8_desc">Equipment procurement and ordering</div>
         <div class="card-path">/dashboard/crm-step8-inventory.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step9-installation.html" data-keywords="crm step 9 installation scheduling crew">
-        <div class="card-top"><span class="card-emoji">9️⃣</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 9 — Installation</div>
-        <div class="card-desc">Installation scheduling and crew management</div>
+        <div class="card-top"><span class="card-emoji">9️⃣</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step9_title">Step 9 — Installation</div>
+        <div class="card-desc" data-i18n="card_step9_desc">Installation scheduling and crew management</div>
         <div class="card-path">/dashboard/crm-step9-installation.html</div>
       </a>
       <a class="card" href="/dashboard/crm-step10-om.html" data-keywords="crm step 10 operations maintenance monitoring">
-        <div class="card-top"><span class="card-emoji">🔟</span><span class="badge badge-live">Live</span></div>
-        <div class="card-title">Step 10 — O&M</div>
-        <div class="card-desc">Operations, maintenance, and monitoring</div>
+        <div class="card-top"><span class="card-emoji">🔟</span><span class="badge badge-live" data-i18n="badge_live">Live</span></div>
+        <div class="card-title" data-i18n="card_step10_title">Step 10 — O&M</div>
+        <div class="card-desc" data-i18n="card_step10_desc">Operations, maintenance, and monitoring</div>
         <div class="card-path">/dashboard/crm-step10-om.html</div>
       </a>
     </div>
@@ -781,80 +832,80 @@
   <section class="section" data-section="project-files">
     <div class="section-header">
       <div class="section-icon">📁</div>
-      <h2 class="section-title">Project Files & Documentation</h2>
-      <span class="section-count">8 files</span>
+      <h2 class="section-title" data-i18n="section_files_title">Project Files & Documentation</h2>
+      <span class="section-count" data-i18n="section_files_count">8 files</span>
     </div>
     <div class="cards">
       <a class="card" href="/portal.html" data-keywords="hub portal dashboard command center this page">
         <div class="card-top">
           <span class="card-emoji">🎯</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Project Portal</div>
-        <div class="card-desc">This page — the central command center for all project assets</div>
+        <div class="card-title" data-i18n="card_portal_title">Project Portal</div>
+        <div class="card-desc" data-i18n="card_portal_desc">This page — the central command center for all project assets</div>
         <div class="card-path">/portal.html</div>
       </a>
       <a class="card" href="/dashboard/" data-keywords="dashboard crm workflow index main">
         <div class="card-top">
           <span class="card-emoji">🖥️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">CRM Dashboard</div>
-        <div class="card-desc">Full CRM dashboard with all workflow steps and tools</div>
+        <div class="card-title" data-i18n="card_dashboard_title">CRM Dashboard</div>
+        <div class="card-desc" data-i18n="card_dashboard_desc">Full CRM dashboard with all workflow steps and tools</div>
         <div class="card-path">/dashboard/</div>
       </a>
       <a class="card" href="/dashboard/financial-dashboard.html" data-keywords="financial dashboard pnl profit loss revenue">
         <div class="card-top">
           <span class="card-emoji">💵</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Financial Dashboard</div>
-        <div class="card-desc">P&L planning, revenue projections, and financial overview</div>
+        <div class="card-title" data-i18n="card_financial_title">Financial Dashboard</div>
+        <div class="card-desc" data-i18n="card_financial_desc">P&L planning, revenue projections, and financial overview</div>
         <div class="card-path">/dashboard/financial-dashboard.html</div>
       </a>
       <a class="card" href="/dashboard/business-plan.html" data-keywords="business plan strategy overview">
         <div class="card-top">
           <span class="card-emoji">📋</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Business Plan</div>
-        <div class="card-desc">Complete business plan and strategic overview</div>
+        <div class="card-title" data-i18n="card_bizplan_title">Business Plan</div>
+        <div class="card-desc" data-i18n="card_bizplan_desc">Complete business plan and strategic overview</div>
         <div class="card-path">/dashboard/business-plan.html</div>
       </a>
       <a class="card" href="/dashboard/legal-contracts.html" data-keywords="legal contracts epc ppa agreement">
         <div class="card-top">
           <span class="card-emoji">⚖️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Legal Contracts</div>
-        <div class="card-desc">EPC contracts, PPA agreements, and legal templates</div>
+        <div class="card-title" data-i18n="card_legal_title">Legal Contracts</div>
+        <div class="card-desc" data-i18n="card_legal_desc">EPC contracts, PPA agreements, and legal templates</div>
         <div class="card-path">/dashboard/legal-contracts.html</div>
       </a>
       <a class="card" href="/dashboard/licensing.html" data-keywords="licensing permits regulations compliance">
         <div class="card-top">
           <span class="card-emoji">📜</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Licensing & Permits</div>
-        <div class="card-desc">Regulatory compliance, permits, and licensing requirements</div>
+        <div class="card-title" data-i18n="card_licensing_title">Licensing & Permits</div>
+        <div class="card-desc" data-i18n="card_licensing_desc">Regulatory compliance, permits, and licensing requirements</div>
         <div class="card-path">/dashboard/licensing.html</div>
       </a>
       <a class="card" href="/dashboard/customer-avatars.html" data-keywords="customer avatars personas icp target audience">
         <div class="card-top">
           <span class="card-emoji">👤</span>
-          <span class="badge badge-docs">Docs</span>
+          <span class="badge badge-docs" data-i18n="badge_docs">Docs</span>
         </div>
-        <div class="card-title">Customer Avatars</div>
-        <div class="card-desc">Ideal customer profiles and target audience personas</div>
+        <div class="card-title" data-i18n="card_avatars_title">Customer Avatars</div>
+        <div class="card-desc" data-i18n="card_avatars_desc">Ideal customer profiles and target audience personas</div>
         <div class="card-path">/dashboard/customer-avatars.html</div>
       </a>
       <a class="card" href="/presentations/strategy-deck.html" data-keywords="strategy deck presentation roadmap">
         <div class="card-top">
           <span class="card-emoji">🗺️</span>
-          <span class="badge badge-live">Live</span>
+          <span class="badge badge-live" data-i18n="badge_live">Live</span>
         </div>
-        <div class="card-title">Strategy Deck</div>
-        <div class="card-desc">Strategic roadmap and company direction presentation</div>
+        <div class="card-title" data-i18n="card_strategy_title">Strategy Deck</div>
+        <div class="card-desc" data-i18n="card_strategy_desc">Strategic roadmap and company direction presentation</div>
         <div class="card-path">/presentations/strategy-deck.html</div>
       </a>
     </div>
@@ -862,8 +913,422 @@
 </main>
 
 <footer class="footer">
-  <p>Solaris Panama — Project Portal &middot; Internal use only &middot; <a href="https://solaris-panama.com">solaris-panama.com</a></p>
+  <p data-i18n="footer_text">Solaris Panama — Project Portal · Internal use only · <a href="https://solaris-panama.com">solaris-panama.com</a></p>
 </footer>
+
+<script>
+const i18n = {
+  en: {
+    header_title: 'Solaris Panama',
+    header_subtitle: 'Project Command Center',
+    search_placeholder: 'Search everything...',
+    stats_tools: '8 Tools',
+    stats_proposals: '3 Proposals',
+    stats_images: '8 Ad Images',
+    stats_leads: '300+ Leads',
+    no_results: 'No items match your search.',
+    badge_live: 'Live',
+    badge_docs: 'Docs',
+    // Section 1 — Live Websites
+    section_live_title: 'Live Websites',
+    section_live_count: '3 sites',
+    card_landing_title: 'Landing Page',
+    card_landing_desc: 'Main marketing website for Solaris Panama solar energy services',
+    card_crm_title: 'CRM Dashboard',
+    card_crm_desc: 'Customer relationship management — leads, pipeline, and project tracking',
+    card_towns_title: 'Town Blog Pages',
+    card_towns_desc: 'SEO-optimized solar guides for Pedasi, Canas, Chitre, Las Tablas, Playa Venao',
+    // Section 2 — Interactive Tools
+    section_tools_title: 'Interactive Tools',
+    section_tools_count: '8 tools',
+    card_gis_title: 'GIS Mapper',
+    card_gis_desc: 'Satellite-based mapping tool for site analysis and geospatial data',
+    card_atlas_title: 'Solar Atlas',
+    card_atlas_desc: 'Solar irradiance data and energy potential atlas for Panama',
+    card_roof_title: 'Roof Scanner Guide',
+    card_roof_desc: 'AI-powered roof assessment and solar panel placement guide',
+    card_financing_title: 'Financing Calculator',
+    card_financing_desc: 'ROI calculator and financing options for solar installations',
+    card_bill_title: 'Bill Scanner',
+    card_bill_desc: 'Electricity bill analyzer — upload and get savings estimate',
+    card_drone_title: 'Drone Guide',
+    card_drone_desc: 'Aerial site survey guide using drone photography',
+    card_equipment_title: 'Equipment List',
+    card_equipment_desc: 'Catalog of panels, inverters, batteries, and mounting hardware',
+    card_monitoring_title: 'Monitoring & Maintenance',
+    card_monitoring_desc: 'System monitoring dashboard and maintenance scheduling',
+    // Section 3 — Proposals
+    section_proposals_title: 'Proposals & Templates',
+    section_proposals_count: '3 proposals',
+    card_commercial_title: 'Commercial Proposal',
+    card_commercial_desc: 'Professional proposal template for commercial and enterprise clients',
+    card_residential_title: 'Residential Proposal',
+    card_residential_desc: 'Solar proposal template for residential homeowner clients',
+    card_finoptions_title: 'Financing Options',
+    card_finoptions_desc: 'Financing plans — lease, PPA, loan, and cash purchase comparisons',
+    // Section 4 — Marketing
+    section_marketing_title: 'Marketing Materials',
+    section_marketing_count: '5 categories',
+    card_sales_title: 'Sales Strategy Docs',
+    card_sales_desc: 'Pricing model, ICP, objection playbook, and sales strategy',
+    card_adcreatives_title: 'Ad Creatives',
+    card_adcreatives_desc: 'Ad templates — Ley 417, savings, testimonial, WhatsApp flyer, one-pager',
+    card_adimages_title: 'Ad Images (8)',
+    card_adimages_desc: 'Professional ad imagery — tropical homes, ROI charts, storm-proof systems',
+    card_blogposts_title: 'Blog Posts (5 Towns)',
+    card_blogposts_desc: 'Location-specific solar guides for key Azuero Peninsula towns',
+    card_brand_title: 'Brand Assets',
+    card_brand_desc: 'Logos, color palette, typography, and brand identity kit',
+    card_investor_title: 'Investor Deck',
+    card_investor_desc: 'Pitch presentation for potential investors and partners',
+    card_salesdeck_title: 'Sales Deck',
+    card_salesdeck_desc: 'Client-facing sales presentation deck',
+    // Section 5 — Research
+    section_research_title: 'Research & Data',
+    section_research_count: '6 resources',
+    card_leads_title: 'Leads Database (300+)',
+    card_leads_desc: 'Expat properties, hotels, and commercial leads across Azuero Peninsula',
+    card_market_title: 'Market Research',
+    card_market_desc: 'Competitor analysis, economics, regulations, and equipment supply chain',
+    card_bizcard_kaniel_title: 'Business Card — Kaniel',
+    card_bizcard_kaniel_desc: 'Digital business card for Kaniel Tordjman',
+    card_bizcard_omri_title: 'Business Card — Omri',
+    card_bizcard_omri_desc: 'Digital business card for Omri',
+    card_emailsig_kaniel_title: 'Email Signature — Kaniel',
+    card_emailsig_kaniel_desc: 'Professional email signature template',
+    card_emailsig_omri_title: 'Email Signature — Omri',
+    card_emailsig_omri_desc: 'Professional email signature template for Omri',
+    // Section 6 — CRM Workflow
+    section_crm_title: 'CRM Workflow Steps',
+    section_crm_count: '10 steps',
+    card_step1_title: 'Step 1 — Lead Capture',
+    card_step1_desc: 'Intake form and lead qualification',
+    card_step2_title: 'Step 2 — Site Survey',
+    card_step2_desc: 'On-site assessment and measurements',
+    card_step3_title: 'Step 3 — Electricity Analysis',
+    card_step3_desc: 'Utility bill analysis and consumption profiling',
+    card_step4_title: 'Step 4 — System Design',
+    card_step4_desc: 'Panel layout and system sizing',
+    card_step5_title: 'Step 5 — SLD',
+    card_step5_desc: 'Single line diagram and electrical planning',
+    card_step6_title: 'Step 6 — Proposal',
+    card_step6_desc: 'Generate client proposal and pricing',
+    card_step7_title: 'Step 7 — Contract',
+    card_step7_desc: 'Contract generation and e-signature',
+    card_step8_title: 'Step 8 — Inventory',
+    card_step8_desc: 'Equipment procurement and ordering',
+    card_step9_title: 'Step 9 — Installation',
+    card_step9_desc: 'Installation scheduling and crew management',
+    card_step10_title: 'Step 10 — O&M',
+    card_step10_desc: 'Operations, maintenance, and monitoring',
+    // Section 7 — Project Files
+    section_files_title: 'Project Files & Documentation',
+    section_files_count: '8 files',
+    card_portal_title: 'Project Portal',
+    card_portal_desc: 'This page — the central command center for all project assets',
+    card_dashboard_title: 'CRM Dashboard',
+    card_dashboard_desc: 'Full CRM dashboard with all workflow steps and tools',
+    card_financial_title: 'Financial Dashboard',
+    card_financial_desc: 'P&L planning, revenue projections, and financial overview',
+    card_bizplan_title: 'Business Plan',
+    card_bizplan_desc: 'Complete business plan and strategic overview',
+    card_legal_title: 'Legal Contracts',
+    card_legal_desc: 'EPC contracts, PPA agreements, and legal templates',
+    card_licensing_title: 'Licensing & Permits',
+    card_licensing_desc: 'Regulatory compliance, permits, and licensing requirements',
+    card_avatars_title: 'Customer Avatars',
+    card_avatars_desc: 'Ideal customer profiles and target audience personas',
+    card_strategy_title: 'Strategy Deck',
+    card_strategy_desc: 'Strategic roadmap and company direction presentation',
+    footer_text: 'Solaris Panama — Project Portal · Internal use only'
+  },
+  es: {
+    header_title: 'Solaris Panamá',
+    header_subtitle: 'Centro de Comando del Proyecto',
+    search_placeholder: 'Buscar herramientas, documentos y recursos...',
+    stats_tools: '8 Herramientas',
+    stats_proposals: '3 Propuestas',
+    stats_images: '8 Imágenes de Anuncios',
+    stats_leads: '300+ Contactos',
+    no_results: 'No se encontraron resultados.',
+    badge_live: 'Activo',
+    badge_docs: 'Docs',
+    // Section 1 — Live Websites
+    section_live_title: 'Sitios Web Activos',
+    section_live_count: '3 sitios',
+    card_landing_title: 'Página Principal',
+    card_landing_desc: 'Sitio web de marketing para los servicios de energía solar de Solaris Panamá',
+    card_crm_title: 'Panel CRM',
+    card_crm_desc: 'Gestión de relaciones con clientes — contactos, pipeline y seguimiento de proyectos',
+    card_towns_title: 'Blog por Ciudades',
+    card_towns_desc: 'Guías solares optimizadas para SEO: Pedasí, Cañas, Chitré, Las Tablas, Playa Venao',
+    // Section 2 — Interactive Tools
+    section_tools_title: 'Herramientas Interactivas',
+    section_tools_count: '8 herramientas',
+    card_gis_title: 'Mapa GIS',
+    card_gis_desc: 'Herramienta de mapeo satelital para análisis de sitios y datos geoespaciales',
+    card_atlas_title: 'Atlas Solar',
+    card_atlas_desc: 'Datos de irradiancia solar y atlas de potencial energético para Panamá',
+    card_roof_title: 'Guía de Escaneo de Techos',
+    card_roof_desc: 'Evaluación de techos con IA y guía de colocación de paneles solares',
+    card_financing_title: 'Calculadora de Financiamiento',
+    card_financing_desc: 'Calculadora de ROI y opciones de financiamiento para instalaciones solares',
+    card_bill_title: 'Escáner de Facturas',
+    card_bill_desc: 'Analizador de facturas eléctricas — suba su factura y obtenga estimación de ahorro',
+    card_drone_title: 'Guía de Drones',
+    card_drone_desc: 'Guía de inspección aérea de sitios usando fotografía con drones',
+    card_equipment_title: 'Lista de Equipos',
+    card_equipment_desc: 'Catálogo de paneles, inversores, baterías y estructuras de montaje',
+    card_monitoring_title: 'Monitoreo y Mantenimiento',
+    card_monitoring_desc: 'Panel de monitoreo del sistema y programación de mantenimiento',
+    // Section 3 — Proposals
+    section_proposals_title: 'Propuestas y Plantillas',
+    section_proposals_count: '3 propuestas',
+    card_commercial_title: 'Propuesta Comercial',
+    card_commercial_desc: 'Plantilla de propuesta profesional para clientes comerciales y empresariales',
+    card_residential_title: 'Propuesta Residencial',
+    card_residential_desc: 'Plantilla de propuesta solar para clientes residenciales',
+    card_finoptions_title: 'Opciones de Financiamiento',
+    card_finoptions_desc: 'Planes de financiamiento — leasing, PPA, préstamo y comparación de compra en efectivo',
+    // Section 4 — Marketing
+    section_marketing_title: 'Material de Marketing',
+    section_marketing_count: '5 categorías',
+    card_sales_title: 'Documentos de Estrategia de Ventas',
+    card_sales_desc: 'Modelo de precios, ICP, manual de objeciones y estrategia de ventas',
+    card_adcreatives_title: 'Creativos Publicitarios',
+    card_adcreatives_desc: 'Plantillas de anuncios — Ley 417, ahorros, testimonios, flyer de WhatsApp, resumen',
+    card_adimages_title: 'Imágenes de Anuncios (8)',
+    card_adimages_desc: 'Imágenes publicitarias profesionales — casas tropicales, gráficos de ROI, sistemas anti-tormentas',
+    card_blogposts_title: 'Artículos de Blog (5 Ciudades)',
+    card_blogposts_desc: 'Guías solares específicas para ciudades clave de la Península de Azuero',
+    card_brand_title: 'Activos de Marca',
+    card_brand_desc: 'Logos, paleta de colores, tipografía y kit de identidad de marca',
+    card_investor_title: 'Presentación para Inversores',
+    card_investor_desc: 'Presentación para potenciales inversores y socios',
+    card_salesdeck_title: 'Presentación de Ventas',
+    card_salesdeck_desc: 'Presentación de ventas para clientes',
+    // Section 5 — Research
+    section_research_title: 'Investigación y Datos',
+    section_research_count: '6 recursos',
+    card_leads_title: 'Base de Datos de Contactos (300+)',
+    card_leads_desc: 'Propiedades de expatriados, hoteles y contactos comerciales en la Península de Azuero',
+    card_market_title: 'Investigación de Mercado',
+    card_market_desc: 'Análisis de competencia, economía, regulaciones y cadena de suministro de equipos',
+    card_bizcard_kaniel_title: 'Tarjeta de Presentación — Kaniel',
+    card_bizcard_kaniel_desc: 'Tarjeta de presentación digital para Kaniel Tordjman',
+    card_bizcard_omri_title: 'Tarjeta de Presentación — Omri',
+    card_bizcard_omri_desc: 'Tarjeta de presentación digital para Omri',
+    card_emailsig_kaniel_title: 'Firma de Email — Kaniel',
+    card_emailsig_kaniel_desc: 'Plantilla de firma de email profesional',
+    card_emailsig_omri_title: 'Firma de Email — Omri',
+    card_emailsig_omri_desc: 'Plantilla de firma de email profesional para Omri',
+    // Section 6 — CRM Workflow
+    section_crm_title: 'Pasos del Flujo CRM',
+    section_crm_count: '10 pasos',
+    card_step1_title: 'Paso 1 — Captura de Contacto',
+    card_step1_desc: 'Formulario de ingreso y calificación de contactos',
+    card_step2_title: 'Paso 2 — Inspección de Sitio',
+    card_step2_desc: 'Evaluación en sitio y mediciones',
+    card_step3_title: 'Paso 3 — Análisis Eléctrico',
+    card_step3_desc: 'Análisis de factura eléctrica y perfil de consumo',
+    card_step4_title: 'Paso 4 — Diseño del Sistema',
+    card_step4_desc: 'Distribución de paneles y dimensionamiento del sistema',
+    card_step5_title: 'Paso 5 — DUL',
+    card_step5_desc: 'Diagrama unifilar y planificación eléctrica',
+    card_step6_title: 'Paso 6 — Propuesta',
+    card_step6_desc: 'Generar propuesta y cotización para el cliente',
+    card_step7_title: 'Paso 7 — Contrato',
+    card_step7_desc: 'Generación de contrato y firma electrónica',
+    card_step8_title: 'Paso 8 — Inventario',
+    card_step8_desc: 'Adquisición y pedido de equipos',
+    card_step9_title: 'Paso 9 — Instalación',
+    card_step9_desc: 'Programación de instalación y gestión de cuadrillas',
+    card_step10_title: 'Paso 10 — O&M',
+    card_step10_desc: 'Operaciones, mantenimiento y monitoreo',
+    // Section 7 — Project Files
+    section_files_title: 'Archivos y Documentación del Proyecto',
+    section_files_count: '8 archivos',
+    card_portal_title: 'Portal del Proyecto',
+    card_portal_desc: 'Esta página — el centro de comando central para todos los activos del proyecto',
+    card_dashboard_title: 'Panel CRM',
+    card_dashboard_desc: 'Panel CRM completo con todos los pasos del flujo y herramientas',
+    card_financial_title: 'Panel Financiero',
+    card_financial_desc: 'Planificación de P&G, proyecciones de ingresos y resumen financiero',
+    card_bizplan_title: 'Plan de Negocios',
+    card_bizplan_desc: 'Plan de negocios completo y resumen estratégico',
+    card_legal_title: 'Contratos Legales',
+    card_legal_desc: 'Contratos EPC, acuerdos PPA y plantillas legales',
+    card_licensing_title: 'Licencias y Permisos',
+    card_licensing_desc: 'Cumplimiento regulatorio, permisos y requisitos de licencias',
+    card_avatars_title: 'Perfiles de Clientes',
+    card_avatars_desc: 'Perfiles de clientes ideales y personas del público objetivo',
+    card_strategy_title: 'Presentación de Estrategia',
+    card_strategy_desc: 'Hoja de ruta estratégica y presentación de dirección de la empresa',
+    footer_text: 'Solaris Panamá — Portal del Proyecto · Solo uso interno'
+  },
+  he: {
+    header_title: 'סולאריס פנמה',
+    header_subtitle: 'מרכז פיקוד הפרויקט',
+    search_placeholder: 'חיפוש כלים, מסמכים ומשאבים...',
+    stats_tools: '8 כלים',
+    stats_proposals: '3 הצעות מחיר',
+    stats_images: '8 תמונות פרסום',
+    stats_leads: '300+ לידים',
+    no_results: 'לא נמצאו תוצאות.',
+    badge_live: 'פעיל',
+    badge_docs: 'מסמכים',
+    // Section 1 — Live Websites
+    section_live_title: 'אתרים פעילים',
+    section_live_count: '3 אתרים',
+    card_landing_title: 'דף נחיתה',
+    card_landing_desc: 'אתר השיווק הראשי של סולאריס פנמה לשירותי אנרגיה סולארית',
+    card_crm_title: 'לוח בקרה CRM',
+    card_crm_desc: 'ניהול קשרי לקוחות — לידים, צינור מכירות ומעקב פרויקטים',
+    card_towns_title: 'בלוג ערים',
+    card_towns_desc: 'מדריכי סולאר ממוקדי SEO: פדאסי, קאניאס, צ׳יטרה, לאס טאבלאס, פלאיה ונאו',
+    // Section 2 — Interactive Tools
+    section_tools_title: 'כלים אינטראקטיביים',
+    section_tools_count: '8 כלים',
+    card_gis_title: 'מפות GIS',
+    card_gis_desc: 'כלי מיפוי לווייני לניתוח אתרים ונתונים גיאו-מרחביים',
+    card_atlas_title: 'אטלס סולארי',
+    card_atlas_desc: 'נתוני קרינת שמש ואטלס פוטנציאל אנרגיה לפנמה',
+    card_roof_title: 'מדריך סריקת גגות',
+    card_roof_desc: 'הערכת גגות מבוססת AI ומדריך למיקום פאנלים סולאריים',
+    card_financing_title: 'מחשבון מימון',
+    card_financing_desc: 'מחשבון ROI ואפשרויות מימון להתקנות סולאריות',
+    card_bill_title: 'סורק חשבונות',
+    card_bill_desc: 'מנתח חשבונות חשמל — העלו חשבון וקבלו הערכת חיסכון',
+    card_drone_title: 'מדריך רחפנים',
+    card_drone_desc: 'מדריך סקר אווירי של אתרים באמצעות צילום רחפנים',
+    card_equipment_title: 'רשימת ציוד',
+    card_equipment_desc: 'קטלוג פאנלים, ממירים, סוללות וחומרת הרכבה',
+    card_monitoring_title: 'ניטור ותחזוקה',
+    card_monitoring_desc: 'לוח ניטור מערכת ותזמון תחזוקה',
+    // Section 3 — Proposals
+    section_proposals_title: 'הצעות מחיר ותבניות',
+    section_proposals_count: '3 הצעות',
+    card_commercial_title: 'הצעה מסחרית',
+    card_commercial_desc: 'תבנית הצעה מקצועית ללקוחות מסחריים ועסקיים',
+    card_residential_title: 'הצעה למגורים',
+    card_residential_desc: 'תבנית הצעת סולאר ללקוחות מגורים',
+    card_finoptions_title: 'אפשרויות מימון',
+    card_finoptions_desc: 'תוכניות מימון — ליסינג, PPA, הלוואה והשוואת רכישה במזומן',
+    // Section 4 — Marketing
+    section_marketing_title: 'חומרי שיווק',
+    section_marketing_count: '5 קטגוריות',
+    card_sales_title: 'מסמכי אסטרטגיית מכירות',
+    card_sales_desc: 'מודל תמחור, ICP, מדריך התמודדות עם התנגדויות ואסטרטגיית מכירות',
+    card_adcreatives_title: 'קריאייטיב פרסומי',
+    card_adcreatives_desc: 'תבניות מודעות — חוק 417, חיסכון, עדויות, פלייר WhatsApp, דף אחד',
+    card_adimages_title: 'תמונות פרסום (8)',
+    card_adimages_desc: 'תמונות פרסום מקצועיות — בתים טרופיים, גרפי ROI, מערכות עמידות לסערות',
+    card_blogposts_title: 'פוסטים בבלוג (5 ערים)',
+    card_blogposts_desc: 'מדריכי סולאר ממוקדי מיקום לערים מרכזיות בחצי האי אסוארו',
+    card_brand_title: 'נכסי מותג',
+    card_brand_desc: 'לוגואים, פלטת צבעים, טיפוגרפיה וערכת זהות מותגית',
+    card_investor_title: 'מצגת למשקיעים',
+    card_investor_desc: 'מצגת פיץ׳ למשקיעים ושותפים פוטנציאליים',
+    card_salesdeck_title: 'מצגת מכירות',
+    card_salesdeck_desc: 'מצגת מכירות ללקוחות',
+    // Section 5 — Research
+    section_research_title: 'מחקר ונתונים',
+    section_research_count: '6 משאבים',
+    card_leads_title: 'מאגר לידים (300+)',
+    card_leads_desc: 'נכסי אקספטים, מלונות ולידים מסחריים ברחבי חצי האי אסוארו',
+    card_market_title: 'מחקר שוק',
+    card_market_desc: 'ניתוח מתחרים, כלכלה, רגולציה ושרשרת אספקת ציוד',
+    card_bizcard_kaniel_title: 'כרטיס ביקור — קניאל',
+    card_bizcard_kaniel_desc: 'כרטיס ביקור דיגיטלי של קניאל תורג׳מן',
+    card_bizcard_omri_title: 'כרטיס ביקור — עמרי',
+    card_bizcard_omri_desc: 'כרטיס ביקור דיגיטלי של עמרי',
+    card_emailsig_kaniel_title: 'חתימת מייל — קניאל',
+    card_emailsig_kaniel_desc: 'תבנית חתימת מייל מקצועית',
+    card_emailsig_omri_title: 'חתימת מייל — עמרי',
+    card_emailsig_omri_desc: 'תבנית חתימת מייל מקצועית לעמרי',
+    // Section 6 — CRM Workflow
+    section_crm_title: 'שלבי תהליך CRM',
+    section_crm_count: '10 שלבים',
+    card_step1_title: 'שלב 1 — קליטת ליד',
+    card_step1_desc: 'טופס קליטה וסיווג לידים',
+    card_step2_title: 'שלב 2 — סקר שטח',
+    card_step2_desc: 'הערכה באתר ומדידות',
+    card_step3_title: 'שלב 3 — ניתוח חשמל',
+    card_step3_desc: 'ניתוח חשבון חשמל ופרופיל צריכה',
+    card_step4_title: 'שלב 4 — עיצוב מערכת',
+    card_step4_desc: 'פריסת פאנלים וגודל מערכת',
+    card_step5_title: 'שלב 5 — סכמת חד-קווית',
+    card_step5_desc: 'דיאגרמה חד-קווית ותכנון חשמלי',
+    card_step6_title: 'שלב 6 — הצעת מחיר',
+    card_step6_desc: 'הפקת הצעת מחיר ותמחור ללקוח',
+    card_step7_title: 'שלב 7 — חוזה',
+    card_step7_desc: 'הפקת חוזה וחתימה אלקטרונית',
+    card_step8_title: 'שלב 8 — מלאי',
+    card_step8_desc: 'רכש ציוד והזמנות',
+    card_step9_title: 'שלב 9 — התקנה',
+    card_step9_desc: 'תזמון התקנה וניהול צוותים',
+    card_step10_title: 'שלב 10 — תפעול ותחזוקה',
+    card_step10_desc: 'תפעול, תחזוקה וניטור',
+    // Section 7 — Project Files
+    section_files_title: 'קבצי פרויקט ותיעוד',
+    section_files_count: '8 קבצים',
+    card_portal_title: 'פורטל הפרויקט',
+    card_portal_desc: 'עמוד זה — מרכז הפיקוד לכל נכסי הפרויקט',
+    card_dashboard_title: 'לוח בקרה CRM',
+    card_dashboard_desc: 'לוח CRM מלא עם כל שלבי התהליך והכלים',
+    card_financial_title: 'לוח בקרה פיננסי',
+    card_financial_desc: 'תכנון רווח והפסד, תחזיות הכנסות וסקירה פיננסית',
+    card_bizplan_title: 'תוכנית עסקית',
+    card_bizplan_desc: 'תוכנית עסקית מלאה וסקירה אסטרטגית',
+    card_legal_title: 'חוזים משפטיים',
+    card_legal_desc: 'חוזי EPC, הסכמי PPA ותבניות משפטיות',
+    card_licensing_title: 'רישיונות והיתרים',
+    card_licensing_desc: 'עמידה ברגולציה, היתרים ודרישות רישוי',
+    card_avatars_title: 'פרופילי לקוחות',
+    card_avatars_desc: 'פרופילי לקוח אידיאלי ופרסונות קהל יעד',
+    card_strategy_title: 'מצגת אסטרטגיה',
+    card_strategy_desc: 'מפת דרכים אסטרטגית ומצגת כיוון החברה',
+    footer_text: 'סולאריס פנמה — פורטל הפרויקט · לשימוש פנימי בלבד'
+  }
+};
+
+let currentLang = 'es';
+
+function setLang(lang) {
+  currentLang = lang;
+
+  // Update active button
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+
+  // Set RTL for Hebrew
+  document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+
+  // Update all i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang] && i18n[lang][key]) {
+      if (el.tagName === 'INPUT') {
+        el.placeholder = i18n[lang][key];
+      } else if (key === 'footer_text') {
+        // Footer has an inner link — rebuild it
+        const linkEl = el.querySelector('a');
+        const href = linkEl ? linkEl.getAttribute('href') : 'https://solaris-panama.com';
+        el.innerHTML = i18n[lang][key] + ' · <a href="' + href + '">solaris-panama.com</a>';
+      } else {
+        el.textContent = i18n[lang][key];
+      }
+    }
+  });
+
+  // Update page title
+  document.title = i18n[lang].header_title + ' — ' + i18n[lang].card_portal_title;
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => setLang('es'));
+</script>
 
 <script>
 (() => {
