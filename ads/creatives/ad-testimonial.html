@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #FEFDFB; font-family: 'DM Sans', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { width: 1080px; height: 1080px; background: #FEFDFB; color: #1A1A1A; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px; position: relative; overflow: hidden; }
+.quote-mark { font-family: 'Playfair Display', serif; font-size: 120px; color: rgba(212,168,67,0.2); position: absolute; top: 60px; left: 50px; line-height: 1; }
+.stars { font-size: 44px; margin-bottom: 40px; position: relative; z-index: 1; }
+.quote { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; position: relative; z-index: 1; max-width: 850px; color: #0B3D2E; }
+.quote .accent { color: #D4A843; }
+.savings-box { display: inline-flex; align-items: center; gap: 15px; background: #F5EFE0; border: 1px solid #E8E4DC; border-radius: 12px; padding: 18px 35px; margin: 30px 0 15px; position: relative; z-index: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.savings-box .arrow { font-size: 36px; color: #D4A843; }
+.savings-box .old { font-size: 32px; color: #8A8A8A; text-decoration: line-through; }
+.savings-box .new { font-size: 42px; font-weight: 700; color: #0B3D2E; }
+.author { font-size: 18px; color: #4A4A4A; margin-bottom: 45px; position: relative; z-index: 1; }
+.author strong { color: #1A1A1A; }
+.cta { display: inline-block; background: #0B3D2E; color: #FEFDFB; font-size: 22px; font-weight: 700; padding: 22px 55px; border-radius: 6px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; position: relative; z-index: 1; }
+.logo { position: absolute; bottom: 40px; font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #0B3D2E; letter-spacing: 2px; z-index: 1; }
+</style>
+<style>.lang-toggle{position:fixed;top:16px;right:16px;z-index:1000;background:#0B3D2E;color:#FEFDFB;border:none;border-radius:9999px;padding:0.4rem 1rem;font-family:"DM Sans",sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.05em;transition:all 0.3s;box-shadow:0 4px 16px rgba(11,61,46,0.08)}.lang-toggle:hover{background:#116B50}</style>
+</head>
+<body>
+<div class="card">
+  <div class="quote-mark">"</div>
+  <div class="stars">⭐⭐⭐⭐⭐</div>
+  <div class="quote">"Nuestra factura pasó de <span class="accent">$850</span> a <span class="accent">$45</span> al mes"</div>
+  <div class="savings-box">
+    <span class="old">$850</span>
+    <span class="arrow">→</span>
+    <span class="new">$45/mes</span>
+  </div>
+  <div class="author"><strong>Comercial Los Azueros</strong> · Chitré, Panamá</div>
+  <a href="https://wa.me/50765831822" class="cta">Quiero Ahorrar Así →</a>
+  <div class="logo">☀ SOLARIS ENERGY</div>
+</div>
+<script src="../lang-toggle.js"></script>
+</body>
+</html>

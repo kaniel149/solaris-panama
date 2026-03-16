@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Energy — Propuesta Solar para [NOMBRE DEL PROYECTO]</title>
+<meta name="description" content="Propuesta de Energía Solar para [NOMBRE] — Sistema fotovoltaico de [XX] kWp. Opciones EPC, PPA y EPC+Batería. Por Solaris Energy S.A.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   SOLARIS ENERGY S.A. — COMMERCIAL PROPOSAL
+   Panama Solar Solutions
+   ============================================ */
+
+:root {
+  --forest: #0B3D2E;
+  --forest-light: #0E4D3A;
+  --gold: #D4A843;
+  --gold-soft: rgba(212,168,67,.08);
+  --green: #1A7A5A;
+  --green-soft: rgba(26,122,90,.08);
+  --white: #FFFFFF;
+  --bg: #FEFDFB;
+  --text: #1A2332;
+  --text-secondary: #6B7A8D;
+  --border: rgba(0,0,0,.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+.es-sub { font-family: 'Inter', sans-serif; color: var(--text-secondary); font-size: 0.85em; font-weight: 400; display: block; margin-top: 2px; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+section { padding: 72px 0; }
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 900;
+  color: var(--forest);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.section-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin-bottom: 40px;
+}
+
+/* ── STICKY NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11,61,46,.97);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(212,168,67,.15);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 9px; color: var(--gold); letter-spacing: 0.5px;
+}
+.nav-brand { font-weight: 800; font-size: 13px; color: var(--gold); letter-spacing: 2.5px; }
+.nav-ref { font-size: 12px; color: rgba(255,255,255,.75); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #25D366; color: #fff; font-size: 12px; font-weight: 700;
+  padding: 8px 16px; border-radius: 8px; text-decoration: none; transition: transform .2s;
+}
+.nav-cta:hover { transform: scale(1.04); }
+
+/* ── HERO ── */
+.hero {
+  margin-top: 56px;
+  background: linear-gradient(165deg, var(--forest) 0%, #051A13 100%);
+  padding: clamp(48px, 10vw, 100px) 24px 64px;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; top: -40%; right: -15%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(212,168,67,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-block;
+  background: rgba(212,168,67,.12); border: 1px solid rgba(212,168,67,.25);
+  color: var(--gold); font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  padding: 6px 18px; border-radius: 100px; margin-bottom: 24px;
+}
+.hero h1 { font-size: clamp(32px, 5.5vw, 56px); font-weight: 900; color: #fff; line-height: 1.12; max-width: 720px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero-subtitle { font-size: clamp(15px, 2vw, 18px); color: rgba(255,255,255,.8); margin-top: 16px; max-width: 580px; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; }
+.hero-stat {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px; padding: 16px 24px; min-width: 140px;
+}
+.hero-stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--gold); }
+.hero-stat-label { font-size: 12px; color: rgba(255,255,255,.75); margin-top: 2px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 32px; margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); }
+.hero-meta-item { font-size: 13px; color: rgba(255,255,255,.75); }
+.hero-meta-item strong { color: rgba(255,255,255,1); display: block; margin-top: 2px; }
+
+/* ── PROJECT / IMAGES ── */
+.project-images { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+.project-images img { width: 100%; border-radius: var(--radius); display: block; }
+.img-wrapper { position: relative; border-radius: var(--radius); overflow: hidden; }
+.img-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; font-size: 12px; font-weight: 600; }
+.project-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-card { background: #fff; border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); }
+.detail-card h4 { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 16px; }
+.detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--text-secondary); }
+.detail-value { font-weight: 600; color: var(--forest); text-align: right; }
+
+/* ── OPTIONS CARDS ── */
+.options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+.option-card {
+  background: #fff; border-radius: var(--radius); padding: 32px 28px;
+  border: 2px solid var(--border); position: relative; transition: all .3s ease;
+}
+.option-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.option-card.featured { border-color: var(--gold); box-shadow: 0 8px 32px rgba(212,168,67,.15); transform: scale(1.03); z-index: 2; }
+.option-card.featured:hover { transform: scale(1.05); }
+.option-tag {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: var(--forest); font-size: 10px; font-weight: 800;
+  letter-spacing: 1.5px; padding: 5px 20px; border-radius: 100px; white-space: nowrap;
+}
+.option-icon { font-size: 36px; margin-bottom: 12px; }
+.option-name { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 800; color: var(--forest); }
+.option-desc { font-size: 13px; color: var(--text-secondary); margin: 4px 0 16px; }
+.option-price { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3vw, 36px); font-weight: 900; color: var(--forest); line-height: 1.1; }
+.option-price-note { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; color: var(--text-secondary); display: block; margin-top: 4px; }
+.option-features { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+.option-feature { display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; font-size: 13px; line-height: 1.5; }
+.check-icon { color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.option-bottom { margin-top: 20px; padding: 16px; border-radius: var(--radius-sm); text-align: center; }
+.option-bottom.gold { background: var(--gold-soft); }
+.option-bottom.green { background: var(--green-soft); }
+.option-bottom-label { font-size: 12px; color: var(--text-secondary); }
+.option-bottom-value { font-size: 22px; font-weight: 800; margin: 4px 0; }
+.option-bottom-value.gold-text { color: var(--gold); }
+.option-bottom-value.green-text { color: var(--green); }
+.option-bottom-sub { font-size: 12px; color: var(--text-secondary); }
+
+/* ── SYSTEM DETAILS ── */
+.specs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.spec-card { background: #fff; border-radius: var(--radius); padding: 28px; border: 1px solid var(--border); }
+.spec-card h4 { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--forest); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.spec-item { display: flex; justify-content: space-between; padding: 7px 0; font-size: 14px; border-bottom: 1px dashed var(--border); }
+.spec-item:last-child { border-bottom: none; }
+.spec-label { color: var(--text-secondary); }
+.spec-val { font-weight: 600; }
+
+/* ── SAVINGS ── */
+.savings-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.savings-comparison { display: flex; flex-direction: column; gap: 24px; }
+.savings-bar-group h4 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+.savings-bar { height: 48px; border-radius: 10px; display: flex; align-items: center; padding: 0 20px; font-weight: 700; font-size: 16px; color: #fff; }
+.bar-grid { background: linear-gradient(90deg, #c0392b, #e74c3c); width: 100%; }
+.bar-solar { background: linear-gradient(90deg, #b8912a, var(--gold)); width: 30%; }
+
+/* ── TIMELINE ── */
+.timeline-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+.timeline-grid::before { content: ''; position: absolute; top: 28px; left: 32px; right: 32px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 2px; }
+.tl-step { text-align: center; position: relative; padding: 0 8px; }
+.tl-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--gold); border: 4px solid var(--bg); margin: 18px auto 16px; position: relative; z-index: 2; }
+.tl-step:last-child .tl-dot { background: var(--green); }
+.tl-week { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+.tl-title { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: var(--forest); margin: 8px 0 4px; }
+.tl-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ── WARRANTIES ── */
+.warranty-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.warranty-card { background: #fff; border-radius: var(--radius); padding: 28px; text-align: center; border: 1px solid var(--border); transition: box-shadow .2s; }
+.warranty-card:hover { box-shadow: var(--shadow-md); }
+.warranty-icon { font-size: 32px; margin-bottom: 8px; }
+.warranty-years { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; color: var(--forest); }
+.warranty-years span { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
+.warranty-label { font-size: 14px; font-weight: 600; margin-top: 4px; }
+.warranty-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── BATTERY ── */
+.battery-section { background: var(--forest); border-radius: 24px; padding: clamp(32px, 5vw, 56px); color: #fff; }
+.battery-section .section-label { color: var(--green); }
+.battery-section .section-heading { color: #fff; }
+.battery-section .section-desc { color: rgba(255,255,255,.8); }
+.battery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.battery-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 28px; }
+.battery-card.recommended { border-color: var(--green); background: rgba(26,122,90,.1); }
+.battery-card h4 { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,.6); }
+.battery-capacity { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--green); margin: 4px 0 16px; }
+.battery-detail { font-size: 13px; color: rgba(255,255,255,.8); line-height: 1.8; }
+.battery-detail strong { color: rgba(255,255,255,.85); }
+.battery-recommend-tag { display: inline-block; background: var(--green); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 4px 12px; border-radius: 6px; margin-top: 12px; }
+
+/* ── CTA ── */
+.cta-block {
+  background: linear-gradient(135deg, var(--gold) 0%, #C49535 100%);
+  border-radius: 24px; padding: clamp(40px, 6vw, 64px); text-align: center; position: relative; overflow: hidden;
+}
+.cta-block::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: rgba(255,255,255,.08); border-radius: 50%; }
+.cta-block h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 900; color: var(--forest); position: relative; }
+.cta-block .cta-sub { font-size: 16px; color: rgba(11,61,46,.65); margin: 12px 0 32px; position: relative; }
+.cta-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; position: relative; }
+.btn-whatsapp {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #25D366; color: #fff; font-size: 17px; font-weight: 700;
+  padding: 18px 36px; border-radius: 14px; text-decoration: none;
+  transition: all .2s; box-shadow: 0 4px 16px rgba(37,211,102,.3);
+}
+.btn-whatsapp:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(37,211,102,.4); }
+.btn-phone {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--forest); color: #fff; font-size: 16px; font-weight: 700;
+  padding: 18px 32px; border-radius: 14px; text-decoration: none; transition: all .2s;
+}
+.btn-phone:hover { transform: scale(1.05); }
+.cta-steps { margin-top: 32px; display: flex; justify-content: center; gap: 40px; font-size: 13px; color: rgba(11,61,46,.5); position: relative; }
+.cta-steps strong { color: var(--forest); }
+
+/* ── LEY 417 BADGE ── */
+.ley417-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(26,122,90,.1); border: 1px solid rgba(26,122,90,.25);
+  color: var(--green); font-size: 12px; font-weight: 700;
+  padding: 8px 16px; border-radius: 8px; margin-top: 12px;
+}
+
+/* ── AGREEMENT ── */
+.agreement-section {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: var(--radius);
+  padding: 48px 40px; margin: 0 auto; max-width: 1080px; position: relative;
+}
+.agreement-section::before { content: ''; position: absolute; top: 0; left: 40px; right: 40px; height: 3px; background: linear-gradient(90deg, var(--gold), #C49535); border-radius: 2px; }
+.agreement-header { font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 900; color: var(--forest); margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+.agreement-sub-header { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--forest); margin: 28px 0 12px; text-transform: uppercase; letter-spacing: 1px; }
+.option-select { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+.option-radio { display: flex; align-items: center; gap: 10px; padding: 14px 24px; border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all .2s; font-size: 14px; font-weight: 600; color: var(--forest); flex: 1; min-width: 200px; }
+.option-radio:hover { border-color: var(--gold); background: var(--gold-soft); }
+.option-radio .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; flex-shrink: 0; }
+.key-terms-list { list-style: none; padding: 0; margin: 0 0 28px; }
+.key-terms-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
+.key-terms-list li:last-child { border-bottom: none; }
+.key-terms-list li::before { content: '•'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+.terms-toggle { background: #f8f9fa; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 28px; overflow: hidden; }
+.terms-toggle summary { padding: 16px 20px; font-size: 14px; font-weight: 700; color: var(--forest); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; }
+.terms-toggle summary::-webkit-details-marker { display: none; }
+.terms-toggle summary::before { content: '▶'; font-size: 10px; color: var(--gold); transition: transform .2s; }
+.terms-toggle[open] summary::before { transform: rotate(90deg); }
+.terms-content { padding: 0 20px 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+.terms-content ol { padding-left: 20px; margin: 0; }
+.terms-content li { margin-bottom: 8px; }
+.signature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); }
+.sig-party { display: flex; flex-direction: column; gap: 16px; }
+.sig-party-label { font-size: 14px; font-weight: 700; color: var(--forest); text-transform: uppercase; letter-spacing: 1px; }
+.sig-line { border-bottom: 1px solid #333; height: 48px; }
+.sig-field { display: flex; flex-direction: column; gap: 4px; }
+.sig-field-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+.sig-field-input { border-bottom: 1px solid #ccc; height: 28px; }
+.stamp-area { width: 120px; height: 120px; border: 2px dashed #ccc; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb; text-align: center; margin-top: 8px; }
+
+/* ── FOOTER ── */
+.footer { background: var(--forest); padding: 48px 24px; text-align: center; color: rgba(255,255,255,.75); }
+.footer-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; }
+.footer-logo .logo-mark { width: 42px; height: 42px; font-size: 10px; }
+.footer-brand { font-weight: 800; font-size: 18px; color: var(--gold); letter-spacing: 3px; }
+.footer-tagline { font-size: 14px; margin-bottom: 20px; }
+.footer-contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; font-size: 13px; color: rgba(255,255,255,.9); margin-bottom: 24px; }
+.footer-legal { font-size: 12px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.08); }
+
+/* ── FLOATING WHATSAPP ── */
+.floating-wa {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: #25D366; color: #fff; width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,.4);
+  transition: transform .2s; animation: pulse-wa 2s infinite;
+}
+.floating-wa:hover { transform: scale(1.1); }
+@keyframes pulse-wa {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,.4); }
+  50% { box-shadow: 0 4px 30px rgba(37,211,102,.6); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-ref { display: none; }
+  .hero-stats { flex-direction: column; gap: 8px; }
+  .hero-meta { flex-direction: column; gap: 12px; }
+  .project-images, .project-details, .specs-row, .savings-visual, .battery-grid { grid-template-columns: 1fr; }
+  .options-grid, .warranty-grid { grid-template-columns: 1fr; }
+  .option-card.featured { transform: none; }
+  .timeline-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .timeline-grid::before { display: none; }
+  .cta-steps { flex-direction: column; gap: 12px; }
+  .footer-contacts { flex-direction: column; gap: 8px; }
+  .option-select, .signature-block { grid-template-columns: 1fr !important; flex-direction: column; }
+}
+
+@media print {
+  .nav, .floating-wa, .nav-cta { display: none !important; }
+  .hero { margin-top: 0; }
+  body { background: #fff; }
+  section { padding: 32px 0; break-inside: avoid; }
+  .option-card.featured { transform: none; border: 3px solid var(--gold); }
+  .battery-section { background: #f0f4f8; color: var(--forest); }
+  .battery-section .section-heading { color: var(--forest); }
+  .cta-block { break-before: page; }
+  .footer { background: #f5f5f5; color: #333; }
+  .agreement-section { border: 2px solid #333; box-shadow: none; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── STICKY NAV ─── -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="logo-mark">SE</div>
+    <div class="nav-brand">SOLARIS ENERGY</div>
+  </div>
+  <div class="nav-ref">#SE-2026-001 · Confidencial</div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <a href="https://wa.me/50765831822?text=Hola%20Solaris%20Energy%2C%20me%20interesa%20la%20propuesta%20SE-2026-001" class="nav-cta" target="_blank">💬 WhatsApp</a>
+  </div>
+</nav>
+
+<!-- ─── FLOATING WHATSAPP ─── -->
+<a href="https://wa.me/50765831822?text=Hola%20Solaris%20Energy%2C%20me%20interesa%20la%20propuesta%20SE-2026-001" class="floating-wa" target="_blank" title="Chat por WhatsApp">💬</a>
+
+<!-- ════════════════════════════════════════════
+     1. HERO
+     ════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">PROPUESTA DE ENERGÍA SOLAR · SOLAR ENERGY PROPOSAL</div>
+
+    <h1>Energía Solar para<br><em>[Nombre del Hotel/Restaurante]</em></h1>
+    <p class="hero-subtitle">Sistema fotovoltaico de [XX] kWp en techo para [descripción del proyecto] — Ciudad de Panamá / Panamá Oeste</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">$[XX,XXX]</div>
+        <div class="hero-stat-label">Ahorro Anual / Annual Savings</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;">Basado en [XX,XXX] kWh/año × $0.18/kWh tarifa ASEP</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">[X.X] años</div>
+        <div class="hero-stat-label">Retorno de Inversión</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">[XX,XXX]</div>
+        <div class="hero-stat-label">kWh/año Producción</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">25 años</div>
+        <div class="hero-stat-label">Garantía de Paneles</div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">Preparado para<strong>[Nombre de la Empresa, S.A.]</strong></div>
+      <div class="hero-meta-item">Fecha de Propuesta<strong>[DD de Mes YYYY]</strong></div>
+      <div class="hero-meta-item">Referencia<strong>SE-2026-001</strong></div>
+      <div class="hero-meta-item">Válida hasta<strong>[30 días desde fecha] (30 días)</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     2. SU PROYECTO
+     ════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Su Proyecto · Your Project</div>
+    <h2 class="section-heading">[Descripción del Proyecto]</h2>
+    <p class="section-desc">Instalaremos [XX] paneles solares de alta eficiencia en su techo, generando energía limpia para reducir sus costos operativos.</p>
+
+    <div class="project-details">
+      <div class="detail-card">
+        <h4>🏨 Detalles del Inmueble</h4>
+        <div class="detail-row"><span class="detail-label">Propietario</span><span class="detail-value">[Nombre Empresa, S.A.]</span></div>
+        <div class="detail-row"><span class="detail-label">Ubicación</span><span class="detail-value">[Ciudad, Provincia, Panamá]</span></div>
+        <div class="detail-row"><span class="detail-label">Tipo de Propiedad</span><span class="detail-value">[Hotel / Restaurante / Comercial]</span></div>
+        <div class="detail-row"><span class="detail-label">Consumo Mensual</span><span class="detail-value">[XX,XXX] kWh/mes</span></div>
+      </div>
+      <div class="detail-card">
+        <h4>☀️ Evaluación del Techo</h4>
+        <div class="detail-row"><span class="detail-label">Tipo de Techo</span><span class="detail-value">[Lámina metálica / Concreto]</span></div>
+        <div class="detail-row"><span class="detail-label">Área Utilizable</span><span class="detail-value">[XXX] m²</span></div>
+        <div class="detail-row"><span class="detail-label">Orientación</span><span class="detail-value">[Sur/Este] — óptima para Panamá</span></div>
+        <div class="detail-row"><span class="detail-label">Sombreado</span><span class="detail-value">Mínimo — exposición completa ✓</span></div>
+      </div>
+    </div>
+
+    <div class="ley417-badge" style="margin-top:24px;">
+      🏛️ Proyecto elegible bajo <strong>Ley 417</strong> — 100% exención de impuestos + exención de aduanas sobre equipos solares
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     3. OPCIONES — 3 PLANES
+     ════════════════════════════════════════════ -->
+<section style="background:#fff;">
+  <div class="container">
+    <div class="section-label">Elija Su Plan · Choose Your Plan</div>
+    <h2 class="section-heading">Tres Opciones, Una Meta: Reducir Costos</h2>
+    <p class="section-desc">Seleccione el plan que se ajuste a su presupuesto. Todas las opciones utilizan el mismo equipo premium.</p>
+
+    <div class="options-grid">
+
+      <!-- OPTION A: EPC -->
+      <div class="option-card">
+        <div class="option-icon">⚡</div>
+        <div class="option-name">Opción A: EPC</div>
+        <div class="option-desc">Sea dueño de su sistema / Own your system</div>
+        <div class="option-price">$[XX,XXX]<span class="option-price-note">pago único / one-time payment</span></div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--gold-soft);border-radius:8px;font-size:12px;color:var(--text-secondary);line-height:1.6;">
+          <strong style="color:var(--forest);">Términos de Pago:</strong><br>
+          30% anticipo · 40% en entrega de equipos · 30% en puesta en marcha
+        </div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> [XX] paneles + [X] inversores — instalación completa</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Trámites ASEP y conexión a red incluidos</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Garantía de paneles 25 años</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Garantía inversores 10 años + mano de obra 24 meses</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Monitoreo 24/7 (1 año gratis)</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Exención fiscal bajo Ley 417</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Usted es dueño — todos los ahorros son suyos</div>
+        </div>
+        <div class="option-bottom green">
+          <div class="option-bottom-label">Ahorro Anual</div>
+          <div class="option-bottom-value green-text">$[XX,XXX]</div>
+          <div class="option-bottom-sub">Retorno: <strong>[X.X] años</strong></div>
+        </div>
+      </div>
+
+      <!-- OPTION B: PPA (RECOMMENDED) -->
+      <div class="option-card featured">
+        <div class="option-tag">★ RECOMENDADO / RECOMMENDED</div>
+        <div class="option-icon">☀️</div>
+        <div class="option-name">Opción B: PPA</div>
+        <div class="option-desc">Cero inversión inicial — nosotros instalamos, usted ahorra</div>
+        <div class="option-price">$0 Inicial<span class="option-price-note">pague solo $[0.XX]/kWh (XX% menos que tarifa ASEP)</span></div>
+        <div style="margin-top:8px;padding:8px 12px;background:rgba(26,122,90,.06);border-left:3px solid var(--green);border-radius:0 8px 8px 0;font-size:11px;color:var(--text-secondary);line-height:1.6;">
+          <strong style="color:var(--forest);">¿Qué es PPA?</strong> Instalamos paneles solares en su techo sin costo. Usted simplemente compra la electricidad que producen a $[0.XX]/kWh — XX% más barato que la tarifa de ASEP.
+        </div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> $0 de instalación — Solaris Energy cubre todo</div>
+          <div class="option-feature"><span class="check-icon">✓</span> XX% más barato que tarifa de red ASEP</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Mantenimiento y monitoreo gratis por 20 años</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Limpieza de paneles 2× al año incluida</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Garantía de reemplazo del sistema</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Beneficios fiscales Ley 417 aplicados</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Empiece a ahorrar desde el Día 1 — cero riesgo</div>
+        </div>
+        <div class="option-bottom gold">
+          <div class="option-bottom-label">Ahorro Mensual</div>
+          <div class="option-bottom-value gold-text">$[X,XXX]/mes</div>
+          <div class="option-bottom-sub">Ahorros comienzan <strong>inmediatamente</strong></div>
+        </div>
+      </div>
+
+      <!-- OPTION C: EPC + STORAGE -->
+      <div class="option-card">
+        <div class="option-icon">🔋</div>
+        <div class="option-name">Opción C: EPC + Batería</div>
+        <div class="option-desc">Máxima independencia energética</div>
+        <div class="option-price">$[XX,XXX]<span class="option-price-note">solar + almacenamiento de [XX] kWh</span></div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--gold-soft);border-radius:8px;font-size:12px;color:var(--text-secondary);line-height:1.6;">
+          <strong style="color:var(--forest);">Términos de Pago:</strong><br>
+          30% anticipo · 40% en entrega · 30% en puesta en marcha
+        </div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> Todo lo incluido en Opción A, más:</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Almacenamiento de [XX] kWh</div>
+          <div class="option-feature"><span class="check-icon">✓</span> [X-X] horas de respaldo ante apagones</div>
+          <div class="option-feature"><span class="check-icon">✓</span> [XX]% tasa de autoconsumo</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Garantía de batería 10 años</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Exención fiscal bajo Ley 417</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Gestión inteligente de energía vía app</div>
+        </div>
+        <div class="option-bottom green">
+          <div class="option-bottom-label">Ahorro Anual</div>
+          <div class="option-bottom-value green-text">$[XX,XXX]</div>
+          <div class="option-bottom-sub">Retorno: <strong>[X.X] años</strong></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     4. DETALLES DEL SISTEMA
+     ════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Detalles del Sistema · System Details</div>
+    <h2 class="section-heading">Equipo Premium, Construido para Durar</h2>
+    <p class="section-desc">Paneles solares Tier 1 e inversores líderes mundiales — diseñados para el clima tropical de Panamá.</p>
+
+    <div class="specs-row">
+      <div>
+        <div class="spec-card" style="margin-bottom:16px;">
+          <h4>☀️ Paneles Solares — [Marca/Modelo]</h4>
+          <div class="spec-item"><span class="spec-label">Modelo</span><span class="spec-val">[Modelo] [XXX]W</span></div>
+          <div class="spec-item"><span class="spec-label">Cantidad</span><span class="spec-val">[XX] paneles</span></div>
+          <div class="spec-item"><span class="spec-label">Capacidad Total</span><span class="spec-val">[XX.X] kWp</span></div>
+          <div class="spec-item"><span class="spec-label">Tecnología</span><span class="spec-val">N-type TOPCon · [XX.X]% eficiencia</span></div>
+          <div class="spec-item"><span class="spec-label">Garantía</span><span class="spec-val">25 años producto · 30 años rendimiento</span></div>
+          <div class="spec-item"><span class="spec-label">Clasificación</span><span class="spec-val">Tier 1 — Bloomberg BNEF</span></div>
+        </div>
+        <div class="spec-card">
+          <h4>⚡ Inversores — [Marca/Modelo]</h4>
+          <div class="spec-item"><span class="spec-label">Cantidad</span><span class="spec-val">[X] unidades</span></div>
+          <div class="spec-item"><span class="spec-label">Potencia</span><span class="spec-val">[XX] kW cada uno · [XX.X]% eficiencia</span></div>
+          <div class="spec-item"><span class="spec-label">Características</span><span class="spec-val">IP66 exterior · [X] MPPT trackers</span></div>
+          <div class="spec-item"><span class="spec-label">Monitoreo</span><span class="spec-val">Aplicación de monitoreo remoto</span></div>
+          <div class="spec-item"><span class="spec-label">Garantía</span><span class="spec-val">10 años</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="spec-card">
+          <h4>🔧 La Instalación Incluye</h4>
+          <div class="spec-item"><span class="spec-label">Montaje</span><span class="spec-val">Abrazaderas sin perforación (sin agujeros en su techo)</span></div>
+          <div class="spec-item"><span class="spec-label">Resistencia al Viento</span><span class="spec-val">Hasta 200 km/h (certificado para huracanes)</span></div>
+          <div class="spec-item"><span class="spec-label">Protección</span><span class="spec-val">Supresor de picos + disyuntores</span></div>
+          <div class="spec-item"><span class="spec-label">Puesta a Tierra</span><span class="spec-val">Sistema completo + protección contra rayos</span></div>
+          <div class="spec-item"><span class="spec-label">Trámites ASEP</span><span class="spec-val">Solicitud y aprobación gestionados por nosotros</span></div>
+          <div class="spec-item"><span class="spec-label">Ley 417</span><span class="spec-val">Documentación de exención fiscal incluida</span></div>
+        </div>
+        <div style="margin-top:16px;padding:16px;background:rgba(26,122,90,.06);border:1px solid rgba(26,122,90,.15);border-radius:12px;">
+          <h4 style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px;">🏛️ Marco Regulatorio de Panamá</h4>
+          <p style="font-size:12px;color:var(--text-secondary);line-height:1.7;">
+            <strong>ASEP</strong> — Autoridad Nacional de los Servicios Públicos<br>
+            <strong>Ley 417 (2019)</strong> — Incentivos para energía renovable<br>
+            • 100% exención de impuesto sobre la renta por generación solar<br>
+            • Exención de derechos de importación sobre equipos solares<br>
+            • Medición neta (Net Metering) disponible<br>
+            <strong>Retorno típico:</strong> 2.5–3.5 años para proyectos comerciales
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     5. SUS AHORROS
+     ════════════════════════════════════════════ -->
+<section style="background:#fff;">
+  <div class="container">
+    <div class="section-label">Sus Ahorros · Your Savings</div>
+    <h2 class="section-heading">Vea Cuánto Ahorrará</h2>
+    <p class="section-desc">Compare sus costos actuales de electricidad con energía solar — los números hablan por sí solos.</p>
+
+    <div class="savings-visual">
+      <div class="savings-comparison">
+        <div class="savings-bar-group">
+          <h4>Sin Solar — Costo Anual de Electricidad</h4>
+          <div class="savings-bar bar-grid">$[XX,XXX]+/año a la red</div>
+        </div>
+        <div class="savings-bar-group" style="margin-top:16px;">
+          <h4>Con Solar (EPC) — Su Nuevo Costo</h4>
+          <div class="savings-bar bar-solar" style="width:2%;min-width:60px;">$0</div>
+          <span style="display:inline-block;margin-top:8px;background:var(--green);color:#fff;font-size:13px;font-weight:700;padding:6px 14px;border-radius:8px;">Ahorre $[XX,XXX]/año</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--green);">$[XX,XXX]</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Ahorro Anual</div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--green);">$[XXX,XXX]</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Ahorro en 10 Años</div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--gold);">[X.X]</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Años de Retorno</div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--green);">[XX.X]t</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">CO₂ Reducido/Año</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     6. CRONOGRAMA
+     ════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Cronograma · Timeline</div>
+    <h2 class="section-heading">De Aprobación a Energía en 4–6 Semanas</h2>
+    <p class="section-desc">Un proceso sencillo — nos encargamos de todo, desde permisos ASEP hasta la conexión a red.</p>
+
+    <div class="timeline-grid">
+      <div class="tl-step">
+        <div class="tl-week">Semana 1</div>
+        <div class="tl-dot"></div>
+        <div class="tl-title">Estudio y Diseño</div>
+        <div class="tl-desc">Medición del sitio, evaluación eléctrica, diseño del sistema</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-week">Semana 2</div>
+        <div class="tl-dot"></div>
+        <div class="tl-title">Permisos y Adquisición</div>
+        <div class="tl-desc">Trámites ASEP, aprobación estructural, pedido de equipos</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-week">Semana 3–4</div>
+        <div class="tl-dot"></div>
+        <div class="tl-title">Instalación</div>
+        <div class="tl-desc">Montaje de paneles, instalación de inversores, cableado completo</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-week">Semana 5–6</div>
+        <div class="tl-dot" style="background:var(--green);"></div>
+        <div class="tl-title">¡En Línea! ✓</div>
+        <div class="tl-desc">Pruebas, inspección ASEP, conexión a red, configuración de monitoreo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     7. GARANTÍAS
+     ════════════════════════════════════════════ -->
+<section style="background:#fff;">
+  <div class="container">
+    <div class="section-label">Garantías y Soporte · Warranties & Support</div>
+    <h2 class="section-heading">Protegido por Décadas</h2>
+    <p class="section-desc">Garantías líderes de la industria respaldadas por fabricantes globales y nuestro equipo local en Panamá.</p>
+
+    <div class="warranty-grid">
+      <div class="warranty-card">
+        <div class="warranty-icon">☀️</div>
+        <div class="warranty-years">25 <span>años</span></div>
+        <div class="warranty-label">Garantía de Paneles</div>
+        <div class="warranty-sub">Garantía del fabricante<br>30 años de rendimiento garantizado</div>
+      </div>
+      <div class="warranty-card">
+        <div class="warranty-icon">⚡</div>
+        <div class="warranty-years">10 <span>años</span></div>
+        <div class="warranty-label">Garantía de Inversores</div>
+        <div class="warranty-sub">Garantía del fabricante<br>Eficiencia garantizada</div>
+      </div>
+      <div class="warranty-card">
+        <div class="warranty-icon">🔧</div>
+        <div class="warranty-years">24 <span>meses</span></div>
+        <div class="warranty-label">Garantía de Mano de Obra</div>
+        <div class="warranty-sub">Garantía de instalación Solaris Energy<br>Servicio local en Panamá</div>
+      </div>
+      <div class="warranty-card">
+        <div class="warranty-icon">📡</div>
+        <div class="warranty-years">24/7</div>
+        <div class="warranty-label">Monitoreo Remoto</div>
+        <div class="warranty-sub">Aplicación de monitoreo<br>Seguimiento en tiempo real</div>
+      </div>
+      <div class="warranty-card">
+        <div class="warranty-icon">🧹</div>
+        <div class="warranty-years">2× <span>/año</span></div>
+        <div class="warranty-label">Limpieza de Paneles</div>
+        <div class="warranty-sub">Limpieza profesional incluida<br>Año 1 gratis</div>
+      </div>
+      <div class="warranty-card">
+        <div class="warranty-icon">🇵🇦</div>
+        <div class="warranty-years">Local</div>
+        <div class="warranty-label">Equipo en Panamá</div>
+        <div class="warranty-sub">Solaris Energy S.A.<br>Respuesta el mismo día</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     8. BATERÍA
+     ════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="battery-section">
+      <div class="section-label">Almacenamiento · Battery Storage</div>
+      <h2 class="section-heading">Agregue Almacenamiento para Independencia Total</h2>
+      <p class="section-desc">Almacene energía solar para uso nocturno y protección contra apagones. Disponible como complemento a Opción A o incluido en Opción C.</p>
+
+      <div class="battery-grid">
+        <div class="battery-card">
+          <h4>Batería × 1</h4>
+          <div class="battery-capacity">[XX] kWh</div>
+          <div class="battery-detail">
+            <strong>Ideal para:</strong> Respaldo esencial + uso nocturno<br>
+            <strong>Respaldo:</strong> [X-X] horas<br>
+            <strong>Autoconsumo:</strong> 70% → 80%<br>
+            <strong>Costo adicional:</strong> $[XX,XXX]<br>
+            <strong>Ahorro extra:</strong> $[X,XXX]/año<br>
+            <strong>Garantía:</strong> 10 años / 6,000+ ciclos
+          </div>
+        </div>
+        <div class="battery-card recommended">
+          <h4>Batería × 2</h4>
+          <div class="battery-capacity">[XX] kWh</div>
+          <div class="battery-detail">
+            <strong>Ideal para:</strong> Independencia total + protección contra apagones<br>
+            <strong>Respaldo:</strong> [X-X] horas<br>
+            <strong>Autoconsumo:</strong> 70% → 85%<br>
+            <strong>Costo adicional:</strong> $[XX,XXX]<br>
+            <strong>Ahorro extra:</strong> $[X,XXX]/año<br>
+            <strong>Garantía:</strong> 10 años / 6,000+ ciclos
+          </div>
+          <div class="battery-recommend-tag">★ RECOMENDADO PARA OPERACIÓN COMERCIAL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     9. CTA
+     ════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="cta-block">
+      <h2>¿Listo para Empezar a Ahorrar?</h2>
+      <p class="cta-sub">Esta propuesta es válida por 30 días. Conversemos sobre su opción preferida.</p>
+
+      <div class="cta-buttons">
+        <a href="https://wa.me/50765831822?text=Hola%20Solaris%20Energy%2C%20me%20gustaría%20avanzar%20con%20la%20propuesta%20SE-2026-001" class="btn-whatsapp" target="_blank">💬 Escríbanos por WhatsApp</a>
+        <a href="tel:+50765831822" class="btn-phone">📞 +507 6583-1822</a>
+      </div>
+
+      <div class="cta-steps">
+        <span><strong>1.</strong> Elija su opción</span>
+        <span><strong>2.</strong> <a href="#agreement" style="color:inherit;text-decoration:underline;">Firme el acuerdo</a></span>
+        <span><strong>3.</strong> Comenzamos en 1 semana</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     10. SOBRE SOLARIS ENERGY
+     ════════════════════════════════════════════ -->
+<section style="background:#fff;">
+  <div class="container">
+    <div style="max-width:720px;margin:0 auto;text-align:center;">
+      <div class="section-label">Sobre Nosotros · About Us</div>
+      <h2 class="section-heading">Sobre Solaris Energy</h2>
+      <p style="font-size:16px;color:var(--text-secondary);line-height:1.8;margin-top:16px;">
+        Solaris Energy S.A. ofrece soluciones profesionales de energía solar en toda la República de Panamá. Diseñamos, instalamos y mantenemos sistemas solares de alto rendimiento para proyectos residenciales, comerciales y de hotelería — con un equipo local que brinda servicio el mismo día.
+      </p>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:24px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--forest);">Ley 417</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Certificados para<br>exención fiscal</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--forest);">ASEP</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Trámites<br>gestionados</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--forest);">Tier 1</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Solo equipos<br>premium</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--forest);">Local</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Equipo en<br>Panamá</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     11. ACUERDO DE SERVICIO
+     ════════════════════════════════════════════ -->
+<section id="agreement">
+  <div class="container">
+    <div class="agreement-section">
+      <h2 class="agreement-header">Acuerdo de Servicio<span class="es-sub" style="font-size:16px;font-weight:400;"> / Service Agreement</span></h2>
+
+      <div class="agreement-sub-header">Opción Seleccionada</div>
+      <div class="option-select">
+        <label class="option-radio"><span class="radio-dot"></span> Opción A: EPC — $[XX,XXX]</label>
+        <label class="option-radio"><span class="radio-dot"></span> Opción B: PPA — $0 Inicial</label>
+        <label class="option-radio"><span class="radio-dot"></span> Opción C: EPC + Batería — $[XX,XXX]</label>
+      </div>
+
+      <div class="agreement-sub-header">Términos Principales</div>
+      <ul class="key-terms-list">
+        <li>Sistema: [XX.X] kWp de instalación solar ([XX] paneles [Marca/Modelo])</li>
+        <li>Inversores: [X]× [Marca/Modelo] ([XX] kW cada uno)</li>
+        <li>Si se selecciona Opción C: + almacenamiento de batería de [XX] kWh</li>
+        <li>Plazo de instalación: 4–6 semanas a partir de la firma</li>
+        <li>Garantía: 25 años paneles, 10 años inversores, 24 meses mano de obra</li>
+        <li>Términos de pago según opción seleccionada (ver detalles de propuesta arriba)</li>
+        <li>Proyecto acogido a beneficios de Ley 417 de la República de Panamá</li>
+      </ul>
+
+      <details class="terms-toggle">
+        <summary>Términos y Condiciones</summary>
+        <div class="terms-content">
+          <ol>
+            <li>Solaris Energy S.A. completará la instalación dentro de 6 semanas de recibir el pago de anticipo.</li>
+            <li>El Cliente proporcionará acceso libre al techo y al panel eléctrico durante la instalación.</li>
+            <li>El Cliente es responsable de mantener acceso despejado a las áreas de instalación.</li>
+            <li><strong>Fuerza Mayor:</strong> Retrasos causados por clima adverso, demoras en envío de materiales, u otras circunstancias fuera de control razonable extenderán el plazo.</li>
+            <li><strong>Cancelación:</strong> Reembolso completo si se cancela dentro de 7 días de la firma. Después de comenzar el estudio del sitio, aplica un cargo del 50%.</li>
+            <li><strong>Resolución de Disputas:</strong> Cualquier disputa será resuelta bajo las leyes de la República de Panamá en los tribunales de la jurisdicción correspondiente.</li>
+            <li><strong>PPA Específico (Solo Opción B):</strong> Contrato a 20 años con ajuste de precio anual del 2%. El acuerdo es transferible al nuevo propietario en caso de venta del inmueble.</li>
+            <li><strong>Ley 417:</strong> Solaris Energy S.A. gestionará toda la documentación necesaria para que el proyecto sea elegible para los beneficios fiscales establecidos en la Ley 417.</li>
+          </ol>
+        </div>
+      </details>
+
+      <div class="signature-block">
+        <div class="sig-party">
+          <div class="sig-party-label">Cliente</div>
+          <div class="sig-line"></div>
+          <div class="sig-field"><span class="sig-field-label">Nombre Completo</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">Cargo / Título</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">Cédula / RUC</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">Fecha</span><div class="sig-field-input"></div></div>
+          <div class="stamp-area">Sello de<br>la Empresa</div>
+        </div>
+        <div class="sig-party">
+          <div class="sig-party-label">Solaris Energy S.A.</div>
+          <div class="sig-line"></div>
+          <div class="sig-field"><span class="sig-field-label">Nombre Completo</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">Cargo / Título</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">RUC</span><div class="sig-field-input"></div></div>
+          <div class="sig-field"><span class="sig-field-label">Fecha</span><div class="sig-field-input"></div></div>
+          <div class="stamp-area">Sello de<br>la Empresa</div>
+        </div>
+      </div>
+
+      <p style="text-align:center;font-size:13px;color:var(--text-secondary);font-style:italic;margin-top:32px;padding-top:20px;border-top:1px solid var(--border);">
+        Al firmar arriba, ambas partes aceptan los términos y condiciones establecidos en este acuerdo y la propuesta #SE-2026-001.<br>
+        Este contrato se rige por las leyes de la República de Panamá.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     12. FOOTER
+     ════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-logo">
+    <div class="logo-mark">SE</div>
+    <div class="footer-brand">SOLARIS ENERGY</div>
+  </div>
+  <div class="footer-tagline">Solaris Energy S.A. — Soluciones Solares Profesionales para Panamá</div>
+
+  <div class="footer-contacts">
+    <span>📞 +507 6583-1822</span>
+    <span>💬 WhatsApp: +507 6583-1822</span>
+    <span>📧 info@solaris-panama.com</span>
+    <span>📍 Ciudad de Panamá, Panamá</span>
+  </div>
+
+  <div class="footer-legal">
+    Propuesta #SE-2026-001 · Válida hasta [fecha] · Precios en USD, ITBMS no incluido<br>
+    Proyecto acogido a Ley 417 — 100% exención fiscal sobre generación solar<br>
+    © 2026 Solaris Energy S.A. · Todos los derechos reservados
+  </div>
+</footer>
+
+</body>
+</html>

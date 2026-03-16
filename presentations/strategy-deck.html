@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panamá — Strategy Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#1A1A1A;color:#FEFDFB;padding:20px}
+.controls{text-align:center;padding:16px;margin-bottom:16px}
+.controls button{background:#0B3D2E;color:#FEFDFB;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;margin:0 4px}
+.controls button:hover{background:#14573F}
+.controls .counter{color:#8A8A8A;font-size:13px;margin:0 12px}
+.slide{width:960px;height:540px;margin:0 auto 40px;border-radius:12px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.3);position:relative;display:none;flex-direction:column}
+.slide.active{display:flex}
+.sn{position:absolute;bottom:12px;right:20px;font-size:10px;color:rgba(255,255,255,0.15)}
+.tb{padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.tb .l{font-family:'Playfair Display',serif;font-size:13px;font-weight:700}
+.tb .t{font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#D4A843}
+.sl{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4A843;margin-bottom:12px}
+h2{font-family:'Playfair Display',serif;font-size:28px;line-height:1.2;margin-bottom:16px}
+.gb{background:#0B3D2E}.wb{background:#FEFDFB;color:#1A1A1A}
+.bs{flex:1;padding:40px 48px;display:flex;gap:36px;align-items:center}
+.bf{flex:1;padding:40px 48px;display:flex;flex-direction:column;justify-content:center}
+.c{flex:1}
+.sc{background:rgba(0,0,0,0.04);border-radius:8px;padding:14px 18px;border-left:3px solid #D4A843;margin-bottom:10px}
+.sc .n{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#0B3D2E}
+.sc .lb{font-size:10px;color:#8A8A8A;margin-top:2px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f{background:rgba(254,253,251,0.05);border-radius:8px;padding:18px;border:1px solid rgba(212,168,67,0.1)}
+.wb .f{background:#F9F7F3;border-color:#E8E4DC}
+.f .ic{font-size:18px;margin-bottom:6px;color:#D4A843}
+.f h4{font-size:12px;font-weight:700;margin-bottom:3px;color:#FEFDFB}
+.wb .f h4{color:#0B3D2E}
+.f p{font-size:10px;color:rgba(254,253,251,0.6);line-height:1.5}
+.wb .f p{color:#4A4A4A}
+ul{list-style:none;padding:0}
+ul li{padding:5px 0;font-size:13px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+ul li::before{content:'';width:5px;height:5px;background:#D4A843;border-radius:50%;flex-shrink:0;margin-top:6px}
+@media print{body{background:white;padding:0}.controls{display:none}.slide{display:flex!important;margin:0;border-radius:0;box-shadow:none;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="controls">
+  <button onclick="nav(-1)">← Prev</button>
+  <span class="counter"><span id="curr">1</span> / <span id="total">12</span></span>
+  <button onclick="nav(1)">Next →</button>
+  <button onclick="printAll()" style="margin-left:16px;background:#4A4A4A">🖨 Print</button>
+</div>
+
+<!-- 1: Title -->
+<div class="slide active gb" style="align-items:center;justify-content:center;text-align:center;padding:60px">
+  <div style="width:56px;height:56px;background:rgba(254,253,251,0.1);border:2px solid rgba(212,168,67,0.3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px"><span style="font-family:'Playfair Display',serif;font-size:24px;color:#D4A843;font-weight:700">S</span></div>
+  <h1 style="font-family:'Playfair Display',serif;font-size:38px;font-weight:700;margin-bottom:6px">Solaris Panamá</h1>
+  <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#D4A843;margin-bottom:20px">Strategic Plan 2026–2028</div>
+  <div style="width:48px;height:2px;background:#D4A843;margin:0 auto 16px"></div>
+  <div style="font-size:12px;color:rgba(254,253,251,0.5)">Premium Solar Installations · Azuero Peninsula, Panamá</div>
+  <div class="sn">1</div>
+</div>
+
+<!-- 2: Vision & Mission -->
+<div class="slide wb">
+  <div class="tb" style="background:#0B3D2E"><div class="l" style="color:#FEFDFB">SOLARIS</div><div class="t">Vision & Mission</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">Vision</div>
+      <h2 style="color:#0B3D2E">Make Azuero the solar capital of Central America</h2>
+      <p style="font-size:13px;color:#4A4A4A;line-height:1.6;margin-top:12px">By 2028, every premium property in the Azuero Peninsula will consider solar not as an option, but as the standard. Solaris will be the name they trust.</p>
+    </div>
+    <div class="c">
+      <div class="sl">Mission</div>
+      <p style="font-size:14px;color:#0B3D2E;line-height:1.7;font-weight:500">Deliver premium turnkey solar installations that eliminate electricity costs for commercial and residential properties in Panama's most sun-rich region.</p>
+      <div style="margin-top:20px;padding:16px;background:#F9F7F3;border-radius:8px;border-left:3px solid #D4A843">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4A843;margin-bottom:4px">Core Values</div>
+        <div style="font-size:12px;color:#4A4A4A;line-height:1.6">Premium quality · Transparent pricing · Local expertise · Long-term relationships · Environmental impact</div>
+      </div>
+    </div>
+  </div>
+  <div class="sn" style="color:rgba(0,0,0,0.15)">2</div>
+</div>
+
+<!-- 3: Market Opportunity -->
+<div class="slide gb">
+  <div class="tb" style="border-bottom:1px solid rgba(212,168,67,0.15)"><div class="l">SOLARIS</div><div class="t">Market Opportunity</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">TAM/SAM/SOM</div>
+      <h2>Panama's solar market is nascent and underserved</h2>
+      <ul>
+        <li>1,200+ commercial properties in Azuero Peninsula</li>
+        <li>Growing expat community (Pedasí, Playa Venao)</li>
+        <li>No dominant rooftop solar player in the region</li>
+        <li>Law 417 creating strong economic incentive</li>
+      </ul>
+    </div>
+    <div class="c">
+      <div class="sc" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)"><div class="n" style="color:#D4A843">$45M+</div><div class="lb" style="color:rgba(254,253,251,0.5)">Total Addressable Market — Azuero commercial solar</div></div>
+      <div class="sc" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)"><div class="n" style="color:#D4A843">$12M</div><div class="lb" style="color:rgba(254,253,251,0.5)">Serviceable Addressable Market — Hotels, large homes</div></div>
+      <div class="sc" style="background:rgba(254,253,251,0.06);border-color:rgba(212,168,67,0.5)"><div class="n" style="color:#D4A843">$2.4M</div><div class="lb" style="color:rgba(254,253,251,0.5)">Year 1 target — 20 installations at $120K avg</div></div>
+    </div>
+  </div>
+  <div class="sn">3</div>
+</div>
+
+<!-- 4: Competitive Landscape -->
+<div class="slide wb">
+  <div class="tb" style="background:#0B3D2E"><div class="l" style="color:#FEFDFB">SOLARIS</div><div class="t">Competition</div></div>
+  <div class="bf">
+    <div class="sl">Competitive Landscape</div>
+    <h2 style="color:#0B3D2E">We compete with inertia, not with companies</h2>
+    <div class="fg" style="margin-top:16px">
+      <div class="f">
+        <div class="ic">🏢</div>
+        <h4>Panama City Players</h4>
+        <p>ENSA Solar, Blue Energy — focused on metro area. Minimal Azuero presence. Generic service.</p>
+      </div>
+      <div class="f">
+        <div class="ic">🔧</div>
+        <h4>Local Electricians</h4>
+        <p>Small operators doing basic installs. No engineering, no permits, no monitoring.</p>
+      </div>
+      <div class="f">
+        <div class="ic">✅</div>
+        <h4>Our Advantage</h4>
+        <p>Local presence + premium service + technology (roof scanner, CRM, monitoring). Full value chain.</p>
+      </div>
+      <div class="f">
+        <div class="ic">🎯</div>
+        <h4>Positioning</h4>
+        <p>Not competing on price. Competing on trust, expertise, and end-to-end service quality.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sn" style="color:rgba(0,0,0,0.15)">4</div>
+</div>
+
+<!-- 5: ICP -->
+<div class="slide gb">
+  <div class="tb" style="border-bottom:1px solid rgba(212,168,67,0.15)"><div class="l">SOLARIS</div><div class="t">Target Customers</div></div>
+  <div class="bf">
+    <div class="sl">Ideal Customer Profile</div>
+    <h2>Three segments, one solution</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px">
+      <div class="f" style="text-align:center;padding:24px">
+        <div class="ic" style="font-size:28px">🏨</div>
+        <h4 style="font-size:14px;margin:8px 0">Boutique Hotels</h4>
+        <p>$3K–$8K/mo electricity. High AC usage. Premium properties. Eco-tourism appeal.</p>
+        <div style="margin-top:8px;font-size:10px;color:#D4A843;font-weight:700">AVG DEAL: $150K</div>
+      </div>
+      <div class="f" style="text-align:center;padding:24px;border-color:rgba(212,168,67,0.3)">
+        <div class="ic" style="font-size:28px">🏠</div>
+        <h4 style="font-size:14px;margin:8px 0">Expat Homeowners</h4>
+        <p>$500–$2K/mo electricity. Modern homes. Value independence. English-speaking.</p>
+        <div style="margin-top:8px;font-size:10px;color:#D4A843;font-weight:700">AVG DEAL: $25K</div>
+      </div>
+      <div class="f" style="text-align:center;padding:24px">
+        <div class="ic" style="font-size:28px">🏗</div>
+        <h4 style="font-size:14px;margin:8px 0">Commercial / Ranches</h4>
+        <p>Large rooftops. High consumption. Tax-motivated. Long-term ROI thinkers.</p>
+        <div style="margin-top:8px;font-size:10px;color:#D4A843;font-weight:700">AVG DEAL: $80K</div>
+      </div>
+    </div>
+  </div>
+  <div class="sn">5</div>
+</div>
+
+<!-- 6: Go-to-Market -->
+<div class="slide wb">
+  <div class="tb" style="background:#0B3D2E"><div class="l" style="color:#FEFDFB">SOLARIS</div><div class="t">Go-to-Market</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">GTM Strategy</div>
+      <h2 style="color:#0B3D2E">Referral-first, digital-amplified</h2>
+      <ul style="color:#4A4A4A">
+        <li>Partner with architects, real estate agents, property managers</li>
+        <li>Community events and lunch-and-learn sessions</li>
+        <li>Targeted Facebook/Instagram ads (expat communities)</li>
+        <li>Google Ads for "solar panels Panama" search intent</li>
+        <li>SEO content: blog articles on Law 417, solar costs</li>
+        <li>Referral bonuses for existing clients</li>
+      </ul>
+    </div>
+    <div class="c">
+      <div class="sc"><div class="n">Phase 1</div><div class="lb">Months 1–3: Launch brand, first 5 installations via network</div></div>
+      <div class="sc"><div class="n">Phase 2</div><div class="lb">Months 4–8: Scale ads, content marketing, 15 installs</div></div>
+      <div class="sc"><div class="n">Phase 3</div><div class="lb">Months 9–12: PPA model, partnerships, 30+ installs/yr</div></div>
+    </div>
+  </div>
+  <div class="sn" style="color:rgba(0,0,0,0.15)">6</div>
+</div>
+
+<!-- 7: Technology -->
+<div class="slide gb">
+  <div class="tb" style="border-bottom:1px solid rgba(212,168,67,0.15)"><div class="l">SOLARIS</div><div class="t">Technology Edge</div></div>
+  <div class="bf">
+    <div class="sl">Proprietary Tools</div>
+    <h2>Technology as competitive moat</h2>
+    <div class="fg" style="margin-top:16px">
+      <div class="f">
+        <div class="ic">🛰</div>
+        <h4>Roof Scanner</h4>
+        <p>Satellite-based roof analysis. Automatic area, angle, and solar potential calculation.</p>
+      </div>
+      <div class="f">
+        <div class="ic">📊</div>
+        <h4>Solar CRM</h4>
+        <p>10-step pipeline from lead to monitoring. Full value chain management.</p>
+      </div>
+      <div class="f">
+        <div class="ic">📄</div>
+        <h4>Proposal Generator</h4>
+        <p>Automated proposals with ROI, system design, and financing options.</p>
+      </div>
+      <div class="f">
+        <div class="ic">📡</div>
+        <h4>Monitoring Dashboard</h4>
+        <p>Real-time production tracking. Alerts for underperformance. Client portal.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sn">7</div>
+</div>
+
+<!-- 8: Revenue Model -->
+<div class="slide wb">
+  <div class="tb" style="background:#0B3D2E"><div class="l" style="color:#FEFDFB">SOLARIS</div><div class="t">Revenue Model</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">Revenue Streams</div>
+      <h2 style="color:#0B3D2E">Multiple revenue streams, recurring potential</h2>
+    </div>
+    <div class="c">
+      <div class="sc"><div class="n">Installation Revenue</div><div class="lb">$25K–$200K per project · 25–35% gross margin · Core revenue</div></div>
+      <div class="sc"><div class="n">PPA Revenue</div><div class="lb">$/kWh below grid rate · 15–20 year contracts · Recurring</div></div>
+      <div class="sc"><div class="n">O&M Contracts</div><div class="lb">$100–$500/mo per system · Monitoring + maintenance · Recurring</div></div>
+      <div class="sc"><div class="n">Referral Commissions</div><div class="lb">Partner installations · Equipment supplier bonuses</div></div>
+    </div>
+  </div>
+  <div class="sn" style="color:rgba(0,0,0,0.15)">8</div>
+</div>
+
+<!-- 9: Financial Projections -->
+<div class="slide gb">
+  <div class="tb" style="border-bottom:1px solid rgba(212,168,67,0.15)"><div class="l">SOLARIS</div><div class="t">Financial Projections</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">3-Year Outlook</div>
+      <h2>Path to $2M+ annual revenue</h2>
+    </div>
+    <div class="c">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="background:rgba(254,253,251,0.05);border-radius:8px;padding:20px;text-align:center;border:1px solid rgba(212,168,67,0.1)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#D4A843;margin-bottom:8px">YEAR 1</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#D4A843">$600K</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4);margin-top:4px">8–10 installs</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4)">Build brand</div>
+        </div>
+        <div style="background:rgba(254,253,251,0.05);border-radius:8px;padding:20px;text-align:center;border:1px solid rgba(212,168,67,0.15)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#D4A843;margin-bottom:8px">YEAR 2</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#D4A843">$1.4M</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4);margin-top:4px">18–22 installs</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4)">PPA launch</div>
+        </div>
+        <div style="background:rgba(254,253,251,0.05);border-radius:8px;padding:20px;text-align:center;border:1px solid rgba(212,168,67,0.2)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#D4A843;margin-bottom:8px">YEAR 3</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#D4A843">$2.4M</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4);margin-top:4px">30+ installs</div>
+          <div style="font-size:10px;color:rgba(254,253,251,0.4)">National expand</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sn">9</div>
+</div>
+
+<!-- 10: Team -->
+<div class="slide wb">
+  <div class="tb" style="background:#0B3D2E"><div class="l" style="color:#FEFDFB">SOLARIS</div><div class="t">Team</div></div>
+  <div class="bs">
+    <div class="c">
+      <div class="sl">Leadership</div>
+      <h2 style="color:#0B3D2E">Experienced founders with deep solar expertise</h2>
+      <p style="font-size:13px;color:#4A4A4A;line-height:1.6;margin-top:8px">Combining Israeli solar industry experience with deep knowledge of the Panamanian market. Technical expertise meets local relationships.</p>
+    </div>
+    <div class="c">
+      <div class="sc"><div class="n" style="font-size:18px">Kaniel Tordjman</div><div class="lb">CEO · Navitas Solar (Israel) founder. 5+ years in solar industry. Technology & business development.</div></div>
+      <div class="sc"><div class="n" style="font-size:18px">Omri</div><div class="lb">COO · Local operations. On-the-ground in Azuero. Client relationships & installations.</div></div>
+      <div style="margin-top:16px;padding:12px 18px;background:#F9F7F3;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#D4A843;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Hiring Plan</div>
+        <div style="font-size:11px;color:#4A4A4A;line-height:1.6">Q2: Sales rep · Q3: Installation lead · Q4: Admin/support</div>
+      </div>
+    </div>
+  </div>
+  <div class="sn" style="color:rgba(0,0,0,0.15)">10</div>
+</div>
+
+<!-- 11: Roadmap -->
+<div class="slide gb">
+  <div class="tb" style="border-bottom:1px solid rgba(212,168,67,0.15)"><div class="l">SOLARIS</div><div class="t">Roadmap</div></div>
+  <div class="bf">
+    <div class="sl">2026 Roadmap</div>
+    <h2>Key milestones this year</h2>
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <div style="flex:1;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border-top:3px solid #D4A843">
+        <div style="font-size:10px;font-weight:700;color:#D4A843;letter-spacing:0.1em">Q1</div>
+        <ul style="margin-top:8px"><li style="font-size:11px">Brand launch</li><li style="font-size:11px">Website live</li><li style="font-size:11px">First 3 leads</li></ul>
+      </div>
+      <div style="flex:1;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border-top:3px solid #D4A843">
+        <div style="font-size:10px;font-weight:700;color:#D4A843;letter-spacing:0.1em">Q2</div>
+        <ul style="margin-top:8px"><li style="font-size:11px">First installation</li><li style="font-size:11px">Ad campaigns live</li><li style="font-size:11px">5 closed deals</li></ul>
+      </div>
+      <div style="flex:1;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border-top:3px solid #D4A843">
+        <div style="font-size:10px;font-weight:700;color:#D4A843;letter-spacing:0.1em">Q3</div>
+        <ul style="margin-top:8px"><li style="font-size:11px">PPA pilot</li><li style="font-size:11px">Partner network</li><li style="font-size:11px">10 installs YTD</li></ul>
+      </div>
+      <div style="flex:1;padding:16px;background:rgba(254,253,251,0.05);border-radius:8px;border-top:3px solid #D4A843">
+        <div style="font-size:10px;font-weight:700;color:#D4A843;letter-spacing:0.1em">Q4</div>
+        <ul style="margin-top:8px"><li style="font-size:11px">O&M recurring</li><li style="font-size:11px">Case studies</li><li style="font-size:11px">$600K revenue</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="sn">11</div>
+</div>
+
+<!-- 12: Thank You -->
+<div class="slide gb" style="align-items:center;justify-content:center;text-align:center;padding:60px">
+  <div style="background:rgba(254,253,251,0.05);border:1px solid rgba(212,168,67,0.2);border-radius:16px;padding:48px;max-width:500px">
+    <div style="width:48px;height:48px;background:rgba(254,253,251,0.1);border:2px solid rgba(212,168,67,0.3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px"><span style="font-family:'Playfair Display',serif;font-size:20px;color:#D4A843;font-weight:700">S</span></div>
+    <h2 style="font-size:28px;margin-bottom:8px">Thank You</h2>
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#D4A843;margin-bottom:20px">Own Your Energy</div>
+    <div style="font-size:13px;color:rgba(254,253,251,0.6)">info@solarispanama.com · solarispanama.com</div>
+  </div>
+  <div class="sn">12</div>
+</div>
+
+<script>
+let c=0;const s=document.querySelectorAll('.slide'),t=s.length;
+document.getElementById('total').textContent=t;
+function nav(d){s[c].classList.remove('active');c=(c+d+t)%t;s[c].classList.add('active');document.getElementById('curr').textContent=c+1}
+function printAll(){s.forEach(x=>x.style.display='flex');window.print();s.forEach((x,i)=>{x.style.display=i===c?'flex':'none'})}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')nav(1);if(e.key==='ArrowLeft')nav(-1)});
+</script>
+</body>
+</html>

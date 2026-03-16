@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Energy — Opciones de Financiamiento Solar en Panamá</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root { --forest: #0B3D2E; --forest-deep: #062A1B; --gold: #D4A843; --green: #1A7A5A; --red: #E53935; --white: #FFFFFF; --pearl: #FEFDFB; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', -apple-system, sans-serif; background: #0A0A0A; color: var(--white); }
+
+    .slide { min-height: 100vh; padding: 4rem 3rem; display: flex; flex-direction: column; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .slide-num { font-size: 0.75rem; color: rgba(255,255,255,0.3); letter-spacing: 0.15em; margin-bottom: 1rem; }
+    .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+    h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.5rem,6vw,4.5rem); line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-family: 'Instrument Serif', serif; font-size: clamp(1.8rem,4vw,3rem); line-height: 1.2; margin-bottom: 2rem; }
+    h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; }
+    .accent { color: var(--gold); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+
+    .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 2rem; transition: all 0.3s; }
+    .card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); }
+    .card.gold { border-color: var(--gold); background: rgba(212,168,67,0.06); }
+    .card.green { border-color: var(--green); background: rgba(26,122,90,0.06); }
+
+    .stat-big { font-family: 'Instrument Serif', serif; font-size: 3rem; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { text-align: left; padding: 0.8rem 1rem; background: rgba(255,255,255,0.05); color: var(--gold); font-weight: 600; border-bottom: 2px solid rgba(255,255,255,0.1); }
+    td { padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+    .badge-gold { background: rgba(212,168,67,0.15); color: var(--gold); }
+    .badge-green { background: rgba(26,122,90,0.15); color: var(--green); }
+
+    .highlight-box { padding: 1.5rem; border-radius: 12px; margin: 1rem 0; }
+    .highlight-gold { background: rgba(212,168,67,0.08); border: 1px solid rgba(212,168,67,0.2); }
+    .highlight-green { background: rgba(26,122,90,0.08); border: 1px solid rgba(26,122,90,0.2); }
+
+    .bank-row { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .bank-rank { font-family: 'Instrument Serif', serif; font-size: 2.5rem; color: var(--gold); min-width: 50px; text-align: center; }
+    .bank-info { flex: 1; }
+    .bank-name { font-size: 1.1rem; font-weight: 700; }
+    .bank-detail { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; line-height: 1.5; }
+    .bank-rate { text-align: center; min-width: 120px; }
+    .bank-rate .stat-big { font-size: 2.2rem; }
+
+    .se-logo { position: fixed; top: 16px; right: 20px; z-index: 200; display: flex; align-items: center; gap: 10px; }
+    .se-logo .brand-text { font-size: 11px; color: rgba(255,255,255,.5); font-weight: 600; letter-spacing: 1px; }
+
+    @media (max-width: 768px) { .slide { padding: 3rem 1.5rem; } .grid-2, .grid-3 { grid-template-columns: 1fr; } .bank-row { flex-direction: column; text-align: center; } }
+</style>
+</head>
+<body>
+
+<div class="se-logo">
+  <span class="brand-text">SOLARIS ENERGY S.A.</span>
+</div>
+
+<!-- SLIDE 0: COVER -->
+<div class="slide" style="background:linear-gradient(160deg,var(--forest-deep),#0A0A0A 60%);">
+    <div class="container">
+        <span class="badge badge-gold" style="margin-bottom:1.5rem;">OPCIONES DE FINANCIAMIENTO</span>
+        <h1>Solar en <span class="accent">Panamá</span></h1>
+        <h2 style="color:rgba(255,255,255,0.6);font-size:1.5rem;">Financiamiento, Incentivos Fiscales y Modelos de Pago</h2>
+        <div style="margin-top:2rem;color:rgba(255,255,255,0.4);font-size:0.9rem;">2026 · Solaris Energy S.A. · info@solaris-panama.com</div>
+    </div>
+</div>
+
+<!-- SLIDE 1: OVERVIEW -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">01 — RESUMEN DE FINANCIAMIENTO</div>
+        <h2>Tres Pilares del Financiamiento Solar</h2>
+        <div class="grid-3">
+            <div class="card gold">
+                <div class="stat-big" style="font-size:2.5rem;">A</div>
+                <h3 style="margin-top:1rem;">Financiamiento para Clientes</h3>
+                <p style="color:rgba(255,255,255,0.6);line-height:1.6;font-size:0.9rem;">
+                    Cómo nuestros clientes financian su instalación solar: préstamos verdes, PPA, leasing, y pago directo.
+                </p>
+            </div>
+            <div class="card gold">
+                <div class="stat-big" style="font-size:2.5rem;">B</div>
+                <h3 style="margin-top:1rem;">Incentivos de Ley 417</h3>
+                <p style="color:rgba(255,255,255,0.6);line-height:1.6;font-size:0.9rem;">
+                    100% exención fiscal, exención de aduanas, Net Metering — los beneficios que hacen solar irresistible en Panamá.
+                </p>
+            </div>
+            <div class="card gold">
+                <div class="stat-big" style="font-size:2.5rem;">C</div>
+                <h3 style="margin-top:1rem;">Bancos y Préstamos Verdes</h3>
+                <p style="color:rgba(255,255,255,0.6);line-height:1.6;font-size:0.9rem;">
+                    Bancos panameños con productos de financiamiento verde y sus condiciones específicas para proyectos solares.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 2: BANK RANKING -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">02 — BANCOS CON FINANCIAMIENTO VERDE</div>
+        <h2>Ranking de Bancos en Panamá</h2>
+
+        <div class="bank-row" style="background:rgba(212,168,67,0.05);border-radius:16px 16px 0 0;">
+            <div class="bank-rank">1</div>
+            <div class="bank-info">
+                <div class="bank-name">Banco General <span class="badge badge-green">Recomendado</span></div>
+                <div class="bank-detail">Línea de Crédito Verde — financiamiento para proyectos de eficiencia energética y energía renovable. Hasta 100% del costo del proyecto. Plazo hasta 7 años. Tasa preferencial.</div>
+            </div>
+            <div class="bank-rate">
+                <div class="stat-big">~5%</div>
+                <div class="stat-label">Tasa preferencial</div>
+            </div>
+        </div>
+
+        <div class="bank-row">
+            <div class="bank-rank">2</div>
+            <div class="bank-info">
+                <div class="bank-name">BAC Credomatic</div>
+                <div class="bank-detail">Préstamo Eco — financiamiento verde para empresas y residencial. Tasas competitivas. Proceso ágil de aprobación. Ideal para PYMEs.</div>
+            </div>
+            <div class="bank-rate">
+                <div class="stat-big">~5-6%</div>
+                <div class="stat-label">Tasa verde</div>
+            </div>
+        </div>
+
+        <div class="bank-row">
+            <div class="bank-rank">3</div>
+            <div class="bank-info">
+                <div class="bank-name">Banistmo (Grupo Bancolombia)</div>
+                <div class="bank-detail">Línea Sostenible — comprometidos con financiamiento verde en Centroamérica. Experiencia en proyectos de energía renovable. Plazo flexible.</div>
+            </div>
+            <div class="bank-rate">
+                <div class="stat-big">~5-6%</div>
+                <div class="stat-label">Tasa negociable</div>
+            </div>
+        </div>
+
+        <div class="bank-row">
+            <div class="bank-rank">4</div>
+            <div class="bank-info">
+                <div class="bank-name">Global Bank</div>
+                <div class="bank-detail">Financiamiento para empresas — incluye proyectos de eficiencia energética. Presencia fuerte en sector comercial panameño.</div>
+            </div>
+            <div class="bank-rate">
+                <div class="stat-big">~6%</div>
+                <div class="stat-label">Tasa comercial</div>
+            </div>
+        </div>
+
+        <div class="bank-row" style="border-radius:0 0 16px 16px;">
+            <div class="bank-rank">5</div>
+            <div class="bank-info">
+                <div class="bank-name">BID / IFC / CAF</div>
+                <div class="bank-detail">Multilaterales con líneas de crédito canalizadas a través de bancos locales. Tasas preferenciales para proyectos verdes certificados. Financiamiento a largo plazo.</div>
+            </div>
+            <div class="bank-rate">
+                <div class="stat-big">3-5%</div>
+                <div class="stat-label">Multilateral</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: LEY 417 DEEP DIVE -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">03 — LEY 417: INCENTIVOS FISCALES</div>
+        <h2>Ley 417 — <span class="accent">El Motor del Solar en Panamá</span></h2>
+
+        <div class="grid-2">
+            <div>
+                <div class="card gold" style="margin-bottom:1.5rem;">
+                    <h3 class="accent">Beneficios para Empresas</h3>
+                    <table style="margin-top:1rem;">
+                        <tr><td>Impuesto sobre la Renta</td><td style="color:var(--green);font-weight:700;">100% exención</td></tr>
+                        <tr><td>Aranceles de Importación</td><td style="color:var(--green);font-weight:700;">100% exención</td></tr>
+                        <tr><td>ITBMS sobre equipos</td><td style="color:var(--green);font-weight:700;">Exento</td></tr>
+                        <tr><td>Net Metering</td><td>Crédito por excedentes</td></tr>
+                        <tr><td>Duración del beneficio</td><td>Vigente durante vida útil</td></tr>
+                        <tr><td>Regulador</td><td>ASEP</td></tr>
+                    </table>
+                </div>
+                <div class="highlight-gold">
+                    <strong>Valor de Ley 417 en 10 años (ejemplo comercial 50 kWp):</strong><br>
+                    Ahorro en impuestos + aranceles = <strong>~$15,000–$25,000</strong> adicionales
+                </div>
+            </div>
+            <div>
+                <div class="card green" style="margin-bottom:1.5rem;">
+                    <h3 style="color:var(--green);">Beneficios para Hogares</h3>
+                    <table style="margin-top:1rem;">
+                        <tr><td>Impuesto sobre la Renta</td><td style="color:var(--green);font-weight:700;">100% exención</td></tr>
+                        <tr><td>Aranceles de Importación</td><td style="color:var(--green);font-weight:700;">100% exención</td></tr>
+                        <tr><td>Net Metering</td><td>Disponible (hasta 500 kW)</td></tr>
+                        <tr><td>Aumento valor propiedad</td><td>+3-5% del valor</td></tr>
+                        <tr><td>Retorno típico</td><td style="font-weight:700;">2.5–3.5 años</td></tr>
+                    </table>
+                </div>
+                <div class="highlight-green">
+                    <strong>Argumento de venta:</strong> "Su sistema solar no solo reduce su factura — bajo Ley 417 está 100% exento de impuestos. Con retorno en 2.5–3.5 años, es la mejor inversión para su hogar."
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: CUSTOMER FINANCING MODELS -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">04 — MODELOS DE FINANCIAMIENTO PARA CLIENTES</div>
+        <h2>Cómo Pagan Nuestros Clientes</h2>
+        <div class="grid-2">
+            <div>
+                <div class="card gold" style="margin-bottom:1.5rem;">
+                    <h3 class="accent">Modelo 1: Compra Directa (EPC)</h3>
+                    <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:0.9rem;">
+                        El cliente paga todo por adelantado.<br>
+                        <strong>Residencial 10 kWp:</strong> ~$8,000–$12,000<br>
+                        <strong>Comercial 50 kWp:</strong> ~$40,000–$55,000<br>
+                        <strong>Margen:</strong> 40-60%<br>
+                        <strong>Ventaja:</strong> Cash flow inmediato<br>
+                        <strong>Desventaja:</strong> No todos pueden pagar de contado
+                    </p>
+                </div>
+                <div class="card green" style="margin-bottom:1.5rem;">
+                    <h3 style="color:var(--green);">Modelo 2: PPA (Power Purchase Agreement)</h3>
+                    <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:0.9rem;">
+                        <strong>Nosotros somos dueños del sistema.</strong><br>
+                        El cliente compra electricidad a precio fijo.<br>
+                        <strong>Tarifa ASEP:</strong> ~$0.16–$0.20/kWh<br>
+                        <strong>Precio PPA:</strong> $0.12–$0.15/kWh<br>
+                        <strong>Contrato:</strong> 15–20 años<br>
+                        <strong>Ventaja:</strong> Revenue recurrente + sin objeción de precio<br>
+                        <strong>Desventaja:</strong> Requiere capital inicial
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3>Modelo 3: Préstamo Bancario Verde</h3>
+                    <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:0.9rem;">
+                        <strong>El cliente financia con su banco.</strong><br>
+                        Nosotros recibimos el pago completo.<br>
+                        <strong>Tasa:</strong> 5-7% (verde preferencial)<br>
+                        <strong>Plazo:</strong> 5-7 años<br>
+                        <strong>Cuota mensual:</strong> < factura eléctrica actual<br>
+                        <strong>Al final:</strong> Cliente es dueño<br>
+                        <strong>Ventaja:</strong> Fácil de vender, cash flow para nosotros
+                    </p>
+                </div>
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3>Modelo 4: Leasing / Pagos Mensuales</h3>
+                    <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:0.9rem;">
+                        <strong>El cliente paga en cuotas mensuales.</strong><br>
+                        <strong>Período:</strong> 3-7 años<br>
+                        <strong>Cuota:</strong> Menor a factura eléctrica<br>
+                        <strong>Al final:</strong> Cliente es propietario<br>
+                        <strong>Ventaja:</strong> Barrera de entrada baja<br>
+                        <strong>Ideal para:</strong> Residencial y PYME
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: ROI NUMBERS -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">05 — NÚMEROS DE RETORNO</div>
+        <h2>ROI — Los Números Reales</h2>
+        <div style="margin-bottom:2rem;color:rgba(255,255,255,0.5);">Ejemplo: Hotel boutique, 30 habitaciones, factura eléctrica $2,500/mes</div>
+
+        <div class="grid-2">
+            <div>
+                <table>
+                    <tr><th colspan="2">Detalles del Sistema</th></tr>
+                    <tr><td>Tamaño del sistema</td><td>50 kWp</td></tr>
+                    <tr><td>Costo de instalación</td><td>$45,000</td></tr>
+                    <tr><td>Producción mensual</td><td>~6,250 kWh</td></tr>
+                    <tr><td>Ahorro mensual (vs $0.18/kWh)</td><td>$1,125</td></tr>
+                    <tr><td>Ahorro anual</td><td><strong>$13,500</strong></td></tr>
+                </table>
+
+                <table style="margin-top:2rem;">
+                    <tr><th colspan="2">Retorno de Inversión</th></tr>
+                    <tr><td>Ahorro Año 1</td><td><strong>$13,500</strong></td></tr>
+                    <tr><td>Beneficio Ley 417 (aranceles ahorrados)</td><td>~$5,000</td></tr>
+                    <tr><td>Retorno efectivo</td><td style="color:var(--green);font-weight:700;"><strong>2.8 años</strong></td></tr>
+                    <tr><td>Ahorro en 25 años</td><td style="color:var(--green);font-weight:700;">$337,500</td></tr>
+                    <tr><td>ROI total</td><td style="color:var(--green);font-weight:700;">750%</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="card gold">
+                    <h3 class="accent">Escenario PPA — 10 Sistemas Comerciales</h3>
+                    <table style="margin-top:1rem;">
+                        <tr><td>Inversión total</td><td>$450,000 (10 × $45K)</td></tr>
+                        <tr><td>Ingreso mensual</td><td><strong>$9,375</strong></td></tr>
+                        <tr><td>Ingreso anual</td><td><strong>$112,500</strong></td></tr>
+                        <tr><td>Pago préstamo (5%, 7 años)</td><td>~$5,400/mes</td></tr>
+                        <tr><td>O&M/mes</td><td>~$1,000/mes</td></tr>
+                        <tr><td style="color:var(--green);">Ganancia neta mensual</td><td style="color:var(--green);font-weight:700;">$2,975</td></tr>
+                        <tr><td>Ganancia neta anual</td><td style="color:var(--green);font-weight:700;">$35,700</td></tr>
+                    </table>
+                    <div style="margin-top:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                        * Después del préstamo (año 7): ganancia = $8,375/mes = $100,500/año
+                    </div>
+                </div>
+
+                <div class="highlight-green" style="margin-top:1.5rem;">
+                    <strong>Bottom line:</strong> Con financiamiento bancario, 10 sistemas PPA generan ~$3,000/mes de ganancia neta desde el día 1. Después de pagar el préstamo — $8,375/mes.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: COMPARISON: PANAMA vs REGION -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">06 — PANAMÁ: VENTAJA COMPETITIVA</div>
+        <h2>¿Por Qué Solar en <span class="accent">Panamá</span>?</h2>
+
+        <div class="grid-3">
+            <div class="card gold">
+                <h3 class="accent">Irradiación Solar</h3>
+                <div class="stat-big" style="font-size:2rem;margin:0.5rem 0;">4.5-5.5</div>
+                <div class="stat-label">kWh/m²/día promedio</div>
+                <p style="color:rgba(255,255,255,0.6);margin-top:1rem;font-size:0.85rem;">
+                    Panamá recibe excelente radiación solar todo el año. Ubicación tropical ecuatorial = producción consistente 12 meses.
+                </p>
+            </div>
+            <div class="card gold">
+                <h3 class="accent">Tarifa Eléctrica</h3>
+                <div class="stat-big" style="font-size:2rem;margin:0.5rem 0;">$0.16-0.20</div>
+                <div class="stat-label">USD/kWh (ASEP)</div>
+                <p style="color:rgba(255,255,255,0.6);margin-top:1rem;font-size:0.85rem;">
+                    Tarifas eléctricas altas = mayor ahorro con solar. Tendencia al alza por costos de generación térmica.
+                </p>
+            </div>
+            <div class="card green">
+                <h3 style="color:var(--green);">Moneda: USD</h3>
+                <div class="stat-big" style="font-size:2rem;margin:0.5rem 0;color:var(--green);">$</div>
+                <div class="stat-label">Sin riesgo cambiario</div>
+                <p style="color:rgba(255,255,255,0.6);margin-top:1rem;font-size:0.85rem;">
+                    Panamá usa el dólar estadounidense. Cero riesgo de devaluación. Inversiones y retornos en la misma moneda fuerte.
+                </p>
+            </div>
+        </div>
+
+        <div class="highlight-gold" style="margin-top:2rem;text-align:center;">
+            <strong style="font-size:1.1rem;">Ley 417 + Alta irradiación + Tarifa alta + USD = El mercado solar más atractivo de Centroamérica</strong>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: ASEP & REGULATIONS -->
+<div class="slide">
+    <div class="container">
+        <div class="slide-num">07 — REGULACIÓN: ASEP</div>
+        <h2>Marco Regulatorio de Panamá</h2>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <h3 class="accent">ASEP — Autoridad Nacional</h3>
+                    <table style="margin-top:1rem;">
+                        <tr><td>Entidad</td><td><strong>ASEP</strong></td></tr>
+                        <tr><td>Función</td><td>Regular servicios públicos</td></tr>
+                        <tr><td>Ley principal</td><td>Ley 417 de 2019</td></tr>
+                        <tr><td>Net Metering</td><td>Hasta 500 kW</td></tr>
+                        <tr><td>Proceso</td><td>Solicitud + inspección</td></tr>
+                        <tr><td>Plazo aprobación</td><td>2-4 semanas típico</td></tr>
+                    </table>
+                </div>
+                <div class="highlight-green">
+                    <strong>Solaris Energy gestiona todos los trámites con ASEP.</strong> El cliente no necesita hacer nada — nosotros manejamos solicitudes, inspecciones y conexión a red.
+                </div>
+            </div>
+            <div>
+                <div class="card gold">
+                    <h3 class="accent">Proceso de Aprobación ASEP</h3>
+                    <table style="margin-top:1rem;">
+                        <tr><td><strong>Paso 1</strong></td><td>Solicitud de generación distribuida</td></tr>
+                        <tr><td><strong>Paso 2</strong></td><td>Estudio técnico de conexión</td></tr>
+                        <tr><td><strong>Paso 3</strong></td><td>Aprobación del diseño</td></tr>
+                        <tr><td><strong>Paso 4</strong></td><td>Instalación del sistema</td></tr>
+                        <tr><td><strong>Paso 5</strong></td><td>Inspección ASEP</td></tr>
+                        <tr><td><strong>Paso 6</strong></td><td>Conexión a red + medidor bidireccional</td></tr>
+                        <tr><td><strong>Paso 7</strong></td><td>Net Metering activado</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: SUMMARY -->
+<div class="slide" style="background:linear-gradient(160deg,var(--forest-deep),#0A0A0A 60%);">
+    <div class="container" style="text-align:center;">
+        <h2 style="margin-bottom:2rem;">Resumen de Financiamiento</h2>
+        <div class="grid-3" style="max-width:800px;margin:0 auto;">
+            <div>
+                <div class="stat-big">5-6%</div>
+                <div class="stat-label">Tasa de préstamo verde</div>
+            </div>
+            <div>
+                <div class="stat-big">100%</div>
+                <div class="stat-label">Exención fiscal (Ley 417)</div>
+            </div>
+            <div>
+                <div class="stat-big">2.5-3.5</div>
+                <div class="stat-label">Años de retorno</div>
+            </div>
+        </div>
+        <div class="grid-3" style="max-width:800px;margin:2rem auto 0;">
+            <div>
+                <div class="stat-big">USD</div>
+                <div class="stat-label">Sin riesgo cambiario</div>
+            </div>
+            <div>
+                <div class="stat-big">ASEP</div>
+                <div class="stat-label">Regulador confiable</div>
+            </div>
+            <div>
+                <div class="stat-big">750%</div>
+                <div class="stat-label">ROI en 25 años</div>
+            </div>
+        </div>
+
+        <div style="margin-top:3rem;padding:2rem;border:1px solid rgba(212,168,67,.3);border-radius:16px;max-width:600px;margin-left:auto;margin-right:auto;">
+            <h3 class="accent" style="margin-bottom:1rem;">¿Listo para comenzar?</h3>
+            <p style="color:rgba(255,255,255,.7);font-size:0.95rem;line-height:1.7;">
+                Contáctenos para una evaluación gratuita de su propiedad y una propuesta personalizada con cálculos de ROI específicos.
+            </p>
+            <div style="margin-top:1.5rem;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <a href="https://wa.me/50765831822?text=Hola%20Solaris%20Energy%2C%20me%20interesan%20las%20opciones%20de%20financiamiento%20solar" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95rem;">💬 WhatsApp</a>
+                <a href="tel:+50765831822" style="display:inline-flex;align-items:center;gap:8px;background:var(--forest);color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95rem;border:1px solid rgba(255,255,255,.2);">📞 +507 6583-1822</a>
+                <a href="mailto:info@solaris-panama.com" style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--gold);padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95rem;border:1px solid var(--gold);">📧 Email</a>
+            </div>
+        </div>
+
+        <div style="margin-top:3rem;color:rgba(255,255,255,0.3);font-size:0.8rem;">
+            Fuentes: ASEP, Ley 417 (Gaceta Oficial), Banco General, BAC Credomatic, Banistmo, BID<br>
+            * Números basados en estimaciones y condiciones de mercado 2026. Tasas y términos sujetos a aprobación bancaria.<br>
+            © 2026 Solaris Energy S.A. · info@solaris-panama.com · +507 6583-1822
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

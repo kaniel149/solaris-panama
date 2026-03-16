@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panamá — Galería de Anuncios</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#0B3D2E;--gold:#D4A843;--pearl:#FEFDFB;--sand:#F5EFE0;--charcoal:#1A1A1A;--slate:#4A4A4A;--ash:#8A8A8A;--mist:#E8E4DC;--cloud:#F9F7F3}
+body{font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--pearl);line-height:1.6}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:700;line-height:1.2}
+.header{background:var(--green);color:var(--pearl);padding:36px 0;text-align:center}
+.header h1{font-size:28px;margin-bottom:4px}
+.header .sub{font-size:12px;color:rgba(254,253,251,0.5)}
+.header .tag{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.section{padding:40px 0 24px}
+.section h2{font-size:22px;color:var(--green);margin-bottom:4px}
+.section .desc{font-size:13px;color:var(--ash);margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.card{border:1px solid var(--mist);border-radius:12px;overflow:hidden;transition:all 0.2s}
+.card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.card .preview{height:200px;background:var(--cloud);position:relative;overflow:hidden}
+.card .preview iframe{width:100%;height:100%;border:none;transform:scale(0.5);transform-origin:0 0;width:200%;height:200%;pointer-events:none}
+.card .info{padding:16px 20px}
+.card .info .label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.card .info h3{font-size:16px;color:var(--green);margin-bottom:4px}
+.card .info p{font-size:12px;color:var(--slate);line-height:1.5}
+.card .info .actions{margin-top:10px;display:flex;gap:8px}
+.card .info .actions a{font-size:11px;font-weight:600;color:var(--green);text-decoration:none;padding:4px 12px;border:1px solid var(--mist);border-radius:100px;transition:all 0.2s}
+.card .info .actions a:hover{background:var(--green);color:var(--pearl);border-color:var(--green)}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+.doc{padding:14px 18px;border:1px solid var(--mist);border-radius:8px;text-decoration:none;color:inherit;transition:all 0.2s;display:block}
+.doc:hover{border-color:var(--gold);background:var(--cloud)}
+.doc .doc-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold)}
+.doc .doc-title{font-size:13px;font-weight:600;color:var(--green);margin-top:2px}
+.doc .doc-type{font-size:10px;color:var(--ash);margin-top:2px}
+hr{border:none;border-top:1px solid var(--mist);margin:16px 0}
+.footer{text-align:center;padding:32px 0;color:var(--ash);font-size:11px;border-top:1px solid var(--mist);margin-top:32px}
+.footer a{color:var(--green);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="tag">Publicidad</div>
+  <h1>Galería de Anuncios</h1>
+  <div class="sub">Todos los creativos publicitarios de Solaris Panamá</div>
+</header>
+
+<main>
+  <!-- Ad Creatives -->
+  <section class="section">
+    <div class="container">
+      <h2>Creativos Publicitarios</h2>
+      <div class="desc">Anuncios HTML listos para compartir y adaptar</div>
+      <div class="grid">
+        <div class="card">
+          <div class="preview"><iframe src="creatives/ad-ley417.html" loading="lazy"></iframe></div>
+          <div class="info">
+            <div class="label">Facebook / Instagram</div>
+            <h3>Ley 417 — Incentivos Solares</h3>
+            <p>Anuncio enfocado en los beneficios fiscales de la Ley 417 para generar interés en energía solar.</p>
+            <div class="actions">
+              <a href="creatives/ad-ley417.html" target="_blank">Ver completo</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview"><iframe src="creatives/ad-ahorro.html" loading="lazy"></iframe></div>
+          <div class="info">
+            <div class="label">Facebook / Instagram</div>
+            <h3>Ahorro Energético</h3>
+            <p>Anuncio centrado en el ahorro mensual y retorno de inversión rápido.</p>
+            <div class="actions">
+              <a href="creatives/ad-ahorro.html" target="_blank">Ver completo</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview"><iframe src="creatives/ad-testimonial.html" loading="lazy"></iframe></div>
+          <div class="info">
+            <div class="label">Facebook / Instagram</div>
+            <h3>Testimonio de Cliente</h3>
+            <p>Social proof con testimonio de un cliente satisfecho.</p>
+            <div class="actions">
+              <a href="creatives/ad-testimonial.html" target="_blank">Ver completo</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview"><iframe src="creatives/whatsapp-flyer.html" loading="lazy"></iframe></div>
+          <div class="info">
+            <div class="label">WhatsApp</div>
+            <h3>Flyer para WhatsApp</h3>
+            <p>Imagen/flyer optimizado para compartir por WhatsApp.</p>
+            <div class="actions">
+              <a href="creatives/whatsapp-flyer.html" target="_blank">Ver completo</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview"><iframe src="creatives/one-pager.html" loading="lazy"></iframe></div>
+          <div class="info">
+            <div class="label">Impreso / Digital</div>
+            <h3>One-Pager Corporativo</h3>
+            <p>Resumen de una página con propuesta de valor y datos clave.</p>
+            <div class="actions">
+              <a href="creatives/one-pager.html" target="_blank">Ver completo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Strategy Documents -->
+  <section class="section">
+    <div class="container">
+      <h2>Documentos de Estrategia</h2>
+      <div class="desc">Planes, audiencias, presupuestos y estrategias por plataforma</div>
+      <div class="docs">
+        <a href="CAMPAIGN_PLAN.md" class="doc">
+          <div class="doc-label">Plan Maestro</div>
+          <div class="doc-title">Campaign Plan</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="facebook-ads-strategy.md" class="doc">
+          <div class="doc-label">Facebook</div>
+          <div class="doc-title">Facebook Ads Strategy</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="instagram-ads-strategy.md" class="doc">
+          <div class="doc-label">Instagram</div>
+          <div class="doc-title">Instagram Ads Strategy</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="google-ads-strategy.md" class="doc">
+          <div class="doc-label">Google</div>
+          <div class="doc-title">Google Ads Strategy</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="AUDIENCES.md" class="doc">
+          <div class="doc-label">Audiencias</div>
+          <div class="doc-title">Target Audiences</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="BUDGET_PLAN.md" class="doc">
+          <div class="doc-label">Presupuesto</div>
+          <div class="doc-title">Budget Plan</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="AD_CREATIVES.md" class="doc">
+          <div class="doc-label">Creativos</div>
+          <div class="doc-title">Ad Creatives Brief</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="OUTREACH_MESSAGES.md" class="doc">
+          <div class="doc-label">Outreach</div>
+          <div class="doc-title">Outreach Messages</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="lead-magnets.md" class="doc">
+          <div class="doc-label">Lead Magnets</div>
+          <div class="doc-title">Lead Magnet Strategy</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="landing-pages-brief.md" class="doc">
+          <div class="doc-label">Landing Pages</div>
+          <div class="doc-title">Landing Pages Brief</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+        <a href="GOOGLE_BUSINESS_SETUP.md" class="doc">
+          <div class="doc-label">Google Business</div>
+          <div class="doc-title">Google Business Setup</div>
+          <div class="doc-type">Markdown</div>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>Solaris Panamá · <a href="../hub.html">← Volver al Hub</a></p>
+</footer>
+
+</body>
+</html>

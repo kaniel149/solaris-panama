@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Solaris Panamá — Atlas Solar Interactivo</title>
+<title>Solaris Panamá — Atlas Solar</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'DM Sans',sans-serif; background:#072A1F; color:#fff; overflow-x:hidden; }
+body { font-family:'Inter',sans-serif; background:#0B3D2E; color:#FEFDFB; overflow-x:hidden; }
 
-/* Header */
-.header { background:linear-gradient(135deg,#0B3D2E 0%,#145A43 100%); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #D4A843; z-index:1001; position:relative; }
+.header { background:linear-gradient(135deg,#0B3D2E 0%,#145A42 100%); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #D4A843; z-index:1001; position:relative; }
 .logo { display:flex; align-items:center; gap:12px; }
-.logo-mark { width:36px; height:36px; background:#D4A843; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; color:#0B3D2E; }
+.logo-mark { width:36px; height:36px; background:#D4A843; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#0B3D2E; }
 .logo-text { font-size:18px; font-weight:700; }
 .logo-text span { color:#D4A843; }
 .header-stats { display:flex; gap:20px; }
@@ -21,95 +20,55 @@ body { font-family:'DM Sans',sans-serif; background:#072A1F; color:#fff; overflo
 .hstat-val { font-size:20px; font-weight:800; color:#D4A843; }
 .hstat-label { font-size:10px; opacity:0.7; text-transform:uppercase; letter-spacing:1px; }
 
-/* Language toggle */
 .lang-toggle { display:flex; gap:4px; }
-.lang-btn { padding:4px 10px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#fff; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.2s; }
+.lang-btn { padding:4px 10px; border-radius:4px; border:1px solid rgba(254,253,251,0.2); background:transparent; color:#FEFDFB; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.2s; }
 .lang-btn.active { background:#D4A843; color:#0B3D2E; border-color:#D4A843; }
 .lang-btn:hover { border-color:#D4A843; }
 
-/* Controls */
-.controls { background:#0B3D2E; padding:10px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; border-bottom:1px solid rgba(255,255,255,0.1); position:relative; z-index:1001; }
-.control-group { display:flex; align-items:center; gap:6px; }
-.control-group label { font-size:11px; opacity:0.7; text-transform:uppercase; letter-spacing:1px; }
-select { background:#145A43; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px; font-family:'DM Sans',sans-serif; }
-select:focus { border-color:#D4A843; outline:none; }
-.search-box { background:#145A43; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px; font-family:'DM Sans',sans-serif; width:180px; }
-.search-box:focus { border-color:#D4A843; outline:none; }
-.search-box::placeholder { color:rgba(255,255,255,0.4); }
-.search-count { font-size:11px; color:#D4A843; font-weight:600; min-width:20px; }
-.toggle-btn { padding:6px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#fff; cursor:pointer; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
-.toggle-btn.active { background:rgba(212,168,67,0.2); border-color:#D4A843; color:#D4A843; }
-.toggle-btn:hover { border-color:#D4A843; }
-.legend { display:flex; gap:10px; margin-left:auto; }
-.leg-item { display:flex; align-items:center; gap:4px; font-size:11px; }
-.leg-dot { width:10px; height:10px; border-radius:50%; }
-
-/* Hamburger for mobile */
-.hamburger { display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer; padding:4px 8px; }
-
-/* Map */
-#map { height:calc(100vh - 115px); width:100%; }
-
-/* Popup */
-.roof-popup { min-width:320px; font-family:'DM Sans',sans-serif; }
-.roof-popup .popup-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid #D4A843; }
-.roof-popup .popup-roof-img { width:60px; height:45px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:600; flex-shrink:0; }
-.roof-popup h3 { font-size:15px; color:#0B3D2E; margin:0; line-height:1.3; }
-.roof-popup .popup-zone-tag { font-size:10px; color:#666; margin-top:2px; }
-.roof-popup .bill-compare { display:flex; gap:8px; margin:10px 0; }
-.roof-popup .bill-box { flex:1; padding:8px; border-radius:6px; text-align:center; }
-.roof-popup .bill-box.before { background:#ffeaea; }
-.roof-popup .bill-box.after { background:#e6f9f0; }
-.roof-popup .bill-label { font-size:10px; text-transform:uppercase; font-weight:600; letter-spacing:0.5px; }
-.roof-popup .bill-box.before .bill-label { color:#c53030; }
-.roof-popup .bill-box.after .bill-label { color:#145A43; }
-.roof-popup .bill-amount { font-size:18px; font-weight:800; margin-top:2px; }
-.roof-popup .bill-box.before .bill-amount { color:#c53030; }
-.roof-popup .bill-box.after .bill-amount { color:#145A43; }
-.roof-popup .bill-arrow { display:flex; align-items:center; color:#145A43; font-size:18px; font-weight:800; }
-.roof-popup .specs { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; margin:8px 0; }
-.roof-popup .spec-label { font-size:10px; color:#666; text-transform:uppercase; }
-.roof-popup .spec-val { font-size:13px; font-weight:600; color:#0B3D2E; }
-.roof-popup .co2-bar { background:#e6f9f0; border-radius:6px; padding:6px 10px; display:flex; align-items:center; gap:8px; margin:8px 0; }
-.roof-popup .co2-icon { font-size:18px; }
-.roof-popup .co2-text { font-size:12px; color:#145A43; font-weight:600; }
-.roof-popup .co2-sub { font-size:10px; color:#666; }
-.roof-popup .options { margin-top:8px; }
-.roof-popup .opt { background:#f0f7f4; padding:8px; border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
-.roof-popup .opt-name { font-weight:600; color:#0B3D2E; font-size:12px; }
-.roof-popup .opt-price { color:#145A43; font-weight:700; font-size:13px; }
-.roof-popup .opt-detail { font-size:10px; color:#666; }
-.roof-popup .cta { display:block; text-align:center; background:linear-gradient(135deg,#145A43,#1a7a5a); color:#fff; padding:10px; border-radius:6px; text-decoration:none; font-weight:700; margin-top:10px; font-size:13px; transition:all 0.2s; }
-.roof-popup .cta:hover { background:linear-gradient(135deg,#0B3D2E,#145A43); transform:translateY(-1px); }
-.roof-popup .powered { text-align:center; margin-top:6px; font-size:9px; color:#999; }
-
-/* Zone labels */
-.zone-label { background:rgba(11,61,46,0.85); color:#D4A843; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; border:1px solid #D4A843; white-space:nowrap; }
+#map { height:calc(100vh - 60px); width:100%; }
 
 /* Info panel */
-.info-panel { position:absolute; bottom:20px; left:20px; background:rgba(11,61,46,0.95); padding:16px; border-radius:10px; border:1px solid rgba(212,168,67,0.3); z-index:1000; max-width:300px; backdrop-filter:blur(10px); }
-.info-panel h4 { color:#D4A843; margin-bottom:8px; font-size:14px; }
-.info-panel p { font-size:12px; line-height:1.6; opacity:0.8; }
-.phase-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; }
-.phase-planning { background:rgba(212,168,67,0.2); color:#D4A843; }
+.info-panel { position:absolute; top:80px; right:20px; background:rgba(11,61,46,0.95); padding:20px; border-radius:12px; border:1px solid rgba(212,168,67,0.3); z-index:1000; max-width:360px; backdrop-filter:blur(10px); }
+.info-panel h4 { color:#D4A843; margin-bottom:10px; font-size:16px; }
+.info-panel p { font-size:12px; line-height:1.7; opacity:0.85; margin-bottom:8px; }
+.info-panel .stat-row { display:flex; gap:8px; margin-top:12px; }
+.info-panel .stat-box { background:rgba(254,253,251,0.08); border-radius:8px; padding:10px 8px; flex:1; text-align:center; border:1px solid rgba(212,168,67,0.2); }
+.info-panel .stat-box .val { font-size:18px; font-weight:800; color:#D4A843; }
+.info-panel .stat-box .lbl { font-size:9px; opacity:0.6; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
 
-/* Scan zone overlay styles */
-.scan-grid { stroke-dasharray:8,6; animation:scanDash 20s linear infinite; }
-@keyframes scanDash { to { stroke-dashoffset:-100; } }
+/* Legend */
+.map-legend { position:absolute; bottom:30px; left:20px; background:rgba(11,61,46,0.95); padding:16px 20px; border-radius:12px; border:1px solid rgba(212,168,67,0.3); z-index:1000; backdrop-filter:blur(10px); }
+.map-legend h4 { color:#D4A843; font-size:13px; margin-bottom:10px; }
+.legend-gradient { width:200px; height:16px; border-radius:4px; margin-bottom:6px; }
+.legend-labels { display:flex; justify-content:space-between; font-size:10px; opacity:0.7; }
+.legend-item { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; }
+.legend-circle { width:14px; height:14px; border-radius:50%; border:2px solid rgba(254,253,251,0.3); flex-shrink:0; }
 
-/* Mobile */
+/* Province popup */
+.prov-popup { font-family:'Inter',sans-serif; min-width:280px; }
+.prov-popup h3 { color:#0B3D2E; font-size:16px; margin-bottom:6px; border-bottom:2px solid #D4A843; padding-bottom:6px; }
+.prov-popup .irr-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; margin:10px 0; }
+.prov-popup .irr-label { font-size:10px; color:#666; text-transform:uppercase; }
+.prov-popup .irr-val { font-size:14px; font-weight:700; color:#0B3D2E; }
+.prov-popup .irr-highlight { background:#f0f7f4; padding:8px 12px; border-radius:6px; margin:8px 0; border-left:3px solid #D4A843; }
+.prov-popup .irr-highlight .label { font-size:10px; color:#666; text-transform:uppercase; }
+.prov-popup .irr-highlight .value { font-size:18px; font-weight:800; color:#0B3D2E; }
+.prov-popup .monthly-chart { display:flex; align-items:flex-end; gap:2px; height:60px; margin:10px 0; }
+.prov-popup .bar { flex:1; background:linear-gradient(to top,#0B3D2E,#D4A843); border-radius:2px 2px 0 0; min-width:8px; position:relative; }
+.prov-popup .bar-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#666; }
+.prov-popup .note { font-size:10px; color:#888; text-align:center; margin-top:16px; }
+.prov-popup .cta { display:block; text-align:center; background:linear-gradient(135deg,#0B3D2E,#145A42); color:#FEFDFB; padding:10px; border-radius:6px; text-decoration:none; font-weight:700; margin-top:10px; font-size:13px; }
+
+/* Monthly chart tooltip */
+.bar-tip { display:none; position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:#0B3D2E; color:#FEFDFB; padding:2px 5px; border-radius:3px; font-size:9px; white-space:nowrap; z-index:10; }
+.bar:hover .bar-tip { display:block; }
+
 @media (max-width:768px) {
   .header { padding:10px 16px; flex-wrap:wrap; gap:8px; }
-  .header-stats { gap:12px; flex-wrap:wrap; }
+  .header-stats { gap:10px; }
   .hstat-val { font-size:16px; }
-  .controls { padding:8px 16px; gap:8px; }
-  .controls.collapsed > *:not(.hamburger):not(.search-wrap) { display:none; }
-  .hamburger { display:block; }
-  .search-box { width:120px; }
-  .legend { display:none !important; }
-  .info-panel { display:none; }
-  #map { height:calc(100vh - 105px); }
-  .logo-text { font-size:15px; }
+  .info-panel { top:auto; bottom:20px; right:10px; left:10px; max-width:none; }
+  .map-legend { bottom:auto; top:70px; left:10px; }
 }
 </style>
 </head>
@@ -118,28 +77,24 @@ select:focus { border-color:#D4A843; outline:none; }
 <div class="header">
   <div class="logo">
     <div class="logo-mark">SP</div>
-    <div class="logo-text"><span>Solaris</span> Atlas Solar</div>
+    <div class="logo-text"><span>Solaris Panamá</span> Atlas Solar</div>
   </div>
   <div class="header-stats">
     <div class="hstat">
-      <div class="hstat-val" id="total-roofs">0</div>
-      <div class="hstat-label" data-i18n="roofs_scanned">Techos Mapeados</div>
+      <div class="hstat-val">4.8–5.4</div>
+      <div class="hstat-label" id="lbl-ghi">kWh/m²/día GHI</div>
     </div>
     <div class="hstat">
-      <div class="hstat-val" id="total-mwp">0</div>
-      <div class="hstat-label" data-i18n="mwp_potential">Potencial MWp</div>
+      <div class="hstat-val">1,500–1,800</div>
+      <div class="hstat-label" id="lbl-yield">kWh/kWp/año</div>
     </div>
     <div class="hstat">
-      <div class="hstat-val" id="total-savings">0</div>
-      <div class="hstat-label" data-i18n="annual_savings">Ahorro Anual $K</div>
+      <div class="hstat-val">10</div>
+      <div class="hstat-label" id="lbl-provinces">Provincias</div>
     </div>
     <div class="hstat">
-      <div class="hstat-val" id="total-co2">0</div>
-      <div class="hstat-label" data-i18n="co2_reduction">Tons CO₂/año</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-val"><span class="phase-badge phase-planning" data-i18n="planning">Mapeo Activo</span></div>
-      <div class="hstat-label" data-i18n="status">Estado</div>
+      <div class="hstat-val">~5 hrs</div>
+      <div class="hstat-label" id="lbl-peak">Horas Pico Solar</div>
     </div>
   </div>
   <div class="lang-toggle">
@@ -148,398 +103,281 @@ select:focus { border-color:#D4A843; outline:none; }
   </div>
 </div>
 
-<div class="controls" id="controls-bar">
-  <button class="hamburger" id="hamburger-btn">☰</button>
-  <div class="control-group search-wrap">
-    <label data-i18n="search">Buscar</label>
-    <input type="text" class="search-box" id="search-input" placeholder="Buscar techos...">
-    <span class="search-count" id="search-count"></span>
-  </div>
-  <div class="control-group">
-    <label data-i18n="zone">Zona</label>
-    <select id="zone-filter">
-      <option value="all">Todas las Zonas</option>
-      <option value="Z1">Z1 — Pedasí Centro</option>
-      <option value="Z2">Z2 — Playa Venao</option>
-      <option value="Z3">Z3 — Las Tablas</option>
-      <option value="Z4">Z4 — Chitré</option>
-      <option value="Z5">Z5 — Coronado</option>
-      <option value="Z6">Z6 — Casco Viejo (PTY)</option>
-      <option value="Z7">Z7 — Costa del Este (PTY)</option>
-      <option value="Z8">Z8 — Boquete</option>
-    </select>
-  </div>
-  <div class="control-group">
-    <label data-i18n="potential">Potencial</label>
-    <select id="potential-filter">
-      <option value="all">Todo</option>
-      <option value="high">Alto (>10 kWp)</option>
-      <option value="medium">Medio (5-10 kWp)</option>
-      <option value="low">Bajo (&lt;5 kWp)</option>
-    </select>
-  </div>
-  <div class="control-group">
-    <label data-i18n="roof_type">Tipo Techo</label>
-    <select id="roof-filter">
-      <option value="all">Todos</option>
-      <option value="metal">Metal</option>
-      <option value="concrete">Concreto</option>
-      <option value="tile">Teja</option>
-    </select>
-  </div>
-  <button class="toggle-btn" id="heatmap-toggle">🔥 Mapa Calor</button>
-  <button class="toggle-btn" id="scan-toggle">📡 Zonas Escaneo</button>
-  <div class="legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#145A43"></div> Alto</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#D4A843"></div> Medio</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#E85D3A"></div> Bajo</div>
-  </div>
-</div>
-
 <div id="map"></div>
 
 <div class="info-panel" id="info-panel">
-  <h4>☀️ Solaris Atlas Solar</h4>
-  <p data-i18n="info_desc">Mapeo satelital de techos en Panamá — identificando potencial solar en cada edificio.</p>
-  <p style="margin-top:8px;">
-    <span class="phase-badge phase-planning">Fase: Mapeo Activo</span><br>
-    <span style="font-size:11px; opacity:0.6;">Objetivo: 5,000+ techos en Azuero, PTY y Chiriquí</span>
-  </p>
-  <p style="margin-top:8px; font-size:11px;">
-    Haz clic en cualquier marcador para ver análisis solar y cotización instantánea.
-  </p>
+  <h4>☀️ Atlas Solar de Panamá</h4>
+  <p id="info-desc">Mapa de irradiancia solar por provincia. Panamá recibe excelente radiación solar durante todo el año gracias a su ubicación ecuatorial (7°–9° N).</p>
+  <p id="info-detail"><strong>GHI promedio nacional:</strong> 4.8–5.4 kWh/m²/día<br>
+  <strong>Mejor época:</strong> Temporada seca (Dic–Abr)<br>
+  <strong>Fuente:</strong> Global Solar Atlas / IRENA</p>
+  <div class="stat-row">
+    <div class="stat-box"><div class="val">5.1</div><div class="lbl" id="lbl-avg">GHI Promedio</div></div>
+    <div class="stat-box"><div class="val">1,650</div><div class="lbl" id="lbl-yield2">kWh/kWp/año</div></div>
+    <div class="stat-box"><div class="val">~14%</div><div class="lbl" id="lbl-cf">Factor Capacidad</div></div>
+  </div>
+</div>
+
+<div class="map-legend">
+  <h4 id="legend-title">Irradiancia Solar (GHI)</h4>
+  <div class="legend-gradient" style="background:linear-gradient(to right,#2166AC,#67A9CF,#D1E5F0,#FDDBC7,#EF8A62,#B2182B);"></div>
+  <div class="legend-labels">
+    <span>3.5 kWh/m²/d</span>
+    <span>4.5</span>
+    <span>5.5+ kWh/m²/d</span>
+  </div>
+  <div class="legend-item"><div class="legend-circle" style="background:#B2182B;"></div> <span id="leg-excellent">Excelente (>5.3)</span></div>
+  <div class="legend-item"><div class="legend-circle" style="background:#EF8A62;"></div> <span id="leg-verygood">Muy Bueno (5.0–5.3)</span></div>
+  <div class="legend-item"><div class="legend-circle" style="background:#FDDBC7;"></div> <span id="leg-good">Bueno (4.5–5.0)</span></div>
+  <div class="legend-item"><div class="legend-circle" style="background:#67A9CF;"></div> <span id="leg-moderate">Moderado (<4.5)</span></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 <script>
 // ===== i18n =====
-var i18n = {
+var lang = 'es';
+var strings = {
   es: {
-    roofs_scanned:'Techos Mapeados', mwp_potential:'Potencial MWp', annual_savings:'Ahorro Anual $K',
-    co2_reduction:'Tons CO₂/año', status:'Estado', planning:'Mapeo Activo', search:'Buscar',
-    zone:'Zona', potential:'Potencial', all:'Todo', roof_type:'Tipo Techo',
-    monthly_before:'Factura Mensual Antes', monthly_after:'Factura Mensual Después',
-    system_size:'Tamaño Sistema', panels:'Paneles', annual_output:'Producción Anual',
-    payback:'Retorno Inversión', co2_saved:'CO₂ Reducido/Año',
-    trees_equiv:'Equivalente a plantar', trees:'árboles',
-    option_epc:'Opción A: Compra (EPC)', option_ppa:'Opción B: PPA ($0 Inicial)',
-    save_day1:'Ahorra 30% desde el día 1',
-    cta_whatsapp:'📱 Cotización Gratis por WhatsApp', powered_by:'Powered by Solaris Panamá',
-    ley417:'Beneficio Ley 417: Exención fiscal por 10 años'
+    ghi:'kWh/m²/día GHI', yield:'kWh/kWp/año', provinces:'Provincias', peak:'Horas Pico Solar',
+    info_title:'Atlas Solar de Panamá',
+    info_desc:'Mapa de irradiancia solar por provincia. Panamá recibe excelente radiación solar durante todo el año gracias a su ubicación ecuatorial (7°–9° N).',
+    info_detail:'<strong>GHI promedio nacional:</strong> 4.8–5.4 kWh/m²/día<br><strong>Mejor época:</strong> Temporada seca (Dic–Abr)<br><strong>Fuente:</strong> Global Solar Atlas / IRENA',
+    avg:'GHI Promedio', yield2:'kWh/kWp/año', cf:'Factor Capacidad',
+    legend_title:'Irradiancia Solar (GHI)',
+    excellent:'Excelente (>5.3)', verygood:'Muy Bueno (5.0–5.3)', good:'Bueno (4.5–5.0)', moderate:'Moderado (<4.5)',
+    annual_ghi:'GHI Anual', peak_sun:'Horas Pico Sol', best_months:'Mejores Meses',
+    annual_yield:'Producción Anual', capacity_factor:'Factor de Capacidad',
+    monthly_ghi:'GHI Mensual (kWh/m²/día)', ideal_for:'Ideal Para',
+    cta:'Solicitar Estudio Solar', note:'Datos basados en Global Solar Atlas (Banco Mundial) e IRENA',
+    months:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
   },
   en: {
-    roofs_scanned:'Roofs Mapped', mwp_potential:'MWp Potential', annual_savings:'$K Annual Savings',
-    co2_reduction:'Tons CO₂/yr', status:'Status', planning:'Active Mapping', search:'Search',
-    zone:'Zone', potential:'Potential', all:'All', roof_type:'Roof Type',
-    monthly_before:'Monthly Bill Before', monthly_after:'Monthly Bill After',
-    system_size:'System Size', panels:'Panels', annual_output:'Annual Output',
-    payback:'Payback', co2_saved:'CO₂ Saved/Year',
-    trees_equiv:'Equivalent to planting', trees:'trees',
-    option_epc:'Option A: EPC (Buy)', option_ppa:'Option B: PPA ($0 Upfront)',
-    save_day1:'Save 30% from day 1',
-    cta_whatsapp:'📱 Get Free Quote via WhatsApp', powered_by:'Powered by Solaris Panamá',
-    ley417:'Ley 417 Benefit: 10-year tax exemption'
+    ghi:'kWh/m²/day GHI', yield:'kWh/kWp/yr', provinces:'Provinces', peak:'Peak Sun Hours',
+    info_title:'Panama Solar Atlas',
+    info_desc:'Solar irradiance map by province. Panama receives excellent solar radiation year-round thanks to its equatorial location (7°–9° N).',
+    info_detail:'<strong>National avg GHI:</strong> 4.8–5.4 kWh/m²/day<br><strong>Best season:</strong> Dry season (Dec–Apr)<br><strong>Source:</strong> Global Solar Atlas / IRENA',
+    avg:'Avg GHI', yield2:'kWh/kWp/yr', cf:'Capacity Factor',
+    legend_title:'Solar Irradiance (GHI)',
+    excellent:'Excellent (>5.3)', verygood:'Very Good (5.0–5.3)', good:'Good (4.5–5.0)', moderate:'Moderate (<4.5)',
+    annual_ghi:'Annual GHI', peak_sun:'Peak Sun Hours', best_months:'Best Months',
+    annual_yield:'Annual Yield', capacity_factor:'Capacity Factor',
+    monthly_ghi:'Monthly GHI (kWh/m²/day)', ideal_for:'Ideal For',
+    cta:'Request Solar Study', note:'Data from Global Solar Atlas (World Bank) & IRENA',
+    months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
   }
 };
-var currentLang = 'es';
-function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || (i18n.es[key]) || key; }
-function applyLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
-  document.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = t(el.dataset.i18n); });
+function T(k) { return strings[lang][k] || strings.es[k] || k; }
+
+function switchLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.lang===l); });
+  document.getElementById('lbl-ghi').textContent = T('ghi');
+  document.getElementById('lbl-yield').textContent = T('yield');
+  document.getElementById('lbl-provinces').textContent = T('provinces');
+  document.getElementById('lbl-peak').textContent = T('peak');
+  document.querySelector('.info-panel h4').textContent = '☀️ ' + T('info_title');
+  document.getElementById('info-desc').textContent = T('info_desc');
+  document.getElementById('info-detail').innerHTML = T('info_detail');
+  document.getElementById('lbl-avg').textContent = T('avg');
+  document.getElementById('lbl-yield2').textContent = T('yield2');
+  document.getElementById('lbl-cf').textContent = T('cf');
+  document.getElementById('legend-title').textContent = T('legend_title');
+  document.getElementById('leg-excellent').textContent = T('excellent');
+  document.getElementById('leg-verygood').textContent = T('verygood');
+  document.getElementById('leg-good').textContent = T('good');
+  document.getElementById('leg-moderate').textContent = T('moderate');
 }
-document.querySelectorAll('.lang-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() { applyLang(this.dataset.lang); });
-});
+document.querySelectorAll('.lang-btn').forEach(function(b){ b.addEventListener('click', function(){ switchLang(this.dataset.lang); }); });
 
-// ===== Map — centered on Panama =====
-var map = L.map('map', { center:[8.0,  -80.3], zoom:8, maxZoom:22, minZoom:7, zoomControl:true });
-L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', { maxZoom:22, attribution:'© Google Satellite' }).addTo(map);
+// ===== Map =====
+var map = L.map('map', { center:[8.537981,-80.782127], zoom:8, maxZoom:18, minZoom:6, zoomControl:true });
+L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}', { maxZoom:18, attribution:'© Google' }).addTo(map);
+// Roads overlay
+L.tileLayer('https://mt0.google.com/vt/lyrs=h&hl=es&x={x}&y={y}&z={z}', { maxZoom:18, opacity:0.5 }).addTo(map);
 
-// ===== Zone Data — Panama =====
-var zones = [
-  { id:'Z1', name:'Pedasí Centro', color:'#D4A843', center:[7.5273,-80.0277], coords:[[7.52,-80.04],[7.52,-80.01],[7.54,-80.01],[7.54,-80.04]], roofs:300, priority:'high' },
-  { id:'Z2', name:'Playa Venao', color:'#D4A843', center:[7.4340,-80.1650], coords:[[7.42,-80.18],[7.42,-80.15],[7.45,-80.15],[7.45,-80.18]], roofs:150, priority:'high' },
-  { id:'Z3', name:'Las Tablas', color:'#D4A843', center:[7.7634,-80.2749], coords:[[7.75,-80.29],[7.75,-80.26],[7.78,-80.26],[7.78,-80.29]], roofs:500, priority:'high' },
-  { id:'Z4', name:'Chitré', color:'#145A43', center:[7.9651,-80.4290], coords:[[7.95,-80.44],[7.95,-80.41],[7.98,-80.41],[7.98,-80.44]], roofs:600, priority:'high' },
-  { id:'Z5', name:'Coronado', color:'#145A43', center:[8.5360,-79.9100], coords:[[8.52,-79.93],[8.52,-79.89],[8.55,-79.89],[8.55,-79.93]], roofs:400, priority:'medium' },
-  { id:'Z6', name:'Casco Viejo (PTY)', color:'#145A43', center:[8.9515,-79.5345], coords:[[8.94,-79.55],[8.94,-79.52],[8.96,-79.52],[8.96,-79.55]], roofs:250, priority:'medium' },
-  { id:'Z7', name:'Costa del Este (PTY)', color:'#D4A843', center:[9.0105,-79.4620], coords:[[9.00,-79.48],[9.00,-79.45],[9.02,-79.45],[9.02,-79.48]], roofs:350, priority:'high' },
-  { id:'Z8', name:'Boquete', color:'#E85D3A', center:[8.7794,-82.4408], coords:[[8.77,-82.46],[8.77,-82.42],[8.79,-82.42],[8.79,-82.46]], roofs:200, priority:'medium' },
+// ===== Province Solar Data =====
+// Based on Global Solar Atlas & IRENA data for Panama
+var provinces = [
+  {
+    name:'Panamá', capital:'Ciudad de Panamá', center:[9.0,-79.5],
+    ghi:5.05, yield:1640, cf:0.137, peakSun:5.0,
+    bestMonths:'Ene–Abr', idealFor:'Comercial, Industrial, Residencial',
+    monthly:[5.6,5.8,5.9,5.4,4.6,4.3,4.5,4.5,4.4,4.5,4.8,5.3],
+    coords:[[8.8,-79.8],[8.8,-79.2],[9.4,-79.2],[9.4,-79.8]],
+    color:'#EF8A62'
+  },
+  {
+    name:'Panamá Oeste', capital:'La Chorrera', center:[8.88,-79.78],
+    ghi:5.10, yield:1660, cf:0.139, peakSun:5.1,
+    bestMonths:'Ene–Abr', idealFor:'Industrial, Agrícola',
+    monthly:[5.7,5.9,6.0,5.5,4.6,4.3,4.5,4.5,4.3,4.5,4.8,5.4],
+    coords:[[8.6,-80.0],[8.6,-79.6],[9.1,-79.6],[9.1,-80.0]],
+    color:'#EF8A62'
+  },
+  {
+    name:'Coclé', capital:'Penonomé', center:[8.5,-80.35],
+    ghi:5.25, yield:1710, cf:0.143, peakSun:5.2,
+    bestMonths:'Dic–Abr', idealFor:'Agrícola, Industrial',
+    monthly:[5.8,6.1,6.2,5.7,4.8,4.5,4.7,4.6,4.5,4.6,5.0,5.5],
+    coords:[[8.2,-80.7],[8.2,-80.0],[8.8,-80.0],[8.8,-80.7]],
+    color:'#B2182B'
+  },
+  {
+    name:'Herrera', capital:'Chitré', center:[7.95,-80.43],
+    ghi:5.40, yield:1760, cf:0.147, peakSun:5.4,
+    bestMonths:'Dic–Abr', idealFor:'Agrícola, Ganadero, Comercial',
+    monthly:[6.0,6.3,6.4,5.9,5.0,4.6,4.8,4.7,4.6,4.7,5.2,5.7],
+    coords:[[7.7,-80.7],[7.7,-80.2],[8.2,-80.2],[8.2,-80.7]],
+    color:'#B2182B'
+  },
+  {
+    name:'Los Santos', capital:'Las Tablas', center:[7.75,-80.3],
+    ghi:5.45, yield:1780, cf:0.149, peakSun:5.4,
+    bestMonths:'Dic–Abr', idealFor:'Plantas solares, Agrícola',
+    monthly:[6.1,6.4,6.5,6.0,5.1,4.7,4.9,4.8,4.6,4.8,5.3,5.8],
+    coords:[[7.4,-80.6],[7.4,-80.0],[8.0,-80.0],[8.0,-80.6]],
+    color:'#B2182B'
+  },
+  {
+    name:'Veraguas', capital:'Santiago', center:[8.1,-81.0],
+    ghi:4.85, yield:1580, cf:0.132, peakSun:4.9,
+    bestMonths:'Ene–Mar', idealFor:'Agrícola, Comercial',
+    monthly:[5.5,5.7,5.8,5.2,4.4,4.1,4.3,4.2,4.1,4.2,4.6,5.1],
+    coords:[[7.5,-81.5],[7.5,-80.6],[8.7,-80.6],[8.7,-81.5]],
+    color:'#FDDBC7'
+  },
+  {
+    name:'Chiriquí', capital:'David', center:[8.4,-82.4],
+    ghi:4.90, yield:1600, cf:0.133, peakSun:4.9,
+    bestMonths:'Ene–Mar', idealFor:'Agrícola, Industrial, Residencial',
+    monthly:[5.5,5.8,5.9,5.3,4.4,4.2,4.3,4.3,4.2,4.3,4.6,5.2],
+    coords:[[8.0,-83.0],[8.0,-82.0],[8.9,-82.0],[8.9,-83.0]],
+    color:'#FDDBC7'
+  },
+  {
+    name:'Bocas del Toro', capital:'Bocas del Toro', center:[9.3,-82.25],
+    ghi:4.40, yield:1430, cf:0.119, peakSun:4.4,
+    bestMonths:'Feb–Abr', idealFor:'Resorts, Islas off-grid',
+    monthly:[4.8,5.1,5.2,4.7,4.0,3.8,4.0,4.0,3.8,3.9,4.2,4.6],
+    coords:[[8.8,-82.6],[8.8,-81.8],[9.6,-81.8],[9.6,-82.6]],
+    color:'#67A9CF'
+  },
+  {
+    name:'Colón', capital:'Colón', center:[9.35,-79.9],
+    ghi:4.70, yield:1530, cf:0.128, peakSun:4.7,
+    bestMonths:'Ene–Mar', idealFor:'Zona Libre, Puertos, Industrial',
+    monthly:[5.3,5.5,5.6,5.0,4.3,4.0,4.2,4.1,4.0,4.1,4.4,5.0],
+    coords:[[9.1,-80.2],[9.1,-79.5],[9.6,-79.5],[9.6,-80.2]],
+    color:'#FDDBC7'
+  },
+  {
+    name:'Darién', capital:'La Palma', center:[8.0,-77.8],
+    ghi:4.60, yield:1500, cf:0.125, peakSun:4.6,
+    bestMonths:'Ene–Mar', idealFor:'Off-grid, Comunidades rurales',
+    monthly:[5.2,5.4,5.5,4.9,4.2,3.9,4.0,4.0,3.9,4.0,4.3,4.8],
+    coords:[[7.4,-78.5],[7.4,-77.2],[8.6,-77.2],[8.6,-78.5]],
+    color:'#67A9CF'
+  }
 ];
 
-// Draw zone boundaries
-var zonePolygons = [];
-zones.forEach(function(z) {
-  var p = L.polygon(z.coords, { color:z.color, weight:2, fillOpacity:0.08, dashArray:'6,4' })
-    .addTo(map).bindTooltip(z.id+' — '+z.name+' ('+z.roofs+' techos)', { permanent:false, className:'zone-label' });
-  zonePolygons.push({ zone:z, polygon:p });
-});
-
-// ===== Sample Roof Data — Panama =====
-var sampleRoofs = [
-  // Z1 Pedasí
-  { lat:7.5280, lng:-80.0280, name:'Hotel Pedasí Sports Lodge', zone:'Z1', type:'metal', area:450, potential:'high', owner:'Hotel' },
-  { lat:7.5260, lng:-80.0260, name:'Casa de Campo Pedasí', zone:'Z1', type:'concrete', area:320, potential:'high', owner:'Residencial' },
-  { lat:7.5290, lng:-80.0300, name:'Supermercado El Rey Pedasí', zone:'Z1', type:'metal', area:680, potential:'high', owner:'Comercial' },
-  { lat:7.5240, lng:-80.0240, name:'Municipio de Pedasí', zone:'Z1', type:'concrete', area:550, potential:'high', owner:'Gobierno' },
-  { lat:7.5310, lng:-80.0310, name:'Hotel Villa Romántica', zone:'Z1', type:'tile', area:380, potential:'medium', owner:'Hotel' },
-  { lat:7.5255, lng:-80.0295, name:'Ferretería Pedasí', zone:'Z1', type:'metal', area:420, potential:'high', owner:'Comercial' },
-  { lat:7.5275, lng:-80.0250, name:'Escuela Primaria Pedasí', zone:'Z1', type:'concrete', area:700, potential:'high', owner:'Gobierno' },
-  { lat:7.5300, lng:-80.0270, name:'Clínica MINSA Pedasí', zone:'Z1', type:'concrete', area:300, potential:'medium', owner:'Gobierno' },
-  { lat:7.5230, lng:-80.0285, name:'Coopers Beach Club', zone:'Z1', type:'metal', area:520, potential:'high', owner:'Hotel' },
-  { lat:7.5265, lng:-80.0320, name:'Playa Arenal Villas', zone:'Z1', type:'tile', area:600, potential:'high', owner:'Residencial' },
-
-  // Z2 Playa Venao
-  { lat:7.4350, lng:-80.1640, name:'Selina Playa Venao', zone:'Z2', type:'metal', area:800, potential:'high', owner:'Hotel' },
-  { lat:7.4330, lng:-80.1660, name:'Eco Venao Lodge', zone:'Z2', type:'tile', area:550, potential:'high', owner:'Hotel' },
-  { lat:7.4360, lng:-80.1620, name:'Villa Cambutal Resort', zone:'Z2', type:'tile', area:450, potential:'high', owner:'Hotel' },
-  { lat:7.4310, lng:-80.1680, name:'Surf School Venao', zone:'Z2', type:'metal', area:250, potential:'medium', owner:'Comercial' },
-  { lat:7.4370, lng:-80.1650, name:'Beach House Venao', zone:'Z2', type:'concrete', area:350, potential:'medium', owner:'Residencial' },
-  { lat:7.4340, lng:-80.1630, name:'Restaurante La Bruja', zone:'Z2', type:'metal', area:280, potential:'medium', owner:'Restaurante' },
-
-  // Z3 Las Tablas
-  { lat:7.7640, lng:-80.2750, name:'Hotel Manolo', zone:'Z3', type:'concrete', area:520, potential:'high', owner:'Hotel' },
-  { lat:7.7620, lng:-80.2730, name:'Centro Comercial Las Tablas', zone:'Z3', type:'metal', area:950, potential:'high', owner:'Comercial' },
-  { lat:7.7660, lng:-80.2770, name:'Hospital Regional de Azuero', zone:'Z3', type:'concrete', area:1200, potential:'high', owner:'Gobierno' },
-  { lat:7.7600, lng:-80.2740, name:'Plaza Las Tablas Mall', zone:'Z3', type:'metal', area:1500, potential:'high', owner:'Comercial' },
-  { lat:7.7650, lng:-80.2720, name:'Universidad de Panamá Azuero', zone:'Z3', type:'concrete', area:900, potential:'high', owner:'Gobierno' },
-  { lat:7.7630, lng:-80.2760, name:'Super 99 Las Tablas', zone:'Z3', type:'metal', area:700, potential:'high', owner:'Comercial' },
-  { lat:7.7610, lng:-80.2780, name:'Iglesia Santa Librada', zone:'Z3', type:'tile', area:400, potential:'medium', owner:'Religioso' },
-  { lat:7.7670, lng:-80.2710, name:'Arena de Toros Las Tablas', zone:'Z3', type:'metal', area:650, potential:'high', owner:'Municipal' },
-
-  // Z4 Chitré
-  { lat:7.9660, lng:-80.4290, name:'Hospital Cecilio Castillero', zone:'Z4', type:'concrete', area:1800, potential:'high', owner:'Gobierno' },
-  { lat:7.9640, lng:-80.4270, name:'Mall de Chitré', zone:'Z4', type:'metal', area:2200, potential:'high', owner:'Comercial' },
-  { lat:7.9680, lng:-80.4310, name:'Novey Chitré', zone:'Z4', type:'metal', area:900, potential:'high', owner:'Comercial' },
-  { lat:7.9620, lng:-80.4250, name:'Hotel Versalles', zone:'Z4', type:'concrete', area:600, potential:'high', owner:'Hotel' },
-  { lat:7.9650, lng:-80.4300, name:'Procesadora de Mariscos', zone:'Z4', type:'metal', area:1100, potential:'high', owner:'Industrial' },
-  { lat:7.9670, lng:-80.4280, name:'Coca Cola Embotelladora', zone:'Z4', type:'metal', area:1400, potential:'high', owner:'Industrial' },
-  { lat:7.9630, lng:-80.4260, name:'Farmacia Arrocha Chitré', zone:'Z4', type:'concrete', area:480, potential:'high', owner:'Comercial' },
-  { lat:7.9690, lng:-80.4320, name:'UNACHI Campus Azuero', zone:'Z4', type:'concrete', area:1000, potential:'high', owner:'Gobierno' },
-
-  // Z5 Coronado
-  { lat:8.5370, lng:-79.9100, name:'Coronado Golf & Beach Resort', zone:'Z5', type:'tile', area:2500, potential:'high', owner:'Hotel' },
-  { lat:8.5350, lng:-79.9080, name:'El Rey Coronado', zone:'Z5', type:'metal', area:800, potential:'high', owner:'Comercial' },
-  { lat:8.5390, lng:-79.9120, name:'Residencias Coronado Bay', zone:'Z5', type:'concrete', area:600, potential:'high', owner:'Residencial' },
-  { lat:8.5330, lng:-79.9060, name:'Club Ecuestre Coronado', zone:'Z5', type:'metal', area:500, potential:'medium', owner:'Deportivo' },
-  { lat:8.5360, lng:-79.9140, name:'Playa Blanca Resort', zone:'Z5', type:'tile', area:1200, potential:'high', owner:'Hotel' },
-
-  // Z6 Casco Viejo
-  { lat:8.9520, lng:-79.5350, name:'American Trade Hotel', zone:'Z6', type:'concrete', area:700, potential:'high', owner:'Hotel' },
-  { lat:8.9510, lng:-79.5330, name:'La Rosa Mexicano', zone:'Z6', type:'tile', area:280, potential:'medium', owner:'Restaurante' },
-  { lat:8.9530, lng:-79.5360, name:'Hotel Central Casco', zone:'Z6', type:'concrete', area:500, potential:'high', owner:'Hotel' },
-  { lat:8.9500, lng:-79.5340, name:'Mercado de Mariscos', zone:'Z6', type:'metal', area:650, potential:'high', owner:'Comercial' },
-  { lat:8.9540, lng:-79.5320, name:'Instituto Nacional de Cultura', zone:'Z6', type:'concrete', area:900, potential:'high', owner:'Gobierno' },
-
-  // Z7 Costa del Este
-  { lat:9.0110, lng:-79.4620, name:'Centro Empresarial Costa del Este', zone:'Z7', type:'concrete', area:3000, potential:'high', owner:'Comercial' },
-  { lat:9.0100, lng:-79.4600, name:'PriceSmart Costa del Este', zone:'Z7', type:'metal', area:2000, potential:'high', owner:'Comercial' },
-  { lat:9.0120, lng:-79.4640, name:'Town Center Costa del Este', zone:'Z7', type:'metal', area:1800, potential:'high', owner:'Comercial' },
-  { lat:9.0090, lng:-79.4580, name:'Hospital Punta Pacífica', zone:'Z7', type:'concrete', area:1500, potential:'high', owner:'Salud' },
-  { lat:9.0130, lng:-79.4660, name:'Colegio Internacional', zone:'Z7', type:'concrete', area:1200, potential:'high', owner:'Educación' },
-  { lat:9.0080, lng:-79.4610, name:'Centro Logístico Panama Pacífico', zone:'Z7', type:'metal', area:4000, potential:'high', owner:'Industrial' },
-
-  // Z8 Boquete
-  { lat:8.7800, lng:-82.4410, name:'Hotel Panamonte', zone:'Z8', type:'tile', area:600, potential:'medium', owner:'Hotel' },
-  { lat:8.7780, lng:-82.4390, name:'Valle Escondido Resort', zone:'Z8', type:'tile', area:1000, potential:'high', owner:'Hotel' },
-  { lat:8.7810, lng:-82.4430, name:'Boquete Coffee Estate Inn', zone:'Z8', type:'tile', area:400, potential:'medium', owner:'Hotel' },
-  { lat:8.7790, lng:-82.4400, name:'Mercado Municipal Boquete', zone:'Z8', type:'metal', area:350, potential:'medium', owner:'Comercial' },
-  { lat:8.7770, lng:-82.4380, name:'Beneficio Café Geisha', zone:'Z8', type:'metal', area:800, potential:'high', owner:'Agroindustrial' },
-];
-
-// ===== Solar Calculator (Panama) =====
-function calcSolar(area) {
-  var usable = area * 0.7;
-  var kwp = usable / 5.5;
-  var annual_kwh = kwp * 1550; // Panama ~5.0 peak sun hours → ~1550 kWh/kWp/yr
-  var rate = 0.22; // USD per kWh (Panama average)
-  var annual_savings = annual_kwh * rate;
-  var epc_cost = kwp * 1200; // USD per kWp (Panama market pricing)
-  var panels = Math.ceil(kwp / 0.58);
-  var payback = epc_cost / annual_savings;
-  var co2_tons = (annual_kwh * 0.35) / 1000; // ~0.35 kg CO2/kWh Panama grid
-  var monthly_bill_before = (annual_kwh / 12) * rate;
-  var monthly_bill_after = monthly_bill_before * 0.20; // 80% offset typical
-  return {
-    usable: Math.round(usable), kwp: Math.round(kwp * 10) / 10,
-    annual_kwh: Math.round(annual_kwh), annual_savings: Math.round(annual_savings),
-    monthly_savings: Math.round(annual_savings / 12), epc_cost: Math.round(epc_cost),
-    ppa_savings: Math.round(annual_kwh * (0.22 - 0.16)), panels: panels,
-    payback: Math.round(payback * 10) / 10, co2_tons: Math.round(co2_tons * 10) / 10,
-    trees: Math.round(co2_tons * 16.5),
-    bill_before: Math.round(monthly_bill_before), bill_after: Math.round(monthly_bill_after)
-  };
+function ghiToColor(ghi) {
+  if (ghi >= 5.3) return '#B2182B';
+  if (ghi >= 5.0) return '#EF8A62';
+  if (ghi >= 4.5) return '#FDDBC7';
+  return '#67A9CF';
 }
 
-function getColor(p) { return p === 'high' ? '#145A43' : p === 'medium' ? '#D4A843' : '#E85D3A'; }
-function getRoofColor(type) { return type === 'metal' ? '#6B8EC2' : type === 'concrete' ? '#A0A0A0' : '#C47A3A'; }
-
-// ===== Build Markers =====
-var markers = [];
-var heatData = [];
-var totalKwp = 0, totalValue = 0, totalSavings = 0, totalCO2 = 0;
-
-sampleRoofs.forEach(function(r) {
-  var s = calcSolar(r.area);
-  totalKwp += s.kwp;
-  totalValue += s.epc_cost;
-  totalSavings += s.annual_savings;
-  totalCO2 += s.co2_tons;
-  heatData.push([r.lat, r.lng, s.kwp]);
-
-  var marker = L.circleMarker([r.lat, r.lng], {
-    radius: Math.max(5, Math.min(14, s.kwp / 4)),
-    fillColor: getColor(r.potential),
-    color: '#fff', weight: 2, fillOpacity: 0.85
+provinces.forEach(function(prov) {
+  // Province polygon
+  var poly = L.polygon(prov.coords, {
+    color: prov.color, weight:2, fillColor:prov.color, fillOpacity:0.25,
+    dashArray:'6,4'
   }).addTo(map);
 
-  var wa_link = 'https://wa.me/50760001234?text=' + encodeURIComponent('Hola Solaris, vi "' + r.name + '" en el Atlas Solar. Me gustaría una cotización gratis!');
-  var roofBg = getRoofColor(r.type);
+  // Center marker
+  var markerSize = Math.round(12 + (prov.ghi - 4.0) * 8);
+  var marker = L.circleMarker(prov.center, {
+    radius: markerSize,
+    fillColor: prov.color,
+    color: '#FEFDFB', weight:3, fillOpacity:0.85
+  }).addTo(map);
 
-  marker.bindPopup(function() {
-    return '<div class="roof-popup">' +
-      '<div class="popup-header">' +
-        '<div class="popup-roof-img" style="background:linear-gradient(135deg,' + roofBg + ',' + roofBg + 'aa);border:2px solid ' + roofBg + ';">' +
-          '<svg width="40" height="28" viewBox="0 0 40 28"><polygon points="5,24 20,4 35,24" fill="none" stroke="#fff" stroke-width="2"/><rect x="8" y="14" width="24" height="12" fill="none" stroke="#fff" stroke-width="1.5" rx="1"/></svg>' +
-        '</div>' +
-        '<div><h3>' + r.name + '</h3><div class="popup-zone-tag">' + r.zone + ' — Techo ' + r.type + ' — ' + r.area + ' m²</div></div>' +
-      '</div>' +
-      '<div class="bill-compare">' +
-        '<div class="bill-box before"><div class="bill-label">' + t('monthly_before') + '</div><div class="bill-amount">$' + s.bill_before.toLocaleString() + '</div></div>' +
-        '<div class="bill-arrow">→</div>' +
-        '<div class="bill-box after"><div class="bill-label">' + t('monthly_after') + '</div><div class="bill-amount">$' + s.bill_after.toLocaleString() + '</div></div>' +
-      '</div>' +
-      '<div class="specs">' +
-        '<div><div class="spec-label">' + t('system_size') + '</div><div class="spec-val">' + s.kwp + ' kWp</div></div>' +
-        '<div><div class="spec-label">' + t('panels') + '</div><div class="spec-val">' + s.panels + '</div></div>' +
-        '<div><div class="spec-label">' + t('annual_output') + '</div><div class="spec-val">' + s.annual_kwh.toLocaleString() + ' kWh</div></div>' +
-        '<div><div class="spec-label">' + t('payback') + '</div><div class="spec-val">' + s.payback + ' años</div></div>' +
-      '</div>' +
-      '<div class="co2-bar">' +
-        '<div class="co2-icon">🌱</div>' +
-        '<div><div class="co2-text">' + s.co2_tons + ' ' + t('co2_saved') + '</div>' +
-        '<div class="co2-sub">' + t('trees_equiv') + ' ' + s.trees + ' ' + t('trees') + '</div></div>' +
-      '</div>' +
-      '<div style="background:#f0f7f4; border:1px solid #D4A843; border-radius:6px; padding:6px 10px; margin:8px 0; font-size:11px; color:#0B3D2E; font-weight:600;">' +
-        '⚡ ' + t('ley417') +
-      '</div>' +
-      '<div class="options">' +
-        '<div class="opt"><div><div class="opt-name">' + t('option_epc') + '</div><div class="opt-detail">' + t('payback') + ' ' + s.payback + ' años</div></div><div class="opt-price">$' + s.epc_cost.toLocaleString() + '</div></div>' +
-        '<div class="opt"><div><div class="opt-name">' + t('option_ppa') + '</div><div class="opt-detail">' + t('save_day1') + '</div></div><div class="opt-price">$0.16/kWh</div></div>' +
-      '</div>' +
-      '<a class="cta" href="' + wa_link + '" target="_blank">' + t('cta_whatsapp') + '</a>' +
-      '<div class="powered">' + t('powered_by') + ' | Regulado por ASEP</div>' +
-    '</div>';
-  }, { maxWidth:360, className:'leaflet-popup-styled' });
+  // Province label
+  L.marker(prov.center, {
+    icon: L.divIcon({
+      className:'',
+      html:'<div style="color:#FEFDFB;font-size:11px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.8);white-space:nowrap;text-align:center;">' +
+        prov.name + '<br><span style="font-size:13px;color:#D4A843;">' + prov.ghi + ' kWh/m²/d</span></div>',
+      iconSize:[100,30], iconAnchor:[50,0]
+    })
+  }).addTo(map);
 
-  markers.push({ marker:marker, data:r, solar:s });
-});
-
-// ===== Animated Stats =====
-function animateCount(el, target, prefix, suffix, decimals, duration) {
-  prefix = prefix || ''; suffix = suffix || ''; decimals = decimals || 0; duration = duration || 1200;
-  var start = 0, startTime = null;
-  function step(ts) {
-    if (!startTime) startTime = ts;
-    var p = Math.min((ts - startTime) / duration, 1);
-    var ease = 1 - Math.pow(1 - p, 3);
-    var val = start + (target - start) * ease;
-    el.textContent = prefix + (decimals > 0 ? val.toFixed(decimals) : Math.round(val).toLocaleString()) + suffix;
-    if (p < 1) requestAnimationFrame(step);
+  // Build monthly chart HTML
+  var maxGhi = Math.max.apply(null, prov.monthly);
+  var months = T('months');
+  var barsHtml = '';
+  for (var i = 0; i < 12; i++) {
+    var h = Math.round((prov.monthly[i] / maxGhi) * 50);
+    barsHtml += '<div class="bar" style="height:' + h + 'px;">' +
+      '<div class="bar-tip">' + prov.monthly[i] + '</div>' +
+      '<div class="bar-label">' + months[i] + '</div></div>';
   }
-  requestAnimationFrame(step);
-}
 
-setTimeout(function() {
-  animateCount(document.getElementById('total-roofs'), sampleRoofs.length, '', '', 0, 1000);
-  animateCount(document.getElementById('total-mwp'), totalKwp / 1000, '', '', 1, 1400);
-  animateCount(document.getElementById('total-savings'), totalSavings / 1000, '', '', 1, 1600);
-  animateCount(document.getElementById('total-co2'), totalCO2, '', '', 0, 1800);
-}, 300);
+  // Popup
+  var popupHtml = '<div class="prov-popup">' +
+    '<h3>☀️ ' + prov.name + '</h3>' +
+    '<div class="irr-highlight"><div class="label">' + T('annual_ghi') + '</div><div class="value">' + prov.ghi + ' kWh/m²/' + (lang==='es'?'día':'day') + '</div></div>' +
+    '<div class="irr-grid">' +
+      '<div><div class="irr-label">' + T('peak_sun') + '</div><div class="irr-val">' + prov.peakSun + ' hrs/' + (lang==='es'?'día':'day') + '</div></div>' +
+      '<div><div class="irr-label">' + T('best_months') + '</div><div class="irr-val">' + prov.bestMonths + '</div></div>' +
+      '<div><div class="irr-label">' + T('annual_yield') + '</div><div class="irr-val">' + prov.yield.toLocaleString() + ' kWh/kWp</div></div>' +
+      '<div><div class="irr-label">' + T('capacity_factor') + '</div><div class="irr-val">' + (prov.cf * 100).toFixed(1) + '%</div></div>' +
+    '</div>' +
+    '<div style="font-size:11px;font-weight:600;color:#0B3D2E;margin-top:8px;">' + T('monthly_ghi') + '</div>' +
+    '<div class="monthly-chart">' + barsHtml + '</div>' +
+    '<div style="font-size:11px;margin-top:18px;"><strong>' + T('ideal_for') + ':</strong> ' + prov.idealFor + '</div>' +
+    '<a class="cta" href="https://wa.me/50760001234?text=' + encodeURIComponent('Hola Solaris Panamá, me interesa un estudio solar para ' + prov.name) + '" target="_blank">' + T('cta') + '</a>' +
+    '<div class="note">' + T('note') + '</div>' +
+  '</div>';
 
-// ===== Heatmap Layer =====
-var heatLayer = L.heatLayer(heatData, { radius:25, blur:20, maxZoom:17, max:80,
-  gradient: { 0.2:'#2196F3', 0.4:'#145A43', 0.6:'#D4A843', 0.8:'#FF5722', 1.0:'#D50000' }
-});
-var heatmapOn = false;
-document.getElementById('heatmap-toggle').addEventListener('click', function() {
-  heatmapOn = !heatmapOn;
-  this.classList.toggle('active', heatmapOn);
-  if (heatmapOn) { heatLayer.addTo(map); } else { map.removeLayer(heatLayer); }
-});
-
-// ===== Scan Zones Toggle =====
-var scanLayerGroup = L.layerGroup();
-var scanOn = false;
-zones.forEach(function(z) {
-  var c = z.coords;
-  var rect = L.polygon(c, { color: z.color, weight:3, fillOpacity:0.04, fillColor:z.color, dashArray:'10,8', className:'scan-grid' });
-  var latMin = Math.min(c[0][0],c[2][0]), latMax = Math.max(c[0][0],c[2][0]);
-  var lngMin = Math.min(c[0][1],c[1][1]), lngMax = Math.max(c[0][1],c[1][1]);
-  var lines = [];
-  for (var lat = latMin; lat <= latMax; lat += 0.002) {
-    lines.push(L.polyline([[lat, lngMin],[lat, lngMax]], { color:z.color, weight:0.5, opacity:0.3, dashArray:'4,4' }));
-  }
-  for (var lng = lngMin; lng <= lngMax; lng += 0.003) {
-    lines.push(L.polyline([[latMin, lng],[latMax, lng]], { color:z.color, weight:0.5, opacity:0.3, dashArray:'4,4' }));
-  }
-  scanLayerGroup.addLayer(rect);
-  lines.forEach(function(l) { scanLayerGroup.addLayer(l); });
-  var label = L.marker(z.center, {
-    icon: L.divIcon({ className:'zone-label', html:'📡 ' + z.id + ' — Por escanear', iconSize:[140,20] })
-  });
-  scanLayerGroup.addLayer(label);
+  marker.bindPopup(popupHtml, { maxWidth:380 });
+  poly.bindPopup(popupHtml, { maxWidth:380 });
 });
 
-document.getElementById('scan-toggle').addEventListener('click', function() {
-  scanOn = !scanOn;
-  this.classList.toggle('active', scanOn);
-  if (scanOn) { scanLayerGroup.addTo(map); } else { map.removeLayer(scanLayerGroup); }
+// ===== Click on map for custom irradiance estimate =====
+var customMarker = null;
+map.on('click', function(e) {
+  var lat = e.latlng.lat, lng = e.latlng.lng;
+  // Check if within Panama bounds roughly
+  if (lat < 7.0 || lat > 10.0 || lng < -83.5 || lng > -77.0) return;
+
+  // Estimate GHI based on latitude and proximity to dry arc (Azuero)
+  var baseGhi = 5.1;
+  // Azuero peninsula (dry arc) bonus
+  var azueroLat = 7.9, azueroLng = -80.4;
+  var distAzuero = Math.sqrt(Math.pow(lat - azueroLat, 2) + Math.pow(lng - azueroLng, 2));
+  if (distAzuero < 1.5) baseGhi += 0.3 * (1 - distAzuero / 1.5);
+  // Caribbean coast penalty (more rain)
+  if (lat > 9.0 && lng > -82.0) baseGhi -= 0.4;
+  // Bocas del Toro penalty
+  if (lat > 9.0 && lng < -82.0) baseGhi -= 0.5;
+  // Darién penalty (high rainfall)
+  if (lng > -78.5) baseGhi -= 0.3;
+  // Clamp
+  baseGhi = Math.max(4.2, Math.min(5.5, baseGhi));
+  var estYield = Math.round(baseGhi * 325);
+
+  if (customMarker) map.removeLayer(customMarker);
+  customMarker = L.marker(e.latlng, {
+    icon: L.divIcon({
+      className:'',
+      html:'<div style="background:#D4A843;color:#0B3D2E;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.3);text-align:center;white-space:nowrap;">' +
+        '☀️ ~' + baseGhi.toFixed(1) + ' kWh/m²/d<br><span style="font-size:10px;font-weight:500;">~' + estYield + ' kWh/kWp/año</span></div>',
+      iconAnchor:[60,40]
+    })
+  }).addTo(map);
 });
 
-// ===== Filters =====
-function applyFilters() {
-  var zone = document.getElementById('zone-filter').value;
-  var pot = document.getElementById('potential-filter').value;
-  var roof = document.getElementById('roof-filter').value;
-  var search = document.getElementById('search-input').value.toLowerCase();
-  var count = 0;
-
-  markers.forEach(function(m) {
-    var show = true;
-    if (zone !== 'all' && m.data.zone !== zone) show = false;
-    if (pot !== 'all' && m.data.potential !== pot) show = false;
-    if (roof !== 'all' && m.data.type !== roof) show = false;
-    if (search && m.data.name.toLowerCase().indexOf(search) === -1) show = false;
-    m.marker.setStyle({ opacity: show ? 1 : 0.07, fillOpacity: show ? 0.85 : 0.07 });
-    if (show) count++;
-  });
-
-  var sc = document.getElementById('search-count');
-  if (search) {
-    sc.textContent = count + '/' + markers.length;
-  } else { sc.textContent = ''; }
-}
-
-document.getElementById('zone-filter').addEventListener('change', function() {
-  applyFilters();
-  if (this.value !== 'all') {
-    var z = zones.find(function(zn) { return zn.id === this.value; }.bind(this));
-    if (z) map.setView(z.center, 14);
-  } else { map.setView([8.0, -80.3], 8); }
-});
-document.getElementById('potential-filter').addEventListener('change', applyFilters);
-document.getElementById('roof-filter').addEventListener('change', applyFilters);
-document.getElementById('search-input').addEventListener('input', applyFilters);
-
-// Mobile
-var controlsBar = document.getElementById('controls-bar');
-if (window.innerWidth <= 768) controlsBar.classList.add('collapsed');
-document.getElementById('hamburger-btn').addEventListener('click', function() {
-  controlsBar.classList.toggle('collapsed');
-});
 </script>
 </body>
 </html>

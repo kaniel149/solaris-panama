@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solaris Panamá — Roof Scanner Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.js"></script>
+<style>
+:root {
+  --ocean: #0B3D2E;
+  --gold: #D4A843;
+  --reef: #145A43;
+  --coral: #E85D3A;
+  --night: #072A1F;
+  --white: #FFF;
+  --panel-w: 420px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--night); color:var(--white); overflow:hidden; height:100vh; display:flex; }
+
+/* Loading */
+.loading-overlay { position:fixed; inset:0; background:var(--night); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000; transition:opacity 0.4s; }
+.loading-overlay.hide { opacity:0; pointer-events:none; }
+.loading-spinner { width:40px; height:40px; border:3px solid rgba(212,168,67,.2); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { color:var(--gold); font-size:14px; margin-top:12px; opacity:0.8; }
+
+/* Sidebar */
+.sidebar { width:var(--panel-w); height:100vh; background:rgba(11,61,46,.98); border-left:1px solid rgba(212,168,67,.2); display:flex; flex-direction:column; z-index:10; overflow:hidden; order:2; }
+.sidebar-header { padding:12px 16px; background:linear-gradient(135deg,var(--ocean),var(--night)); border-bottom:1px solid rgba(212,168,67,.2); }
+.sidebar-header h1 { font-size:15px; font-weight:700; color:var(--gold); display:flex; align-items:center; gap:6px; }
+.sidebar-header p { font-size:11px; opacity:.5; margin-top:2px; }
+
+/* Stats */
+.stats-bar { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.06); }
+.stat-box { text-align:center; padding:6px 2px; background:rgba(255,255,255,.03); border-radius:6px; }
+.stat-val { font-family:'Space Grotesk'; font-size:14px; font-weight:700; color:var(--gold); }
+.stat-lbl { font-size:9px; opacity:.5; margin-top:1px; }
+
+/* Filters */
+.filters { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.06); }
+.filter-group { display:flex; align-items:center; gap:4px; margin-bottom:5px; flex-wrap:wrap; }
+.filter-label { font-size:9px; opacity:.35; width:52px; flex-shrink:0; text-transform:uppercase; letter-spacing:.3px; }
+.fbtn { padding:4px 9px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:transparent; color:rgba(255,255,255,.55); font-size:10px; cursor:pointer; font-family:'DM Sans'; transition:all .2s; white-space:nowrap; }
+.fbtn:hover { border-color:rgba(212,168,67,.4); color:rgba(255,255,255,.8); }
+.fbtn.on { background:var(--gold); color:var(--night); border-color:var(--gold); }
+
+/* Search */
+.search-sort-row { padding:6px 12px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; gap:6px; align-items:center; }
+.search-sort-row input { flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); color:white; font-family:'DM Sans'; font-size:11px; outline:none; }
+.search-sort-row input:focus { border-color:var(--gold); }
+.search-sort-row select { padding:7px 6px; border-radius:6px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); color:white; font-family:'DM Sans'; font-size:10px; outline:none; cursor:pointer; width:100px; }
+
+/* Building list */
+.sidebar-body { flex:1; overflow-y:auto; }
+.sidebar-body::-webkit-scrollbar { width:4px; }
+.sidebar-body::-webkit-scrollbar-thumb { background:rgba(212,168,67,.3); border-radius:2px; }
+.building-list { padding:6px; }
+
+.bc { padding:9px 10px 9px 12px; margin-bottom:4px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:8px; cursor:pointer; transition:all .15s; border-left:3px solid transparent; }
+.bc.pri-a { border-left-color:#D4A843; background:rgba(212,168,67,.03); }
+.bc.pri-b { border-left-color:#2ED89A; }
+.bc.pri-c { border-left-color:#6496FF; }
+.bc:hover { border-color:var(--gold); background:rgba(212,168,67,.05); }
+.bc.sel { border-color:var(--gold); background:rgba(212,168,67,.08); }
+.bc-top { display:flex; justify-content:space-between; align-items:center; gap:6px; }
+.bc-name { font-size:12px; font-weight:600; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.badge { font-family:'Space Grotesk'; font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; }
+.pa { background:rgba(212,168,67,.2); color:#D4A843; }
+.pb { background:rgba(46,216,154,.2); color:#2ED89A; }
+.pc { background:rgba(100,150,255,.2); color:#6496FF; }
+.bc-row { display:flex; gap:8px; margin-top:4px; font-size:10px; opacity:.55; flex-wrap:wrap; }
+.bc-tag { font-size:9px; padding:1px 6px; border-radius:3px; background:rgba(255,255,255,.05); display:inline-block; margin-top:4px; }
+
+/* Detail */
+.detail-view { display:none; padding:12px; }
+.detail-view.show { display:block; }
+.detail-back { display:flex; align-items:center; gap:4px; background:none; border:none; color:var(--gold); font-family:'DM Sans'; font-size:11px; cursor:pointer; padding:4px 0; margin-bottom:8px; }
+.dp-head h2 { font-size:16px; color:var(--gold); line-height:1.3; }
+.dp-meta { font-size:11px; opacity:.5; margin-bottom:10px; line-height:1.5; }
+.dp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:10px 0; }
+.dg { background:rgba(255,255,255,.04); border-radius:8px; padding:8px 6px; text-align:center; }
+.dg-v { font-family:'Space Grotesk'; font-size:16px; font-weight:700; }
+.dg-l { font-size:9px; opacity:.4; margin-top:2px; }
+.dp-cols { display:flex; gap:14px; margin-top:10px; }
+.dp-col { flex:1; }
+.dp-col h4 { font-size:10px; color:var(--gold); margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
+.dt { width:100%; font-size:11px; }
+.dt td { padding:3px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.dt td:last-child { text-align:right; font-family:'Space Grotesk'; font-weight:600; }
+
+.dp-actions { display:flex; gap:6px; margin-top:12px; flex-wrap:wrap; }
+.dp-actions a { flex:1; min-width:75px; padding:8px; text-align:center; border-radius:6px; text-decoration:none; font-size:10px; cursor:pointer; transition:all .15s; }
+.act-wa { background:rgba(37,211,102,.12); color:#25D366; }
+.act-wa:hover { background:rgba(37,211,102,.3); }
+.act-sat { background:rgba(46,216,154,.12); color:#2ED89A; }
+.act-sat:hover { background:rgba(46,216,154,.3); }
+.act-map { background:rgba(212,168,67,.12); color:var(--gold); }
+.act-map:hover { background:rgba(212,168,67,.3); }
+
+/* Map */
+.map-container { flex:1; position:relative; order:1; }
+#map { width:100%; height:100%; }
+
+.htgl { position:absolute; top:10px; left:10px; z-index:5; display:flex; gap:3px; }
+.htb { padding:5px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.15); background:rgba(11,61,46,.92); color:rgba(255,255,255,.6); font-size:10px; cursor:pointer; font-family:'DM Sans'; transition:all .15s; }
+.htb.on { background:var(--gold); color:var(--night); border-color:var(--gold); }
+
+.legend { position:absolute; bottom:12px; right:12px; background:rgba(11,61,46,.92); border:1px solid rgba(255,255,255,.08); border-radius:8px; padding:8px 12px; z-index:4; font-size:10px; }
+.lg-i { display:flex; align-items:center; gap:6px; margin:3px 0; }
+.lg-d { width:9px; height:9px; border-radius:50%; }
+
+.maplibregl-popup-content { background:rgba(11,61,46,.95)!important; border:1px solid rgba(212,168,67,.3)!important; border-radius:8px!important; padding:8px 12px!important; color:white!important; font-family:'DM Sans'!important; font-size:11px!important; }
+.popup-name { font-weight:600; color:var(--gold); margin-bottom:2px; }
+.popup-stats { opacity:.6; font-size:10px; }
+
+/* Export */
+.export-bar { padding:6px 12px; border-top:1px solid rgba(255,255,255,.06); display:flex; gap:4px; }
+.xbtn { flex:1; padding:7px 4px; border-radius:6px; border:1px solid rgba(255,255,255,.15); background:transparent; color:rgba(255,255,255,.6); font-family:'DM Sans'; font-size:9px; cursor:pointer; transition:all .15s; }
+.xbtn:hover { background:var(--gold); color:var(--night); border-color:var(--gold); }
+
+/* Ley 417 badge */
+.ley417-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:600; background:rgba(212,168,67,.15); color:var(--gold); margin-top:4px; }
+
+@media (max-width:768px) {
+  .sidebar { width:100%; height:50vh; border-left:none; order:1; }
+  .map-container { height:50vh; order:2; }
+  body { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando Roof Scanner...</div>
+</div>
+
+<div class="map-container">
+  <div id="map"></div>
+  <div class="htgl">
+    <button class="htb on" id="sat-btn">🛰️ Satélite</button>
+    <button class="htb" id="str-btn">🗺️ Calles</button>
+    <button class="htb" id="heat-btn">🔥 Calor</button>
+  </div>
+  <div class="legend">
+    <div class="lg-i"><div class="lg-d" style="background:#D4A843"></div> A — Alto Potencial</div>
+    <div class="lg-i"><div class="lg-d" style="background:#2ED89A"></div> B — Buen Potencial</div>
+    <div class="lg-i"><div class="lg-d" style="background:#6496FF"></div> C — Moderado</div>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>☀️ Solaris Roof Scanner</h1>
+    <p>Escaneo de techos para potencial solar — Panamá</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-box"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Edificios</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-kwp">0</div><div class="stat-lbl">MWp Total</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-named">0</div><div class="stat-lbl">Identificados</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-a">0</div><div class="stat-lbl">Prioridad A</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-savings">0</div><div class="stat-lbl">Ahorro $K/año</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <span class="filter-label">Prioridad</span>
+      <div class="filter-chips">
+        <button class="fbtn on" data-filter="pri" data-val="all">Todos</button>
+        <button class="fbtn" data-filter="pri" data-val="A">A</button>
+        <button class="fbtn" data-filter="pri" data-val="B">B</button>
+        <button class="fbtn" data-filter="pri" data-val="C">C</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Categoría</span>
+      <div class="filter-chips">
+        <button class="fbtn on" data-filter="cat" data-val="all">Todos</button>
+        <button class="fbtn" data-filter="cat" data-val="commercial">🏢 Comercial</button>
+        <button class="fbtn" data-filter="cat" data-val="hotel">🏨 Hotel</button>
+        <button class="fbtn" data-filter="cat" data-val="industrial">🏭 Industrial</button>
+        <button class="fbtn" data-filter="cat" data-val="residential">🏠 Residencial</button>
+        <button class="fbtn" data-filter="cat" data-val="government">🏛️ Gobierno</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-sort-row">
+    <input id="search" type="text" placeholder="Buscar edificio...">
+    <select id="sort-by">
+      <option value="score">Por Score</option>
+      <option value="area">Por Área</option>
+      <option value="kwp">Por kWp</option>
+      <option value="savings">Por Ahorro</option>
+      <option value="name">Por Nombre</option>
+    </select>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="sidebar-list-content">
+      <div class="building-list" id="blist"></div>
+    </div>
+    <div class="detail-view" id="detail-view"></div>
+  </div>
+
+  <div class="export-bar">
+    <button class="xbtn" onclick="exportCSV()">📥 CSV</button>
+    <button class="xbtn" onclick="exportJSON()">📦 JSON</button>
+    <button class="xbtn" onclick="shareAtlas()">🔗 Compartir</button>
+  </div>
+</div>
+
+<script>
+// ===== Panama Building Data =====
+var PRIORITY_COLORS = { A:'#D4A843', B:'#2ED89A', C:'#6496FF' };
+var CAT_LABELS = {
+  commercial:'🏢 Comercial', hotel:'🏨 Hotel/Resort', industrial:'🏭 Industrial',
+  residential:'🏠 Residencial', government:'🏛️ Gobierno', restaurant:'🍽️ Restaurante',
+  education:'🏫 Educación', health:'🏥 Salud', sports:'⚽ Deportivo', religious:'⛪ Religioso'
+};
+var CENTER = [-80.03, 7.53]; // Pedasí default
+var COST_PER_KWP = 1200; // USD
+
+// Panama solar constants
+var PEAK_SUN_HOURS = 5.0;
+var KWH_PER_KWP = 1550;
+var ELEC_RATE = 0.22; // USD/kWh
+var CO2_FACTOR = 0.35; // kg CO2/kWh
+
+// Sample buildings
+var B = [
+  // Pedasí area
+  {i:1, n:'Hotel Pedasí Sports Lodge', c:'hotel', la:7.5280, lo:-80.0280, a:450, pr:'A', kw:57.3, s:92},
+  {i:2, n:'Supermercado El Rey Pedasí', c:'commercial', la:7.5290, lo:-80.0300, a:680, pr:'A', kw:86.5, s:95},
+  {i:3, n:'Municipio de Pedasí', c:'government', la:7.5240, lo:-80.0240, a:550, pr:'A', kw:70.0, s:88},
+  {i:4, n:'Coopers Beach Club', c:'hotel', la:7.5230, lo:-80.0285, a:520, pr:'A', kw:66.2, s:90},
+  {i:5, n:'Escuela Primaria Pedasí', c:'education', la:7.5275, lo:-80.0250, a:700, pr:'A', kw:89.1, s:87},
+  {i:6, n:'Casa de Campo Pedasí', c:'residential', la:7.5260, lo:-80.0260, a:320, pr:'B', kw:40.7, s:75},
+  {i:7, n:'Ferretería Pedasí', c:'commercial', la:7.5255, lo:-80.0295, a:420, pr:'A', kw:53.5, s:85},
+  {i:8, n:'Clínica MINSA Pedasí', c:'health', la:7.5300, lo:-80.0270, a:300, pr:'B', kw:38.2, s:72},
+  {i:9, n:'Playa Arenal Villas', c:'residential', la:7.5265, lo:-80.0320, a:600, pr:'A', kw:76.4, s:82},
+  // Playa Venao
+  {i:10, n:'Selina Playa Venao', c:'hotel', la:7.4350, lo:-80.1640, a:800, pr:'A', kw:101.8, s:96},
+  {i:11, n:'Eco Venao Lodge', c:'hotel', la:7.4330, lo:-80.1660, a:550, pr:'A', kw:70.0, s:91},
+  {i:12, n:'Villa Cambutal Resort', c:'hotel', la:7.4360, lo:-80.1620, a:450, pr:'A', kw:57.3, s:88},
+  {i:13, n:'Surf School Venao', c:'commercial', la:7.4310, lo:-80.1680, a:250, pr:'C', kw:31.8, s:62},
+  // Las Tablas
+  {i:14, n:'Hospital Regional de Azuero', c:'health', la:7.7660, lo:-80.2770, a:1200, pr:'A', kw:152.7, s:98},
+  {i:15, n:'Plaza Las Tablas Mall', c:'commercial', la:7.7600, lo:-80.2740, a:1500, pr:'A', kw:190.9, s:99},
+  {i:16, n:'Universidad de Panamá Azuero', c:'education', la:7.7650, lo:-80.2720, a:900, pr:'A', kw:114.5, s:94},
+  {i:17, n:'Super 99 Las Tablas', c:'commercial', la:7.7630, lo:-80.2760, a:700, pr:'A', kw:89.1, s:90},
+  {i:18, n:'Arena de Toros Las Tablas', c:'commercial', la:7.7670, lo:-80.2710, a:650, pr:'A', kw:82.7, s:86},
+  // Chitré
+  {i:19, n:'Hospital Cecilio Castillero', c:'health', la:7.9660, lo:-80.4290, a:1800, pr:'A', kw:229.1, s:99},
+  {i:20, n:'Mall de Chitré', c:'commercial', la:7.9640, lo:-80.4270, a:2200, pr:'A', kw:280.0, s:99},
+  {i:21, n:'Novey Chitré', c:'commercial', la:7.9680, lo:-80.4310, a:900, pr:'A', kw:114.5, s:93},
+  {i:22, n:'Coca Cola Embotelladora', c:'industrial', la:7.9670, lo:-80.4280, a:1400, pr:'A', kw:178.2, s:97},
+  {i:23, n:'UNACHI Campus Azuero', c:'education', la:7.9690, lo:-80.4320, a:1000, pr:'A', kw:127.3, s:91},
+  // Costa del Este PTY
+  {i:24, n:'Centro Empresarial Costa del Este', c:'commercial', la:9.0110, lo:-79.4620, a:3000, pr:'A', kw:381.8, s:99},
+  {i:25, n:'PriceSmart Costa del Este', c:'commercial', la:9.0100, lo:-79.4600, a:2000, pr:'A', kw:254.5, s:98},
+  {i:26, n:'Hospital Punta Pacífica', c:'health', la:9.0090, lo:-79.4580, a:1500, pr:'A', kw:190.9, s:96},
+  {i:27, n:'Centro Logístico Panama Pacífico', c:'industrial', la:9.0080, lo:-79.4610, a:4000, pr:'A', kw:509.1, s:99},
+  {i:28, n:'Colegio Internacional', c:'education', la:9.0130, lo:-79.4660, a:1200, pr:'A', kw:152.7, s:93},
+  // Boquete
+  {i:29, n:'Valle Escondido Resort', c:'hotel', la:8.7780, lo:-82.4390, a:1000, pr:'A', kw:127.3, s:90},
+  {i:30, n:'Beneficio Café Geisha', c:'industrial', la:8.7770, lo:-82.4380, a:800, pr:'A', kw:101.8, s:88},
+];
+
+// Compute derived fields
+B.forEach(function(b) {
+  b.kwp = b.kw;
+  b.annual_kwh = Math.round(b.kw * KWH_PER_KWP);
+  b.annual_savings = Math.round(b.annual_kwh * ELEC_RATE);
+  b.epc = Math.round(b.kw * COST_PER_KWP);
+  b.payback = Math.round((b.epc / b.annual_savings) * 10) / 10;
+  b.co2 = Math.round((b.annual_kwh * CO2_FACTOR) / 1000 * 10) / 10;
+  b.bill_before = Math.round(b.annual_kwh / 12 * ELEC_RATE);
+  b.bill_after = Math.round(b.bill_before * 0.2);
+});
+
+var map, selId = null, hoverPopup = null;
+var fPri = 'all', fCat = 'all';
+var sortBy = 'score';
+
+// ===== Map =====
+function initMap() {
+  map = new maplibregl.Map({
+    container:'map',
+    style: {
+      version:8,
+      glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources: {
+        sat:{type:'raster', tiles:['https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'], tileSize:256, maxzoom:22},
+        str:{type:'raster', tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize:256, maxzoom:19}
+      },
+      layers: [
+        {id:'satellite', type:'raster', source:'sat'},
+        {id:'streets', type:'raster', source:'str', layout:{visibility:'none'}}
+      ]
+    },
+    center:CENTER, zoom:13, maxZoom:22
+  });
+  map.on('load', onMapLoad);
+}
+
+function onMapLoad() {
+  var pts = B.map(function(b) {
+    return { type:'Feature', geometry:{type:'Point', coordinates:[b.lo, b.la]}, properties:{i:b.i, pr:b.pr, s:b.s, a:b.a, n:b.n, c:b.c, kw:b.kw} };
+  });
+
+  map.addSource('pts', {type:'geojson', data:{type:'FeatureCollection', features:pts}});
+
+  map.addLayer({id:'sel-ring', type:'circle', source:'pts', filter:['==',['get','i'],-1],
+    paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,6,14,12,17,18], 'circle-color':'transparent', 'circle-stroke-width':3, 'circle-stroke-color':'#D4A843'}});
+
+  map.addLayer({id:'bldg', type:'circle', source:'pts',
+    paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,3,14,6,17,10],
+      'circle-color':['match',['get','pr'],'A','#D4A843','B','#2ED89A','C','#6496FF','#666'],
+      'circle-opacity':0.85, 'circle-stroke-width':0.5, 'circle-stroke-color':'rgba(255,255,255,0.2)'}});
+
+  map.addLayer({id:'heat', type:'heatmap', source:'pts', layout:{visibility:'none'},
+    paint:{'heatmap-weight':['interpolate',['linear'],['get','s'],0,0,100,1],
+      'heatmap-intensity':['interpolate',['linear'],['zoom'],10,1,15,3],
+      'heatmap-radius':['interpolate',['linear'],['zoom'],10,15,15,30],
+      'heatmap-color':['interpolate',['linear'],['heatmap-density'],0,'rgba(0,0,0,0)',0.2,'#145A43',0.4,'#2ED89A',0.6,'#D4A843',0.8,'#E85D3A',1,'#FF2222'],
+      'heatmap-opacity':0.7}});
+
+  // Click
+  map.on('click','bldg', function(e) { if(e.features.length) selectBuilding(e.features[0].properties.i); });
+
+  // Hover
+  hoverPopup = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:10});
+  map.on('mouseenter','bldg', function(e) {
+    map.getCanvas().style.cursor = 'pointer';
+    if(!e.features.length) return;
+    var p = e.features[0].properties;
+    var name = p.n || CAT_LABELS[p.c] || p.c;
+    hoverPopup.setLngLat(e.lngLat).setHTML(
+      '<div class="popup-name">'+name+'</div>'+
+      '<div class="popup-stats">'+p.pr+' · '+Number(p.kw).toFixed(1)+'kWp · '+Number(p.a).toLocaleString()+'m²</div>'
+    ).addTo(map);
+  });
+  map.on('mousemove','bldg', function(e) { if(e.features.length) hoverPopup.setLngLat(e.lngLat); });
+  map.on('mouseleave','bldg', function() { map.getCanvas().style.cursor = ''; hoverPopup.remove(); });
+
+  // Hide loading
+  document.getElementById('loader').classList.add('hide');
+  renderList();
+  updateStats();
+}
+
+// ===== Filtering =====
+function getFiltered() {
+  var f = B.slice();
+  if(fPri !== 'all') f = f.filter(function(b) { return b.pr === fPri; });
+  if(fCat !== 'all') f = f.filter(function(b) { return b.c === fCat; });
+  var q = document.getElementById('search').value.toLowerCase().trim();
+  if(q) f = f.filter(function(b) { return (b.n||'').toLowerCase().includes(q); });
+  return sortFiltered(f);
+}
+
+function sortFiltered(f) {
+  var c = f.slice();
+  switch(sortBy) {
+    case 'area': return c.sort(function(a,b){return b.a-a.a;});
+    case 'kwp': return c.sort(function(a,b){return b.kw-a.kw;});
+    case 'name': return c.sort(function(a,b){return (a.n||'').localeCompare(b.n||'');});
+    case 'savings': return c.sort(function(a,b){return b.annual_savings-a.annual_savings;});
+    default: return c.sort(function(a,b){return b.s-a.s;});
+  }
+}
+
+function updateStats() {
+  var f = getFiltered();
+  document.getElementById('s-total').textContent = f.length;
+  document.getElementById('s-kwp').textContent = (f.reduce(function(s,b){return s+b.kw;},0)/1000).toFixed(1);
+  document.getElementById('s-named').textContent = f.filter(function(b){return b.n;}).length;
+  document.getElementById('s-a').textContent = f.filter(function(b){return b.pr==='A';}).length;
+  document.getElementById('s-savings').textContent = Math.round(f.reduce(function(s,b){return s+b.annual_savings;},0)/1000);
+}
+
+function updateMapFilter() {
+  if(!map || !map.getLayer('bldg')) return;
+  var f = getFiltered();
+  var ids = f.map(function(b){return b.i;});
+  var fltr = ['in',['get','i'],['literal',ids]];
+  ['bldg','heat'].forEach(function(l) { if(map.getLayer(l)) map.setFilter(l, fltr); });
+}
+
+// ===== Render List =====
+function renderList() {
+  var f = getFiltered();
+  var html = '';
+  f.forEach(function(b) {
+    var cat = CAT_LABELS[b.c] || b.c;
+    html += '<div class="bc pri-'+b.pr.toLowerCase()+(selId===b.i?' sel':'')+'" onclick="selectBuilding('+b.i+')">' +
+      '<div class="bc-top"><span class="bc-name">'+b.n+'</span><span class="badge p'+b.pr.toLowerCase()+'">'+b.pr+'</span></div>' +
+      '<div class="bc-row"><span>'+b.kw.toFixed(1)+' kWp</span><span>'+b.a+'m²</span><span>$'+b.annual_savings.toLocaleString()+'/año</span></div>' +
+      '<span class="bc-tag">'+cat+'</span>' +
+      (b.epc > 50000 ? '<span class="ley417-badge">Ley 417</span>' : '') +
+    '</div>';
+  });
+  document.getElementById('blist').innerHTML = html || '<div style="padding:20px;text-align:center;opacity:.5">No se encontraron edificios</div>';
+  updateStats();
+}
+
+// ===== Select Building =====
+function selectBuilding(id) {
+  selId = id;
+  var b = B.find(function(x){return x.i===id;});
+  if(!b) return;
+
+  // Fly to
+  map.easeTo({center:[b.lo, b.la], zoom:16});
+  if(map.getLayer('sel-ring')) map.setFilter('sel-ring', ['==',['get','i'],id]);
+
+  // Show detail
+  var wa_link = 'https://wa.me/50760001234?text=' + encodeURIComponent('Hola Solaris, me interesa '+b.n+'. ¿Pueden enviarme una cotización?');
+  var gmap = 'https://maps.google.com/?q='+b.la+','+b.lo;
+  var cat = CAT_LABELS[b.c] || b.c;
+
+  document.getElementById('detail-view').innerHTML =
+    '<button class="detail-back" onclick="showList()">← Volver a lista</button>' +
+    '<div class="dp-head"><h2>'+b.n+'</h2></div>' +
+    '<div class="dp-meta">'+cat+' · '+b.a+'m² · Score: '+b.s+'/100</div>' +
+    '<div class="dp-grid">' +
+      '<div class="dg"><div class="dg-v" style="color:#D4A843">'+b.kw.toFixed(1)+'</div><div class="dg-l">kWp</div></div>' +
+      '<div class="dg"><div class="dg-v" style="color:#2ED89A">$'+b.annual_savings.toLocaleString()+'</div><div class="dg-l">Ahorro/Año</div></div>' +
+      '<div class="dg"><div class="dg-v" style="color:#6496FF">'+b.payback+'</div><div class="dg-l">Años ROI</div></div>' +
+    '</div>' +
+    '<div class="dp-cols">' +
+      '<div class="dp-col"><h4>Sistema</h4><table class="dt">' +
+        '<tr><td>Paneles</td><td>'+Math.ceil(b.kw/0.58)+'</td></tr>' +
+        '<tr><td>Producción Anual</td><td>'+b.annual_kwh.toLocaleString()+' kWh</td></tr>' +
+        '<tr><td>CO₂ Reducido</td><td>'+b.co2+' ton/año</td></tr>' +
+        '<tr><td>Regulador</td><td>ASEP</td></tr>' +
+      '</table></div>' +
+      '<div class="dp-col"><h4>Financiero</h4><table class="dt">' +
+        '<tr><td>Inversión EPC</td><td>$'+b.epc.toLocaleString()+'</td></tr>' +
+        '<tr><td>Factura Antes</td><td>$'+b.bill_before+'/mes</td></tr>' +
+        '<tr><td>Factura Después</td><td>$'+b.bill_after+'/mes</td></tr>' +
+        '<tr><td>Ley 417</td><td>Exención 10 años</td></tr>' +
+      '</table></div>' +
+    '</div>' +
+    '<div class="dp-actions">' +
+      '<a class="act-wa" href="'+wa_link+'" target="_blank">📱 WhatsApp</a>' +
+      '<a class="act-sat" href="'+gmap+'" target="_blank">🛰️ Google Maps</a>' +
+      '<a class="act-map" href="#" onclick="showList();return false;">📋 Lista</a>' +
+    '</div>';
+
+  document.querySelector('.sidebar-list-content').style.display = 'none';
+  document.getElementById('detail-view').classList.add('show');
+  renderList();
+}
+
+function showList() {
+  selId = null;
+  document.querySelector('.sidebar-list-content').style.display = '';
+  document.getElementById('detail-view').classList.remove('show');
+  if(map && map.getLayer('sel-ring')) map.setFilter('sel-ring', ['==',['get','i'],-1]);
+  renderList();
+}
+
+// ===== Filter Events =====
+document.querySelectorAll('.fbtn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var type = this.dataset.filter;
+    var val = this.dataset.val;
+    // Deselect siblings
+    this.parentElement.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on');});
+    this.classList.add('on');
+    if(type === 'pri') fPri = val;
+    if(type === 'cat') fCat = val;
+    renderList();
+    updateMapFilter();
+  });
+});
+
+document.getElementById('search').addEventListener('input', function() { renderList(); updateMapFilter(); });
+document.getElementById('sort-by').addEventListener('change', function() { sortBy = this.value; renderList(); });
+
+// Map layer toggles
+document.getElementById('sat-btn').addEventListener('click', function() {
+  map.setLayoutProperty('satellite','visibility','visible');
+  map.setLayoutProperty('streets','visibility','none');
+  document.getElementById('sat-btn').classList.add('on');
+  document.getElementById('str-btn').classList.remove('on');
+});
+document.getElementById('str-btn').addEventListener('click', function() {
+  map.setLayoutProperty('satellite','visibility','none');
+  map.setLayoutProperty('streets','visibility','visible');
+  document.getElementById('str-btn').classList.add('on');
+  document.getElementById('sat-btn').classList.remove('on');
+});
+document.getElementById('heat-btn').addEventListener('click', function() {
+  var vis = map.getLayoutProperty('heat','visibility');
+  var on = vis === 'visible';
+  map.setLayoutProperty('heat','visibility', on ? 'none' : 'visible');
+  this.classList.toggle('on', !on);
+});
+
+// ===== Export =====
+function exportCSV() {
+  var f = getFiltered();
+  var csv = 'Nombre,Categoría,Área m²,kWp,Ahorro Anual USD,EPC USD,Payback Años,CO2 ton/año,Lat,Lng\n';
+  f.forEach(function(b) {
+    csv += '"'+b.n+'","'+b.c+'",'+b.a+','+b.kw.toFixed(1)+','+b.annual_savings+','+b.epc+','+b.payback+','+b.co2+','+b.la+','+b.lo+'\n';
+  });
+  var blob = new Blob([csv], {type:'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'solaris-panama-roofs.csv';
+  a.click();
+}
+
+function exportJSON() {
+  var f = getFiltered();
+  var blob = new Blob([JSON.stringify(f, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'solaris-panama-roofs.json';
+  a.click();
+}
+
+function shareAtlas() {
+  var url = window.location.href;
+  navigator.clipboard.writeText(url).then(function() { alert('Link copiado!'); });
+}
+
+// Init
+initMap();
+</script>
+</body>
+</html>

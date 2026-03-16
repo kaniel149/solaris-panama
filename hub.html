@@ -1,802 +1,427 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solaris Panamá — Hub Central</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --green: #0B3D2E;
-  --green-canopy: #14573F;
-  --green-light: #1B7A58;
-  --gold: #D4A843;
-  --gold-dark: #B8912E;
-  --gold-light: #F0D47A;
-  --pearl: #FEFDFB;
-  --sand: #F5EFE0;
-  --cloud: #F9F7F3;
-  --charcoal: #1A1A1A;
-  --slate: #4A4A4A;
-  --ash: #8A8A8A;
-  --mist: #E8E4DC;
-  --radius: 12px;
-  --shadow: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
-}
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-body { font-family: 'DM Sans', -apple-system, sans-serif; color: var(--charcoal); background: var(--pearl); line-height: 1.6; }
-h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; line-height: 1.2; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solaris Panama — Project Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #0B3D2E;
+      --green-light: #145840;
+      --green-dark: #072a1f;
+      --gold: #D4A843;
+      --gold-light: #e4c06a;
+      --pearl: #FEFDFB;
+      --pearl-dim: #f5f2ed;
+      --text-primary: #FEFDFB;
+      --text-secondary: rgba(254, 253, 251, 0.7);
+      --card-bg: rgba(11, 61, 46, 0.45);
+      --card-border: rgba(212, 168, 67, 0.15);
+      --card-hover-border: rgba(212, 168, 67, 0.4);
+    }
 
-/* Header */
-.hub-header {
-  background: var(--green);
-  color: var(--pearl);
-  padding: 48px 0 56px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.hub-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.hub-header::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: -5%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(212,168,67,0.05) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.hub-header .logo-mark {
-  width: 56px;
-  height: 56px;
-  background: rgba(254,253,251,0.1);
-  border: 2px solid rgba(212,168,67,0.3);
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-}
-.hub-header .logo-mark span {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  color: var(--gold);
-  font-weight: 700;
-}
-.hub-header h1 { font-size: 36px; margin-bottom: 4px; position: relative; }
-.hub-header .tagline {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-.hub-header .subtitle {
-  font-size: 14px;
-  color: rgba(254,253,251,0.6);
-  position: relative;
-}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Nav pills */
-.hub-nav {
-  background: var(--pearl);
-  border-bottom: 1px solid var(--mist);
-  padding: 12px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.hub-nav .container {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.hub-nav a {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--slate);
-  text-decoration: none;
-  padding: 6px 16px;
-  border-radius: 100px;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-.hub-nav a:hover { background: var(--sand); color: var(--green); }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--green-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
 
-/* Container */
-.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    /* Subtle background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(212, 168, 67, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(11, 61, 46, 0.3) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-/* Section */
-.section { padding: 56px 0 32px; }
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.section-title .icon {
-  width: 36px;
-  height: 36px;
-  background: var(--green);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gold);
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.section-title h2 { font-size: 24px; color: var(--green); }
-.section-title .count {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ash);
-  background: var(--cloud);
-  padding: 2px 10px;
-  border-radius: 100px;
-}
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
 
-/* Cards grid */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-}
-.card {
-  background: var(--pearl);
-  border: 1px solid var(--mist);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.card:hover {
-  border-color: var(--gold);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-.card .card-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold-dark);
-}
-.card .card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--green);
-}
-.card .card-desc {
-  font-size: 13px;
-  color: var(--slate);
-  line-height: 1.5;
-}
-.card .card-type {
-  font-size: 11px;
-  color: var(--ash);
-  margin-top: auto;
-  padding-top: 4px;
-}
+    /* Header */
+    header {
+      padding: 48px 0 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 48px;
+    }
 
-/* Featured card */
-.card.featured {
-  background: var(--green);
-  border-color: var(--green);
-  grid-column: span 2;
-}
-.card.featured .card-label { color: var(--gold); }
-.card.featured .card-title { color: var(--pearl); }
-.card.featured .card-desc { color: rgba(254,253,251,0.7); }
-.card.featured .card-type { color: rgba(254,253,251,0.4); }
+    header h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--pearl);
+      margin-bottom: 8px;
+    }
 
-/* Divider */
-.divider {
-  border: none;
-  border-top: 1px solid var(--mist);
-  margin: 0;
-}
+    header h1 span {
+      color: var(--gold);
+    }
 
-/* Footer */
-.hub-footer {
-  text-align: center;
-  padding: 40px 0;
-  color: var(--ash);
-  font-size: 12px;
-  border-top: 1px solid var(--mist);
-  margin-top: 40px;
-}
-.hub-footer a { color: var(--green); text-decoration: none; }
+    header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 400;
+    }
 
-@media (max-width: 640px) {
-  .card.featured { grid-column: span 1; }
-  .hub-header h1 { font-size: 28px; }
-  .cards { grid-template-columns: 1fr; }
-}
-</style>
+    .badge {
+      display: inline-block;
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 100px;
+      border: 1px solid rgba(212, 168, 67, 0.2);
+      margin-bottom: 16px;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .section-card:hover {
+      border-color: var(--card-hover-border);
+      transform: translateY(-2px);
+    }
+
+    .section-card h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--pearl);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-card h2 .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(212, 168, 67, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .link-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .link-list li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.925rem;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .link-list li a:hover {
+      background: rgba(254, 253, 251, 0.06);
+    }
+
+    .link-list li a .arrow {
+      margin-left: auto;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.2s ease;
+      color: var(--gold);
+      font-size: 0.85rem;
+    }
+
+    .link-list li a:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .link-list .sublabel {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .tag-live {
+      background: rgba(74, 222, 128, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    .tag-soon {
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--gold);
+      border: 1px solid rgba(212, 168, 67, 0.15);
+    }
+
+    .tag-wip {
+      background: rgba(254, 253, 251, 0.06);
+      color: var(--text-secondary);
+      border: 1px solid rgba(254, 253, 251, 0.1);
+    }
+
+    /* Full-width card */
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 32px 0 48px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      header { padding: 32px 0 28px; margin-bottom: 32px; }
+      header h1 { font-size: 1.8rem; }
+      .grid { grid-template-columns: 1fr; gap: 16px; }
+      .section-card { padding: 22px; }
+    }
+  </style>
 </head>
 <body>
-
-<!-- Header -->
-<header class="hub-header">
-  <div class="logo-mark"><span>S</span></div>
-  <h1>Solaris Panamá</h1>
-  <div class="tagline">Own Your Energy</div>
-  <div class="subtitle">Hub Central — Todos los recursos del proyecto</div>
-</header>
-
-<!-- Navigation -->
-<nav class="hub-nav">
   <div class="container">
-    <a href="#public">Sitio Público</a>
-    <a href="#crm">CRM & Dashboard</a>
-    <a href="#tools">Herramientas</a>
-    <a href="#presentations">Presentaciones</a>
-    <a href="#marketing">Marketing</a>
-    <a href="#ads">Publicidad</a>
-    <a href="#brand">Marca</a>
-    <a href="#research">Investigación</a>
-    <a href="#sales">Ventas</a>
+    <header>
+      <div class="badge">Internal Project Hub</div>
+      <h1>Solaris <span>Panama</span></h1>
+      <p>All project assets, tools, and resources in one place</p>
+    </header>
+
+    <div class="grid">
+
+      <!-- Live Sites -->
+      <div class="section-card">
+        <h2><span class="icon">&#9788;</span> Live Sites</h2>
+        <ul class="link-list">
+          <li>
+            <a href="https://solaris-panama.com" target="_blank">
+              <span>Landing Page <span class="tag tag-live">Live</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://crm.solaris-panama.com" target="_blank">
+              <span>CRM Dashboard <span class="tag tag-live">Live</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tools -->
+      <div class="section-card">
+        <h2><span class="icon">&#9881;</span> Tools</h2>
+        <ul class="link-list">
+          <li>
+            <a href="/roof-designer">
+              <span>Roof Designer <span class="tag tag-live">Live</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./tools/">
+              <span>GIS Mapper <span class="tag tag-soon">Soon</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./tools/">
+              <span>Solar Atlas <span class="tag tag-soon">Soon</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./proposals/">
+              <span>Proposal Generator <span class="tag tag-wip">WIP</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Marketing -->
+      <div class="section-card">
+        <h2><span class="icon">&#9733;</span> Marketing</h2>
+        <ul class="link-list">
+          <li>
+            <a href="./marketing/">
+              <span>Strategy Docs</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./sales/">
+              <span>Sales Playbook</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./blog/">
+              <span>Blog Posts</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./ads-creatives/">
+              <span>Ads Creatives</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./presentations/">
+              <span>Presentations</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Research -->
+      <div class="section-card">
+        <h2><span class="icon">&#9782;</span> Research</h2>
+        <ul class="link-list">
+          <li>
+            <a href="./research/">
+              <span>Market Research</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./towns/">
+              <span>Towns Data</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./leads-spreadsheet.csv">
+              <span>Leads Database<br><span class="sublabel">300+ qualified leads (CSV)</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Brand Assets -->
+      <div class="section-card">
+        <h2><span class="icon">&#9830;</span> Brand Assets</h2>
+        <ul class="link-list">
+          <li>
+            <a href="./brand/">
+              <span>Logos &amp; Brand Kit</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./brand/">
+              <span>Business Cards</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./brand/">
+              <span>Email Signatures</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Project Files -->
+      <div class="section-card">
+        <h2><span class="icon">&#128196;</span> Project Files</h2>
+        <ul class="link-list">
+          <li>
+            <a href="./ASSETS.md">
+              <span>ASSETS.md<br><span class="sublabel">Full asset inventory (text)</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./FIXES.md">
+              <span>FIXES.md<br><span class="sublabel">Known issues &amp; fixes log</span></span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="./ads/">
+              <span>Ads Config</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <footer>
+      <p>Solaris Panama &mdash; <a href="https://kanielt.com">KANIEL TORD LLC</a> &mdash; Internal Use Only</p>
+    </footer>
   </div>
-</nav>
-
-<main>
-
-  <!-- Public / Landing -->
-  <section class="section" id="public">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">🌐</div>
-        <h2>Sitio Público</h2>
-        <span class="count">6 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="landing-page.html" class="card featured">
-          <span class="card-label">Principal</span>
-          <span class="card-title">Landing Page — Solaris Panamá</span>
-          <span class="card-desc">Página principal con propuesta de valor, beneficios Ley 417, calculadora de ahorro y formulario de contacto.</span>
-          <span class="card-type">HTML · Español / English</span>
-        </a>
-        <a href="blog/ley-417-panama.html" class="card">
-          <span class="card-label">Blog</span>
-          <span class="card-title">Ley 417 — Incentivos Solares</span>
-          <span class="card-desc">Artículo sobre beneficios fiscales de energía solar en Panamá.</span>
-          <span class="card-type">HTML · SEO</span>
-        </a>
-        <a href="blog/cuanto-cuestan-paneles-solares-panama.html" class="card">
-          <span class="card-label">Blog</span>
-          <span class="card-title">¿Cuánto Cuestan Paneles Solares?</span>
-          <span class="card-desc">Guía de costos para instalaciones solares en Panamá.</span>
-          <span class="card-type">HTML · SEO</span>
-        </a>
-        <a href="blog/energia-solar-comercial-azuero.html" class="card">
-          <span class="card-label">Blog</span>
-          <span class="card-title">Energía Solar Comercial en Azuero</span>
-          <span class="card-desc">Oportunidades para negocios en la península.</span>
-          <span class="card-type">HTML · SEO</span>
-        </a>
-        <a href="towns/solar-pedasi.html" class="card">
-          <span class="card-label">Localidad</span>
-          <span class="card-title">Solar en Pedasí</span>
-          <span class="card-desc">Página localizada para Pedasí.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="towns/solar-playa-venao.html" class="card">
-          <span class="card-label">Localidad</span>
-          <span class="card-title">Solar en Playa Venao</span>
-          <span class="card-desc">Página localizada para Playa Venao.</span>
-          <span class="card-type">HTML</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- CRM & Dashboard -->
-  <section class="section" id="crm">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">📊</div>
-        <h2>CRM & Dashboard</h2>
-        <span class="count">35 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="dashboard/index.html" class="card featured">
-          <span class="card-label">Dashboard</span>
-          <span class="card-title">Panel Principal — Solaris Dashboard</span>
-          <span class="card-desc">Centro de operaciones con navegación a todas las herramientas del CRM, valor de cadena, y métricas.</span>
-          <span class="card-type">HTML · Dashboard</span>
-        </a>
-        <a href="dashboard/crm-step1-lead-capture.html" class="card">
-          <span class="card-label">CRM Paso 1</span>
-          <span class="card-title">Captura de Leads</span>
-          <span class="card-desc">Formulario de captura y gestión de prospectos.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step2-site-survey.html" class="card">
-          <span class="card-label">CRM Paso 2</span>
-          <span class="card-title">Inspección del Sitio</span>
-          <span class="card-desc">Herramienta para evaluación del sitio y mediciones.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step3-electricity.html" class="card">
-          <span class="card-label">CRM Paso 3</span>
-          <span class="card-title">Análisis Eléctrico</span>
-          <span class="card-desc">Análisis del consumo eléctrico del cliente.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step4-design.html" class="card">
-          <span class="card-label">CRM Paso 4</span>
-          <span class="card-title">Diseño del Sistema</span>
-          <span class="card-desc">Diseño técnico de la instalación solar.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step5-sld.html" class="card">
-          <span class="card-label">CRM Paso 5</span>
-          <span class="card-title">Diagrama Unifilar (SLD)</span>
-          <span class="card-desc">Generador de diagramas unifilares.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step6-proposal.html" class="card">
-          <span class="card-label">CRM Paso 6</span>
-          <span class="card-title">Propuesta Comercial</span>
-          <span class="card-desc">Generador de propuestas para clientes.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step7-contract.html" class="card">
-          <span class="card-label">CRM Paso 7</span>
-          <span class="card-title">Contrato</span>
-          <span class="card-desc">Gestión de contratos con el cliente.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step8-inventory.html" class="card">
-          <span class="card-label">CRM Paso 8</span>
-          <span class="card-title">Inventario & Adquisición</span>
-          <span class="card-desc">Gestión de equipos y compras.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step9-installation.html" class="card">
-          <span class="card-label">CRM Paso 9</span>
-          <span class="card-title">Instalación</span>
-          <span class="card-desc">Seguimiento del proceso de instalación.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-step10-om.html" class="card">
-          <span class="card-label">CRM Paso 10</span>
-          <span class="card-title">Operación & Mantenimiento</span>
-          <span class="card-desc">Monitoreo post-instalación.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/crm-value-chain.html" class="card">
-          <span class="card-label">Flujo</span>
-          <span class="card-title">Cadena de Valor Completa</span>
-          <span class="card-desc">Visualización del flujo completo del CRM.</span>
-          <span class="card-type">HTML · CRM</span>
-        </a>
-        <a href="dashboard/financial-dashboard.html" class="card">
-          <span class="card-label">Finanzas</span>
-          <span class="card-title">Dashboard Financiero</span>
-          <span class="card-desc">Métricas financieras y P&L.</span>
-          <span class="card-type">HTML · Dashboard</span>
-        </a>
-        <a href="dashboard/pnl-plan.html" class="card">
-          <span class="card-label">Finanzas</span>
-          <span class="card-title">Plan P&L</span>
-          <span class="card-desc">Proyección de ganancias y pérdidas.</span>
-          <span class="card-type">HTML · Dashboard</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Tools -->
-  <section class="section" id="tools">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">🔧</div>
-        <h2>Herramientas</h2>
-        <span class="count">8 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="dashboard/roof-scanner.html" class="card featured">
-          <span class="card-label">Herramienta</span>
-          <span class="card-title">Roof Scanner — Escáner de Techos</span>
-          <span class="card-desc">Análisis satelital de techos para evaluar potencial solar. Clasificación de tipos de techo y cálculo de área disponible.</span>
-          <span class="card-type">HTML · Herramienta</span>
-        </a>
-        <a href="proposal.html" class="card">
-          <span class="card-label">Herramienta</span>
-          <span class="card-title">Generador de Propuestas</span>
-          <span class="card-desc">Propuesta comercial personalizada con ROI, ahorro y diseño del sistema.</span>
-          <span class="card-type">HTML · Ventas</span>
-        </a>
-        <a href="dashboard/bill-scanner.html" class="card">
-          <span class="card-label">Herramienta</span>
-          <span class="card-title">Bill Scanner — Escáner de Facturas</span>
-          <span class="card-desc">Escaneo y análisis de facturas eléctricas.</span>
-          <span class="card-type">HTML · Herramienta</span>
-        </a>
-        <a href="dashboard/drone-guide.html" class="card">
-          <span class="card-label">Herramienta</span>
-          <span class="card-title">Guía de Inspección con Dron</span>
-          <span class="card-desc">Protocolo para inspección aérea de techos.</span>
-          <span class="card-type">HTML · Operaciones</span>
-        </a>
-        <a href="dashboard/equipment-list.html" class="card">
-          <span class="card-label">Referencia</span>
-          <span class="card-title">Lista de Equipos</span>
-          <span class="card-desc">Catálogo de paneles, inversores y componentes.</span>
-          <span class="card-type">HTML · Operaciones</span>
-        </a>
-        <a href="dashboard/monitoring-maintenance.html" class="card">
-          <span class="card-label">Herramienta</span>
-          <span class="card-title">Monitoreo & Mantenimiento</span>
-          <span class="card-desc">Dashboard de monitoreo de sistemas instalados.</span>
-          <span class="card-type">HTML · Operaciones</span>
-        </a>
-        <a href="dashboard/procurement-engineering.html" class="card">
-          <span class="card-label">Referencia</span>
-          <span class="card-title">Ingeniería & Adquisiciones</span>
-          <span class="card-desc">Gestión de procurement y especificaciones técnicas.</span>
-          <span class="card-type">HTML · Operaciones</span>
-        </a>
-        <a href="dashboard/licensing.html" class="card">
-          <span class="card-label">Referencia</span>
-          <span class="card-title">Licencias & Permisos</span>
-          <span class="card-desc">Guía de licencias ASEP y permisos municipales.</span>
-          <span class="card-type">HTML · Legal</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Presentations -->
-  <section class="section" id="presentations">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">📽</div>
-        <h2>Presentaciones</h2>
-        <span class="count">3 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="presentations/sales-deck.html" class="card featured">
-          <span class="card-label">Ventas</span>
-          <span class="card-title">Sales Deck — Presentación Comercial</span>
-          <span class="card-desc">Presentación para clientes potenciales: problema, solución, Ley 417, ROI, opciones de financiamiento.</span>
-          <span class="card-type">HTML · 10 slides · ES/EN</span>
-        </a>
-        <a href="presentations/strategy-deck.html" class="card">
-          <span class="card-label">Estrategia</span>
-          <span class="card-title">Strategy Deck — Plan Estratégico</span>
-          <span class="card-desc">Visión general del negocio, mercado, competencia, go-to-market y roadmap.</span>
-          <span class="card-type">HTML · 12 slides</span>
-        </a>
-        <a href="presentations/investor-deck.html" class="card">
-          <span class="card-label">Inversión</span>
-          <span class="card-title">Investor Deck — Para Inversionistas</span>
-          <span class="card-desc">Oportunidad de mercado, modelo de negocio, proyecciones financieras y equipo.</span>
-          <span class="card-type">HTML · 10 slides</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Marketing -->
-  <section class="section" id="marketing">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">📣</div>
-        <h2>Marketing</h2>
-        <span class="count">7 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="marketing/go-to-market-timeline.md" class="card">
-          <span class="card-label">Estrategia</span>
-          <span class="card-title">Go-To-Market Timeline</span>
-          <span class="card-desc">Cronograma de lanzamiento y actividades de marketing.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/brand-positioning.md" class="card">
-          <span class="card-label">Marca</span>
-          <span class="card-title">Brand Positioning</span>
-          <span class="card-desc">Posicionamiento de marca y propuesta de valor diferenciada.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/channel-strategy.md" class="card">
-          <span class="card-label">Canales</span>
-          <span class="card-title">Channel Strategy</span>
-          <span class="card-desc">Estrategia por canal: redes sociales, referidos, alianzas.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/content-plan.md" class="card">
-          <span class="card-label">Contenido</span>
-          <span class="card-title">Content Plan</span>
-          <span class="card-desc">Plan de contenido para blog, redes y email.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/lead-magnet-strategy.md" class="card">
-          <span class="card-label">Leads</span>
-          <span class="card-title">Lead Magnet Strategy</span>
-          <span class="card-desc">Estrategia de lead magnets y captura de prospectos.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/landing-page-brief.md" class="card">
-          <span class="card-label">Brief</span>
-          <span class="card-title">Landing Page Brief</span>
-          <span class="card-desc">Especificaciones para landing pages de campañas.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="marketing/partnerships.md" class="card">
-          <span class="card-label">Alianzas</span>
-          <span class="card-title">Partnerships</span>
-          <span class="card-desc">Estrategia de alianzas con arquitectos, contratistas y hoteles.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Ads -->
-  <section class="section" id="ads">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">📢</div>
-        <h2>Publicidad & Anuncios</h2>
-        <span class="count">13 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="ads/index.html" class="card featured">
-          <span class="card-label">Galería</span>
-          <span class="card-title">Galería de Anuncios</span>
-          <span class="card-desc">Vista previa de todos los anuncios creativos en un solo lugar.</span>
-          <span class="card-type">HTML · Galería</span>
-        </a>
-        <a href="ads/CAMPAIGN_PLAN.md" class="card">
-          <span class="card-label">Plan</span>
-          <span class="card-title">Campaign Plan</span>
-          <span class="card-desc">Plan maestro de campañas publicitarias.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="ads/facebook-ads-strategy.md" class="card">
-          <span class="card-label">Facebook</span>
-          <span class="card-title">Facebook Ads Strategy</span>
-          <span class="card-desc">Estrategia para campañas en Facebook e Instagram.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="ads/google-ads-strategy.md" class="card">
-          <span class="card-label">Google</span>
-          <span class="card-title">Google Ads Strategy</span>
-          <span class="card-desc">Estrategia de búsqueda y display en Google.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="ads/AUDIENCES.md" class="card">
-          <span class="card-label">Audiencias</span>
-          <span class="card-title">Target Audiences</span>
-          <span class="card-desc">Definición de audiencias y segmentos objetivo.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="ads/BUDGET_PLAN.md" class="card">
-          <span class="card-label">Presupuesto</span>
-          <span class="card-title">Budget Plan</span>
-          <span class="card-desc">Presupuesto y asignación por canal.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Brand -->
-  <section class="section" id="brand">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">🎨</div>
-        <h2>Marca & Identidad</h2>
-        <span class="count">12 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="brand/brand-guidelines.md" class="card">
-          <span class="card-label">Guía</span>
-          <span class="card-title">Brand Guidelines</span>
-          <span class="card-desc">Manual de identidad visual: colores, tipografía, logo, tono.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="brand/color-palette.html" class="card">
-          <span class="card-label">Colores</span>
-          <span class="card-title">Paleta de Colores</span>
-          <span class="card-desc">Paleta completa con códigos hex y usos.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/presentation-template.html" class="card">
-          <span class="card-label">Template</span>
-          <span class="card-title">Presentation Template</span>
-          <span class="card-desc">Plantilla base para presentaciones.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/business-card.html" class="card">
-          <span class="card-label">Impreso</span>
-          <span class="card-title">Tarjeta de Presentación</span>
-          <span class="card-desc">Diseño de tarjeta de presentación.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/letterhead.html" class="card">
-          <span class="card-label">Impreso</span>
-          <span class="card-title">Papel Membretado</span>
-          <span class="card-desc">Diseño de carta corporativa.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/email-signature.html" class="card">
-          <span class="card-label">Digital</span>
-          <span class="card-title">Firma de Email</span>
-          <span class="card-desc">Firma HTML para correo electrónico.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/social-media-templates.html" class="card">
-          <span class="card-label">Social</span>
-          <span class="card-title">Social Media Templates</span>
-          <span class="card-desc">Plantillas para redes sociales.</span>
-          <span class="card-type">HTML</span>
-        </a>
-        <a href="brand/site-sign-v2.html" class="card">
-          <span class="card-label">Señalización</span>
-          <span class="card-title">Letrero de Obra</span>
-          <span class="card-desc">Diseño del letrero para sitios de instalación.</span>
-          <span class="card-type">HTML</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Research -->
-  <section class="section" id="research">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">🔬</div>
-        <h2>Investigación</h2>
-        <span class="count">8 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="research/COMPETITOR_ANALYSIS.md" class="card">
-          <span class="card-label">Competencia</span>
-          <span class="card-title">Análisis de Competidores</span>
-          <span class="card-desc">Análisis detallado de competidores en el mercado solar panameño.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/economics.md" class="card">
-          <span class="card-label">Economía</span>
-          <span class="card-title">Análisis Económico</span>
-          <span class="card-desc">Economía del mercado solar en Panamá.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/regulations.md" class="card">
-          <span class="card-label">Regulación</span>
-          <span class="card-title">Marco Regulatorio</span>
-          <span class="card-desc">Regulaciones y Ley 417 para energía solar.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/equipment-supply.md" class="card">
-          <span class="card-label">Equipos</span>
-          <span class="card-title">Cadena de Suministro</span>
-          <span class="card-desc">Proveedores y logística de equipos solares.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/leads-detailed.md" class="card">
-          <span class="card-label">Leads</span>
-          <span class="card-title">Leads Detallados</span>
-          <span class="card-desc">Lista detallada de prospectos investigados.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/leads-expat-properties.md" class="card">
-          <span class="card-label">Leads</span>
-          <span class="card-title">Propiedades de Expats</span>
-          <span class="card-desc">Investigación de propiedades de expatriados.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="research/competitors.md" class="card">
-          <span class="card-label">Competencia</span>
-          <span class="card-title">Competidores — Resumen</span>
-          <span class="card-desc">Resumen rápido de competidores en la región.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="dashboard/MARKET_RESEARCH.md" class="card">
-          <span class="card-label">Mercado</span>
-          <span class="card-title">Market Research</span>
-          <span class="card-desc">Investigación general del mercado.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Sales -->
-  <section class="section" id="sales">
-    <div class="container">
-      <div class="section-title">
-        <div class="icon">💼</div>
-        <h2>Ventas</h2>
-        <span class="count">6 archivos</span>
-      </div>
-      <div class="cards">
-        <a href="sales/strategy.md" class="card">
-          <span class="card-label">Estrategia</span>
-          <span class="card-title">Sales Strategy</span>
-          <span class="card-desc">Estrategia general de ventas y penetración de mercado.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="sales/ICP.md" class="card">
-          <span class="card-label">Perfil</span>
-          <span class="card-title">Ideal Customer Profile</span>
-          <span class="card-desc">Perfil del cliente ideal por segmento.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="sales/pitch-deck.md" class="card">
-          <span class="card-label">Pitch</span>
-          <span class="card-title">Pitch Deck Script</span>
-          <span class="card-desc">Guión y contenido para el pitch deck.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="sales/pricing-model.md" class="card">
-          <span class="card-label">Precios</span>
-          <span class="card-title">Pricing Model</span>
-          <span class="card-desc">Modelo de precios y márgenes por tipo de proyecto.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="sales/objection-playbook.md" class="card">
-          <span class="card-label">Objeciones</span>
-          <span class="card-title">Objection Playbook</span>
-          <span class="card-desc">Respuestas a objeciones comunes de clientes.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-        <a href="sales/outreach-sequences.md" class="card">
-          <span class="card-label">Outreach</span>
-          <span class="card-title">Outreach Sequences</span>
-          <span class="card-desc">Secuencias de contacto para prospectos fríos y cálidos.</span>
-          <span class="card-type">Markdown</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="hub-footer">
-  <p>Solaris Panamá — Hub Central · Última actualización: Marzo 2026</p>
-  <p><a href="ASSETS.md">Ver ASSETS.md</a> · <a href="landing-page.html">Ir al sitio público</a></p>
-</footer>
-
 </body>
 </html>
