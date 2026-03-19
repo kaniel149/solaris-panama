@@ -189,6 +189,66 @@ export function calculateMonthlyProduction(yearlyKwh: number): number[] {
   return NORMALIZED_MONTHLY_FRACTIONS.map(fraction => yearlyKwh * fraction);
 }
 
+/**
+ * Enhanced production calculation backed by PySAM simulation.
+ * Uses per-location irradiance data instead of fixed PSH constants.
+ * Falls back to the existing calculateProduction() if PySAM/PVWatts are unavailable.
+ *
+ * @returns { annualProductionByYear, year1MonthlyKwh, source }
+ */
+export async function calculateProductionV2(
+  systemKwp: number,
+  lat: number,
+  lon: number,
+  tilt: number = 10,
+  azimuth: number = 180,
+  performanceRatio: number = PANAMA_DEFAULTS.performanceRatio
+): Promise<{
+  annualProductionByYear: number[];
+  year1MonthlyKwh: number[];
+  source: string;
+}> {
+  try {
+    const { simulateSolar } = await import('./pySamClient');
+    const result = await simulateSolar({
+      lat,
+      lon,
+      systemCapacityKw: systemKwp,
+      tilt,
+      azimuth,
+      losses: 14,
+    });
+
+    // Apply annual degradation to PySAM year-1 output
+    const annualProductionByYear = Array.from(
+      { length: PANAMA_DEFAULTS.systemLifetime },
+      (_, year) => result.annualKwh * Math.pow(1 - PANAMA_DEFAULTS.degradationRate, year)
+    );
+
+    return {
+      annualProductionByYear,
+      year1MonthlyKwh: result.monthlyKwh,
+      source: result.source,
+    };
+  } catch (err) {
+    console.warn('[solarCalculator] calculateProductionV2 PySAM lookup failed, using fixed PSH:', (err as Error).message);
+
+    // Fallback: use existing calculateProduction with default PSH
+    const annualProductionByYear = calculateProduction(
+      systemKwp,
+      PANAMA_DEFAULTS.peakSunHours,
+      performanceRatio
+    );
+    const year1MonthlyKwh = calculateMonthlyProduction(annualProductionByYear[0]);
+
+    return {
+      annualProductionByYear,
+      year1MonthlyKwh,
+      source: 'regional-constant',
+    };
+  }
+}
+
 /** Calculate net metering breakdown */
 function calculateNetMetering(
   annualProductionKwh: number,
