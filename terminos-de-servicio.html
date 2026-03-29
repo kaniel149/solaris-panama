@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos de Servicio — Solaris Panamá</title>
+<meta name="description" content="Términos y condiciones de los servicios de instalación solar de Solaris Energy Panamá. Garantías, pagos y responsabilidades.">
+<meta property="og:title" content="Términos de Servicio — Solaris Panamá">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://solaris-panama.com/terminos-de-servicio.html">
+<link rel="canonical" href="https://solaris-panama.com/terminos-de-servicio.html">
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-900: #0B3D2E;
+  --green-800: #0E4D3A;
+  --green-700: #116B50;
+  --green-600: #158C68;
+  --green-50:  #F4FAF7;
+  --gold-500:  #D4A843;
+  --gold-400:  #E4BE5A;
+  --white:     #FEFDFB;
+  --gray-50:   #FAFAF8;
+  --gray-100:  #F0EFEB;
+  --gray-200:  #E0DED8;
+  --gray-400:  #A8A59E;
+  --gray-600:  #6B6860;
+  --gray-800:  #2E2C28;
+  --gray-900:  #1A1916;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: var(--gray-800);
+  background: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 400; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); letter-spacing: -0.01em; color: var(--green-900); margin-top: 2.5rem; margin-bottom: 1rem; }
+h3 { font-size: 1.15rem; color: var(--green-900); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+.container { max-width: 800px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+
+/* NAV */
+.nav {
+  background: rgba(11,61,46,0.97); backdrop-filter: blur(20px);
+  padding: 1rem 0; box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+.nav .container { max-width: 1200px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+.nav-logo svg { color: var(--gold-400); }
+.nav-links { display: none; list-style: none; gap: 2rem; }
+@media (min-width: 768px) { .nav-links { display: flex; } }
+.nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--white); }
+.btn-nav { display: inline-flex; align-items: center; padding: 0.6rem 1.4rem; background: var(--gold-500); color: var(--green-900); border-radius: 99px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s; }
+.btn-nav:hover { background: var(--gold-400); }
+
+/* PAGE HEADER */
+.page-header { background: var(--green-900); padding: clamp(4rem, 8vw, 6rem) 0 3rem; }
+.page-header .container { max-width: 800px; }
+.page-header .label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-500); display: block; margin-bottom: 0.75rem; }
+.page-header h1 { color: var(--white); margin-bottom: 1rem; }
+.page-header .meta { color: rgba(255,255,255,0.5); font-size: 0.875rem; }
+
+/* CONTENT */
+.content-wrap { padding: clamp(3rem, 6vw, 5rem) 0; }
+
+.prose p { color: var(--gray-600); line-height: 1.8; margin-bottom: 1.25rem; font-size: 1rem; }
+.prose ul, .prose ol { color: var(--gray-600); padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.prose li { margin-bottom: 0.5rem; line-height: 1.7; }
+.prose strong { color: var(--gray-800); font-weight: 600; }
+.prose a { color: var(--green-700); text-decoration: underline; }
+.prose a:hover { color: var(--green-600); }
+
+.toc {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md); padding: 1.5rem 2rem; margin-bottom: 3rem;
+}
+.toc h3 { color: var(--green-900); margin-top: 0; margin-bottom: 1rem; font-size: 1rem; }
+.toc ol { padding-left: 1.25rem; margin: 0; }
+.toc li { margin-bottom: 0.4rem; }
+.toc a { color: var(--green-700); text-decoration: none; font-size: 0.9rem; }
+.toc a:hover { text-decoration: underline; }
+
+.section-divider { border: none; border-top: 1px solid var(--gray-100); margin: 2.5rem 0; }
+
+.highlight-box {
+  background: var(--green-50); border-left: 3px solid var(--green-700);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.highlight-box p { margin-bottom: 0; color: var(--green-900); font-size: 0.95rem; }
+
+.warning-box {
+  background: #FEF9E7; border-left: 3px solid var(--gold-500);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.warning-box p { margin-bottom: 0; color: #6B5000; font-size: 0.95rem; }
+
+/* FOOTER */
+footer { background: var(--gray-900); padding: 3rem 0 2rem; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.footer-bottom { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.footer-bottom p { color: var(--gray-600); font-size: 0.8rem; }
+.footer-legal { display: flex; gap: 1.5rem; }
+.footer-legal a { color: var(--gray-600); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+.footer-legal a:hover { color: var(--gray-400); }
+
+/* WA */
+.whatsapp-float {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
+  transition: transform 0.3s;
+}
+.whatsapp-float:hover { transform: scale(1.1); }
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container">
+    <a href="/" class="nav-logo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      Solaris Panamá
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/servicios.html">Servicios</a></li>
+      <li><a href="/towns/solar-pedasi.html">Proyectos</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/contacto.html">Contacto</a></li>
+    </ul>
+    <a href="/contacto.html" class="btn-nav">Cotización Gratis</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <span class="label">Legal</span>
+    <h1>Términos de Servicio</h1>
+    <p class="meta">Última actualización: enero de 2026 · Solaris Energy Panamá</p>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main class="content-wrap">
+  <div class="container">
+    <div class="prose">
+
+      <div class="toc">
+        <h3>Contenido</h3>
+        <ol>
+          <li><a href="#aceptacion">Aceptación de los Términos</a></li>
+          <li><a href="#servicios">Descripción de los Servicios</a></li>
+          <li><a href="#cotizaciones">Cotizaciones y Propuestas</a></li>
+          <li><a href="#contratos">Formalización del Contrato</a></li>
+          <li><a href="#pagos">Términos de Pago</a></li>
+          <li><a href="#instalacion">Proceso de Instalación</a></li>
+          <li><a href="#garantias">Garantías</a></li>
+          <li><a href="#rendimiento">Rendimiento del Sistema</a></li>
+          <li><a href="#mantenimiento">Mantenimiento</a></li>
+          <li><a href="#responsabilidad">Limitación de Responsabilidad</a></li>
+          <li><a href="#cancelacion">Cancelación</a></li>
+          <li><a href="#uso-sitio">Uso del Sitio Web</a></li>
+          <li><a href="#propiedad-intelectual">Propiedad Intelectual</a></li>
+          <li><a href="#jurisdiccion">Jurisdicción y Ley Aplicable</a></li>
+          <li><a href="#contacto-tos">Contacto</a></li>
+        </ol>
+      </div>
+
+      <div class="highlight-box">
+        <p>Al solicitar una cotización, contratar nuestros servicios o utilizar nuestro sitio web, aceptas estos Términos de Servicio en su totalidad. Te recomendamos leerlos detenidamente antes de proceder.</p>
+      </div>
+
+      <hr class="section-divider">
+
+      <h2 id="aceptacion">1. Aceptación de los Términos</h2>
+      <p>Estos Términos de Servicio ("Términos") constituyen un acuerdo legal entre <strong>Solaris Energy Panamá</strong> ("Solaris", "nosotros") y cualquier persona física o jurídica ("Cliente", "tú") que utilice nuestro sitio web, solicite nuestros servicios o celebre un contrato con nosotros.</p>
+      <p>Si actúas en nombre de una empresa u organización, declaras que tienes la autoridad para vincularla a estos Términos.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="servicios">2. Descripción de los Servicios</h2>
+      <p>Solaris Panamá ofrece los siguientes servicios profesionales de energía solar fotovoltaica en la República de Panamá:</p>
+      <ul>
+        <li><strong>Análisis y evaluación solar:</strong> evaluación técnica de la viabilidad solar de una propiedad, análisis satelital, estimaciones de producción y ahorro</li>
+        <li><strong>Diseño de sistemas fotovoltaicos:</strong> diseño eléctrico y estructural personalizado para cada instalación</li>
+        <li><strong>Tramitación de permisos:</strong> gestión de permisos ante distribuidoras eléctricas (ENSA, EDECHI, ELEKTRA NORESTE) y ETESA</li>
+        <li><strong>Instalación de sistemas solares:</strong> instalación residencial, comercial e industrial de sistemas fotovoltaicos conectados a la red o aislados</li>
+        <li><strong>Gestión de beneficios fiscales:</strong> asesoría y tramitación de exenciones y deducciones conforme a la Ley 417</li>
+        <li><strong>Mantenimiento y monitoreo:</strong> servicios post-instalación de limpieza, revisión técnica y monitoreo de producción</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="cotizaciones">3. Cotizaciones y Propuestas</h2>
+      <p>Las cotizaciones emitidas por Solaris Panamá se rigen por las siguientes condiciones:</p>
+      <ul>
+        <li>Las cotizaciones tienen una validez de <strong>30 días calendario</strong> desde su fecha de emisión</li>
+        <li>Los precios están expresados en dólares estadounidenses (USD) e incluyen ITBMS según la exención de la Ley 417</li>
+        <li>Las estimaciones de ahorro y producción son proyecciones basadas en datos climáticos históricos y el diseño propuesto; no constituyen garantías de rendimiento específico</li>
+        <li>Cualquier modificación al alcance del proyecto requerirá una nueva cotización o adenda escrita</li>
+        <li>La cotización se basa en las condiciones del techo y de la instalación eléctrica existente reportadas por el cliente; cambios significativos en estas condiciones pueden afectar el precio final</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="contratos">4. Formalización del Contrato</h2>
+      <p>El contrato de servicios entre Solaris Panamá y el Cliente se formaliza cuando:</p>
+      <ul>
+        <li>El Cliente firma el contrato de instalación emitido por Solaris, o</li>
+        <li>El Cliente realiza el pago del anticipo establecido en la propuesta económica</li>
+      </ul>
+      <p>La solicitud de cotización a través del sitio web o por WhatsApp no constituye por sí sola un contrato vinculante. El cliente será responsable de verificar que las condiciones de su propiedad son las informadas a Solaris.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="pagos">5. Términos de Pago</h2>
+      <p>Salvo que el contrato específico establezca condiciones diferentes, la estructura de pagos estándar es la siguiente:</p>
+      <ul>
+        <li><strong>50% al firmar el contrato:</strong> cubre la adquisición de materiales y equipos</li>
+        <li><strong>40% al inicio de la instalación:</strong> confirmado antes del primer día de trabajo en sitio</li>
+        <li><strong>10% a la finalización:</strong> una vez completada la puesta en marcha del sistema y entregada la documentación</li>
+      </ul>
+
+      <h3>Métodos de pago aceptados</h3>
+      <ul>
+        <li>Transferencia bancaria a cuenta de Solaris Energy Panamá</li>
+        <li>Efectivo (previa coordinación con el equipo de ventas)</li>
+        <li>Cheque certificado a nombre de Solaris Energy Panamá</li>
+      </ul>
+
+      <h3>Pagos tardíos</h3>
+      <p>Los pagos realizados con más de 10 días de retraso sobre la fecha acordada podrán generar un cargo por mora del 1.5% mensual sobre el monto adeudado. Solaris se reserva el derecho de suspender el trabajo hasta que el pago sea recibido.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="instalacion">6. Proceso de Instalación</h2>
+      <h3>6.1 Responsabilidades del Cliente</h3>
+      <p>Para el correcto desarrollo de la instalación, el Cliente se compromete a:</p>
+      <ul>
+        <li>Garantizar acceso al techo y a la instalación eléctrica existente durante los días de trabajo</li>
+        <li>Notificar a Solaris cualquier condición estructural del techo que pueda afectar la instalación</li>
+        <li>Obtener el consentimiento del propietario si el inmueble es arrendado</li>
+        <li>Contar con un punto eléctrico trifásico o monofásico accesible según se requiera</li>
+        <li>Notificar a vecinos y autoridades locales si el proceso de instalación lo requiere</li>
+      </ul>
+
+      <h3>6.2 Responsabilidades de Solaris</h3>
+      <ul>
+        <li>Ejecutar la instalación conforme al diseño aprobado y las normativas técnicas vigentes en Panamá</li>
+        <li>Utilizar materiales y equipos de la calidad especificada en el contrato</li>
+        <li>Gestionar los permisos correspondientes ante las autoridades y distribuidoras eléctricas</li>
+        <li>Entregar el sistema en funcionamiento y capacitar al cliente en su uso básico</li>
+        <li>Proveer documentación técnica y certificados de la instalación</li>
+      </ul>
+
+      <h3>6.3 Plazos</h3>
+      <p>Los plazos de instalación son estimativos y pueden variar por causas ajenas a la voluntad de Solaris, incluyendo retrasos en permisos, condiciones climáticas adversas, o disponibilidad de equipos. Solaris notificará al cliente con anticipación sobre cualquier cambio significativo en el cronograma.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="garantias">7. Garantías</h2>
+      <p>Solaris Panamá garantiza lo siguiente en todos sus proyectos de instalación:</p>
+
+      <h3>7.1 Garantía de la instalación (mano de obra)</h3>
+      <ul>
+        <li><strong>5 años</strong> de garantía sobre la calidad de la instalación y el trabajo realizado por Solaris</li>
+        <li>Cubre fallos en la estructura de montaje, conexiones eléctricas y trabajo de instalación</li>
+        <li>No cubre daños causados por terremotos, huracanes, vandalismo o modificaciones no autorizadas</li>
+      </ul>
+
+      <h3>7.2 Garantía de equipos (transferida del fabricante)</h3>
+      <ul>
+        <li><strong>Paneles fotovoltaicos:</strong> garantía de producto de 10-12 años y garantía de rendimiento lineal de 25-30 años (según fabricante)</li>
+        <li><strong>Inversores:</strong> garantía de 5 a 10 años según el fabricante y modelo instalado</li>
+        <li><strong>Baterías (si aplica):</strong> garantía según las especificaciones del fabricante, típicamente 5-10 años</li>
+        <li><strong>Estructuras de montaje:</strong> garantía de 10 años contra corrosión y deformación</li>
+      </ul>
+
+      <div class="warning-box">
+        <p>Las garantías de equipos son emitidas por los fabricantes y Solaris actúa como intermediario para facilitar su gestión. Solaris no asume responsabilidad directa por los términos específicos de la garantía de cada fabricante.</p>
+      </div>
+
+      <h3>7.3 Exclusiones de garantía</h3>
+      <p>Las garantías no cubrirán daños causados por:</p>
+      <ul>
+        <li>Uso incorrecto o modificaciones no autorizadas del sistema</li>
+        <li>Daños causados por fenómenos naturales de fuerza mayor (rayos, inundaciones, terremotos)</li>
+        <li>Negligencia o falta de mantenimiento preventivo recomendado por Solaris</li>
+        <li>Intervención de terceros no autorizados por Solaris</li>
+        <li>Daños en la instalación eléctrica preexistente del inmueble</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="rendimiento">8. Rendimiento del Sistema</h2>
+      <p>Las estimaciones de producción de energía y ahorro económico presentadas en las propuestas comerciales son proyecciones basadas en:</p>
+      <ul>
+        <li>Datos históricos de irradiación solar de la zona (fuentes: NASA, PVGIS)</li>
+        <li>El diseño técnico del sistema propuesto</li>
+        <li>Eficiencias declaradas por los fabricantes de equipos</li>
+        <li>Supuestos sobre el comportamiento de la red eléctrica local</li>
+      </ul>
+      <p>El rendimiento real puede variar en ±15% respecto a las estimaciones por factores fuera del control de Solaris, incluyendo variaciones climáticas interanuales, sombreado estacional, o cambios en las tarifas eléctricas.</p>
+      <p>Solaris no garantiza un nivel de producción o ahorro específico, y las estimaciones no constituyen una obligación de resultado, salvo que se especifique expresamente por escrito en el contrato.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="mantenimiento">9. Mantenimiento</h2>
+      <p>Para el correcto funcionamiento del sistema durante toda su vida útil, el cliente es responsable de:</p>
+      <ul>
+        <li>Limpiar los paneles al menos dos veces al año (o más frecuentemente en zonas polvorientas)</li>
+        <li>No instalar objetos que generen sombra sobre los paneles sin consultar a Solaris</li>
+        <li>No modificar el cableado o los equipos sin autorización de técnicos certificados</li>
+        <li>Reportar a Solaris cualquier anomalía en la producción o en los equipos</li>
+      </ul>
+      <p>Solaris Panamá ofrece planes de mantenimiento preventivo anuales o semestrales. El incumplimiento de las recomendaciones de mantenimiento puede afectar la validez de la garantía de instalación.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="responsabilidad">10. Limitación de Responsabilidad</h2>
+      <p>En la máxima medida permitida por la ley panameña:</p>
+      <ul>
+        <li>La responsabilidad total de Solaris Panamá ante el Cliente no excederá el monto total pagado por el Cliente por los servicios objeto de la reclamación</li>
+        <li>Solaris no será responsable por daños indirectos, incidentales, especiales o consecuentes, incluyendo pérdida de beneficios esperados o ahorro proyectado</li>
+        <li>Solaris no asume responsabilidad por interrupciones del suministro eléctrico por parte de la distribuidora, cambios regulatorios que afecten la generación distribuida, ni aumentos o decrementos en las tarifas eléctricas</li>
+        <li>Solaris no es responsable por daños a la estructura del inmueble preexistentes que no hayan sido identificados ni informados antes de la instalación</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="cancelacion">11. Cancelación</h2>
+      <h3>11.1 Cancelación por el Cliente antes de la instalación</h3>
+      <ul>
+        <li>Dentro de los primeros 5 días hábiles desde la firma del contrato: reembolso completo del anticipo, menos gastos administrativos ya incurridos</li>
+        <li>Entre el día 6 y el inicio de la instalación: Solaris retendrá los costos de equipos ya adquiridos y gestiones realizadas</li>
+        <li>Una vez iniciada la instalación: no procede reembolso del anticipo; se cobra el trabajo completado hasta la fecha de cancelación</li>
+      </ul>
+
+      <h3>11.2 Cancelación por Solaris</h3>
+      <p>Solaris podrá cancelar el contrato, con reembolso proporcional al Cliente, si:</p>
+      <ul>
+        <li>Se identifican condiciones estructurales del techo que hagan inviable o insegura la instalación, no previamente informadas por el cliente</li>
+        <li>El cliente incumple reiteradamente las condiciones de acceso o pago establecidas</li>
+        <li>Causas de fuerza mayor prolongadas hacen inviable la ejecución del proyecto</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="uso-sitio">12. Uso del Sitio Web</h2>
+      <p>Al acceder a <strong>solaris-panama.com</strong>, aceptas utilizar el sitio de manera legal y conforme a estos Términos. Queda prohibido:</p>
+      <ul>
+        <li>Usar el sitio para actividades ilícitas o fraudulentas</li>
+        <li>Enviar información falsa a través de los formularios de contacto</li>
+        <li>Intentar acceder a partes del sitio restringidas al público</li>
+        <li>Realizar scraping masivo de contenido sin autorización escrita</li>
+        <li>Introducir virus, malware o cualquier código dañino</li>
+      </ul>
+      <p>La calculadora de ahorro solar y otras herramientas interactivas del sitio proporcionan estimaciones orientativas y no constituyen asesoría técnica ni financiera formal.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="propiedad-intelectual">13. Propiedad Intelectual</h2>
+      <p>Todo el contenido del sitio web solaris-panama.com, incluyendo textos, imágenes, logotipos, diseño, código y calculadoras, es propiedad de Solaris Energy Panamá o de sus licenciantes, y está protegido por las leyes de propiedad intelectual aplicables en Panamá e internacionalmente.</p>
+      <p>Queda prohibida la reproducción, distribución o uso comercial de cualquier contenido del sitio sin autorización escrita previa de Solaris. Los clientes pueden compartir información del sitio con fines informativos personales, sin alterar ni eliminar los avisos de propiedad.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="jurisdiccion">14. Jurisdicción y Ley Aplicable</h2>
+      <p>Estos Términos de Servicio se rigen por las leyes de la <strong>República de Panamá</strong>. Cualquier controversia derivada de la interpretación, ejecución o incumplimiento de estos Términos o de los contratos de servicio se someterá, en primera instancia, a una negociación amistosa entre las partes.</p>
+      <p>Si no se alcanza acuerdo en un plazo de 30 días, la controversia será sometida a los tribunales competentes de la <strong>República de Panamá</strong>, con renuncia expresa a cualquier otro fuero que pudiera corresponder.</p>
+      <p>Las partes podrán acordar voluntariamente el sometimiento a arbitraje mediante el Centro de Conciliación y Arbitraje de Panamá (CECAP), si así lo deciden mutuamente por escrito.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="contacto-tos">15. Contacto</h2>
+      <p>Para consultas sobre estos Términos de Servicio o cualquier aspecto legal de la relación comercial con Solaris Panamá:</p>
+      <ul>
+        <li><strong>Correo electrónico:</strong> <a href="mailto:info@solarispanama.com">info@solarispanama.com</a></li>
+        <li><strong>WhatsApp / Teléfono:</strong> +507 6583-1822</li>
+        <li><strong>Ubicación:</strong> Península de Azuero, República de Panamá</li>
+      </ul>
+      <p>Solaris Panamá se reserva el derecho de modificar estos Términos en cualquier momento. Las modificaciones entran en vigor al publicarse en este sitio web. Los contratos ya suscritos se rigen por los términos vigentes en la fecha de su firma.</p>
+
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom">
+      <p>© 2026 Solaris Panamá. Todos los derechos reservados.</p>
+      <div class="footer-legal">
+        <a href="/politica-de-privacidad.html">Privacidad</a>
+        <a href="/terminos-de-servicio.html">Términos</a>
+        <a href="/contacto.html">Contacto</a>
+        <a href="/">Inicio</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/50765831822?text=Hola%2C%20me%20interesa%20una%20cotizaci%C3%B3n%20de%20paneles%20solares" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+</body>
+</html>

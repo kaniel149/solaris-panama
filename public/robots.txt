@@ -1,3 +1,15 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /crm-leads
+Disallow: /projects
+Disallow: /clients
+Disallow: /settings
+Disallow: /api/
+Disallow: /tools/
+Disallow: /leads
+Disallow: /monitoring
+Disallow: /calendar
+
 Sitemap: https://solaris-panama.com/sitemap.xml
