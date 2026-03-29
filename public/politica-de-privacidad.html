@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad — Solaris Panamá</title>
+<meta name="description" content="Política de privacidad de Solaris Energy Panamá. Cómo recopilamos, usamos y protegemos tu información personal.">
+<meta property="og:title" content="Política de Privacidad — Solaris Panamá">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://solaris-panama.com/politica-de-privacidad.html">
+<link rel="canonical" href="https://solaris-panama.com/politica-de-privacidad.html">
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-900: #0B3D2E;
+  --green-800: #0E4D3A;
+  --green-700: #116B50;
+  --green-600: #158C68;
+  --green-50:  #F4FAF7;
+  --gold-500:  #D4A843;
+  --gold-400:  #E4BE5A;
+  --white:     #FEFDFB;
+  --gray-50:   #FAFAF8;
+  --gray-100:  #F0EFEB;
+  --gray-200:  #E0DED8;
+  --gray-400:  #A8A59E;
+  --gray-600:  #6B6860;
+  --gray-800:  #2E2C28;
+  --gray-900:  #1A1916;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: var(--gray-800);
+  background: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 400; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); letter-spacing: -0.01em; color: var(--green-900); margin-top: 2.5rem; margin-bottom: 1rem; }
+h3 { font-size: 1.15rem; color: var(--green-900); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+.container { max-width: 800px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+
+/* NAV */
+.nav {
+  background: rgba(11,61,46,0.97); backdrop-filter: blur(20px);
+  padding: 1rem 0; box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+.nav .container { max-width: 1200px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+.nav-logo svg { color: var(--gold-400); }
+.nav-links { display: none; list-style: none; gap: 2rem; }
+@media (min-width: 768px) { .nav-links { display: flex; } }
+.nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--white); }
+.btn-nav { display: inline-flex; align-items: center; padding: 0.6rem 1.4rem; background: var(--gold-500); color: var(--green-900); border-radius: 99px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s; }
+.btn-nav:hover { background: var(--gold-400); }
+
+/* PAGE HEADER */
+.page-header { background: var(--green-900); padding: clamp(4rem, 8vw, 6rem) 0 3rem; }
+.page-header .container { max-width: 800px; }
+.page-header .label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-500); display: block; margin-bottom: 0.75rem; }
+.page-header h1 { color: var(--white); margin-bottom: 1rem; }
+.page-header .meta { color: rgba(255,255,255,0.5); font-size: 0.875rem; }
+
+/* CONTENT */
+.content-wrap { padding: clamp(3rem, 6vw, 5rem) 0; }
+
+.prose p { color: var(--gray-600); line-height: 1.8; margin-bottom: 1.25rem; font-size: 1rem; }
+.prose ul, .prose ol { color: var(--gray-600); padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.prose li { margin-bottom: 0.5rem; line-height: 1.7; }
+.prose strong { color: var(--gray-800); font-weight: 600; }
+.prose a { color: var(--green-700); text-decoration: underline; }
+.prose a:hover { color: var(--green-600); }
+
+.toc {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md); padding: 1.5rem 2rem; margin-bottom: 3rem;
+}
+.toc h3 { color: var(--green-900); margin-top: 0; margin-bottom: 1rem; font-size: 1rem; }
+.toc ol { padding-left: 1.25rem; margin: 0; }
+.toc li { margin-bottom: 0.4rem; }
+.toc a { color: var(--green-700); text-decoration: none; font-size: 0.9rem; }
+.toc a:hover { text-decoration: underline; }
+
+.section-divider { border: none; border-top: 1px solid var(--gray-100); margin: 2.5rem 0; }
+
+.highlight-box {
+  background: var(--green-50); border-left: 3px solid var(--green-700);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.highlight-box p { margin-bottom: 0; color: var(--green-900); font-size: 0.95rem; }
+
+/* FOOTER */
+footer { background: var(--gray-900); padding: 3rem 0 2rem; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.footer-bottom { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.footer-bottom p { color: var(--gray-600); font-size: 0.8rem; }
+.footer-legal { display: flex; gap: 1.5rem; }
+.footer-legal a { color: var(--gray-600); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+.footer-legal a:hover { color: var(--gray-400); }
+
+/* WA */
+.whatsapp-float {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
+  transition: transform 0.3s;
+}
+.whatsapp-float:hover { transform: scale(1.1); }
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container">
+    <a href="/" class="nav-logo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      Solaris Panamá
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/servicios.html">Servicios</a></li>
+      <li><a href="/towns/solar-pedasi.html">Proyectos</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/contacto.html">Contacto</a></li>
+    </ul>
+    <a href="/contacto.html" class="btn-nav">Cotización Gratis</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <span class="label">Legal</span>
+    <h1>Política de Privacidad</h1>
+    <p class="meta">Última actualización: enero de 2026 · Solaris Energy Panamá</p>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main class="content-wrap">
+  <div class="container">
+    <div class="prose">
+
+      <div class="toc">
+        <h3>Contenido</h3>
+        <ol>
+          <li><a href="#quienes-somos">Quiénes somos</a></li>
+          <li><a href="#datos-recopilados">Datos que recopilamos</a></li>
+          <li><a href="#como-usamos">Cómo usamos tus datos</a></li>
+          <li><a href="#whatsapp">Comunicación por WhatsApp</a></li>
+          <li><a href="#google-analytics">Google Analytics y Cookies</a></li>
+          <li><a href="#google-ads">Google Ads</a></li>
+          <li><a href="#compartir">Con quién compartimos tus datos</a></li>
+          <li><a href="#retencion">Retención de datos</a></li>
+          <li><a href="#derechos">Tus derechos</a></li>
+          <li><a href="#seguridad">Seguridad</a></li>
+          <li><a href="#menores">Menores de edad</a></li>
+          <li><a href="#cambios">Cambios a esta política</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ol>
+      </div>
+
+      <p>Solaris Energy Panamá ("Solaris", "nosotros", "nuestro") opera el sitio web <strong>solaris-panama.com</strong> y se compromete a proteger tu privacidad. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos la información que nos proporcionas al utilizar nuestro sitio web o al contactarnos.</p>
+      <p>Al usar nuestro sitio web o al enviarnos tus datos de contacto, aceptas las prácticas descritas en este documento.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="quienes-somos">1. Quiénes Somos</h2>
+      <p><strong>Responsable del tratamiento de datos:</strong></p>
+      <ul>
+        <li><strong>Empresa:</strong> Solaris Energy Panamá</li>
+        <li><strong>Dominio:</strong> solaris-panama.com</li>
+        <li><strong>Correo:</strong> info@solarispanama.com</li>
+        <li><strong>Teléfono:</strong> +507 6583-1822</li>
+        <li><strong>Ubicación:</strong> Península de Azuero, República de Panamá</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="datos-recopilados">2. Datos que Recopilamos</h2>
+      <p>Recopilamos los siguientes tipos de información:</p>
+
+      <h3>2.1 Datos proporcionados directamente por ti</h3>
+      <p>Cuando completas formularios en nuestro sitio web o nos contactas, podemos recopilar:</p>
+      <ul>
+        <li>Nombre completo</li>
+        <li>Nombre de empresa o negocio</li>
+        <li>Número de teléfono (incluyendo WhatsApp)</li>
+        <li>Correo electrónico</li>
+        <li>Ubicación o zona geográfica</li>
+        <li>Área estimada del techo (m²)</li>
+        <li>Mensajes o comentarios que nos envíes</li>
+      </ul>
+
+      <h3>2.2 Datos recopilados automáticamente</h3>
+      <p>Al visitar nuestro sitio web, recopilamos automáticamente:</p>
+      <ul>
+        <li>Dirección IP (anonimizada)</li>
+        <li>Tipo y versión de navegador</li>
+        <li>Sistema operativo</li>
+        <li>Páginas visitadas y duración de la visita</li>
+        <li>Fuente de tráfico (cómo llegaste al sitio)</li>
+        <li>Datos de Google Analytics (ver sección 5)</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="como-usamos">3. Cómo Usamos tus Datos</h2>
+      <p>Utilizamos tu información personal exclusivamente para los siguientes fines:</p>
+      <ul>
+        <li><strong>Responder a tu solicitud de cotización</strong> y enviarte la evaluación solar personalizada</li>
+        <li><strong>Contactarte</strong> a través del canal que prefieras (teléfono, WhatsApp, correo electrónico)</li>
+        <li><strong>Elaborar propuestas</strong> de instalación de sistemas solares</li>
+        <li><strong>Enviar comunicaciones comerciales relevantes</strong> sobre nuestros servicios, únicamente si nos das tu consentimiento</li>
+        <li><strong>Mejorar nuestro sitio web</strong> y la experiencia del usuario mediante análisis estadístico</li>
+        <li><strong>Cumplir con obligaciones legales</strong> aplicables en la República de Panamá</li>
+      </ul>
+
+      <div class="highlight-box">
+        <p>Nunca usamos tus datos para venderlos a terceros ni para enviarte publicidad de empresas ajenas a Solaris Panamá.</p>
+      </div>
+
+      <hr class="section-divider">
+
+      <h2 id="whatsapp">4. Comunicación por WhatsApp</h2>
+      <p>Al usar el botón de WhatsApp en nuestro sitio o al facilitarnos tu número, entiendes que:</p>
+      <ul>
+        <li>Tus mensajes y número de teléfono serán almacenados por WhatsApp Inc. (Meta Platforms) según sus propias políticas de privacidad</li>
+        <li>Usaremos tu número únicamente para responder a tus consultas y hacer seguimiento comercial relacionado con energía solar</li>
+        <li>No te añadiremos a grupos o listas de difusión sin tu consentimiento expreso</li>
+        <li>Puedes pedir que dejemos de contactarte en cualquier momento respondiendo "STOP" o escribiéndonos a info@solarispanama.com</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="google-analytics">5. Google Analytics y Cookies</h2>
+      <p>Utilizamos <strong>Google Analytics</strong> para analizar el uso de nuestro sitio web y mejorar su contenido. Google Analytics recopila información anónima sobre el comportamiento de los visitantes mediante cookies.</p>
+
+      <h3>¿Qué son las cookies?</h3>
+      <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo al visitar una página web. Nos permiten recordar tus preferencias y analizar el tráfico de forma agregada.</p>
+
+      <h3>Tipos de cookies que usamos</h3>
+      <ul>
+        <li><strong>Cookies técnicas esenciales:</strong> necesarias para el funcionamiento del sitio. No pueden desactivarse.</li>
+        <li><strong>Cookies analíticas (Google Analytics):</strong> recopilan datos de uso de forma anónima para mejorar el sitio. Puedes desactivarlas.</li>
+        <li><strong>Cookies publicitarias (Google Ads):</strong> utilizadas para medir conversiones de campañas publicitarias (ver sección 6).</li>
+      </ul>
+
+      <h3>Cómo desactivar las cookies</h3>
+      <p>Puedes desactivar las cookies en la configuración de tu navegador o usar la extensión oficial de Google: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>.</p>
+      <p>Para más información sobre cómo Google usa los datos, consulta: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a></p>
+
+      <hr class="section-divider">
+
+      <h2 id="google-ads">6. Google Ads y Seguimiento de Conversiones</h2>
+      <p>Nuestro sitio puede incluir el píxel de seguimiento de <strong>Google Ads</strong> para medir la efectividad de nuestras campañas publicitarias en Google Search y Google Display.</p>
+      <p>Este seguimiento funciona mediante cookies y puede registrar:</p>
+      <ul>
+        <li>Si llegaste a nuestro sitio desde un anuncio de Google</li>
+        <li>Si completaste una acción de conversión (como enviar el formulario)</li>
+      </ul>
+      <p>No recopilamos información personal identificable a través de este seguimiento. Los datos son procesados de forma agregada por Google.</p>
+      <p>Puedes gestionar las preferencias de publicidad personalizada en: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a></p>
+
+      <hr class="section-divider">
+
+      <h2 id="compartir">7. Con Quién Compartimos tus Datos</h2>
+      <p>No vendemos, alquilamos ni cedemos tu información personal a terceros con fines comerciales. Únicamente compartimos tus datos en los siguientes casos excepcionales:</p>
+      <ul>
+        <li><strong>Proveedores de servicios:</strong> empresas que nos ayudan a operar el negocio (por ejemplo, plataformas de CRM, servicios de correo), que están obligadas contractualmente a proteger tu información</li>
+        <li><strong>Obligaciones legales:</strong> si una autoridad competente de la República de Panamá lo requiere mediante orden judicial o mandato legal</li>
+        <li><strong>Con tu consentimiento explícito:</strong> en cualquier otro caso donde te hayamos informado previamente y hayas aceptado</li>
+      </ul>
+
+      <h3>Plataformas de terceros que procesan datos</h3>
+      <ul>
+        <li><strong>Google (Analytics y Ads):</strong> datos de uso anónimos del sitio web</li>
+        <li><strong>Meta (WhatsApp):</strong> comunicaciones directas de WhatsApp</li>
+        <li><strong>Supabase:</strong> base de datos donde almacenamos las solicitudes de cotización (servidores en la nube, con cifrado)</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <h2 id="retencion">8. Retención de Datos</h2>
+      <p>Conservamos tus datos personales durante el tiempo necesario para prestarte el servicio solicitado y cumplir con nuestras obligaciones legales en Panamá:</p>
+      <ul>
+        <li><strong>Solicitudes de cotización y contactos:</strong> hasta 3 años después del último contacto</li>
+        <li><strong>Clientes con instalación activa:</strong> durante la vigencia del contrato y la garantía, más 5 años adicionales</li>
+        <li><strong>Datos analíticos (Google Analytics):</strong> 14 meses según la configuración estándar</li>
+      </ul>
+      <p>Transcurridos estos plazos, tus datos serán eliminados o anonimizados de forma segura.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="derechos">9. Tus Derechos</h2>
+      <p>Tienes derecho a:</p>
+      <ul>
+        <li><strong>Acceso:</strong> solicitar una copia de los datos personales que tenemos sobre ti</li>
+        <li><strong>Rectificación:</strong> corregir datos inexactos o desactualizados</li>
+        <li><strong>Eliminación:</strong> solicitar que eliminemos tus datos personales (derecho al olvido), salvo que estemos obligados a conservarlos por ley</li>
+        <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado y de uso común</li>
+        <li><strong>Oposición:</strong> oponerte al uso de tus datos para comunicaciones comerciales</li>
+        <li><strong>Revocación del consentimiento:</strong> retirar tu consentimiento en cualquier momento sin que ello afecte a la legalidad del tratamiento previo</li>
+      </ul>
+      <p>Para ejercer cualquiera de estos derechos, escríbenos a: <a href="mailto:info@solarispanama.com">info@solarispanama.com</a> con el asunto "Privacidad – [tu solicitud]". Responderemos en un plazo máximo de 30 días hábiles.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="seguridad">10. Seguridad de tus Datos</h2>
+      <p>Tomamos medidas técnicas y organizativas razonables para proteger tu información personal contra acceso no autorizado, pérdida o divulgación, que incluyen:</p>
+      <ul>
+        <li>Cifrado SSL/TLS en todas las comunicaciones del sitio web (HTTPS)</li>
+        <li>Almacenamiento seguro en bases de datos con control de acceso</li>
+        <li>Acceso restringido a los datos únicamente al personal autorizado</li>
+        <li>Revisiones periódicas de seguridad</li>
+      </ul>
+      <p>Sin embargo, ningún sistema de transmisión de datos por internet es 100% seguro. Si identificas alguna vulnerabilidad, notifícanos en info@solarispanama.com.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="menores">11. Menores de Edad</h2>
+      <p>Nuestro sitio web y servicios no están dirigidos a personas menores de 18 años. No recopilamos intencionalmente datos personales de menores. Si eres padre o tutor y crees que tu hijo nos ha proporcionado datos personales, contáctanos para que podamos eliminarlos.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="cambios">12. Cambios a Esta Política</h2>
+      <p>Nos reservamos el derecho de actualizar esta Política de Privacidad en cualquier momento. Cuando lo hagamos, revisaremos la fecha de "Última actualización" al inicio del documento. Te recomendamos revisarla periódicamente.</p>
+      <p>Si los cambios son significativos y tienes una relación activa con nosotros, te lo notificaremos por correo electrónico o a través de un aviso en el sitio web.</p>
+
+      <hr class="section-divider">
+
+      <h2 id="contacto">13. Contacto para Asuntos de Privacidad</h2>
+      <p>Para cualquier consulta, solicitud o reclamación relacionada con el tratamiento de tus datos personales, puedes contactarnos a través de:</p>
+      <ul>
+        <li><strong>Correo electrónico:</strong> <a href="mailto:info@solarispanama.com">info@solarispanama.com</a></li>
+        <li><strong>Asunto del correo:</strong> "Política de Privacidad – [tu consulta]"</li>
+        <li><strong>Teléfono / WhatsApp:</strong> +507 6583-1822</li>
+        <li><strong>Ubicación:</strong> Península de Azuero, República de Panamá</li>
+      </ul>
+      <p>Esta política se rige por las leyes de la República de Panamá, incluyendo la Ley 81 de 2019 sobre Protección de Datos Personales.</p>
+
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom">
+      <p>© 2026 Solaris Panamá. Todos los derechos reservados.</p>
+      <div class="footer-legal">
+        <a href="/politica-de-privacidad.html">Privacidad</a>
+        <a href="/terminos-de-servicio.html">Términos</a>
+        <a href="/contacto.html">Contacto</a>
+        <a href="/">Inicio</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/50765831822?text=Hola%2C%20me%20interesa%20una%20cotizaci%C3%B3n%20de%20paneles%20solares" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+</body>
+</html>
