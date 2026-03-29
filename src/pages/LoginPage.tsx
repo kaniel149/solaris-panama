@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sun, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
@@ -71,8 +71,8 @@ const LoginPage: React.FC = () => {
           }}
         />
         {/* Radial glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#00ffcc]/[0.04] blur-[120px]" />
-        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] rounded-full bg-[#8b5cf6]/[0.04] blur-[100px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4A843]/[0.04] blur-[120px]" />
+        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] rounded-full bg-[#0B3D2E]/[0.08] blur-[100px]" />
       </div>
 
       {/* Card */}
@@ -90,10 +90,10 @@ const LoginPage: React.FC = () => {
             transition={{ delay: 0.1 }}
             className="flex flex-col items-center mb-8"
           >
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00ffcc] to-[#8b5cf6] flex items-center justify-center mb-4 shadow-lg shadow-[#00ffcc]/20">
-              <Sun className="w-7 h-7 text-[#0a0a0f]" />
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center mb-4 shadow-lg shadow-[#D4A843]/20">
+              <img src="/solaris-icon.png" alt="Solaris" className="w-8 h-8" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-[#00ffcc] to-[#8b5cf6] bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-[#D4A843] to-[#f5d080] bg-clip-text text-transparent">
               SOLARIS
             </h1>
             <p className="text-white/30 text-sm mt-1">Panama Solar CRM</p>
@@ -128,7 +128,7 @@ const LoginPage: React.FC = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ffcc]/40 focus:bg-white/[0.06] transition-all text-sm"
+                    className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#D4A843]/40 focus:bg-white/[0.06] transition-all text-sm"
                   />
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
                 </div>
@@ -146,7 +146,7 @@ const LoginPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
                   required
-                  className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ffcc]/40 focus:bg-white/[0.06] transition-all text-sm"
+                  className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#D4A843]/40 focus:bg-white/[0.06] transition-all text-sm"
                 />
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
               </div>
@@ -164,7 +164,7 @@ const LoginPage: React.FC = () => {
                   placeholder="Enter password"
                   required
                   minLength={6}
-                  className="w-full px-4 py-3 pl-11 pr-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ffcc]/40 focus:bg-white/[0.06] transition-all text-sm"
+                  className="w-full px-4 py-3 pl-11 pr-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/20 focus:outline-none focus:border-[#D4A843]/40 focus:bg-white/[0.06] transition-all text-sm"
                 />
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
                 <button
@@ -186,8 +186,8 @@ const LoginPage: React.FC = () => {
               className={cn(
                 'w-full py-3 rounded-xl font-semibold text-sm transition-all relative overflow-hidden',
                 loading
-                  ? 'bg-[#00ffcc]/20 text-[#00ffcc]/50 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#00ffcc] to-[#00e6b8] text-[#0a0a0f] hover:shadow-lg hover:shadow-[#00ffcc]/20'
+                  ? 'bg-[#D4A843]/20 text-[#D4A843]/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#D4A843] to-[#f5d080] text-[#0a0a0f] hover:shadow-lg hover:shadow-[#D4A843]/20'
               )}
             >
               {loading ? (
@@ -250,7 +250,7 @@ const LoginPage: React.FC = () => {
                     setMode('signup');
                     setError(null);
                   }}
-                  className="text-[#00ffcc] hover:text-[#00ffcc]/80 font-medium transition-colors"
+                  className="text-[#D4A843] hover:text-[#D4A843]/80 font-medium transition-colors"
                 >
                   Sign up
                 </button>
@@ -263,7 +263,7 @@ const LoginPage: React.FC = () => {
                     setMode('login');
                     setError(null);
                   }}
-                  className="text-[#00ffcc] hover:text-[#00ffcc]/80 font-medium transition-colors"
+                  className="text-[#D4A843] hover:text-[#D4A843]/80 font-medium transition-colors"
                 >
                   Sign in
                 </button>

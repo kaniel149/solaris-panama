@@ -79,14 +79,14 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         {/* Notifications */}
         <button className="relative p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#00ffcc]" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D4A843]" />
         </button>
 
         {/* User avatar + dropdown */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00ffcc]/20 to-[#8b5cf6]/20 border border-white/[0.1] flex items-center justify-center text-sm font-semibold text-[#00ffcc] hover:border-[#00ffcc]/30 transition-colors"
+            className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D4A843]/20 to-[#0B3D2E]/20 border border-white/[0.1] flex items-center justify-center text-sm font-semibold text-[#D4A843] hover:border-[#D4A843]/30 transition-colors"
           >
             {userInitial}
           </button>

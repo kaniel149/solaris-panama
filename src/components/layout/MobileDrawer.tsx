@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sun } from 'lucide-react';
+import { X } from 'lucide-react';
 import { mainNavItems, bottomNavItems } from '../../config/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -57,10 +57,10 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ open, onClose }) => {
             {/* Header */}
             <div className="h-16 flex items-center justify-between px-4 border-b border-white/[0.06]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00ffcc] to-[#8b5cf6] flex items-center justify-center">
-                  <Sun className="w-5 h-5 text-[#0a0a0f]" />
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center">
+                  <img src="/solaris-icon.png" alt="Solaris" className="w-6 h-6" />
                 </div>
-                <span className="text-lg font-bold bg-gradient-to-r from-[#00ffcc] to-[#8b5cf6] bg-clip-text text-transparent">
+                <span className="text-lg font-bold bg-gradient-to-r from-[#D4A843] to-[#f5d080] bg-clip-text text-transparent">
                   SOLARIS
                 </span>
               </div>
@@ -84,22 +84,22 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ open, onClose }) => {
                     className={cn(
                       'w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 relative',
                       active
-                        ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
+                        ? 'bg-[#D4A843]/10 text-[#D4A843]'
                         : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
                     )}
                   >
                     {active && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#00ffcc]" />
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]" />
                     )}
                     <Icon
                       className={cn(
                         'w-5 h-5 shrink-0',
-                        active && 'drop-shadow-[0_0_8px_rgba(0,255,204,0.5)]'
+                        active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]'
                       )}
                     />
                     <span className="text-sm font-medium">{t(item.labelKey)}</span>
                     {item.badge && item.badge > 0 && (
-                      <span className="ml-auto text-xs bg-[#8b5cf6] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                      <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                         {item.badge}
                       </span>
                     )}
@@ -111,7 +111,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ open, onClose }) => {
             {/* User info at bottom */}
             <div className="px-4 py-4 border-t border-white/[0.06]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00ffcc]/20 to-[#8b5cf6]/20 border border-white/[0.1] flex items-center justify-center text-sm font-semibold text-[#00ffcc]">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D4A843]/20 to-[#0B3D2E]/20 border border-white/[0.1] flex items-center justify-center text-sm font-semibold text-[#D4A843]">
                   {user?.user_metadata?.full_name?.charAt(0).toUpperCase() ||
                     user?.email?.charAt(0).toUpperCase() ||
                     'U'}

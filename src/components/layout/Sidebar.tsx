@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Sun } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { mainNavItems, toolsNavItems, bottomNavItems } from '../../config/navigation';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
@@ -42,8 +42,8 @@ const Sidebar: React.FC = () => {
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-white/[0.06]">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00ffcc] to-[#8b5cf6] flex items-center justify-center shrink-0">
-            <Sun className="w-5 h-5 text-[#0a0a0f]" />
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center shrink-0">
+            <img src="/solaris-icon.png" alt="Solaris" className="w-6 h-6" />
           </div>
           <AnimatePresence>
             {!collapsed && (
@@ -52,7 +52,7 @@ const Sidebar: React.FC = () => {
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.15 }}
-                className="text-lg font-bold bg-gradient-to-r from-[#00ffcc] to-[#8b5cf6] bg-clip-text text-transparent whitespace-nowrap"
+                className="text-lg font-bold bg-gradient-to-r from-[#D4A843] to-[#f5d080] bg-clip-text text-transparent whitespace-nowrap"
               >
                 SOLARIS
               </motion.span>
@@ -74,18 +74,18 @@ const Sidebar: React.FC = () => {
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative',
                 active
-                  ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
+                  ? 'bg-[#D4A843]/10 text-[#D4A843]'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
               )}
             >
               {active && (
                 <motion.div
                   layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#00ffcc]"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(0,255,204,0.5)]')} />
+              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]')} />
               <AnimatePresence>
                 {!collapsed && (
                   <motion.span
@@ -100,7 +100,7 @@ const Sidebar: React.FC = () => {
                 )}
               </AnimatePresence>
               {!collapsed && item.badge && item.badge > 0 && (
-                <span className="ml-auto text-xs bg-[#8b5cf6] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                   {item.badge}
                 </span>
               )}
@@ -137,18 +137,18 @@ const Sidebar: React.FC = () => {
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative',
                 active
-                  ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
+                  ? 'bg-[#D4A843]/10 text-[#D4A843]'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
               )}
             >
               {active && (
                 <motion.div
                   layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#00ffcc]"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(0,255,204,0.5)]')} />
+              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]')} />
               <AnimatePresence>
                 {!collapsed && (
                   <motion.span
@@ -180,7 +180,7 @@ const Sidebar: React.FC = () => {
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150',
                 active
-                  ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
+                  ? 'bg-[#D4A843]/10 text-[#D4A843]'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
               )}
             >

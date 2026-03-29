@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sun } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
@@ -54,7 +54,7 @@ const Layout: React.FC = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="w-10 h-10 rounded-full border-2 border-[#00ffcc]/20 border-t-[#00ffcc]"
+            className="w-10 h-10 rounded-full border-2 border-[#D4A843]/20 border-t-[#D4A843]"
           />
           <span className="text-white/40 text-sm">Loading...</span>
         </div>
@@ -94,8 +94,8 @@ const Layout: React.FC = () => {
               <div
                 className={`absolute top-3 right-0 translate-x-full flex flex-col items-center gap-1.5 py-2.5 px-1.5 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer transition-opacity duration-200 ${sidebarHover ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               >
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00ffcc] to-[#8b5cf6] flex items-center justify-center">
-                  <Sun className="w-4 h-4 text-[#0a0a0f]" />
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center">
+                  <img src="/solaris-icon.png" alt="Solaris" className="w-5 h-5" />
                 </div>
                 <ChevronRight className="w-3 h-3 text-[#555566]" />
               </div>
