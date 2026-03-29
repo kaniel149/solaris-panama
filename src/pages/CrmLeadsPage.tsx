@@ -6,13 +6,10 @@ import {
   Phone,
   RefreshCw,
   Plus,
-  Filter,
-  ChevronDown,
   Search,
   Globe,
   Instagram,
   Facebook,
-  ArrowRight,
   X,
   Send,
 } from 'lucide-react';
@@ -28,8 +25,6 @@ import {
 } from '@/services/leadService';
 
 const cn = (...c: (string | boolean | undefined | null)[]) => c.filter(Boolean).join(' ');
-
-const WHATSAPP_NUMBER = '50765831822';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   new: { label: 'Nuevo', color: '#00ffcc', bg: 'rgba(0,255,204,0.1)' },
@@ -57,7 +52,6 @@ export default function CrmLeadsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
-  const [filterOpen, setFilterOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, new: 0, contacted: 0, qualified: 0, won: 0, bySource: {} as Record<string, number> });
 
   // Detail panel
