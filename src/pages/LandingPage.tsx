@@ -133,7 +133,7 @@ export default function LandingPage() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
 
@@ -142,6 +142,34 @@ export default function LandingPage() {
     // Track Google Ads conversion
     trackLeadConversion();
 
+    // Extract UTM params from URL
+    const params = new URLSearchParams(window.location.search);
+
+    // Save lead to database
+    try {
+      await fetch('/api/leads/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.nombre.trim(),
+          phone: form.telefono.trim(),
+          monthly_bill: form.factura || null,
+          source: params.get('utm_source') === 'google' ? 'google_ads'
+            : params.get('utm_source') === 'facebook' ? 'facebook'
+            : params.get('utm_source') === 'instagram' ? 'instagram'
+            : 'website',
+          campaign: params.get('utm_campaign') || null,
+          utm_source: params.get('utm_source') || null,
+          utm_medium: params.get('utm_medium') || null,
+          utm_campaign: params.get('utm_campaign') || null,
+          utm_content: params.get('utm_content') || null,
+          utm_term: params.get('utm_term') || null,
+        }),
+      });
+    } catch {
+      // Don't block WhatsApp if DB save fails
+    }
+
     // Build WhatsApp message
     const facturaText = form.factura ? ` Mi factura mensual promedio es $${form.factura}.` : '';
     const message = encodeURIComponent(
@@ -149,12 +177,9 @@ export default function LandingPage() {
     );
     const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
 
-    // Show thank you state then open WhatsApp
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-    }, 400);
+    setSubmitting(false);
+    setSubmitted(true);
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
   }
 
   // ── Render ────────────────────────────────────────────────────────────────

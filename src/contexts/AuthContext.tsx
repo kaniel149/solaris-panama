@@ -14,8 +14,8 @@ const supabase: SupabaseClient = createClient(
 
 export type UserRole = 'admin' | 'sales' | 'engineer' | 'installer';
 
-// Bypass auth — direct access while we fix login flow
-const DEV_BYPASS_AUTH = true;
+// Set to true for local dev without Supabase auth
+const DEV_BYPASS_AUTH = !HAS_SUPABASE;
 
 const DEV_USER: User = {
   id: '49c311f6-c0a5-4b04-a192-4214bb424994',

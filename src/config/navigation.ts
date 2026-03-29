@@ -10,6 +10,7 @@ import {
   ScanLine,
   Sparkles,
   Target,
+  MessageCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -22,7 +23,8 @@ export interface NavItem {
 }
 
 export const mainNavItems: NavItem[] = [
-  { key: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, path: '/' },
+  { key: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { key: 'crm-leads', labelKey: 'Leads', icon: MessageCircle, path: '/crm-leads' },
   { key: 'projects', labelKey: 'nav.projects', icon: FolderKanban, path: '/projects' },
   { key: 'clients', labelKey: 'nav.clients', icon: Users, path: '/clients' },
   { key: 'proposals', labelKey: 'nav.proposals', icon: FileText, path: '/proposals' },

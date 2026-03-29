@@ -13,6 +13,7 @@ import LandingPage from '@/pages/LandingPage';
 import DashboardPage from '@/pages/DashboardPage';
 
 // Lazy loaded (secondary pages)
+const CrmLeadsPage = lazy(() => import('@/pages/CrmLeadsPage'));
 const ProjectsPage = lazy(() => import('@/pages/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectDetailPage'));
 const ClientsPage = lazy(() => import('@/pages/ClientsPage'));
@@ -55,6 +56,14 @@ export default function App() {
             {/* CRM routes (behind auth) */}
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route
+                path="/crm-leads"
+                element={
+                  <Suspense fallback={<PageLoader />}>
+                    <CrmLeadsPage />
+                  </Suspense>
+                }
+              />
               <Route
                 path="/projects"
                 element={
