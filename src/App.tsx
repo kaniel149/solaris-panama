@@ -8,6 +8,7 @@ import Layout from '@/components/layout/Layout';
 // Eagerly loaded (critical pages)
 import LoginPage from '@/pages/LoginPage';
 import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
+import LandingPage from '@/pages/LandingPage';
 import DashboardPage from '@/pages/DashboardPage';
 
 // Lazy loaded (secondary pages)
@@ -45,6 +46,7 @@ export default function App() {
         <ToastProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
             <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
             <Route element={<Layout />}>
