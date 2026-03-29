@@ -46,6 +46,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: 'app.html',
       output: {
         manualChunks(id) {
           // Core React libraries

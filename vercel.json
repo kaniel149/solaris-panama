@@ -1,17 +1,18 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/home.html" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/towns/:path*", "destination": "/towns/:path*" },
-    { "source": "/blog/:path*", "destination": "/blog/:path*" },
-    { "source": "/nosotros.html", "destination": "/nosotros.html" },
-    { "source": "/servicios.html", "destination": "/servicios.html" },
-    { "source": "/contacto.html", "destination": "/contacto.html" },
-    { "source": "/politica-de-privacidad.html", "destination": "/politica-de-privacidad.html" },
-    { "source": "/terminos-de-servicio.html", "destination": "/terminos-de-servicio.html" },
-    { "source": "/ads-creatives/:path*", "destination": "/ads-creatives/:path*" },
-    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
-    { "source": "/robots.txt", "destination": "/robots.txt" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/landing", "destination": "/app.html" },
+    { "source": "/dashboard", "destination": "/app.html" },
+    { "source": "/login", "destination": "/app.html" },
+    { "source": "/crm-leads", "destination": "/app.html" },
+    { "source": "/projects/:path*", "destination": "/app.html" },
+    { "source": "/clients/:path*", "destination": "/app.html" },
+    { "source": "/proposals/:path*", "destination": "/app.html" },
+    { "source": "/calendar", "destination": "/app.html" },
+    { "source": "/monitoring", "destination": "/app.html" },
+    { "source": "/leads/:path*", "destination": "/app.html" },
+    { "source": "/settings", "destination": "/app.html" },
+    { "source": "/tools/:path*", "destination": "/app.html" },
+    { "source": "/mapa-solar", "destination": "/app.html" }
   ]
 }
