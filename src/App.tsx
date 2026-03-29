@@ -5,7 +5,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import Layout from '@/components/layout/Layout';
 
-// Eagerly loaded (critical pages)
+// Eagerly loaded (public pages)
+import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
 import LandingPage from '@/pages/LandingPage';
@@ -45,12 +46,15 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
             <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
+            {/* CRM routes (behind auth) */}
             <Route element={<Layout />}>
-              <Route path="/" element={<DashboardPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route
                 path="/projects"
                 element={

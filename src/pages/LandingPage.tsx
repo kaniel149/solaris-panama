@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sun,
   ArrowRight,
   ChevronRight,
   Shield,
@@ -53,7 +52,8 @@ function StatCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      className="flex flex-col items-center gap-2 px-6 py-5 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.07] shadow-glass"
+      className="flex flex-col items-center gap-2 px-6 py-5 rounded-2xl backdrop-blur-xl border border-[#D4A843]/10 shadow-glass"
+      style={{ background: 'rgba(11,61,46,0.4)' }}
     >
       <div className="w-10 h-10 rounded-xl bg-[#D4A843]/10 flex items-center justify-center text-[#D4A843]">
         {icon}
@@ -81,7 +81,7 @@ function StepCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      className="relative flex flex-col items-center text-center gap-4 px-6 py-8 rounded-2xl bg-[#12121a]/60 backdrop-blur-xl border border-white/[0.06]"
+      className="relative flex flex-col items-center text-center gap-4 px-6 py-8 rounded-2xl backdrop-blur-xl border border-[#D4A843]/8 bg-[#0B3D2E]/30"
     >
       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center text-white font-bold text-lg shadow-lg">
         {number}
@@ -160,33 +160,31 @@ export default function LandingPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden">
+    <div className="min-h-screen text-[#FEFDFB] overflow-x-hidden" style={{ background: '#071F17' }}>
 
       {/* ── Background ambiance ──────────────────────────────────────────── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         {/* Grid */}
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)',
+              'linear-gradient(rgba(212,168,67,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.2) 1px, transparent 1px)',
             backgroundSize: '60px 60px',
           }}
         />
         {/* Gold glow — top */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-[#D4A843]/[0.06] blur-[140px]" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-[#0B3D2E]/30 blur-[140px]" />
         {/* Green glow — bottom-left */}
-        <div className="absolute bottom-0 -left-40 w-[600px] h-[600px] rounded-full bg-[#0B3D2E]/[0.15] blur-[120px]" />
+        <div className="absolute bottom-0 -left-40 w-[600px] h-[600px] rounded-full bg-[#D4A843]/[0.06] blur-[120px]" />
       </div>
 
       {/* ── Navbar ───────────────────────────────────────────────────────── */}
       <header className="relative z-10 flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center shadow-lg">
-            <Sun className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-base font-bold tracking-wide text-white">SOLARIS</span>
-          <span className="hidden sm:inline text-xs text-white/30 font-normal">Panama</span>
+          <img src="/solaris-icon.png" alt="Solaris" className="w-9 h-9" />
+          <span className="text-base font-bold tracking-wide text-white" style={{ fontFamily: "'Playfair Display', serif" }}>SOLARIS</span>
+          <span className="hidden sm:inline text-xs text-[#D4A843]/60 font-normal">Panamá</span>
         </div>
         <button
           onClick={scrollToForm}
@@ -206,12 +204,12 @@ export default function LandingPage() {
         >
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4A843]/10 border border-[#D4A843]/20 text-[#D4A843] text-xs font-medium mb-6">
-            <Sun className="w-3.5 h-3.5" />
+            <img src="/solaris-icon.png" alt="" className="w-3.5 h-3.5" />
             Ley 417 — Equipos sin impuestos
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-5">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-5" style={{ fontFamily: "'Playfair Display', serif" }}>
             Tu Techo Puede{' '}
             <span
               className="bg-clip-text text-transparent"
@@ -248,7 +246,7 @@ export default function LandingPage() {
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.08] text-white/70 hover:text-white hover:border-white/[0.15] text-base font-medium transition-all"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border border-white/10 text-white/70 hover:text-white hover:border-white/20 text-base font-medium transition-all"
             >
               <MessageCircle className="w-4 h-4 text-[#25d366]" />
               WhatsApp Directo
@@ -309,7 +307,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
           className="text-center mb-10"
         >
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             ¿Cómo funciona?
           </h2>
           <p className="text-sm text-white/40">Simple y rápido — de cotización a ahorro en días</p>
@@ -358,7 +356,7 @@ export default function LandingPage() {
           <div className="px-8 py-10 md:px-12 md:py-12 flex flex-col md:flex-row items-center gap-8">
             {/* Icon */}
             <div className="shrink-0 w-20 h-20 rounded-full bg-[#D4A843]/10 border border-[#D4A843]/20 flex items-center justify-center">
-              <Sun className="w-9 h-9 text-[#D4A843]" />
+              <img src="/solaris-icon.png" alt="Solaris" className="w-10 h-10" />
             </div>
 
             {/* Quote */}
@@ -408,7 +406,7 @@ export default function LandingPage() {
               <CheckCircle2 className="w-3.5 h-3.5" />
               100% Gratis — Sin compromiso
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
               Solicitar Cotización Gratis
             </h2>
             <p className="text-sm text-white/40">
@@ -417,7 +415,8 @@ export default function LandingPage() {
           </div>
 
           {/* Card */}
-          <div className="rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.07] shadow-glass-lg p-6 sm:p-8">
+          <div className="rounded-2xl backdrop-blur-xl border border-[#D4A843]/10 shadow-glass-lg p-6 sm:p-8"
+            style={{ background: 'rgba(11,61,46,0.4)' }}>
             <AnimatePresence mode="wait">
               {submitted ? (
                 /* Thank you state */
@@ -617,10 +616,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="relative z-10 border-t border-white/[0.04] px-6 py-8 max-w-5xl mx-auto">
+      <footer className="relative z-10 border-t border-[#D4A843]/10 px-6 py-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/20">
           <div className="flex items-center gap-2">
-            <Sun className="w-4 h-4 text-[#D4A843]/50" />
+            <img src="/solaris-icon.png" alt="Solaris" className="w-4 h-4 opacity-50" />
             <span>Solaris Panama — Energía Solar en la Península de Azuero</span>
           </div>
           <div className="flex items-center gap-4">
