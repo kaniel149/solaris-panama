@@ -67,6 +67,42 @@ function fieldValue(fields: MetaLeadField[], names: string[]): string | null {
   return null;
 }
 
+function buildFollowupMessage(fullName: string): string {
+  const first = (fullName || 'amigo').split(' ')[0] || 'amigo';
+  return [
+    `Hola ${first}! 👋`,
+    '',
+    'Soy Henry de Solaris Panamá.',
+    '',
+    'Ayer nos contactaste a través de Meta para una cotización.',
+    '¿Sigues interesado? Me faltaron algunos datos para prepararte la propuesta.',
+    '',
+    'Si prefieres una llamada rápida de 10 min, dime cuándo te queda bien 📞',
+    '',
+    '¡Saludos!',
+  ].join('\n');
+}
+
+function buildNewLeadAlert(params: {
+  source: string;
+  name: string;
+  phone: string;
+  preview: string;
+}): string {
+  return [
+    '🔔 *NUEVO LEAD — Solaris Panama*',
+    '',
+    `📥 Fuente:  ${params.source}`,
+    `👤 Nombre:  ${params.name}`,
+    `📱 Teléfono: ${params.phone}`,
+    '',
+    `💬 Info:`,
+    `"${params.preview}"`,
+    '',
+    `🌐 CRM: https://solaris-panama.com/crm-leads`,
+  ].join('\n');
+}
+
 /**
  * Build the ack message for a Meta lead — references what they already
  * answered in the form, asks only the 2 missing details.
@@ -301,6 +337,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 automation_type: 'meta_ack',
                 scheduled_for: new Date(Date.now() + 60 * 1000).toISOString(),
                 idempotency_key: `meta_ack:${data.id}`,
+              });
+
+              // 24h follow-up
+              await supabase.from('whatsapp_outbound_queue').insert({
+                lead_id: data.id,
+                phone: cleanPhone,
+                message: buildFollowupMessage(name.trim()),
+                automation_type: 'followup',
+                scheduled_for: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                idempotency_key: `followup:${data.id}`,
+              });
+
+              // 🔔 Alert Kaniel
+              await supabase.from('whatsapp_outbound_queue').insert({
+                phone: '972502213948',
+                message: buildNewLeadAlert({
+                  source: 'Meta Ads',
+                  name: name.trim(),
+                  phone: `+${cleanPhone}`,
+                  preview: `${installType || '?'} · ${location || '?'} · bill ${billRange || '?'}`,
+                }),
+                automation_type: 'manual',
+                scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
+                idempotency_key: `new_lead_alert:meta:${data.id}`,
               });
             }
           }

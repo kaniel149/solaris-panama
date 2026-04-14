@@ -83,6 +83,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Failed to save lead' });
     }
 
+    // 🔔 Alert Kaniel about new website/LP lead
+    try {
+      const preview = message?.trim() || `${source || 'web'} · ${location || '?'}`;
+      await supabase.from('whatsapp_outbound_queue').insert({
+        phone: '972502213948',
+        message: [
+          '🔔 *NUEVO LEAD — Solaris Panama*',
+          '',
+          `📥 Fuente:  ${source === 'lp_azuero' ? 'Landing Azuero (Google Ads)' : 'Website'}`,
+          `👤 Nombre:  ${name.trim()}`,
+          `📱 Teléfono: +${cleanPhone}`,
+          '',
+          `💬 Info:`,
+          `"${preview.substring(0, 250)}"`,
+          '',
+          `${gclid ? '🎯 GCLID: ' + gclid.substring(0, 40) + '...\n' : ''}🌐 CRM: https://solaris-panama.com/crm-leads`,
+        ].join('\n'),
+        automation_type: 'manual',
+        scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
+        idempotency_key: `new_lead_alert:intake:${data.id}`,
+      });
+    } catch (alertErr) {
+      console.warn('[intake] alert enqueue failed:', alertErr);
+    }
+
     return res.status(201).json({ ok: true, id: data.id });
   } catch (err) {
     console.error('Lead intake error:', err);
