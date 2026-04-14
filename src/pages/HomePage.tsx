@@ -60,6 +60,26 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <nav className="hidden md:flex items-center gap-1">
+              <button
+                onClick={() => navigate('/nosotros')}
+                className="px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Nosotros
+              </button>
+              <button
+                onClick={() => navigate('/servicios')}
+                className="px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Servicios
+              </button>
+              <button
+                onClick={() => navigate('/proyectos')}
+                className="px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Proyectos
+              </button>
+            </nav>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
@@ -338,10 +358,28 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-4">
             <button
+              onClick={() => navigate('/nosotros')}
+              className="hover:text-white/50 transition-colors"
+            >
+              Nosotros
+            </button>
+            <button
+              onClick={() => navigate('/servicios')}
+              className="hover:text-white/50 transition-colors"
+            >
+              Servicios
+            </button>
+            <button
+              onClick={() => navigate('/proyectos')}
+              className="hover:text-white/50 transition-colors"
+            >
+              Proyectos
+            </button>
+            <button
               onClick={() => navigate('/login')}
               className="hover:text-white/50 transition-colors"
             >
-              Acceso CRM
+              CRM
             </button>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}

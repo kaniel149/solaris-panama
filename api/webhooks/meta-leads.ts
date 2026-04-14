@@ -177,33 +177,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
           const cleanPhone = phone.replace(/[\s\-()]/g, '');
 
-          // Upsert — platform_lead_id is unique for meta_ads
-          const { data, error } = await supabase
+          const payload = {
+            name: name.trim(),
+            phone: cleanPhone,
+            email: email?.trim() || null,
+            monthly_bill: monthlyBill,
+            location,
+            source: 'meta_ads',
+            platform_lead_id: lead.id,
+            ad_id: lead.ad_id || v.ad_id || null,
+            ad_set_id: lead.adset_id || v.adgroup_id || null,
+            form_id: lead.form_id || v.form_id || null,
+            campaign: lead.campaign_id || null,
+            page_id: pageId,
+            status: 'new',
+            raw_data: { change: v, lead },
+          };
+
+          // Manual dedup: check if lead exists (avoids needing PG unique constraint)
+          const { data: existing } = await supabase
             .from('leads')
-            .upsert(
-              {
-                name: name.trim(),
-                phone: cleanPhone,
-                email: email?.trim() || null,
-                monthly_bill: monthlyBill,
-                location,
-                source: 'meta_ads',
-                platform_lead_id: lead.id,
-                ad_id: lead.ad_id || v.ad_id || null,
-                ad_set_id: lead.adset_id || v.adgroup_id || null,
-                form_id: lead.form_id || v.form_id || null,
-                campaign: lead.campaign_id || null,
-                page_id: pageId,
-                status: 'new',
-                raw_data: { change: v, lead },
-              },
-              {
-                onConflict: 'platform_lead_id',
-                ignoreDuplicates: false,
-              }
-            )
             .select('id')
-            .single();
+            .eq('platform_lead_id', lead.id)
+            .maybeSingle();
+
+          let data: { id: string } | null = null;
+          let error: unknown = null;
+          if (existing?.id) {
+            const upd = await supabase
+              .from('leads')
+              .update(payload)
+              .eq('id', existing.id)
+              .select('id')
+              .single();
+            data = upd.data;
+            error = upd.error;
+          } else {
+            const ins = await supabase
+              .from('leads')
+              .insert(payload)
+              .select('id')
+              .single();
+            data = ins.data;
+            error = ins.error;
+          }
 
           if (error) {
             console.error('[meta-leads] Supabase error:', error);

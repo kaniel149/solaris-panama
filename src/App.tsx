@@ -11,6 +11,9 @@ import LoginPage from '@/pages/LoginPage';
 import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
 import LandingPage from '@/pages/LandingPage';
 import DashboardPage from '@/pages/DashboardPage';
+import NosotrosPage from '@/pages/NosotrosPage';
+import ServiciosPage from '@/pages/ServiciosPage';
+import ProyectosPage from '@/pages/ProyectosPage';
 
 // Lazy loaded (secondary pages)
 const CrmLeadsPage = lazy(() => import('@/pages/CrmLeadsPage'));
@@ -51,6 +54,9 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/landing" element={<LandingPage />} />
+            <Route path="/nosotros" element={<NosotrosPage />} />
+            <Route path="/servicios" element={<ServiciosPage />} />
+            <Route path="/proyectos" element={<ProyectosPage />} />
             <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
             <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
             {/* CRM routes (behind auth) */}
