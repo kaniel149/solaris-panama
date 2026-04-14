@@ -30,6 +30,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       utm_campaign,
       utm_content,
       utm_term,
+      gclid,
+      fbclid,
     } = req.body;
 
     if (!name || !phone) {
@@ -68,6 +70,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         utm_campaign: utm_campaign || null,
         utm_content: utm_content || null,
         utm_term: utm_term || null,
+        gclid: gclid || null,
+        fbclid: fbclid || null,
         status: 'new',
         raw_data: req.body,
       })
