@@ -67,6 +67,44 @@ function fieldValue(fields: MetaLeadField[], names: string[]): string | null {
   return null;
 }
 
+/**
+ * Build the ack message for a Meta lead — references what they already
+ * answered in the form, asks only the 2 missing details.
+ */
+function buildMetaAckMessage(params: {
+  name: string;
+  installType: string | null;
+  location: string | null;
+  billRange: string | null;
+}): string {
+  const firstName = params.name.split(' ')[0] || params.name;
+  const lines: string[] = [];
+
+  lines.push(`¡Hola ${firstName}! 👋`);
+  lines.push('');
+  lines.push('Soy *Henry* de Solaris Panamá. Recibí tu solicitud, gracias 🙏');
+  lines.push('');
+
+  const summary: string[] = [];
+  if (params.installType) summary.push(`✅ Tipo: ${params.installType}`);
+  if (params.location) summary.push(`✅ Ubicación: ${params.location}`);
+  if (params.billRange) summary.push(`✅ Consumo: ${params.billRange}/mes`);
+  if (summary.length) {
+    lines.push('Ya tengo los datos:');
+    lines.push(...summary);
+    lines.push('');
+  }
+
+  lines.push('Para preparar tu cotización en 24h, me faltan solo 2 detalles:');
+  lines.push('');
+  lines.push('1️⃣ ¿Ya tienes el techo construido o es casa en construcción?');
+  lines.push('2️⃣ ¿Tienes conexión actual a Naturgy/ENSA?');
+  lines.push('');
+  lines.push('Y si prefieres, podemos agendar una llamada de 15 min para revisar todo juntos. ¿Cuándo te queda bien?');
+
+  return lines.join('\n');
+}
+
 async function fetchLeadFromGraph(leadgenId: string): Promise<MetaLeadData> {
   const token = process.env.META_PAGE_ACCESS_TOKEN;
   if (!token) throw new Error('META_PAGE_ACCESS_TOKEN not set');
@@ -231,6 +269,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               status: 'ok',
               id: data?.id,
             });
+
+            // 🤖 Queue Meta acknowledgement WhatsApp (60 sec delay to let Omri react first)
+            if (data?.id && cleanPhone && cleanPhone.startsWith('507')) {
+              const installType = fieldValue(lead.field_data, [
+                '_¿la_instalación_es_para?',
+                'installation_type',
+                'tipo',
+              ]);
+              const location = fieldValue(lead.field_data, [
+                '_¿en_qué_ciudad_o_provincia_vives?',
+                'city',
+                'ciudad',
+              ]);
+              const billRange = fieldValue(lead.field_data, [
+                '¿cuánto_pagas_mensualmente_de_luz?',
+                'monthly_bill',
+              ]);
+
+              const waMessage = buildMetaAckMessage({
+                name: name.trim(),
+                installType,
+                location,
+                billRange,
+              });
+
+              await supabase.from('whatsapp_outbound_queue').insert({
+                lead_id: data.id,
+                phone: cleanPhone,
+                message: waMessage,
+                automation_type: 'meta_ack',
+                scheduled_for: new Date(Date.now() + 60 * 1000).toISOString(),
+                idempotency_key: `meta_ack:${data.id}`,
+              });
+            }
           }
         } catch (err) {
           console.error('[meta-leads] Fetch/insert error:', err);
