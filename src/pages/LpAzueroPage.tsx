@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
@@ -23,6 +23,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import { trackLeadConversion } from '@/lib/gtag';
+import { track, identify } from '@/lib/analytics';
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '50765831822';
@@ -180,8 +181,27 @@ export default function LpAzueroPage() {
   const [errors, setErrors] = useState<{ nombre?: string; telefono?: string }>({});
   const quizRef = useRef<HTMLDivElement>(null);
 
+  // Track initial page view with UTM context
+  useEffect(() => {
+    const utm = getUtmParams();
+    track('lp_azuero_viewed', {
+      referrer: document.referrer,
+      ...utm,
+    });
+  }, []);
+
+  // Track each step entrance (funnel analysis)
+  useEffect(() => {
+    if (step === 0 || done) return;
+    track('lp_quiz_step_viewed', {
+      step,
+      ...(step === 5 && { has_all_answers: true }),
+    });
+  }, [step, done]);
+
   // Scroll to quiz when user starts
   const startQuiz = () => {
+    track('lp_quiz_started', { source: 'hero_cta' });
     setStep(1);
     setTimeout(() => {
       quizRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -203,6 +223,11 @@ export default function LpAzueroPage() {
 
   // Auto-advance to next step after selection
   const selectAndAdvance = (field: keyof QuizState, value: string, nextStep: StepId) => {
+    track('lp_quiz_answered', {
+      step,
+      field,
+      value,
+    });
     setQuiz((q) => ({ ...q, [field]: value }));
     setTimeout(() => setStep(nextStep), 300);
   };
@@ -222,11 +247,25 @@ export default function LpAzueroPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateContact() || submitting) return;
+    if (!validateContact()) {
+      track('lp_quiz_validation_error', {
+        errors: Object.keys(errors).join(','),
+      });
+      return;
+    }
+    if (submitting) return;
 
     setSubmitting(true);
     const utm = getUtmParams();
     const cleanPhone = quiz.telefono.replace(/\D/g, '');
+
+    track('lp_quiz_submit_attempt', {
+      monthly_bill: quiz.monthly_bill,
+      location: quiz.location,
+      installation_type: quiz.installation_type,
+      timeframe: quiz.timeframe,
+      ...utm,
+    });
 
     try {
       await fetch(API_URL, {
@@ -245,6 +284,19 @@ export default function LpAzueroPage() {
       });
 
       trackLeadConversion();
+      identify(`507${cleanPhone}`, {
+        name: quiz.nombre.trim(),
+        phone: `507${cleanPhone}`,
+        location: quiz.location,
+        monthly_bill_range: quiz.monthly_bill,
+      });
+      track('lp_lead_submitted', {
+        ...utm,
+        monthly_bill: quiz.monthly_bill,
+        location: quiz.location,
+        installation_type: quiz.installation_type,
+        timeframe: quiz.timeframe,
+      });
 
       // Build pre-filled WhatsApp message
       const waMessage = encodeURIComponent(
