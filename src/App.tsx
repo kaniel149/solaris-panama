@@ -10,6 +10,7 @@ import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
 import LandingPage from '@/pages/LandingPage';
+import LpAzueroPage from '@/pages/LpAzueroPage';
 import DashboardPage from '@/pages/DashboardPage';
 import NosotrosPage from '@/pages/NosotrosPage';
 import ServiciosPage from '@/pages/ServiciosPage';
@@ -54,6 +55,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/landing" element={<LandingPage />} />
+            <Route path="/lp/azuero" element={<LpAzueroPage />} />
+            <Route path="/azuero" element={<Navigate to="/lp/azuero" replace />} />
             <Route path="/nosotros" element={<NosotrosPage />} />
             <Route path="/servicios" element={<ServiciosPage />} />
             <Route path="/proyectos" element={<ProyectosPage />} />
