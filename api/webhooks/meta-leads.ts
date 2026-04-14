@@ -160,9 +160,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             'cuanto_pagas_de_luz',
             'consumo_mensual',
           ]);
-          const monthlyBill = monthlyBillRaw
-            ? parseFloat(monthlyBillRaw.replace(/[^0-9.]/g, ''))
-            : null;
+          let monthlyBill: number | null = null;
+          if (monthlyBillRaw) {
+            const cleaned = monthlyBillRaw.replace(/[^0-9.]/g, '');
+            const parsed = parseFloat(cleaned);
+            if (Number.isFinite(parsed)) monthlyBill = parsed;
+          }
 
           const location =
             fieldValue(lead.field_data, [
