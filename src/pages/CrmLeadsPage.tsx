@@ -36,7 +36,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 };
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  google_ads: { label: 'Google', icon: <Globe className="w-3 h-3" />, color: '#4285f4' },
+  google_ads: { label: 'Google Ads', icon: <Globe className="w-3 h-3" />, color: '#4285f4' },
+  meta_ads: { label: 'Meta Ads', icon: <Facebook className="w-3 h-3" />, color: '#1877f2' },
   facebook: { label: 'Facebook', icon: <Facebook className="w-3 h-3" />, color: '#1877f2' },
   instagram: { label: 'Instagram', icon: <Instagram className="w-3 h-3" />, color: '#e4405f' },
   whatsapp: { label: 'WhatsApp', icon: <MessageCircle className="w-3 h-3" />, color: '#25d366' },
