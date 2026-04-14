@@ -14,5 +14,11 @@
     { "source": "/settings", "destination": "/app.html" },
     { "source": "/tools/:path*", "destination": "/app.html" },
     { "source": "/mapa-solar", "destination": "/app.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/poll-meta-leads",
+      "schedule": "*/5 * * * *"
+    }
   ]
 }
