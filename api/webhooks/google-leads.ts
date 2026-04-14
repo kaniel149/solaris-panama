@@ -97,9 +97,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'Factura mensual',
       'Cuánto pagas de luz',
     ]);
-    const monthlyBill = monthlyBillRaw
-      ? parseFloat(monthlyBillRaw.replace(/[^0-9.]/g, ''))
-      : null;
+    let monthlyBill: number | null = null;
+    if (monthlyBillRaw) {
+      const cleaned = monthlyBillRaw.replace(/[^0-9.]/g, '');
+      const parsed = parseFloat(cleaned);
+      if (Number.isFinite(parsed)) monthlyBill = parsed;
+    }
 
     const location =
       col(cols, ['CITY', 'city', 'Ciudad', 'Provincia']) || null;
@@ -107,32 +110,59 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cleanPhone = phone.replace(/[\s\-()]/g, '');
     const leadId = body.lead_id ? String(body.lead_id) : null;
 
-    const { data, error } = await supabase
-      .from('leads')
-      .upsert(
-        {
-          name: name.trim(),
-          phone: cleanPhone,
-          email: email?.trim() || null,
-          monthly_bill: monthlyBill,
-          location,
-          source: 'google_ads',
-          platform_lead_id: leadId,
-          ad_id: body.creative_id ? String(body.creative_id) : null,
-          ad_set_id: body.adgroup_id ? String(body.adgroup_id) : null,
-          form_id: body.form_id ? String(body.form_id) : null,
-          campaign: body.campaign_id ? String(body.campaign_id) : null,
-          gclid: body.gcl_id || null,
-          status: 'new',
-          raw_data: body,
-        },
-        {
-          onConflict: 'platform_lead_id',
-          ignoreDuplicates: false,
-        }
-      )
-      .select('id')
-      .single();
+    const payload = {
+      name: name.trim(),
+      phone: cleanPhone,
+      email: email?.trim() || null,
+      monthly_bill: monthlyBill,
+      location,
+      source: 'google_ads',
+      platform_lead_id: leadId,
+      ad_id: body.creative_id ? String(body.creative_id) : null,
+      ad_set_id: body.adgroup_id ? String(body.adgroup_id) : null,
+      form_id: body.form_id ? String(body.form_id) : null,
+      campaign: body.campaign_id ? String(body.campaign_id) : null,
+      gclid: body.gcl_id || null,
+      status: 'new',
+      raw_data: body,
+    };
+
+    // Manual dedup
+    let data: { id: string } | null = null;
+    let error: unknown = null;
+    if (leadId) {
+      const { data: existing } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('platform_lead_id', leadId)
+        .maybeSingle();
+      if (existing?.id) {
+        const upd = await supabase
+          .from('leads')
+          .update(payload)
+          .eq('id', existing.id)
+          .select('id')
+          .single();
+        data = upd.data;
+        error = upd.error;
+      } else {
+        const ins = await supabase
+          .from('leads')
+          .insert(payload)
+          .select('id')
+          .single();
+        data = ins.data;
+        error = ins.error;
+      }
+    } else {
+      const ins = await supabase
+        .from('leads')
+        .insert(payload)
+        .select('id')
+        .single();
+      data = ins.data;
+      error = ins.error;
+    }
 
     if (error) {
       console.error('[google-leads] Supabase error:', error);
