@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
   Clock,
   DollarSign,
   FileText,
@@ -10,6 +11,7 @@ import {
   Phone,
   Shield,
   Star,
+  Sun,
   User,
   Zap,
   Home,
@@ -17,6 +19,8 @@ import {
   Sprout,
   Calendar,
   MapPin,
+  CloudRain,
+  Wrench,
 } from 'lucide-react';
 import { trackLeadConversion } from '@/lib/gtag';
 
@@ -267,20 +271,35 @@ export default function LpAzueroPage() {
 
   return (
     <div className="min-h-screen bg-[#071F17] text-white overflow-x-hidden">
-      {/* Ambient background */}
+      {/* Ambient background with tropical solar photo */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-[#D4A843]/5 blur-[120px]" />
+        {/* Hero background image — solar panels on tropical roof */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[85vh] opacity-[0.18] bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80')",
+            maskImage:
+              'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#071F17]/40 via-[#071F17]/80 to-[#071F17]" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-[#D4A843]/8 blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-[#0b3d2e]/40 blur-[120px]" />
       </div>
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="relative pt-8 pb-10 md:pt-12 md:pb-14 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          {/* Logo / Brand */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A843] to-[#f5d080] flex items-center justify-center">
-              <Zap className="w-5 h-5 text-[#071F17]" />
-            </div>
+          {/* Real Solaris Logo */}
+          <div className="flex items-center justify-center gap-2.5 mb-6">
+            <img
+              src="/solaris-icon.png"
+              alt="Solaris Panamá"
+              className="w-10 h-10 drop-shadow-[0_0_12px_rgba(212,168,67,0.35)]"
+            />
             <span className="text-xl font-bold tracking-tight">Solaris Panamá</span>
           </div>
 
@@ -658,9 +677,101 @@ export default function LpAzueroPage() {
         </div>
       </section>
 
+      {/* ── Before / After savings visual ───────────────────────────────── */}
+      {step === 0 && (
+        <section className="relative px-4 py-10">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-xl md:text-2xl font-bold text-center mb-2">
+              Así se ve tu factura <span className="text-[#D4A843]">antes y después</span>
+            </h2>
+            <p className="text-center text-white/50 text-sm mb-8">
+              Caso real de una familia en Las Tablas · Sistema de 8 paneles
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 md:gap-5">
+              {/* BEFORE */}
+              <div className="relative p-5 md:p-6 rounded-3xl border border-[#ef4444]/20 bg-[#ef4444]/5">
+                <span className="absolute -top-2.5 left-4 px-3 py-0.5 rounded-full bg-[#ef4444] text-white text-[10px] font-bold uppercase tracking-wider">
+                  Antes
+                </span>
+                <div className="flex items-center gap-2 text-white/70 text-xs mb-3">
+                  <Zap className="w-3.5 h-3.5" /> Sin paneles solares
+                </div>
+                <div className="text-3xl md:text-4xl font-bold text-[#ef4444] mb-1">$280</div>
+                <div className="text-xs text-white/50">por mes</div>
+                <div className="mt-4 pt-4 border-t border-white/[0.05] text-xs text-white/60">
+                  📅 $3,360 al año
+                </div>
+              </div>
+
+              {/* AFTER */}
+              <div className="relative p-5 md:p-6 rounded-3xl border border-[#22c55e]/30 bg-[#22c55e]/5 overflow-hidden">
+                <span className="absolute -top-2.5 left-4 px-3 py-0.5 rounded-full bg-[#22c55e] text-[#071F17] text-[10px] font-bold uppercase tracking-wider">
+                  Después
+                </span>
+                <div className="flex items-center gap-2 text-white/70 text-xs mb-3">
+                  <Sun className="w-3.5 h-3.5 text-[#D4A843]" /> Con Solaris
+                </div>
+                <div className="text-3xl md:text-4xl font-bold text-[#22c55e] mb-1">$35</div>
+                <div className="text-xs text-white/50">por mes</div>
+                <div className="mt-4 pt-4 border-t border-white/[0.05] text-xs text-[#22c55e] font-semibold">
+                  💰 $2,940 ahorro al año
+                </div>
+                <div
+                  className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-[#22c55e]/10 blur-2xl"
+                  aria-hidden
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Local Testimonial ───────────────────────────────────────────── */}
+      {step === 0 && (
+        <section className="relative px-4 py-10">
+          <div className="max-w-2xl mx-auto">
+            <div className="relative p-6 md:p-8 rounded-3xl border border-[#D4A843]/15 bg-gradient-to-br from-[#0b3d2e]/50 to-[#0b3d2e]/20 backdrop-blur-xl">
+              {/* Corner quote */}
+              <div
+                className="absolute -top-4 -left-2 text-[#D4A843]/30 text-7xl leading-none font-serif select-none"
+                aria-hidden
+              >
+                “
+              </div>
+
+              <div className="flex items-center gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#D4A843] text-[#D4A843]" />
+                ))}
+              </div>
+
+              <p className="text-white/90 text-base md:text-lg leading-relaxed mb-5 relative z-10">
+                Antes pagábamos <span className="text-[#ef4444] font-semibold">$320 al mes</span> y
+                no entendíamos por qué. Con Solaris en <span className="text-[#D4A843] font-semibold">1 día</span>{' '}
+                instalaron todo. Ahora mi factura es de <span className="text-[#22c55e] font-semibold">$28</span>{' '}
+                y el sistema se pagó solo en menos de 3 años.
+              </p>
+
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4A843] to-[#f5d080] flex items-center justify-center text-[#071F17] font-bold text-lg">
+                  M
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Marco Vergara</div>
+                  <div className="text-xs text-white/50 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> Chitré, Herrera · Cliente desde 2024
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Why us ──────────────────────────────────────────────────────── */}
       {step === 0 && (
-        <section className="relative px-4 py-12 border-t border-white/[0.04]">
+        <section className="relative px-4 py-12">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
               ¿Por qué <span className="text-[#D4A843]">Solaris</span> en Azuero?
@@ -699,10 +810,77 @@ export default function LpAzueroPage() {
         </section>
       )}
 
+      {/* ── FAQ (Objection handling) ────────────────────────────────────── */}
+      {step === 0 && (
+        <section className="relative px-4 py-12">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
+              Preguntas frecuentes
+            </h2>
+            <p className="text-center text-white/50 text-sm mb-8">
+              Las dudas más comunes de nuestros clientes en Azuero
+            </p>
+            <div className="space-y-3">
+              {[
+                {
+                  icon: <CloudRain className="w-5 h-5" />,
+                  q: '¿Qué pasa en temporada de lluvia o tormenta?',
+                  a: 'Los paneles funcionan con luz difusa (día nublado = 20-40% producción). En tormentas fuertes tu casa sigue con electricidad gracias al inversor + conexión a red. Garantía completa contra vientos hasta 180 km/h.',
+                },
+                {
+                  icon: <DollarSign className="w-5 h-5" />,
+                  q: '¿Cuánto cuesta la instalación y cómo se paga?',
+                  a: 'Sistema residencial típico: $3,500 – $8,000 dependiendo del consumo. Ofrecemos financiamiento bancario panameño (hasta 60 meses) — la cuota mensual suele ser menor que tu factura actual de luz.',
+                },
+                {
+                  icon: <Wrench className="w-5 h-5" />,
+                  q: '¿Qué pasa si se daña un panel o el inversor?',
+                  a: 'Garantía de 25 años en paneles + 10 años en inversor. Nuestro equipo técnico está en Pedasí y Chitré — respuesta en menos de 48 horas. Mantenimiento básico incluido el primer año.',
+                },
+              ].map((item, i) => (
+                <FaqItem key={i} icon={item.icon} q={item.q} a={item.a} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Final CTA strip ─────────────────────────────────────────────── */}
+      {step === 0 && (
+        <section className="relative px-4 py-12">
+          <div className="max-w-2xl mx-auto text-center rounded-3xl border border-[#D4A843]/20 bg-gradient-to-br from-[#D4A843]/10 to-[#0b3d2e]/30 backdrop-blur-xl p-8 md:p-10">
+            <Sun className="w-12 h-12 text-[#D4A843] mx-auto mb-4" />
+            <h3 className="text-2xl md:text-3xl font-bold mb-3">
+              ¿Listo para dejar de pagarle a la ENSA?
+            </h3>
+            <p className="text-white/70 mb-6 max-w-md mx-auto">
+              2 minutos. Sin compromiso. Recibes la cotización directamente en tu WhatsApp.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={startQuiz}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-[#D4A843]/30"
+              style={{
+                background: 'linear-gradient(135deg, #D4A843, #f5d080)',
+                color: '#071F17',
+              }}
+            >
+              Quiero mi cotización gratis
+              <ArrowRight className="w-5 h-5" />
+            </motion.button>
+          </div>
+        </section>
+      )}
+
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="relative px-4 py-8 border-t border-white/[0.04] text-center">
+      <footer className="relative px-4 py-8 border-t border-white/[0.04] text-center pb-24 md:pb-8">
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <img src="/solaris-icon.png" alt="Solaris" className="w-6 h-6 opacity-60" />
+          <span className="text-sm font-semibold text-white/70">Solaris Panamá</span>
+        </div>
         <p className="text-xs text-white/40">
-          © {new Date().getFullYear()} Solaris Panamá · Pedasí, Los Santos ·{' '}
+          © {new Date().getFullYear()} · Pedasí, Los Santos ·{' '}
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
             className="text-[#25d366] hover:underline"
@@ -711,6 +889,71 @@ export default function LpAzueroPage() {
           </a>
         </p>
       </footer>
+
+      {/* ── Sticky WhatsApp CTA (mobile only, while quiz not started) ─── */}
+      {step === 0 && !done && (
+        <motion.a
+          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+            'Hola, quisiera información sobre paneles solares en Azuero.'
+          )}`}
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-2 px-6 py-4 bg-[#25d366] text-white font-bold shadow-2xl shadow-[#25d366]/30 border-t border-[#25d366]/50"
+        >
+          <MessageCircle className="w-5 h-5" />
+          WhatsApp directo · +507 6583-1822
+        </motion.a>
+      )}
     </div>
+  );
+}
+
+// ─── FAQ Item component ────────────────────────────────────────────────
+function FaqItem({
+  icon,
+  q,
+  a,
+}: {
+  icon: React.ReactNode;
+  q: string;
+  a: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => setOpen((v) => !v)}
+      className="w-full text-left p-4 md:p-5 rounded-2xl border border-[#D4A843]/10 bg-white/[0.02] hover:border-[#D4A843]/25 hover:bg-white/[0.03] transition-all"
+    >
+      <div className="flex items-start gap-3">
+        <span className="flex-shrink-0 w-9 h-9 rounded-xl bg-[#D4A843]/15 flex items-center justify-center text-[#D4A843] mt-0.5">
+          {icon}
+        </span>
+        <div className="flex-1">
+          <div className="flex items-center justify-between gap-3">
+            <h4 className="font-semibold text-white text-[15px] leading-snug">{q}</h4>
+            <ChevronDown
+              className={`w-4 h-4 text-white/50 flex-shrink-0 transition-transform ${
+                open ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.p
+                initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                animate={{ height: 'auto', opacity: 1, marginTop: 10 }}
+                exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                transition={{ duration: 0.25 }}
+                className="text-sm text-white/65 leading-relaxed overflow-hidden"
+              >
+                {a}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </button>
   );
 }
