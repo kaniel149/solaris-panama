@@ -27,8 +27,24 @@ import { track, identify } from '@/lib/analytics';
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '50765831822';
-const PANAMA_PHONE_REGEX = /^6\d{7}$/;
 const API_URL = '/api/leads/intake';
+
+/**
+ * Cleans Panama phone:
+ *  - Strips +, spaces, dashes, parentheses
+ *  - Removes "507" country code if present
+ *  - Returns the 8-digit local number, or null if invalid
+ *
+ * Panama mobile starts with 6, landline with 2/3/8.
+ * For solar leads we accept both.
+ */
+function cleanPanamaPhone(input: string): string | null {
+  let p = (input || '').replace(/\D/g, '');
+  if (p.startsWith('507') && p.length >= 11) p = p.slice(3); // strip country code
+  if (p.length !== 8) return null;
+  if (!/^[2368]/.test(p)) return null; // Panama starts with 2,3,6,8
+  return p;
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 interface QuizState {
@@ -235,11 +251,11 @@ export default function LpAzueroPage() {
   const validateContact = (): boolean => {
     const newErrors: typeof errors = {};
     if (!quiz.nombre.trim() || quiz.nombre.trim().length < 2) {
-      newErrors.nombre = 'Ingresa tu nombre completo';
+      newErrors.nombre = 'Ingresa tu nombre';
     }
-    const cleanPhone = quiz.telefono.replace(/\D/g, '');
-    if (!PANAMA_PHONE_REGEX.test(cleanPhone)) {
-      newErrors.telefono = 'Ingresa un número celular válido (6XXXXXXX)';
+    const cleanPhone = cleanPanamaPhone(quiz.telefono);
+    if (!cleanPhone) {
+      newErrors.telefono = 'Ingresa un número de Panamá (8 dígitos, ej: 6123-4567)';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -257,7 +273,7 @@ export default function LpAzueroPage() {
 
     setSubmitting(true);
     const utm = getUtmParams();
-    const cleanPhone = quiz.telefono.replace(/\D/g, '');
+    const cleanPhone = cleanPanamaPhone(quiz.telefono) || quiz.telefono.replace(/\D/g, '');
 
     track('lp_quiz_submit_attempt', {
       monthly_bill: quiz.monthly_bill,
@@ -595,15 +611,20 @@ export default function LpAzueroPage() {
                     {/* Name */}
                     <div className="mb-4">
                       <label className="block text-xs text-white/60 mb-1.5 font-medium">
-                        Nombre completo <span className="text-[#D4A843]">*</span>
+                        Nombre <span className="text-[#D4A843]">*</span>
                       </label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                         <input
                           type="text"
+                          autoFocus
+                          autoComplete="name"
                           value={quiz.nombre}
-                          onChange={(e) => setQuiz({ ...quiz, nombre: e.target.value })}
-                          placeholder="Ej. Carlos Mendoza"
+                          onChange={(e) => {
+                            setQuiz({ ...quiz, nombre: e.target.value });
+                            if (errors.nombre) setErrors((prev) => ({ ...prev, nombre: undefined }));
+                          }}
+                          placeholder="Tu nombre"
                           className={`w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder:text-white/20 focus:outline-none transition-all ${
                             errors.nombre
                               ? 'border-[#ef4444]/60'
@@ -616,26 +637,33 @@ export default function LpAzueroPage() {
                       )}
                     </div>
 
-                    {/* Phone */}
+                    {/* Phone — single intuitive field */}
                     <div className="mb-6">
                       <label className="block text-xs text-white/60 mb-1.5 font-medium">
-                        WhatsApp <span className="text-[#D4A843]">*</span>
+                        Tu WhatsApp (Panamá) <span className="text-[#D4A843]">*</span>
                       </label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                        <span className="absolute left-10 top-1/2 -translate-y-1/2 text-white/60 text-sm">+507</span>
                         <input
                           type="tel"
+                          inputMode="numeric"
+                          autoComplete="tel"
                           value={quiz.telefono}
-                          onChange={(e) => setQuiz({ ...quiz, telefono: e.target.value })}
-                          placeholder="6123 4567"
-                          className={`w-full pl-20 pr-4 py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder:text-white/20 focus:outline-none transition-all ${
+                          onChange={(e) => {
+                            setQuiz({ ...quiz, telefono: e.target.value });
+                            if (errors.telefono) setErrors((prev) => ({ ...prev, telefono: undefined }));
+                          }}
+                          placeholder="Ej: 6123 4567"
+                          className={`w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder:text-white/20 focus:outline-none transition-all ${
                             errors.telefono
                               ? 'border-[#ef4444]/60'
                               : 'border-white/[0.08] focus:border-[#D4A843]/40 focus:bg-white/[0.06]'
                           }`}
                         />
                       </div>
+                      <p className="text-[10px] text-white/35 mt-1.5">
+                        Solo 8 dígitos. Sin +507. Sin guiones.
+                      </p>
                       {errors.telefono && (
                         <p className="text-[#ef4444] text-xs mt-1.5">{errors.telefono}</p>
                       )}
