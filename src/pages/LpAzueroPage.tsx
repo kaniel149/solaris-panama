@@ -186,6 +186,7 @@ export default function LpAzueroPage() {
   const [step, setStep] = useState<StepId>(0);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [waLink, setWaLink] = useState<string>('');
   const [quiz, setQuiz] = useState<QuizState>({
     monthly_bill: '',
     location: '',
@@ -316,21 +317,22 @@ export default function LpAzueroPage() {
 
       // Build pre-filled WhatsApp message
       const waMessage = encodeURIComponent(
-        `Hola Solaris! 👋\n\n` +
-          `Vengo de la página web. Me llamo ${quiz.nombre.trim()}.\n\n` +
-          `💡 Pago mensual de luz: ${quiz.monthly_bill}\n` +
-          `🏠 Instalación para: ${quiz.installation_type}\n` +
-          `📍 Zona: ${quiz.location}\n` +
-          `⏱ Quiero instalar: ${quiz.timeframe}\n\n` +
-          `Me gustaría recibir la cotización.`
+        `Hola Solaris!\n\n` +
+          `Vengo de la pagina web. Me llamo ${quiz.nombre.trim()}.\n\n` +
+          `Pago mensual de luz: ${quiz.monthly_bill}\n` +
+          `Instalacion para: ${quiz.installation_type}\n` +
+          `Zona: ${quiz.location}\n` +
+          `Quiero instalar: ${quiz.timeframe}\n\n` +
+          `Me gustaria recibir la cotizacion.`
       );
       const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
-
+      setWaLink(waUrl);
       setDone(true);
-      // Redirect after brief "thanks" screen
-      setTimeout(() => {
-        window.location.href = waUrl;
-      }, 2200);
+
+      // IMMEDIATE redirect — must happen synchronously after user click,
+      // otherwise mobile browsers (Safari iOS, Chrome) block it as popup.
+      // We open in same tab so WhatsApp app intent can take over.
+      window.location.href = waUrl;
     } catch (err) {
       console.error('Submit failed:', err);
       setSubmitting(false);
@@ -374,7 +376,7 @@ export default function LpAzueroPage() {
           {/* Trust badges (above headline) */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
             <TrustBadge icon={<Shield className="w-3.5 h-3.5" />} text="Instaladores certificados" />
-            <TrustBadge icon={<Star className="w-3.5 h-3.5" />} text="4.9★ en Azuero" />
+            <TrustBadge icon={<Star className="w-3.5 h-3.5" />} text="Top en Azuero" />
             <TrustBadge icon={<FileText className="w-3.5 h-3.5" />} text="Ley 417" />
           </div>
 
@@ -401,8 +403,8 @@ export default function LpAzueroPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg md:text-xl text-white/70 mb-8 max-w-xl mx-auto leading-relaxed"
           >
-            Responde 4 preguntas rápidas y recibe tu cotización{' '}
-            <span className="text-[#D4A843] font-semibold">gratuita</span> por WhatsApp en menos de 5 minutos.
+            Responde unas preguntas rápidas y recibe tu cotización{' '}
+            <span className="text-[#D4A843] font-semibold">gratuita</span> por WhatsApp.
           </motion.p>
 
           {/* CTA — scrolls to quiz */}
@@ -721,14 +723,23 @@ export default function LpAzueroPage() {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#22c55e]/15 mb-5">
                   <CheckCircle2 className="w-8 h-8 text-[#22c55e]" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">¡Listo, {quiz.nombre.split(' ')[0]}! 🎉</h2>
-                <p className="text-white/70 mb-5 leading-relaxed">
-                  Te estamos redirigiendo a WhatsApp con tu cotización pre-llenada...
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  ¡Listo, {quiz.nombre.split(' ')[0]}!
+                </h2>
+                <p className="text-white/70 mb-6 leading-relaxed">
+                  Recibimos tu solicitud. Toca el botón para enviarnos tu mensaje en WhatsApp:
                 </p>
-                <div className="inline-flex items-center gap-2 text-[#25d366] font-semibold">
-                  <span className="w-4 h-4 border-2 border-[#25d366]/30 border-t-[#25d366] rounded-full animate-spin" />
-                  Abriendo WhatsApp...
-                </div>
+                <a
+                  href={waLink || `https://wa.me/${WHATSAPP_NUMBER}`}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-base shadow-2xl shadow-[#25d366]/30 mb-3"
+                  style={{ background: '#25d366', color: 'white' }}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Abrir WhatsApp ahora
+                </a>
+                <p className="text-xs text-white/40 mt-3">
+                  Si no se abre solo, toca el botón verde
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
