@@ -139,10 +139,16 @@ export default function LandingPage() {
 
     setSubmitting(true);
 
-    // Track Google Ads conversion
-    trackLeadConversion();
+    // Track Google Ads + Meta Pixel conversion (Enhanced Conversions w/ hashed PII)
+    const conv = await trackLeadConversion({
+      phone: form.telefono.trim(),
+      firstName: form.nombre.trim().split(' ')[0],
+      lastName: form.nombre.trim().split(' ').slice(1).join(' ') || undefined,
+      value: 1.0,
+      currency: 'USD',
+    }).catch(() => ({ eventId: '', fbc: null, fbp: null }));
 
-    // Extract UTM params from URL
+    // Extract UTM + click-id params from URL
     const params = new URLSearchParams(window.location.search);
 
     // Save lead to database
@@ -164,6 +170,12 @@ export default function LandingPage() {
           utm_campaign: params.get('utm_campaign') || null,
           utm_content: params.get('utm_content') || null,
           utm_term: params.get('utm_term') || null,
+          gclid: params.get('gclid') || null,
+          fbclid: params.get('fbclid') || null,
+          // CAPI dedup + click attribution
+          event_id: conv.eventId,
+          fbc: conv.fbc,
+          fbp: conv.fbp,
         }),
       });
     } catch {

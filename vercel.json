@@ -20,7 +20,23 @@
   "crons": [
     {
       "path": "/api/cron/poll-meta-leads",
-      "schedule": "*/15 * * * *"
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/bridge-watchdog",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/upload-google-conversions",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/stale-leads-alert",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/daily-report",
+      "schedule": "0 23 * * *"
     }
   ]
 }

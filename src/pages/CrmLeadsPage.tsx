@@ -33,7 +33,14 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   proposal_sent: { label: 'Propuesta', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
   won: { label: 'Ganado', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
   lost: { label: 'Perdido', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+  // Non-customer statuses (hidden by default)
+  vendor: { label: 'Proveedor', color: '#a855f7', bg: 'rgba(168,85,247,0.1)' },
+  partner: { label: 'Socio', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
+  not_a_lead: { label: 'No es Lead', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
 };
+
+// Statuses excluded from default pipeline view (vendors, partners, junk)
+const NON_CUSTOMER_STATUSES = ['vendor', 'partner', 'not_a_lead'];
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   google_ads: { label: 'Google Ads', icon: <Globe className="w-3 h-3" />, color: '#4285f4' },
@@ -45,7 +52,7 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
   manual: { label: 'Manual', icon: <Plus className="w-3 h-3" />, color: '#8888a0' },
 };
 
-const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost'];
+const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
 export default function CrmLeadsPage() {
   const [leads, setLeads] = useState<CrmLead[]>([]);
@@ -53,6 +60,7 @@ export default function CrmLeadsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
+  const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
   const [stats, setStats] = useState({ total: 0, new: 0, contacted: 0, qualified: 0, won: 0, bySource: {} as Record<string, number> });
 
   // Detail panel
@@ -69,13 +77,18 @@ export default function CrmLeadsPage() {
         getLeads({ search: search || undefined, status: statusFilter || undefined, source: sourceFilter || undefined }),
         getLeadStats(),
       ]);
-      setLeads(res.data);
+      // Default: hide vendors / partners / not_a_lead from main pipeline view
+      // (still searchable via the status dropdown explicitly)
+      const filtered = (showNonCustomers || statusFilter)
+        ? res.data
+        : res.data.filter((l) => !NON_CUSTOMER_STATUSES.includes(l.status || ''));
+      setLeads(filtered);
       setStats(s);
     } catch (err) {
       console.error('Failed to fetch leads:', err);
     }
     setLoading(false);
-  }, [search, statusFilter, sourceFilter]);
+  }, [search, statusFilter, sourceFilter, showNonCustomers]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -115,8 +128,12 @@ export default function CrmLeadsPage() {
   };
 
   const openWhatsApp = (phone: string, name: string) => {
-    const msg = encodeURIComponent(`Hola ${name}, te escribo de Solaris Panama sobre tu consulta de paneles solares.`);
-    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${msg}`, '_blank');
+    // First-name only, normalize to NFC so accents (á, ñ, é) survive encoding
+    const firstName = (name || '').normalize('NFC').split(' ')[0] || 'amigo';
+    const msg = encodeURIComponent(
+      `Hola ${firstName}, te escribo de Solaris Panamá sobre tu consulta de paneles solares.`
+    );
+    window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${msg}`, '_blank');
   };
 
   return (
@@ -197,6 +214,18 @@ export default function CrmLeadsPage() {
             <option key={k} value={k}>{v.label}</option>
           ))}
         </select>
+        <button
+          onClick={() => setShowNonCustomers((v) => !v)}
+          title="Mostrar/ocultar proveedores, socios y no-leads"
+          className={cn(
+            'px-3 py-2 rounded-xl border text-sm whitespace-nowrap transition-colors',
+            showNonCustomers
+              ? 'bg-[#a855f7]/10 border-[#a855f7]/40 text-[#a855f7]'
+              : 'bg-[#12121a] border-white/[0.06] text-[#8888a0] hover:text-white'
+          )}
+        >
+          {showNonCustomers ? '👥 Mostrando todos' : '🙈 Ocultar proveedores'}
+        </button>
       </div>
 
       {/* Main content */}
@@ -337,7 +366,7 @@ export default function CrmLeadsPage() {
                 </div>
 
                 {/* Source & Status */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   {(() => {
                     const src = SOURCE_CONFIG[selectedLead.source] || SOURCE_CONFIG.manual;
                     return (
@@ -350,6 +379,92 @@ export default function CrmLeadsPage() {
                     <span className="text-xs text-[#555570]">· {selectedLead.campaign}</span>
                   )}
                 </div>
+
+                {/* Attribution badges — gclid / fbclid / utm / ad_id */}
+                {(selectedLead.gclid || selectedLead.fbclid || selectedLead.ad_id || selectedLead.utm_source || selectedLead.utm_medium) && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Atribución</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedLead.gclid && (
+                        <span
+                          title={selectedLead.gclid}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20"
+                        >
+                          🎯 Google · gclid
+                        </span>
+                      )}
+                      {selectedLead.fbclid && (
+                        <span
+                          title={selectedLead.fbclid}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                        >
+                          📘 Meta · fbclid
+                        </span>
+                      )}
+                      {selectedLead.ad_id && (
+                        <span
+                          title={`Ad ID: ${selectedLead.ad_id}`}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                        >
+                          ad: {String(selectedLead.ad_id).slice(0, 12)}
+                        </span>
+                      )}
+                      {selectedLead.utm_source && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
+                          {selectedLead.utm_source}
+                          {selectedLead.utm_medium ? ` / ${selectedLead.utm_medium}` : ''}
+                        </span>
+                      )}
+                      {selectedLead.utm_campaign && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
+                          {selectedLead.utm_campaign}
+                        </span>
+                      )}
+                      {selectedLead.utm_content && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#555570] border border-white/[0.06]">
+                          content: {selectedLead.utm_content}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Deal value (won leads) */}
+                {selectedLead.status === 'won' && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1.5">Valor de la venta</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#555570]">$</span>
+                      <input
+                        type="number"
+                        defaultValue={selectedLead.deal_value || ''}
+                        placeholder="0"
+                        onBlur={async (e) => {
+                          const val = parseFloat(e.target.value);
+                          if (!Number.isFinite(val)) return;
+                          await updateLead(selectedLead.id, {
+                            deal_value: val,
+                            deal_currency: 'USD',
+                            won_at: selectedLead.won_at || new Date().toISOString(),
+                          } as Partial<CrmLead>);
+                          setSelectedLead({
+                            ...selectedLead,
+                            deal_value: val,
+                            won_at: selectedLead.won_at || new Date().toISOString(),
+                          } as CrmLead);
+                          fetchLeads();
+                        }}
+                        className="w-32 px-2 py-1 rounded-md bg-white/[0.04] border border-[#22c55e]/30 text-[#22c55e] text-sm font-semibold outline-none focus:border-[#22c55e]/60"
+                      />
+                      <span className="text-[10px] text-[#555570]">USD</span>
+                      {selectedLead.gclid && (
+                        <span className="text-[10px] text-[#4285f4]" title="Will upload to Google Ads as offline conversion">
+                          → Google
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Status pipeline */}
                 <div>

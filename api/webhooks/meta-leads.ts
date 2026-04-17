@@ -1,6 +1,19 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
+import { sendMetaCapiEventLogged } from '../lib/meta-capi';
+
+// CRITICAL: disable Vercel's bodyParser so we can read raw bytes for HMAC verification.
+// Re-stringifying req.body changes byte order/whitespace and breaks signature.
+export const config = { api: { bodyParser: false } };
+
+async function readRawBody(req: VercelRequest): Promise<Buffer> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req as unknown as AsyncIterable<Buffer | string>) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
+}
 
 /**
  * Meta Lead Ads Webhook
@@ -176,15 +189,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // ---------- POST: lead notification ----------
   try {
-    // Verify signature (Meta signs request with APP_SECRET)
-    const rawBody = JSON.stringify(req.body);
+    // Read RAW body bytes (bodyParser disabled above) — required for valid HMAC.
+    const rawBuf = await readRawBody(req);
+    const rawBody = rawBuf.toString('utf8');
     const signature = req.headers['x-hub-signature-256'] as string | undefined;
     if (process.env.META_APP_SECRET && !verifySignature(rawBody, signature)) {
       console.warn('[meta-leads] Invalid signature');
+      // Log to webhook_logs for debugging
+      await supabase.from('webhook_logs').insert({
+        source: 'meta',
+        status_code: 401,
+        error: 'invalid_signature',
+        payload: { headers: { signature: signature?.slice(0, 20) } },
+      }).then(() => {}).catch(() => {});
       return res.status(401).json({ error: 'Invalid signature' });
     }
 
-    const body = req.body;
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (e) {
+      return res.status(400).json({ error: 'invalid json' });
+    }
     if (body?.object !== 'page' || !Array.isArray(body.entry)) {
       return res.status(200).json({ ok: true, ignored: 'not a page event' });
     }
@@ -265,6 +291,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             campaign: lead.campaign_id || null,
             page_id: pageId,
             status: 'new',
+            lead_score: 0, // QW4: default 0 for sortable pipeline
+            event_id: crypto.randomUUID(), // For CAPI/pixel dedup
             raw_data: { change: v, lead },
           };
 
@@ -306,27 +334,68 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               id: data?.id,
             });
 
+            // 📡 Fire CAPI Lead event (server-side, dedups w/ browser pixel via event_id)
+            sendMetaCapiEventLogged(supabase, {
+              eventName: 'Lead',
+              eventId: payload.event_id,
+              email: payload.email,
+              phone: cleanPhone,
+              firstName: name.trim().split(' ')[0],
+              lastName: name.trim().split(' ').slice(1).join(' ') || null,
+              city: location,
+              externalId: data?.id,
+              sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || ''}`,
+              currency: 'USD',
+              contentName: `Meta Lead Form ${lead.form_id || ''}`,
+            }).then(async () => {
+              if (data?.id) {
+                await supabase.from('leads')
+                  .update({ meta_capi_lead_sent_at: new Date().toISOString() })
+                  .eq('id', data.id);
+              }
+            }).catch(() => {});
+
             // 🤖 Queue Meta acknowledgement WhatsApp (60 sec delay to let Omri react first)
             if (data?.id && cleanPhone && cleanPhone.startsWith('507')) {
-              const installType = fieldValue(lead.field_data, [
-                '_¿la_instalación_es_para?',
-                'installation_type',
-                'tipo',
-              ]);
-              const location = fieldValue(lead.field_data, [
-                '_¿en_qué_ciudad_o_provincia_vives?',
-                'city',
-                'ciudad',
-              ]);
-              const billRange = fieldValue(lead.field_data, [
-                '¿cuánto_pagas_mensualmente_de_luz?',
-                'monthly_bill',
-              ]);
+              const installTypeNames = ['_¿la_instalación_es_para?', 'installation_type', 'tipo'];
+              const locationNames = ['_¿en_qué_ciudad_o_provincia_vives?', 'city', 'ciudad'];
+              const billNames = ['¿cuánto_pagas_mensualmente_de_luz?', 'monthly_bill', 'factura_mensual'];
+
+              const installType = fieldValue(lead.field_data, installTypeNames);
+              const billLocation = fieldValue(lead.field_data, locationNames);
+              const billRange = fieldValue(lead.field_data, billNames);
+
+              // 🔍 Log unmatched field names so we can extend the matchers next time.
+              // The form_id may have introduced labels we don't know about.
+              const matched = [
+                installType ? installTypeNames[0] : null,
+                billLocation ? locationNames[0] : null,
+                billRange ? billNames[0] : null,
+              ].filter(Boolean);
+              const allFieldNames = lead.field_data.map((f) => f.name);
+              const unmatched = allFieldNames.filter((n) =>
+                !matched.includes(n) &&
+                !['full_name', 'first_name', 'last_name', 'phone_number', 'email', 'nombre', 'apellido', 'correo', 'telefono'].includes(n.toLowerCase())
+              );
+              if (!installType || !billLocation || !billRange) {
+                await supabase.from('webhook_logs').insert({
+                  source: 'meta',
+                  status_code: 200,
+                  error: 'unmatched_meta_form_fields',
+                  payload: {
+                    lead_id: data.id,
+                    form_id: lead.form_id,
+                    missing: { installType: !installType, location: !billLocation, billRange: !billRange },
+                    all_field_names: allFieldNames,
+                    unmatched_after_known_keys: unmatched,
+                  },
+                }).then(() => {}).catch(() => {});
+              }
 
               const waMessage = buildMetaAckMessage({
                 name: name.trim(),
                 installType,
-                location,
+                location: billLocation,
                 billRange,
               });
 

@@ -17,6 +17,18 @@ export interface CrmLead {
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
+  gclid?: string | null;
+  fbclid?: string | null;
+  ad_id?: string | null;
+  ad_set_id?: string | null;
+  form_id?: string | null;
+  platform_lead_id?: string | null;
+  // Migration 008
+  deal_value?: number | null;
+  deal_currency?: string | null;
+  won_at?: string | null;
   status: string;
   assigned_to: string | null;
   lead_score: number;

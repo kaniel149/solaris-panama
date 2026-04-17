@@ -187,6 +187,7 @@ export default function LpAzueroPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [waLink, setWaLink] = useState<string>('');
+  const [honeypot, setHoneypot] = useState(''); // QW9 — bots fill this
   const [quiz, setQuiz] = useState<QuizState>({
     monthly_bill: '',
     location: '',
@@ -198,13 +199,43 @@ export default function LpAzueroPage() {
   const [errors, setErrors] = useState<{ nombre?: string; telefono?: string }>({});
   const quizRef = useRef<HTMLDivElement>(null);
 
-  // Track initial page view with UTM context
+  // Track initial page view with UTM context + LP-only meta tags
   useEffect(() => {
     const utm = getUtmParams();
     track('lp_azuero_viewed', {
       referrer: document.referrer,
       ...utm,
     });
+
+    // QW2: LP shouldn't be indexed (it's a paid-traffic destination only)
+    const prevTitle = document.title;
+    document.title = 'Cotización Solar Gratis · Azuero | Solaris Panamá';
+
+    const upsertMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
+      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+      return el;
+    };
+    const robotsEl = upsertMeta('robots', 'noindex, nofollow');
+    const descEl = upsertMeta('description', 'Cotización solar gratis por WhatsApp en 2 min. De $280 a $35/mes. Instalación en 1 día. Ley 417 (Panamá).');
+    const ogTitleEl = upsertMeta('og:title', 'Paneles Solares Azuero — Cotización Gratis | Solaris', 'property');
+    const ogDescEl = upsertMeta('og:description', 'De $280 a $35/mes. Cotización por WhatsApp en 2 min.', 'property');
+    const ogImgEl = upsertMeta('og:image', 'https://solaris-panama.com/og-azuero.jpg', 'property');
+
+    return () => {
+      document.title = prevTitle;
+      robotsEl?.remove();
+      // Leave description/OG in place — homepage hydration may override
+      descEl?.remove();
+      ogTitleEl?.remove();
+      ogDescEl?.remove();
+      ogImgEl?.remove();
+    };
   }, []);
 
   // Track each step entrance (funnel analysis)
@@ -285,6 +316,18 @@ export default function LpAzueroPage() {
     });
 
     try {
+      // 🔵 Fire conversion FIRST (sync gtag/fbq calls); collect eventId+fbc/fbp
+      // so the server-side CAPI dedups against the browser pixel.
+      // Wrapped in try/catch by trackLeadConversion itself (handles adblockers).
+      const conv = await trackLeadConversion({
+        phone: `507${cleanPhone}`,
+        firstName: quiz.nombre.trim().split(' ')[0],
+        lastName: quiz.nombre.trim().split(' ').slice(1).join(' ') || undefined,
+        city: quiz.location,
+        value: 1.0,
+        currency: 'USD',
+      }).catch(() => ({ eventId: '', fbc: null, fbp: null }));
+
       await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -296,11 +339,15 @@ export default function LpAzueroPage() {
           message: `Monthly: ${quiz.monthly_bill} | Install: ${quiz.installation_type} | Timeframe: ${quiz.timeframe}`,
           source: 'lp_azuero',
           campaign: utm.utm_campaign || 'Solar Azuero - Search',
+          // CAPI dedup + click attribution
+          event_id: conv.eventId,
+          fbc: conv.fbc,
+          fbp: conv.fbp,
+          website: honeypot, // bot trap — server returns 200 silently if filled
           ...utm,
         }),
       });
 
-      trackLeadConversion();
       identify(`507${cleanPhone}`, {
         name: quiz.nombre.trim(),
         phone: `507${cleanPhone}`,
@@ -615,6 +662,17 @@ export default function LpAzueroPage() {
                       <label className="block text-xs text-white/60 mb-1.5 font-medium">
                         Nombre <span className="text-[#D4A843]">*</span>
                       </label>
+                      {/* Honeypot — bots fill this, humans don't see it. Server checks `website` field. */}
+                      <input
+                        type="text"
+                        name="website"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        aria-hidden="true"
+                        style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none', height: 0, width: 0 }}
+                      />
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                         <input
