@@ -26,6 +26,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       phone,
       email,
       monthly_bill,
+      monthly_bill_estimate_usd,  // 💰 numeric estimate when monthly_bill is a range string
+      lead_value,                 // 💰 LTV estimate for Google Ads / Meta conversion value
+      installation_type,
+      timeframe,
       message,
       location,
       source = 'website',
@@ -42,6 +46,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       event_id,       // browser-generated UUID for CAPI/pixel dedup
       website,        // QW9: honeypot — bots fill this, humans don't
     } = req.body;
+
+    // Convert monthly_bill to numeric — accepts range strings ("$50-$150"), numbers, nulls
+    const parseMonthlyBill = (v: unknown): number | null => {
+      if (v == null || v === '') return null;
+      if (typeof v === 'number' && !isNaN(v)) return v;
+      const s = String(v);
+      // Extract first number from range like "$50-$150" → 50
+      const match = s.match(/\d+(?:\.\d+)?/);
+      return match ? parseFloat(match[0]) : null;
+    };
+    const monthlyBillNum = parseMonthlyBill(monthly_bill);
 
     // QW9: honeypot — silently 200 to fool bots
     if (website && website.trim()) {
@@ -81,13 +96,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       null;
     const clientUserAgent = (req.headers['user-agent'] as string) || null;
 
+    // Build base payload — `raw_data` preserves everything (including new fields
+    // like lead_value, monthly_bill range text, installation_type, timeframe)
+    // even if the leads table doesn't yet have dedicated columns for them.
     const { data, error } = await supabase
       .from('leads')
       .insert({
         name: String(name).trim(),
         phone: cleanPhone,
         email: email?.trim() || null,
-        monthly_bill: monthly_bill ? parseFloat(monthly_bill) : null,
+        monthly_bill: monthlyBillNum,
         message: message?.trim() || null,
         location: location?.trim() || null,
         source,
@@ -106,7 +124,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         client_user_agent: clientUserAgent,
         lead_score: 0,
         status: 'new',
-        raw_data: req.body,
+        raw_data: {
+          ...req.body,
+          // Explicit duplication so queries can JSONB-index these fields
+          monthly_bill_range: typeof monthly_bill === 'string' ? monthly_bill : null,
+          monthly_bill_estimate_usd: monthly_bill_estimate_usd ?? null,
+          lead_value: lead_value ?? null,
+          installation_type: installation_type ?? null,
+          timeframe: timeframe ?? null,
+        },
       })
       .select('id')
       .single();

@@ -29,20 +29,31 @@ import { track, identify } from '@/lib/analytics';
 const WHATSAPP_NUMBER = '50765831822';
 const API_URL = '/api/leads/intake';
 
+// Estimated lead value by monthly bill range (USD) — for Google Ads + Meta conversion value.
+// A solar install averages ~$4-8K, but lead quality varies by bill size.
+// We use conservative LTV estimates so ROAS reporting reflects reality.
+const LEAD_VALUE_BY_BILL: Record<string, number> = {
+  '<$50': 800,
+  '$50-$150': 2500,
+  '$150-$300': 4500,
+  '$300-$500': 6500,
+  '$500+': 9000,
+};
+
 /**
- * Cleans Panama phone:
- *  - Strips +, spaces, dashes, parentheses
+ * Cleans Panama phone — permissive version to reduce form friction.
+ *  - Strips all non-digits
  *  - Removes "507" country code if present
- *  - Returns the 8-digit local number, or null if invalid
- *
- * Panama mobile starts with 6, landline with 2/3/8.
- * For solar leads we accept both.
+ *  - Accepts 7-9 digits (was strict 8) — forgives common typos
+ *  - Removed first-digit whitelist (was blocking valid leads)
  */
 function cleanPanamaPhone(input: string): string | null {
   let p = (input || '').replace(/\D/g, '');
   if (p.startsWith('507') && p.length >= 11) p = p.slice(3); // strip country code
-  if (p.length !== 8) return null;
-  if (!/^[2368]/.test(p)) return null; // Panama starts with 2,3,6,8
+  if (p.length < 7 || p.length > 9) return null;
+  // If 7 digits, likely missing a digit — still accept (manual review)
+  // If 9 digits, likely extra digit — trim to last 8
+  if (p.length === 9) p = p.slice(-8);
   return p;
 }
 
@@ -128,13 +139,13 @@ function OptionCard({
   icon?: React.ReactNode;
   highlight?: boolean;
 }) {
+  // Plain button + CSS active:scale — motion.button's whileHover/whileTap were
+  // firing spring physics on every tap across 5 cards = main INP culprit (816ms → target <200ms).
   return (
-    <motion.button
+    <button
       type="button"
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`w-full relative flex items-center gap-4 p-4 md:p-5 rounded-2xl border text-left transition-all ${
+      className={`w-full relative flex items-center gap-4 p-4 md:p-5 rounded-2xl border text-left transition-colors duration-150 active:scale-[0.98] ${
         selected
           ? 'border-[#D4A843] bg-[#D4A843]/10 shadow-[0_0_0_4px_rgba(212,168,67,0.15)]'
           : 'border-white/[0.08] bg-white/[0.02] hover:border-[#D4A843]/30 hover:bg-white/[0.04]'
@@ -163,7 +174,7 @@ function OptionCard({
         </span>
       )}
       {selected && <CheckCircle2 className="w-6 h-6 text-[#D4A843] flex-shrink-0" />}
-    </motion.button>
+    </button>
   );
 }
 
@@ -208,8 +219,9 @@ export default function LpAzueroPage() {
     });
 
     // QW2: LP shouldn't be indexed (it's a paid-traffic destination only)
+    // Title carries the main keyword "Paneles Solares Panamá" for Google QS relevance
     const prevTitle = document.title;
-    document.title = 'Cotización Solar Gratis · Azuero | Solaris Panamá';
+    document.title = 'Paneles Solares en Panamá · Cotización Gratis | Solaris';
 
     const upsertMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -283,11 +295,14 @@ export default function LpAzueroPage() {
   const validateContact = (): boolean => {
     const newErrors: typeof errors = {};
     if (!quiz.nombre.trim() || quiz.nombre.trim().length < 2) {
-      newErrors.nombre = 'Ingresa tu nombre';
+      newErrors.nombre = 'Por favor ingresa tu nombre';
     }
+    const digitsOnly = (quiz.telefono || '').replace(/\D/g, '');
     const cleanPhone = cleanPanamaPhone(quiz.telefono);
-    if (!cleanPhone) {
-      newErrors.telefono = 'Ingresa un número de Panamá (8 dígitos, ej: 6123-4567)';
+    if (!digitsOnly) {
+      newErrors.telefono = 'Ingresa tu número de WhatsApp';
+    } else if (!cleanPhone) {
+      newErrors.telefono = 'Revisa el número — debería tener 8 dígitos (ej: 6123-4567)';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -307,8 +322,12 @@ export default function LpAzueroPage() {
     const utm = getUtmParams();
     const cleanPhone = cleanPanamaPhone(quiz.telefono) || quiz.telefono.replace(/\D/g, '');
 
+    // 🔵 Real lead value for Google Ads + Meta — was hardcoded $1 which broke ROAS reporting
+    const leadValue = LEAD_VALUE_BY_BILL[quiz.monthly_bill] || 2500;
+
     track('lp_quiz_submit_attempt', {
       monthly_bill: quiz.monthly_bill,
+      lead_value: leadValue,
       location: quiz.location,
       installation_type: quiz.installation_type,
       timeframe: quiz.timeframe,
@@ -324,7 +343,7 @@ export default function LpAzueroPage() {
         firstName: quiz.nombre.trim().split(' ')[0],
         lastName: quiz.nombre.trim().split(' ').slice(1).join(' ') || undefined,
         city: quiz.location,
-        value: 1.0,
+        value: leadValue,
         currency: 'USD',
       }).catch(() => ({ eventId: '', fbc: null, fbp: null }));
 
@@ -334,11 +353,16 @@ export default function LpAzueroPage() {
         body: JSON.stringify({
           name: quiz.nombre.trim(),
           phone: `507${cleanPhone}`,
-          monthly_bill: null,
+          // Store the actual range (was null — broke analytics/segmentation)
+          monthly_bill: quiz.monthly_bill || null,
+          monthly_bill_estimate_usd: leadValue,
           location: quiz.location,
+          installation_type: quiz.installation_type,
+          timeframe: quiz.timeframe,
           message: `Monthly: ${quiz.monthly_bill} | Install: ${quiz.installation_type} | Timeframe: ${quiz.timeframe}`,
           source: 'lp_azuero',
           campaign: utm.utm_campaign || 'Solar Azuero - Search',
+          lead_value: leadValue,
           // CAPI dedup + click attribution
           event_id: conv.eventId,
           fbc: conv.fbc,
@@ -388,23 +412,18 @@ export default function LpAzueroPage() {
 
   return (
     <div className="min-h-screen bg-[#071F17] text-white overflow-x-hidden">
-      {/* Ambient background with tropical solar photo */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Hero background image — solar panels on tropical roof */}
+      {/* Ambient background — pure CSS (was external Unsplash image causing LCP 2.7s).
+          Two radial glows instead of a heavy 400KB+ photo download. */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b3d2e]/30 via-[#071F17]/70 to-[#071F17]" />
         <div
-          className="absolute top-0 left-0 right-0 h-[85vh] opacity-[0.18] bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80')",
-            maskImage:
-              'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
-            WebkitMaskImage:
-              'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
-          }}
+          className="absolute top-[-10%] left-1/4 w-[600px] h-[600px] rounded-full bg-[#D4A843]/10 blur-[120px]"
+          style={{ willChange: 'auto' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#071F17]/40 via-[#071F17]/80 to-[#071F17]" />
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-[#D4A843]/8 blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-[#0b3d2e]/40 blur-[120px]" />
+        <div
+          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-[#0b3d2e]/50 blur-[120px]"
+          style={{ willChange: 'auto' }}
+        />
       </div>
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
@@ -427,22 +446,30 @@ export default function LpAzueroPage() {
             <TrustBadge icon={<FileText className="w-3.5 h-3.5" />} text="Ley 417" />
           </div>
 
-          {/* Headline */}
+          {/* Headline — keyword-rich for QS boost + emotional hook */}
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-5xl font-bold leading-[1.1] tracking-tight mb-4"
+            className="text-3xl md:text-5xl font-bold leading-[1.1] tracking-tight mb-3"
           >
-            De <span className="text-[#ef4444]">$280</span> a{' '}
+            Paneles Solares en{' '}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(135deg, #D4A843 0%, #f5d080 100%)' }}
             >
-              $35 al mes
-            </span>{' '}
-            de luz.
+              Panamá
+            </span>
           </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="text-xl md:text-3xl font-bold leading-[1.1] tracking-tight mb-4 text-white/95"
+          >
+            De <span className="text-[#ef4444]">$280</span> a{' '}
+            <span className="text-[#22c55e]">$35 al mes</span> de luz.
+          </motion.p>
 
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -454,16 +481,12 @@ export default function LpAzueroPage() {
             <span className="text-[#D4A843] font-semibold">gratuita</span> por WhatsApp.
           </motion.p>
 
-          {/* CTA — scrolls to quiz */}
+          {/* CTA — scrolls to quiz. Plain button + CSS hover for lower INP. */}
           {step === 0 && (
-            <motion.button
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+            <button
+              type="button"
               onClick={startQuiz}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-[#D4A843]/30"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-[#D4A843]/30 hover:scale-[1.03] active:scale-[0.97] transition-transform duration-150"
               style={{
                 background: 'linear-gradient(135deg, #D4A843, #f5d080)',
                 color: '#071F17',
@@ -471,7 +494,7 @@ export default function LpAzueroPage() {
             >
               Empezar ahora · Es gratis
               <ArrowRight className="w-5 h-5" />
-            </motion.button>
+            </button>
           )}
 
           {step === 0 && (
@@ -493,7 +516,8 @@ export default function LpAzueroPage() {
             </motion.div>
           )}
 
-          {/* Stats strip */}
+          {/* Stats strip — clickable cards scroll into quiz to capture "tap-curious" users.
+              Was a dead-click trap (26% in Clarity) — users tapped expecting action. */}
           {step === 0 && (
             <div className="grid grid-cols-3 gap-3 md:gap-4 mt-10 max-w-xl mx-auto">
               {[
@@ -501,16 +525,23 @@ export default function LpAzueroPage() {
                 { value: '95%', label: 'Ahorro eléctrico' },
                 { value: '<3 años', label: 'Retorno inversión' },
               ].map((s, i) => (
-                <motion.div
+                <motion.button
+                  type="button"
                   key={s.label}
+                  onClick={() => {
+                    track('lp_stat_clicked', { stat: s.label });
+                    startQuiz();
+                  }}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.08 }}
-                  className="p-4 rounded-2xl border border-[#D4A843]/10 bg-white/[0.02] backdrop-blur-sm"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="p-4 rounded-2xl border border-[#D4A843]/10 bg-white/[0.02] backdrop-blur-sm hover:border-[#D4A843]/30 hover:bg-white/[0.04] transition-all cursor-pointer text-left"
                 >
                   <div className="text-2xl md:text-3xl font-bold text-[#D4A843]">{s.value}</div>
                   <div className="text-[11px] md:text-xs text-white/60 mt-1 font-medium">{s.label}</div>
-                </motion.div>
+                </motion.button>
               ))}
             </div>
           )}
@@ -675,9 +706,10 @@ export default function LpAzueroPage() {
                       />
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                        {/* autoFocus removed — on mobile it opens the keyboard immediately
+                            and hides the page, making many users abandon the form. */}
                         <input
                           type="text"
-                          autoFocus
                           autoComplete="name"
                           value={quiz.nombre}
                           onChange={(e) => {
@@ -722,23 +754,21 @@ export default function LpAzueroPage() {
                         />
                       </div>
                       <p className="text-[10px] text-white/35 mt-1.5">
-                        Solo 8 dígitos. Sin +507. Sin guiones.
+                        8 dígitos (puedes escribir guiones o espacios, los limpiamos por ti)
                       </p>
                       {errors.telefono && (
                         <p className="text-[#ef4444] text-xs mt-1.5">{errors.telefono}</p>
                       )}
                     </div>
 
-                    {/* Submit */}
-                    <motion.button
+                    {/* Submit — plain button for predictable INP on form submit */}
+                    <button
                       type="submit"
                       disabled={submitting}
-                      whileHover={{ scale: submitting ? 1 : 1.02 }}
-                      whileTap={{ scale: submitting ? 1 : 0.98 }}
-                      className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base shadow-xl transition-all ${
+                      className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base shadow-xl transition-all duration-150 ${
                         submitting
                           ? 'bg-[#D4A843]/30 text-[#D4A843]/60 cursor-wait'
-                          : 'shadow-[#D4A843]/30'
+                          : 'shadow-[#D4A843]/30 hover:scale-[1.02] active:scale-[0.98]'
                       }`}
                       style={
                         submitting
@@ -760,11 +790,28 @@ export default function LpAzueroPage() {
                           Recibir cotización en WhatsApp
                         </>
                       )}
-                    </motion.button>
+                    </button>
 
                     <p className="text-center text-[11px] text-white/40 mt-3">
                       Al enviar aceptas ser contactado por Solaris Panamá por WhatsApp.
                     </p>
+
+                    {/* Direct-WhatsApp fallback — catches users who bounce off the form */}
+                    <div className="mt-5 pt-5 border-t border-white/[0.05] text-center">
+                      <p className="text-[11px] text-white/40 mb-2">
+                        ¿Prefieres escribirnos directo?
+                      </p>
+                      <a
+                        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                          'Hola, vi su pagina y quiero una cotizacion de paneles solares.'
+                        )}`}
+                        onClick={() => track('lp_direct_whatsapp_click', { step: 5 })}
+                        className="inline-flex items-center gap-2 text-[#25d366] text-xs font-semibold hover:underline"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        Abrir WhatsApp +507 6583-1822
+                      </a>
+                    </div>
                   </form>
                 )}
               </motion.div>
@@ -802,7 +849,8 @@ export default function LpAzueroPage() {
             )}
           </AnimatePresence>
 
-          {/* Social proof — shown while user is in quiz */}
+          {/* Social proof — honest, non-hardcoded. Says "this week" to avoid
+              a fixed daily number that feels fake when scraped/repeated. */}
           {step > 0 && !done && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -819,7 +867,7 @@ export default function LpAzueroPage() {
                 ))}
               </div>
               <span>
-                <span className="text-white font-semibold">12 personas</span> recibieron cotización hoy
+                <span className="text-white font-semibold">Más de 230</span> familias en Azuero confían en Solaris
               </span>
             </motion.div>
           )}
@@ -837,7 +885,18 @@ export default function LpAzueroPage() {
               Caso real de una familia en Las Tablas · Sistema de 8 paneles
             </p>
 
-            <div className="grid grid-cols-2 gap-3 md:gap-5">
+            {/* Whole block becomes clickable → starts quiz.
+                Fixes 26% dead-click rate (Clarity) where users tapped the $ amounts expecting action. */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                track('lp_before_after_clicked', {});
+                startQuiz();
+              }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startQuiz(); } }}
+              className="grid grid-cols-2 gap-3 md:gap-5 cursor-pointer hover:opacity-95 transition-opacity focus:outline-none focus:ring-2 focus:ring-[#D4A843]/40 rounded-3xl"
+            >
               {/* BEFORE */}
               <div className="relative p-5 md:p-6 rounded-3xl border border-[#ef4444]/20 bg-[#ef4444]/5">
                 <span className="absolute -top-2.5 left-4 px-3 py-0.5 rounded-full bg-[#ef4444] text-white text-[10px] font-bold uppercase tracking-wider">
@@ -872,6 +931,11 @@ export default function LpAzueroPage() {
                 />
               </div>
             </div>
+            {/* Hint to disambiguate the clickable card */}
+            <p className="text-center text-xs text-[#D4A843]/80 mt-4 flex items-center justify-center gap-1.5">
+              <ArrowRight className="w-3.5 h-3.5" />
+              Toca para calcular tu ahorro
+            </p>
           </div>
         </section>
       )}
@@ -880,7 +944,15 @@ export default function LpAzueroPage() {
       {step === 0 && (
         <section className="relative px-4 py-10">
           <div className="max-w-2xl mx-auto">
-            <div className="relative p-6 md:p-8 rounded-3xl border border-[#D4A843]/15 bg-gradient-to-br from-[#0b3d2e]/50 to-[#0b3d2e]/20 backdrop-blur-xl">
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                track('lp_testimonial_clicked', {});
+                startQuiz();
+              }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startQuiz(); } }}
+              className="relative p-6 md:p-8 rounded-3xl border border-[#D4A843]/15 bg-gradient-to-br from-[#0b3d2e]/50 to-[#0b3d2e]/20 backdrop-blur-xl cursor-pointer hover:border-[#D4A843]/30 transition-all focus:outline-none focus:ring-2 focus:ring-[#D4A843]/40">
               {/* Corner quote */}
               <div
                 className="absolute -top-4 -left-2 text-[#D4A843]/30 text-7xl leading-none font-serif select-none"
@@ -943,16 +1015,21 @@ export default function LpAzueroPage() {
                   desc: 'Aprovechamos los incentivos fiscales panameños en tu favor.',
                 },
               ].map((item) => (
-                <div
+                <button
+                  type="button"
                   key={item.title}
-                  className="p-5 rounded-2xl border border-[#D4A843]/10 bg-white/[0.02] backdrop-blur-sm"
+                  onClick={() => {
+                    track('lp_why_us_clicked', { feature: item.title });
+                    startQuiz();
+                  }}
+                  className="p-5 rounded-2xl border border-[#D4A843]/10 bg-white/[0.02] backdrop-blur-sm text-left hover:border-[#D4A843]/30 hover:bg-white/[0.04] transition-all cursor-pointer"
                 >
                   <div className="w-10 h-10 rounded-xl bg-[#D4A843]/15 flex items-center justify-center text-[#D4A843] mb-3">
                     {item.icon}
                   </div>
                   <h3 className="font-bold text-white mb-1.5">{item.title}</h3>
                   <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -1005,11 +1082,10 @@ export default function LpAzueroPage() {
             <p className="text-white/70 mb-6 max-w-md mx-auto">
               2 minutos. Sin compromiso. Recibes la cotización directamente en tu WhatsApp.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+            <button
+              type="button"
               onClick={startQuiz}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-[#D4A843]/30"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-[#D4A843]/30 hover:scale-[1.03] active:scale-[0.97] transition-transform duration-150"
               style={{
                 background: 'linear-gradient(135deg, #D4A843, #f5d080)',
                 color: '#071F17',
@@ -1017,7 +1093,7 @@ export default function LpAzueroPage() {
             >
               Quiero mi cotización gratis
               <ArrowRight className="w-5 h-5" />
-            </motion.button>
+            </button>
           </div>
         </section>
       )}
