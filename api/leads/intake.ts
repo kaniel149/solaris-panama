@@ -146,27 +146,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 📡 Fire CAPI Lead event (server-side dedup w/ browser pixel via event_id)
-    sendMetaCapiEventLogged(supabase, {
-      eventName: 'Lead',
-      eventId,
-      email: email?.trim() || null,
-      phone: cleanPhone,
-      firstName: String(name).trim().split(' ')[0],
-      lastName: String(name).trim().split(' ').slice(1).join(' ') || null,
-      city: location || null,
-      externalId: data.id,
-      fbc: fbc || null,
-      fbp: fbp || null,
-      clientIp,
-      clientUserAgent,
-      sourceUrl: `https://solaris-panama.com/${source === 'lp_azuero' ? 'lp/azuero' : ''}`,
-      currency: 'USD',
-      contentName: source,
-    }).then(async () => {
+    // AWAITED — fire-and-forget caused Vercel serverless to kill the request
+    // before webhook_logs insert completed (silent CAPI loss).
+    try {
+      await sendMetaCapiEventLogged(supabase, {
+        eventName: 'Lead',
+        eventId,
+        email: email?.trim() || null,
+        phone: cleanPhone,
+        firstName: String(name).trim().split(' ')[0],
+        lastName: String(name).trim().split(' ').slice(1).join(' ') || null,
+        city: location || null,
+        externalId: data.id,
+        fbc: fbc || null,
+        fbp: fbp || null,
+        clientIp,
+        clientUserAgent,
+        sourceUrl: `https://solaris-panama.com/${source === 'lp_azuero' ? 'lp/azuero' : ''}`,
+        currency: 'USD',
+        contentName: source,
+      });
       await supabase.from('leads')
         .update({ meta_capi_lead_sent_at: new Date().toISOString() })
         .eq('id', data.id);
-    }).catch(() => {});
+    } catch (err) {
+      console.error('[intake] CAPI fire failed:', err);
+    }
 
     // 🔔 Alert Kaniel about new website/LP lead
     try {
