@@ -1,11 +1,15 @@
 /**
- * Conversion tracking — Google Ads + Meta Pixel.
+ * Conversion tracking — Google Ads + GA4 + Meta Pixel.
  *
  * KEY UPGRADE 2026-04-17:
  *   - Google Enhanced Conversions (hashed email/phone via gtag('set','user_data',...))
  *   - transaction_id (eventId) for both platforms = dedup with server-side CAPI
  *   - Returns the eventId so callers can pass it to /api/leads/intake (event_id field)
  *   - Reads _fbc / _fbp cookies and returns them too — they go to intake → CAPI
+ *
+ * KEY UPGRADE 2026-04-29:
+ *   - GA4 init via VITE_GA4_MEASUREMENT_ID env var
+ *   - trackGA4Event() helper for custom events
  *
  * Browser SHA-256 (SubtleCrypto). Falls back to plain text for very old browsers.
  */
@@ -19,6 +23,36 @@ declare global {
 
 const GOOGLE_AW_ID = 'AW-18049688013';
 const GOOGLE_LEAD_LABEL = '-DbRCLOi55EcEM3D4Z5D';
+
+/**
+ * Initialize GA4 measurement. Call once at app startup.
+ * No-op if VITE_GA4_MEASUREMENT_ID is not set.
+ */
+export function initGA4(): void {
+  const ga4Id = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
+  if (!ga4Id || typeof window.gtag !== 'function') return;
+  try {
+    window.gtag('config', ga4Id, { send_page_view: true });
+  } catch (e) {
+    console.warn('[gtag] GA4 init failed:', e);
+  }
+}
+
+/**
+ * Track a custom GA4 event. No-op if GA4 ID is not configured or gtag not loaded.
+ */
+export function trackGA4Event(
+  eventName: string,
+  params?: Record<string, unknown>
+): void {
+  const ga4Id = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
+  if (!ga4Id || typeof window.gtag !== 'function') return;
+  try {
+    window.gtag('event', eventName, params ?? {});
+  } catch (e) {
+    console.warn('[gtag] GA4 event failed:', e);
+  }
+}
 
 export interface LeadConversionParams {
   email?: string | null;
@@ -154,6 +188,13 @@ export async function trackLeadConversion(
   } catch (e) {
     console.warn('[fbq] Meta lead failed (adblocker?):', e);
   }
+
+  // 🟢 GA4 — generate_lead event with same event_id for cross-platform dedup
+  trackGA4Event('generate_lead', {
+    currency,
+    value,
+    transaction_id: eventId,
+  });
 
   return { eventId, fbc, fbp };
 }

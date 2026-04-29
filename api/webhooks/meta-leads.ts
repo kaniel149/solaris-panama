@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
-import { sendMetaCapiEventLogged } from '../lib/meta-capi';
+import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
 
 // CRITICAL: disable Vercel's bodyParser so we can read raw bytes for HMAC verification.
 // Re-stringifying req.body changes byte order/whitespace and breaks signature.

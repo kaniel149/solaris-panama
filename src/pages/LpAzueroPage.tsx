@@ -7,6 +7,7 @@ import {
   Clock,
   DollarSign,
   FileText,
+  Mail,
   MessageCircle,
   Phone,
   Shield,
@@ -65,6 +66,7 @@ interface QuizState {
   timeframe: string;
   nombre: string;
   telefono: string;
+  email: string;
 }
 
 type StepId = 0 | 1 | 2 | 3 | 4 | 5;
@@ -206,8 +208,9 @@ export default function LpAzueroPage() {
     timeframe: '',
     nombre: '',
     telefono: '',
+    email: '',
   });
-  const [errors, setErrors] = useState<{ nombre?: string; telefono?: string }>({});
+  const [errors, setErrors] = useState<{ nombre?: string; telefono?: string; email?: string }>({});
   const quizRef = useRef<HTMLDivElement>(null);
 
   // Track initial page view with UTM context + LP-only meta tags
@@ -304,6 +307,10 @@ export default function LpAzueroPage() {
     } else if (!cleanPhone) {
       newErrors.telefono = 'Revisa el número — debería tener 8 dígitos (ej: 6123-4567)';
     }
+    // Email is optional — only validate format if the user filled it in
+    if (quiz.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(quiz.email.trim())) {
+      newErrors.email = 'Revisa el correo electrónico';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -339,6 +346,7 @@ export default function LpAzueroPage() {
       // so the server-side CAPI dedups against the browser pixel.
       // Wrapped in try/catch by trackLeadConversion itself (handles adblockers).
       const conv = await trackLeadConversion({
+        email: quiz.email.trim() || undefined,
         phone: `507${cleanPhone}`,
         firstName: quiz.nombre.trim().split(' ')[0],
         lastName: quiz.nombre.trim().split(' ').slice(1).join(' ') || undefined,
@@ -353,6 +361,7 @@ export default function LpAzueroPage() {
         body: JSON.stringify({
           name: quiz.nombre.trim(),
           phone: `507${cleanPhone}`,
+          email: quiz.email.trim() || null,
           // Store the actual range (was null — broke analytics/segmentation)
           monthly_bill: quiz.monthly_bill || null,
           monthly_bill_estimate_usd: leadValue,
@@ -730,7 +739,7 @@ export default function LpAzueroPage() {
                     </div>
 
                     {/* Phone — single intuitive field */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       <label className="block text-xs text-white/60 mb-1.5 font-medium">
                         Tu WhatsApp (Panamá) <span className="text-[#D4A843]">*</span>
                       </label>
@@ -758,6 +767,35 @@ export default function LpAzueroPage() {
                       </p>
                       {errors.telefono && (
                         <p className="text-[#ef4444] text-xs mt-1.5">{errors.telefono}</p>
+                      )}
+                    </div>
+
+                    {/* Email — optional, reduces friction */}
+                    <div className="mb-6">
+                      <label className="block text-xs text-white/60 mb-1.5 font-medium">
+                        Correo electrónico{' '}
+                        <span className="text-white/35 font-normal">(opcional)</span>
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                        <input
+                          type="email"
+                          autoComplete="email"
+                          value={quiz.email}
+                          onChange={(e) => {
+                            setQuiz({ ...quiz, email: e.target.value });
+                            if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                          }}
+                          placeholder="tu@correo.com"
+                          className={`w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder:text-white/20 focus:outline-none transition-all ${
+                            errors.email
+                              ? 'border-[#ef4444]/60'
+                              : 'border-white/[0.08] focus:border-[#D4A843]/40 focus:bg-white/[0.06]'
+                          }`}
+                        />
+                      </div>
+                      {errors.email && (
+                        <p className="text-[#ef4444] text-xs mt-1.5">{errors.email}</p>
                       )}
                     </div>
 

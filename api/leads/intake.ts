@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
-import { sendMetaCapiEventLogged } from '../lib/meta-capi';
+import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
