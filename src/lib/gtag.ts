@@ -32,7 +32,7 @@ export function initGA4(): void {
   const ga4Id = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
   if (!ga4Id || typeof window.gtag !== 'function') return;
   try {
-    window.gtag('config', ga4Id, { send_page_view: true });
+    window.gtag('config', ga4Id, { send_page_view: false });
   } catch (e) {
     console.warn('[gtag] GA4 init failed:', e);
   }

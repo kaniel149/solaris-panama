@@ -4,6 +4,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import Layout from '@/components/layout/Layout';
+import RouteTracker from '@/components/RouteTracker';
 
 // Eagerly loaded (public pages)
 import HomePage from '@/pages/HomePage';
@@ -50,6 +51,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
+          <RouteTracker />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<HomePage />} />
