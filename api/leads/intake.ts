@@ -2,11 +2,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
+import { inferAttribution } from '../lib/attribution.js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || ''
-);
+function getSupabaseServerClient() {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) return null;
+  return createClient(supabaseUrl, serviceRoleKey);
+}
 
 // Panama mobile prefixes: 6 (mobile), 5/3/2 (some VoIP/landline). Allow 8 digits after country code.
 const PA_PHONE_RE = /^507[2-8]\d{7}$/;
@@ -19,6 +22,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const supabase = getSupabaseServerClient();
+  if (!supabase) {
+    console.error('[intake] missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
 
   try {
     const {
@@ -45,6 +54,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       fbp,            // _fbp cookie value
       event_id,       // browser-generated UUID for CAPI/pixel dedup
       website,        // QW9: honeypot — bots fill this, humans don't
+      referrer_source, // from client sessionStorage ('google_organic' | 'facebook' | 'instagram')
+      referrer_url,    // raw document.referrer captured on client
     } = req.body;
 
     // Convert monthly_bill to numeric — accepts range strings ("$50-$150"), numbers, nulls
@@ -96,6 +107,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       null;
     const clientUserAgent = (req.headers['user-agent'] as string) || null;
 
+    // Resolve attribution — infer utm_source from gclid/fbclid/referrer when missing
+    const resolved = inferAttribution({
+      utm_source: utm_source || null,
+      utm_medium: utm_medium || null,
+      utm_campaign: utm_campaign || null,
+      utm_content: utm_content || null,
+      utm_term: utm_term || null,
+      gclid: gclid || null,
+      fbclid: fbclid || null,
+      referrer_source: referrer_source || null,
+      referrer_url: referrer_url || null,
+    });
+
+    if (resolved.attribution_debug.inferred) {
+      console.info('[intake] attribution inferred:', resolved.attribution_debug.infer_reason,
+        '| resolved utm_source:', resolved.utm_source);
+    }
+
     // Build base payload — `raw_data` preserves everything (including new fields
     // like lead_value, monthly_bill range text, installation_type, timeframe)
     // even if the leads table doesn't yet have dedicated columns for them.
@@ -110,13 +139,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         location: location?.trim() || null,
         source,
         campaign: campaign || null,
-        utm_source: utm_source || null,
-        utm_medium: utm_medium || null,
-        utm_campaign: utm_campaign || null,
-        utm_content: utm_content || null,
-        utm_term: utm_term || null,
-        gclid: gclid || null,
-        fbclid: fbclid || null,
+        utm_source: resolved.utm_source,
+        utm_medium: resolved.utm_medium,
+        utm_campaign: resolved.utm_campaign,
+        utm_content: resolved.utm_content,
+        utm_term: resolved.utm_term,
+        gclid: resolved.gclid,
+        fbclid: resolved.fbclid,
         fbc: fbc || null,
         fbp: fbp || null,
         event_id: eventId,
@@ -124,6 +153,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         client_user_agent: clientUserAgent,
         lead_score: 0,
         status: 'new',
+        attribution_debug: resolved.attribution_debug,
         raw_data: {
           ...req.body,
           // Explicit duplication so queries can JSONB-index these fields
@@ -140,10 +170,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) {
       console.error('Lead insert error:', error);
       await supabase.from('webhook_logs').insert({
-        source: 'intake', status_code: 500, error: String(error.message || error), payload: req.body,
+        source: 'intake',
+        status_code: 500,
+        error: String(error.message || error),
+        payload: { ...req.body, attribution_debug: resolved.attribution_debug },
       }).then(() => {}).catch(() => {});
       return res.status(500).json({ error: 'Failed to save lead' });
     }
+
+    // Log successful intake with attribution debug data for observability
+    await supabase.from('webhook_logs').insert({
+      source: 'intake',
+      direction: 'in',
+      status_code: 201,
+      payload: {
+        lead_id: data.id,
+        phone_prefix: cleanPhone.slice(0, 4),
+        source,
+        attribution_debug: resolved.attribution_debug,
+      },
+    }).then(() => {}).catch(() => {});
 
     // 📡 Fire CAPI Lead event (server-side dedup w/ browser pixel via event_id)
     // AWAITED — fire-and-forget caused Vercel serverless to kill the request

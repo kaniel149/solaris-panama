@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { initAnalytics } from './lib/analytics';
 import { initGA4 } from './lib/gtag';
+import { initAttribution } from './lib/attribution';
 import './i18n';
 import './index.css';
 
@@ -11,6 +12,8 @@ import './index.css';
 initAnalytics();
 // Initialize GA4 measurement (no-op if VITE_GA4_MEASUREMENT_ID not set)
 initGA4();
+// Capture UTM/gclid/fbclid/referrer on first load; persists in sessionStorage
+initAttribution();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

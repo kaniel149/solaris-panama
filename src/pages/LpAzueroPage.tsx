@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { trackLeadConversion } from '@/lib/gtag';
 import { track, identify } from '@/lib/analytics';
+import { getAttribution } from '@/lib/attribution';
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '50765831822';
@@ -326,7 +327,19 @@ export default function LpAzueroPage() {
     if (submitting) return;
 
     setSubmitting(true);
-    const utm = getUtmParams();
+    // getAttribution reads from sessionStorage (set by initAttribution on page load),
+    // which survives multi-step quiz navigation. Falls back to live URL params.
+    const attr = getAttribution();
+    // Keep utm alias for existing track() calls below
+    const utm = {
+      utm_source: attr.utm_source,
+      utm_medium: attr.utm_medium,
+      utm_campaign: attr.utm_campaign,
+      utm_content: attr.utm_content,
+      utm_term: attr.utm_term,
+      gclid: attr.gclid,
+      fbclid: attr.fbclid,
+    };
     const cleanPhone = cleanPanamaPhone(quiz.telefono) || quiz.telefono.replace(/\D/g, '');
 
     // 🔵 Real lead value for Google Ads + Meta — was hardcoded $1 which broke ROAS reporting
@@ -377,6 +390,8 @@ export default function LpAzueroPage() {
           fbc: conv.fbc,
           fbp: conv.fbp,
           website: honeypot, // bot trap — server returns 200 silently if filled
+          referrer_source: attr.referrer_source,
+          referrer_url: attr.referrer_url,
           ...utm,
         }),
       });

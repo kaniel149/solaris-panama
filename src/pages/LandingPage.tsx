@@ -14,6 +14,7 @@ import {
   Star,
 } from 'lucide-react';
 import { trackLeadConversion } from '@/lib/gtag';
+import { getAttribution } from '@/lib/attribution';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -148,8 +149,16 @@ export default function LandingPage() {
       currency: 'USD',
     }).catch(() => ({ eventId: '', fbc: null, fbp: null }));
 
-    // Extract UTM + click-id params from URL
-    const params = new URLSearchParams(window.location.search);
+    // Retrieve attribution from sessionStorage (set by initAttribution on page load)
+    // Falls back to live URL params if sessionStorage is unavailable.
+    const attr = getAttribution();
+
+    // Derive source label from resolved attribution
+    const derivedSource =
+      attr.utm_source === 'google' ? 'google_ads'
+      : attr.utm_source === 'facebook' ? 'facebook'
+      : attr.utm_source === 'instagram' ? 'instagram'
+      : 'website';
 
     // Save lead to database
     try {
@@ -160,18 +169,17 @@ export default function LandingPage() {
           name: form.nombre.trim(),
           phone: form.telefono.trim(),
           monthly_bill: form.factura || null,
-          source: params.get('utm_source') === 'google' ? 'google_ads'
-            : params.get('utm_source') === 'facebook' ? 'facebook'
-            : params.get('utm_source') === 'instagram' ? 'instagram'
-            : 'website',
-          campaign: params.get('utm_campaign') || null,
-          utm_source: params.get('utm_source') || null,
-          utm_medium: params.get('utm_medium') || null,
-          utm_campaign: params.get('utm_campaign') || null,
-          utm_content: params.get('utm_content') || null,
-          utm_term: params.get('utm_term') || null,
-          gclid: params.get('gclid') || null,
-          fbclid: params.get('fbclid') || null,
+          source: derivedSource,
+          campaign: attr.utm_campaign || null,
+          utm_source: attr.utm_source,
+          utm_medium: attr.utm_medium,
+          utm_campaign: attr.utm_campaign,
+          utm_content: attr.utm_content,
+          utm_term: attr.utm_term,
+          gclid: attr.gclid,
+          fbclid: attr.fbclid,
+          referrer_source: attr.referrer_source,
+          referrer_url: attr.referrer_url,
           // CAPI dedup + click attribution
           event_id: conv.eventId,
           fbc: conv.fbc,
