@@ -213,7 +213,7 @@ const ProposalsPage: React.FC = () => {
             Proposals linked to leads will appear here.
           </p>
           <a
-            href="/proposal-generator"
+            href="/tools/proposal-generator"
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#00ffcc] to-[#00e6b8] text-[#0a0a0f] font-semibold text-sm hover:shadow-lg hover:shadow-[#00ffcc]/20 transition-shadow"
           >
             <Sparkles className="w-4 h-4" />
@@ -239,7 +239,7 @@ const ProposalsPage: React.FC = () => {
           </div>
         </div>
         <a
-          href="/proposal-generator"
+          href="/tools/proposal-generator"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#00ffcc] to-[#00e6b8] text-[#0a0a0f] font-semibold text-sm hover:shadow-lg hover:shadow-[#00ffcc]/20 transition-shadow"
         >
           <Sparkles className="w-4 h-4" />

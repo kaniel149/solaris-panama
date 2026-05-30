@@ -1,10 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || ''
-);
+function getSupabaseServerClient() {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) return null;
+  return createClient(supabaseUrl, serviceRoleKey);
+}
 
 interface WhatsAppMessage {
   id: string;
@@ -24,6 +26,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const supabase = getSupabaseServerClient();
+  if (!supabase) {
+    console.error('[whatsapp-sync] missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  const expectedSecret = process.env.WHATSAPP_SYNC_SECRET || process.env.AUTOMATION_SECRET;
+  if (expectedSecret) {
+    const providedSecret = req.headers['x-whatsapp-sync-secret'] || req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    if (providedSecret !== expectedSecret) {
+      return res.status(401).json({ error: 'unauthorized' });
+    }
+  }
 
   try {
     // Expect array of WhatsApp conversations from frontend (via MCP)

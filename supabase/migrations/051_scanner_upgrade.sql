@@ -18,6 +18,16 @@
 
 
 -- ============================================================================
+-- A0. Allow the cron scan-engine source value on roof_scans.source
+--     Migration 050 constrained source to a fixed set; the async Overpass cron
+--     worker writes source='overpass_cron', so extend the CHECK to include it.
+-- ============================================================================
+ALTER TABLE roof_scans DROP CONSTRAINT IF EXISTS roof_scans_source_check;
+ALTER TABLE roof_scans ADD CONSTRAINT roof_scans_source_check
+  CHECK (source IN ('google_solar','local_panama','pvwatts','pvwatts_estimate','manual','overpass_cron'));
+
+
+-- ============================================================================
 -- A. Fix RLS on roof_scans
 --    Old SELECT policy: USING (true)  →  every authenticated user sees ALL rows.
 --    New SELECT policy: scope to rows the caller created, OR rows they can reach

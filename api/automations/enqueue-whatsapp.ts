@@ -26,6 +26,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const expectedSecret = process.env.AUTOMATION_SECRET;
+  if (expectedSecret) {
+    const providedSecret = req.headers['x-automation-secret'] || req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    if (providedSecret !== expectedSecret) {
+      return res.status(401).json({ error: 'unauthorized' });
+    }
+  }
+
   try {
     const {
       lead_id,

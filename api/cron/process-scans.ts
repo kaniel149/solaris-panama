@@ -238,7 +238,7 @@ async function processScan(req: ScanRequest): Promise<ScanResult> {
   const [minLng, minLat, maxLng, maxLat] = req.bbox;
 
   // Guard: bbox side limit
-  if ((maxLng - minLng) > MAX_BBOX_DEG || (maxLat - minLat) > MAX_BBOX_DEG) {
+  if (Math.abs(maxLng - minLng) > MAX_BBOX_DEG || Math.abs(maxLat - minLat) > MAX_BBOX_DEG) {
     return { id: req.id, status: 'failed', error: 'bbox too large' };
   }
 
@@ -274,7 +274,6 @@ async function processScan(req: ScanRequest): Promise<ScanResult> {
       if (element.type !== 'way' && element.type !== 'relation') continue;
 
       const coords = extractGeometry(element);
-      if (counts.found > MAX_BUILDINGS) break;
 
       if (coords.length < 3) {
         counts.skipped++;

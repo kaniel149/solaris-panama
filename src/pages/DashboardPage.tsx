@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/Button';
 import { STAGE_COLORS, STAGE_LABELS } from '@/types/project';
 import type { PipelineStage } from '@/types/project';
 import type { ActivityType } from '@/types/activity';
+import { getLeadStats } from '@/services/leadService';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filter(Boolean).join(' ');
 
@@ -126,6 +127,23 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<
 export default function DashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [leadStats, setLeadStats] = useState({
+    total: 0,
+    new: 0,
+    contacted: 0,
+    qualified: 0,
+    proposal_sent: 0,
+    won: 0,
+    lost: 0,
+    stale: 0,
+    totalWonValue: 0,
+  });
+
+  useEffect(() => {
+    getLeadStats()
+      .then((stats) => setLeadStats(stats))
+      .catch((err) => console.warn('[Dashboard] Failed to load CRM stats:', err));
+  }, []);
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -178,31 +196,25 @@ export default function DashboardPage() {
       {/* Stats Row */}
       <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
-          label={t('dashboard.totalProjects')}
-          value={38}
+          label="CRM Leads"
+          value={leadStats.total}
           icon={<LayoutDashboard className="w-4 h-4" />}
-          trend={{ value: 12, label: 'vs last month' }}
         />
         <StatsCard
-          label={t('dashboard.activeProjects')}
-          value={21}
+          label="Open Leads"
+          value={Math.max(0, leadStats.total - leadStats.won - leadStats.lost)}
           icon={<Zap className="w-4 h-4" />}
-          trend={{ value: 8, label: 'vs last month' }}
         />
         <StatsCard
-          label={t('dashboard.revenue')}
-          value={842000}
+          label="Won Revenue"
+          value={leadStats.totalWonValue}
           format="currency"
-          prefix="$"
           icon={<DollarSign className="w-4 h-4" />}
-          trend={{ value: 23, label: 'vs last month' }}
         />
         <StatsCard
-          label={t('dashboard.conversion')}
-          value={34}
-          suffix="%"
+          label="Stale Follow-ups"
+          value={leadStats.stale}
           icon={<Target className="w-4 h-4" />}
-          trend={{ value: -2, label: 'vs last month' }}
         />
       </motion.div>
 

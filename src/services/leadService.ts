@@ -29,6 +29,16 @@ export interface CrmLead {
   deal_value?: number | null;
   deal_currency?: string | null;
   won_at?: string | null;
+  google_conversion_uploaded_at?: string | null;
+  meta_capi_lead_sent_at?: string | null;
+  meta_capi_purchase_sent_at?: string | null;
+  event_id?: string | null;
+  fbc?: string | null;
+  fbp?: string | null;
+  client_user_agent?: string | null;
+  client_ip?: string | null;
+  auto_wa_sent_at?: string | null;
+  auto_wa_type?: string | null;
   status: string;
   assigned_to: string | null;
   lead_score: number;
@@ -102,6 +112,24 @@ export async function updateLead(id: string, updates: Partial<CrmLead>): Promise
   return data as CrmLead;
 }
 
+export async function markLeadWon(id: string, dealValue: number, currency = 'USD'): Promise<CrmLead> {
+  const { data, error } = await supabase.rpc('mark_lead_won', {
+    p_lead_id: id,
+    p_deal_value: dealValue,
+    p_deal_currency: currency,
+  });
+
+  if (!error && data) return data as CrmLead;
+
+  // Older databases may not have the helper yet. Keep the CRM usable.
+  return updateLead(id, {
+    status: 'won',
+    deal_value: dealValue,
+    deal_currency: currency,
+    won_at: new Date().toISOString(),
+  });
+}
+
 export async function deleteLead(id: string): Promise<void> {
   const { error } = await supabase.from('leads').delete().eq('id', id);
   if (error) throw error;
@@ -146,10 +174,14 @@ export async function getLeadStats(): Promise<{
   new: number;
   contacted: number;
   qualified: number;
+  proposal_sent: number;
   won: number;
+  lost: number;
+  stale: number;
+  totalWonValue: number;
   bySource: Record<string, number>;
 }> {
-  const { data, error } = await supabase.from('leads').select('status, source');
+  const { data, error } = await supabase.from('leads').select('status, source, created_at, updated_at, deal_value');
   if (error) throw error;
 
   const leads = data || [];
@@ -164,9 +196,50 @@ export async function getLeadStats(): Promise<{
     new: leads.filter((l) => l.status === 'new').length,
     contacted: leads.filter((l) => l.status === 'contacted').length,
     qualified: leads.filter((l) => l.status === 'qualified').length,
+    proposal_sent: leads.filter((l) => l.status === 'proposal_sent').length,
     won: leads.filter((l) => l.status === 'won').length,
+    lost: leads.filter((l) => l.status === 'lost').length,
+    stale: leads.filter((l) => isStaleLead(l as Pick<CrmLead, 'status' | 'created_at' | 'updated_at'>)).length,
+    totalWonValue: leads
+      .filter((l) => l.status === 'won')
+      .reduce((sum, l) => sum + (Number(l.deal_value) || 0), 0),
     bySource,
   };
+}
+
+export function isStaleLead(lead: Pick<CrmLead, 'status' | 'created_at' | 'updated_at'>): boolean {
+  const now = Date.now();
+  const ageHours = (now - new Date(lead.created_at).getTime()) / 36e5;
+  const idleDays = (now - new Date(lead.updated_at).getTime()) / 864e5;
+
+  if (lead.status === 'new') return ageHours > 48;
+  if (lead.status === 'contacted') return idleDays > 5;
+  if (lead.status === 'qualified') return idleDays > 7;
+  if (lead.status === 'proposal_sent') return idleDays > 10;
+  return false;
+}
+
+export async function enqueueWhatsAppMessage(params: {
+  leadId?: string;
+  phone: string;
+  message: string;
+  automationType?: 'meta_ack' | 'wa_discovery' | 'followup' | 'manual';
+  delaySeconds?: number;
+}): Promise<{ ok: boolean; id?: string; deduped?: boolean }> {
+  const res = await fetch('/api/automations/enqueue-whatsapp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      lead_id: params.leadId,
+      phone: params.phone,
+      message: params.message,
+      automation_type: params.automationType || 'manual',
+      delay_seconds: params.delaySeconds ?? 0,
+      idempotency_key: params.leadId ? `manual:${params.leadId}:${Date.now()}` : undefined,
+    }),
+  });
+  if (!res.ok) throw new Error('WhatsApp enqueue failed');
+  return res.json();
 }
 
 // ─── WhatsApp Sync (calls API endpoint) ──────────────────────────

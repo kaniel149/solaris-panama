@@ -67,8 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const select = 'id, name, phone, status, source, location, created_at, updated_at';
 
     const [news, contacted, qualified, proposals] = await Promise.all([
-      supabase.from('leads').select(select).eq('status', 'new').lt('created_at', hours(48))
-        .not('source', 'in', '(vendor,partner)').limit(20),
+      supabase.from('leads').select(select).eq('status', 'new').lt('created_at', hours(48)).limit(20),
       supabase.from('leads').select(select).eq('status', 'contacted').lt('updated_at', days(5)).limit(20),
       supabase.from('leads').select(select).eq('status', 'qualified').lt('updated_at', days(7)).limit(20),
       supabase.from('leads').select(select).eq('status', 'proposal_sent').lt('updated_at', days(10)).limit(20),

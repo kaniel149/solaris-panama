@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs/promises';
 
 /**
  * Intercept /api/ requests in dev mode and return a proper JSON 503 response.
@@ -29,8 +30,55 @@ function apiDevFallback(): Plugin {
   };
 }
 
+function appHtmlFallback(): Plugin {
+  const appRoutes = [
+    '/dashboard',
+    '/login',
+    '/crm-leads',
+    '/projects',
+    '/clients',
+    '/proposals',
+    '/calendar',
+    '/monitoring',
+    '/leads',
+    '/settings',
+    '/tools',
+    '/mapa-solar',
+    '/lp',
+    '/azuero',
+    '/nosotros',
+    '/servicios',
+    '/proyectos',
+  ];
+
+  return {
+    name: 'app-html-fallback',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url?.split('?')[0] || '/';
+        const acceptsHtml = req.method === 'GET' && req.headers.accept?.includes('text/html');
+        const isAppRoute = appRoutes.some((route) => url === route || url.startsWith(`${route}/`));
+        if (!acceptsHtml || !isAppRoute) {
+          next();
+          return;
+        }
+
+        try {
+          const html = await fs.readFile(path.resolve(__dirname, 'app.html'), 'utf-8');
+          const transformed = await server.transformIndexHtml(url, html);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/html');
+          res.end(transformed);
+        } catch (error) {
+          next(error);
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [apiDevFallback(), react()],
+  plugins: [apiDevFallback(), appHtmlFallback(), react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

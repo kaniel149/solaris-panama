@@ -69,6 +69,7 @@
 </script>
 <!-- Google Ads tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18049688013"></script>
+<script src="/lead-tracking.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -1064,26 +1065,11 @@ function toggleFaq(btn) {
 // Form
 document.getElementById('leadForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const data = new FormData(this);
-  fetch('https://solaris-panama.com/api/lead', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      name: data.get('name'),
-      company: data.get('company'),
-      phone: data.get('phone'),
-      email: data.get('email'),
-      bill: data.get('bill'),
-      sector: data.get('sector'),
-      location: data.get('location'),
-      message: data.get('message'),
-      type: 'comercial',
-      source: 'solar-comercial'
-    })
-  }).catch(() => {});
-  this.style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
-  if (typeof gtag !== 'undefined') gtag('event', 'conversion', {'send_to': 'AW-18049688013/lead_comercial'});
+  window.SolarisLeadTracking.submitForm(this, {
+    source: 'solar_comercial_form',
+    installation_type: 'comercial',
+    successElementId: 'formSuccess'
+  });
 });
 
 // Fade up

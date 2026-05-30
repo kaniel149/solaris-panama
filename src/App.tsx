@@ -9,15 +9,15 @@ import RouteTracker from '@/components/RouteTracker';
 // Eagerly loaded (public pages)
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
-import PublicSolarMapPage from '@/pages/PublicSolarMapPage';
 import LandingPage from '@/pages/LandingPage';
 import LpAzueroPage from '@/pages/LpAzueroPage';
-import DashboardPage from '@/pages/DashboardPage';
 import NosotrosPage from '@/pages/NosotrosPage';
 import ServiciosPage from '@/pages/ServiciosPage';
 import ProyectosPage from '@/pages/ProyectosPage';
 
 // Lazy loaded (secondary pages)
+const PublicSolarMapPage = lazy(() => import('@/pages/PublicSolarMapPage'));
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const CrmLeadsPage = lazy(() => import('@/pages/CrmLeadsPage'));
 const ProjectsPage = lazy(() => import('@/pages/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectDetailPage'));
@@ -62,11 +62,25 @@ export default function App() {
             <Route path="/nosotros" element={<NosotrosPage />} />
             <Route path="/servicios" element={<ServiciosPage />} />
             <Route path="/proyectos" element={<ProyectosPage />} />
-            <Route path="/mapa-solar" element={<PublicSolarMapPage />} />
+            <Route
+              path="/mapa-solar"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <PublicSolarMapPage />
+                </Suspense>
+              }
+            />
             <Route path="/solar-map" element={<Navigate to="/mapa-solar" replace />} />
             {/* CRM routes (behind auth) */}
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <Suspense fallback={<PageLoader />}>
+                    <DashboardPage />
+                  </Suspense>
+                }
+              />
               <Route
                 path="/crm-leads"
                 element={
