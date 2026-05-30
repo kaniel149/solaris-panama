@@ -4,6 +4,7 @@ import { ScanLine, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useRoofScanner } from '@/hooks/useRoofScanner';
 import { useLeadManager } from '@/hooks/useLeadManager';
 import { useAreaSelection } from '@/hooks/useAreaSelection';
+import { useScanRequests, MAX_BBOX_SIDE_DEG } from '@/hooks/useScanRequests';
 import { useToast } from '@/components/ui/Toast';
 import { geocodeAddress, type GeocodingResult } from '@/services/geocodingService';
 import {
@@ -18,6 +19,7 @@ import BuildingDetail from '@/components/scanner/BuildingDetail';
 import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
 import DrawToolbar from '@/components/scanner/DrawToolbar';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
+import ScanRequestsPanel from '@/components/scanner/ScanRequestsPanel';
 
 // ===== TYPES =====
 
@@ -72,6 +74,9 @@ export default function RoofScannerPage() {
     isEnriching,
     enrichProgress,
   } = useLeadManager();
+
+  // Async background scan queue (separate from the instant viewport scan).
+  const { requests: scanRequests, isQueuing, queueScan } = useScanRequests();
 
   const selectedZoneNameRef = useRef<string | undefined>(undefined);
   selectedZoneNameRef.current = areaSelectedZone?.name;
@@ -144,6 +149,58 @@ export default function RoofScannerPage() {
     const bounds = getActiveBounds() ?? mapBounds;
     scanViewport(bounds);
   }, [scanViewport, mapBounds, getActiveBounds]);
+
+  // ===== Async background scan =====
+  // Uses the drawn zone bounds if one exists, else the current map viewport.
+  const handleQueueScan = useCallback(async () => {
+    const bounds = getActiveBounds() ?? mapBounds;
+    const minLng = bounds.west;
+    const minLat = bounds.south;
+    const maxLng = bounds.east;
+    const maxLat = bounds.north;
+    const bbox: number[] = [minLng, minLat, maxLng, maxLat];
+
+    // Guard: the worker rejects bboxes whose side exceeds MAX_BBOX_SIDE_DEG.
+    const sideLng = Math.abs(maxLng - minLng);
+    const sideLat = Math.abs(maxLat - minLat);
+    if (sideLng > MAX_BBOX_SIDE_DEG || sideLat > MAX_BBOX_SIDE_DEG) {
+      toast({
+        type: 'warning',
+        title: 'Área demasiado grande',
+        description: `Acerca el mapa: cada lado debe ser menor a ${MAX_BBOX_SIDE_DEG}°.`,
+      });
+      return;
+    }
+
+    // GeoJSON Polygon ring of the bbox (lng/lat, closed).
+    const areaGeojson = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [minLng, minLat],
+          [maxLng, minLat],
+          [maxLng, maxLat],
+          [minLng, maxLat],
+          [minLng, minLat],
+        ],
+      ],
+    };
+
+    const result = await queueScan(areaGeojson, bbox, {});
+    if ('error' in result) {
+      toast({
+        type: 'error',
+        title: 'No se pudo encolar el escaneo',
+        description: result.error,
+      });
+      return;
+    }
+    toast({
+      type: 'success',
+      title: 'Escaneo encolado',
+      description: 'Los leads aparecerán a medida que el worker procese el área.',
+    });
+  }, [getActiveBounds, mapBounds, queueScan, toast]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
@@ -346,7 +403,12 @@ export default function RoofScannerPage() {
         isScanning={isScanning}
         onScanViewport={handleScanViewport}
         onClear={clearBuildings}
+        onQueueScan={handleQueueScan}
+        isQueuing={isQueuing}
       />
+
+      {/* ===== ASYNC BACKGROUND-SCAN STATUS PANEL — bottom-left corner ===== */}
+      <ScanRequestsPanel requests={scanRequests} />
 
       {/* ===== LEFT PANEL — hover-activated overlay ===== */}
       <div
