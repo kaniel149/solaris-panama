@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
+import * as crypto from 'crypto';
+import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
 
 /**
  * Cron: pulls the last 10 leads from each Meta lead form on the page
@@ -136,7 +138,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const cleanPhone = phone.replace(/[\s\-()]/g, '');
 
-        const { error } = await supabase.from('leads').insert({
+        const eventId = crypto.randomUUID();
+
+        const { data: insertedLead, error } = await supabase.from('leads').insert({
           name: name.trim(),
           phone: cleanPhone,
           email: email?.trim() || null,
@@ -150,12 +154,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           campaign: lead.campaign_id || null,
           page_id: PAGE_ID,
           status: 'new',
+          event_id: eventId,
           raw_data: { lead, source: 'cron_poll' },
-        });
+        }).select('id').single();
 
         if (!error) {
           inserted++;
           totalNew++;
+          try {
+            await sendMetaCapiEventLogged(supabase, {
+              eventName: 'Lead',
+              eventId,
+              email: email?.trim() || null,
+              phone: cleanPhone,
+              firstName: name.trim().split(' ')[0],
+              lastName: name.trim().split(' ').slice(1).join(' ') || null,
+              city: location,
+              externalId: insertedLead?.id,
+              sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || form.id}`,
+              currency: 'USD',
+              contentName: `Meta Lead Form ${lead.form_id || form.id}`,
+            });
+            if (insertedLead?.id) {
+              await supabase.from('leads')
+                .update({ meta_capi_lead_sent_at: new Date().toISOString() })
+                .eq('id', insertedLead.id);
+            }
+          } catch (capiErr) {
+            console.warn('[poll-meta-leads] CAPI fire failed:', capiErr);
+          }
+
+          try {
+            await supabase.from('whatsapp_outbound_queue').insert({
+              phone: '972502213948',
+              message: [
+                'NUEVO LEAD - Solaris Panama',
+                '',
+                'Fuente: Meta Ads cron fallback',
+                `Nombre: ${name.trim()}`,
+                `Telefono: +${cleanPhone}`,
+                `Zona: ${location || '?'}`,
+                `CRM: https://solaris-panama.com/crm-leads`,
+              ].join('\n'),
+              automation_type: 'manual',
+              scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
+              idempotency_key: `new_lead_alert:meta_poll:${insertedLead?.id || lead.id}`,
+            });
+          } catch (alertErr) {
+            console.warn('[poll-meta-leads] alert enqueue failed:', alertErr);
+          }
         }
       }
 

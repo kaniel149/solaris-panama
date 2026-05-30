@@ -7,6 +7,7 @@ import {
   RefreshCw,
   Plus,
   Search,
+  Clock,
   Globe,
   Instagram,
   Facebook,
@@ -20,6 +21,8 @@ import {
   addLeadNote,
   getLeadNotes,
   getLeadStats,
+  isStaleLead,
+  markLeadWon,
   type CrmLead,
   type LeadNote,
 } from '@/services/leadService';
@@ -31,6 +34,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   contacted: { label: 'Contactado', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
   qualified: { label: 'Calificado', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
   proposal_sent: { label: 'Propuesta', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+  cold: { label: 'Frío', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
+  warm: { label: 'Tibio', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+  hot: { label: 'Caliente', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
   won: { label: 'Ganado', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
   lost: { label: 'Perdido', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
   // Non-customer statuses (hidden by default)
@@ -41,18 +47,25 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 // Statuses excluded from default pipeline view (vendors, partners, junk)
 const NON_CUSTOMER_STATUSES = ['vendor', 'partner', 'not_a_lead'];
+const SYSTEM_TEST_SOURCES = ['debug_test', 'capi_verify'];
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  google_ads: { label: 'Google Ads', icon: <Globe className="w-3 h-3" />, color: '#4285f4' },
-  meta_ads: { label: 'Meta Ads', icon: <Facebook className="w-3 h-3" />, color: '#1877f2' },
+  google_ads: { label: 'Google Lead Form', icon: <Globe className="w-3 h-3" />, color: '#4285f4' },
+  lp_azuero: { label: 'Google Ads LP', icon: <Globe className="w-3 h-3" />, color: '#D4A843' },
+  meta_ads: { label: 'Meta Lead Ads', icon: <Facebook className="w-3 h-3" />, color: '#1877f2' },
   facebook: { label: 'Facebook', icon: <Facebook className="w-3 h-3" />, color: '#1877f2' },
   instagram: { label: 'Instagram', icon: <Instagram className="w-3 h-3" />, color: '#e4405f' },
   whatsapp: { label: 'WhatsApp', icon: <MessageCircle className="w-3 h-3" />, color: '#25d366' },
   website: { label: 'Website', icon: <Globe className="w-3 h-3" />, color: '#D4A843' },
   manual: { label: 'Manual', icon: <Plus className="w-3 h-3" />, color: '#8888a0' },
+  referral: { label: 'Referral', icon: <Users className="w-3 h-3" />, color: '#22c55e' },
+  cold_call: { label: 'Cold call', icon: <Phone className="w-3 h-3" />, color: '#0ea5e9' },
+  event: { label: 'Event', icon: <Users className="w-3 h-3" />, color: '#f59e0b' },
+  debug_test: { label: 'Debug Test', icon: <Globe className="w-3 h-3" />, color: '#64748b' },
+  capi_verify: { label: 'CAPI Verify', icon: <Facebook className="w-3 h-3" />, color: '#64748b' },
 };
 
-const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
+const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'cold', 'warm', 'hot', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
 export default function CrmLeadsPage() {
   const [leads, setLeads] = useState<CrmLead[]>([]);
@@ -61,7 +74,17 @@ export default function CrmLeadsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
-  const [stats, setStats] = useState({ total: 0, new: 0, contacted: 0, qualified: 0, won: 0, bySource: {} as Record<string, number> });
+  const [stats, setStats] = useState({
+    total: 0,
+    new: 0,
+    contacted: 0,
+    qualified: 0,
+    proposal_sent: 0,
+    won: 0,
+    lost: 0,
+    stale: 0,
+    bySource: {} as Record<string, number>,
+  });
 
   // Detail panel
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
@@ -79,9 +102,11 @@ export default function CrmLeadsPage() {
       ]);
       // Default: hide vendors / partners / not_a_lead from main pipeline view
       // (still searchable via the status dropdown explicitly)
-      const filtered = (showNonCustomers || statusFilter)
-        ? res.data
-        : res.data.filter((l) => !NON_CUSTOMER_STATUSES.includes(l.status || ''));
+      const filtered = res.data.filter((l) => {
+        if (!sourceFilter && SYSTEM_TEST_SOURCES.includes(l.source || '')) return false;
+        if (!showNonCustomers && !statusFilter && NON_CUSTOMER_STATUSES.includes(l.status || '')) return false;
+        return true;
+      });
       setLeads(filtered);
       setStats(s);
     } catch (err) {
@@ -93,9 +118,14 @@ export default function CrmLeadsPage() {
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
   const handleStatusChange = async (lead: CrmLead, newStatus: string) => {
-    await updateLead(lead.id, { status: newStatus } as Partial<CrmLead>);
+    const updates: Partial<CrmLead> = { status: newStatus };
+    if (newStatus === 'won' && !lead.won_at) {
+      updates.won_at = new Date().toISOString();
+      updates.deal_currency = lead.deal_currency || 'USD';
+    }
+    await updateLead(lead.id, updates);
     fetchLeads();
-    if (selectedLead?.id === lead.id) setSelectedLead({ ...selectedLead, status: newStatus });
+    if (selectedLead?.id === lead.id) setSelectedLead({ ...selectedLead, ...updates });
   };
 
   const handleSelectLead = async (lead: CrmLead) => {
@@ -168,17 +198,35 @@ export default function CrmLeadsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
         {[
           { label: 'Total', value: stats.total, color: '#D4A843' },
           { label: 'Nuevos', value: stats.new, color: '#00ffcc' },
           { label: 'Contactados', value: stats.contacted, color: '#8b5cf6' },
           { label: 'Calificados', value: stats.qualified, color: '#f59e0b' },
           { label: 'Ganados', value: stats.won, color: '#22c55e' },
+          { label: 'Vencidos', value: stats.stale, color: '#ef4444' },
         ].map((s) => (
           <div key={s.label} className="px-4 py-3 rounded-xl bg-[#12121a] border border-white/[0.06]">
             <div className="text-xs text-[#555570] mb-1">{s.label}</div>
             <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {[
+          { label: 'Google Ads LP', value: stats.bySource.lp_azuero || 0, detail: 'landing con gclid', color: '#D4A843' },
+          { label: 'Google Lead Form', value: stats.bySource.google_ads || 0, detail: 'webhook directo', color: '#4285f4' },
+          { label: 'Meta Lead Ads', value: stats.bySource.meta_ads || 0, detail: 'leadgen form', color: '#1877f2' },
+          { label: 'WhatsApp', value: stats.bySource.whatsapp || 0, detail: 'bridge import/sync', color: '#25d366' },
+        ].map((s) => (
+          <div key={s.label} className="px-4 py-3 rounded-xl bg-[#12121a]/70 border border-white/[0.06]">
+            <div className="flex items-baseline justify-between gap-3">
+              <div className="text-xs font-medium text-[#c0c0d0]">{s.label}</div>
+              <div className="text-lg font-bold tabular-nums" style={{ color: s.color }}>{s.value}</div>
+            </div>
+            <div className="text-[10px] text-[#555570] mt-0.5">{s.detail}</div>
           </div>
         ))}
       </div>
@@ -224,7 +272,7 @@ export default function CrmLeadsPage() {
               : 'bg-[#12121a] border-white/[0.06] text-[#8888a0] hover:text-white'
           )}
         >
-          {showNonCustomers ? '👥 Mostrando todos' : '🙈 Ocultar proveedores'}
+          {showNonCustomers ? 'Mostrando todos' : 'Ocultar proveedores'}
         </button>
       </div>
 
@@ -254,6 +302,7 @@ export default function CrmLeadsPage() {
                 {leads.map((lead) => {
                   const src = SOURCE_CONFIG[lead.source] || SOURCE_CONFIG.manual;
                   const st = STATUS_CONFIG[lead.status] || STATUS_CONFIG.new;
+                  const stale = isStaleLead(lead);
                   return (
                     <tr
                       key={lead.id}
@@ -267,6 +316,12 @@ export default function CrmLeadsPage() {
                         <div className="text-sm font-medium text-white">{lead.name}</div>
                         {lead.monthly_bill && (
                           <div className="text-[11px] text-[#555570]">${lead.monthly_bill}/mes</div>
+                        )}
+                        {stale && (
+                          <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#ef4444]">
+                            <Clock className="w-3 h-3" />
+                            Requiere seguimiento
+                          </div>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -291,6 +346,23 @@ export default function CrmLeadsPage() {
                           {src.icon}
                           {src.label}
                         </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {lead.gclid && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#4285f4]/10 text-[#4285f4]">
+                              gclid
+                            </span>
+                          )}
+                          {lead.platform_lead_id && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1877f2]/10 text-[#1877f2]">
+                              platform id
+                            </span>
+                          )}
+                          {lead.fbclid && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1877f2]/10 text-[#1877f2]">
+                              fbclid
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <select
@@ -378,10 +450,39 @@ export default function CrmLeadsPage() {
                   {selectedLead.campaign && (
                     <span className="text-xs text-[#555570]">· {selectedLead.campaign}</span>
                   )}
+                  {isStaleLead(selectedLead) && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-[#ef4444]/10 text-[#ef4444]">
+                      <Clock className="w-3 h-3" />
+                      Seguimiento vencido
+                    </span>
+                  )}
                 </div>
 
-                {/* Attribution badges — gclid / fbclid / utm / ad_id */}
-                {(selectedLead.gclid || selectedLead.fbclid || selectedLead.ad_id || selectedLead.utm_source || selectedLead.utm_medium) && (
+                {(selectedLead.auto_wa_sent_at || selectedLead.meta_capi_lead_sent_at || selectedLead.google_conversion_uploaded_at) && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Automatización</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedLead.auto_wa_sent_at && (
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#25d366]/10 text-[#25d366] border border-[#25d366]/20">
+                          WA auto: {new Date(selectedLead.auto_wa_sent_at).toLocaleDateString('es-PA')}
+                        </span>
+                      )}
+                      {selectedLead.meta_capi_lead_sent_at && (
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20">
+                          Meta CAPI enviado
+                        </span>
+                      )}
+                      {selectedLead.google_conversion_uploaded_at && (
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20">
+                          Google offline enviado
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Attribution badges — gclid / fbclid / platform lead / utm / ad_id */}
+                {(selectedLead.gclid || selectedLead.fbclid || selectedLead.platform_lead_id || selectedLead.ad_id || selectedLead.form_id || selectedLead.utm_source || selectedLead.utm_medium) && (
                   <div>
                     <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Atribución</div>
                     <div className="flex flex-wrap gap-1.5">
@@ -390,7 +491,7 @@ export default function CrmLeadsPage() {
                           title={selectedLead.gclid}
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20"
                         >
-                          🎯 Google · gclid
+                          Google · gclid
                         </span>
                       )}
                       {selectedLead.fbclid && (
@@ -398,7 +499,15 @@ export default function CrmLeadsPage() {
                           title={selectedLead.fbclid}
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
                         >
-                          📘 Meta · fbclid
+                          Meta · fbclid
+                        </span>
+                      )}
+                      {selectedLead.platform_lead_id && (
+                        <span
+                          title={`Platform lead ID: ${selectedLead.platform_lead_id}`}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                        >
+                          platform: {String(selectedLead.platform_lead_id).slice(0, 12)}
                         </span>
                       )}
                       {selectedLead.ad_id && (
@@ -407,6 +516,14 @@ export default function CrmLeadsPage() {
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
                         >
                           ad: {String(selectedLead.ad_id).slice(0, 12)}
+                        </span>
+                      )}
+                      {selectedLead.form_id && (
+                        <span
+                          title={`Form ID: ${selectedLead.form_id}`}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                        >
+                          form: {String(selectedLead.form_id).slice(0, 12)}
                         </span>
                       )}
                       {selectedLead.utm_source && (
@@ -442,16 +559,8 @@ export default function CrmLeadsPage() {
                         onBlur={async (e) => {
                           const val = parseFloat(e.target.value);
                           if (!Number.isFinite(val)) return;
-                          await updateLead(selectedLead.id, {
-                            deal_value: val,
-                            deal_currency: 'USD',
-                            won_at: selectedLead.won_at || new Date().toISOString(),
-                          } as Partial<CrmLead>);
-                          setSelectedLead({
-                            ...selectedLead,
-                            deal_value: val,
-                            won_at: selectedLead.won_at || new Date().toISOString(),
-                          } as CrmLead);
+                          const updated = await markLeadWon(selectedLead.id, val, 'USD');
+                          setSelectedLead(updated);
                           fetchLeads();
                         }}
                         className="w-32 px-2 py-1 rounded-md bg-white/[0.04] border border-[#22c55e]/30 text-[#22c55e] text-sm font-semibold outline-none focus:border-[#22c55e]/60"

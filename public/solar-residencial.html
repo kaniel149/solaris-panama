@@ -79,6 +79,7 @@
 </script>
 <!-- Google Ads tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18049688013"></script>
+<script src="/lead-tracking.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -879,23 +880,11 @@ function toggleFaq(btn) {
 // Form
 document.getElementById('leadForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const data = new FormData(this);
-  fetch('https://solaris-panama.com/api/lead', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      name: data.get('name'),
-      phone: data.get('phone'),
-      email: data.get('email'),
-      bill: data.get('bill'),
-      location: data.get('location'),
-      type: 'residencial',
-      source: 'solar-residencial'
-    })
-  }).catch(() => {});
-  this.style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
-  if (typeof gtag !== 'undefined') gtag('event', 'conversion', {'send_to': 'AW-18049688013/lead_residencial'});
+  window.SolarisLeadTracking.submitForm(this, {
+    source: 'solar_residencial_form',
+    installation_type: 'residencial',
+    successElementId: 'formSuccess'
+  });
 });
 
 // Fade up

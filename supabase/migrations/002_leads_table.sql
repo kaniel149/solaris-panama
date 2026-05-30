@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS leads (
 
   -- Source tracking
   source TEXT NOT NULL DEFAULT 'manual',
-  -- Values: google_ads, facebook, instagram, whatsapp, website, manual
+  -- Values: google_ads, meta_ads, lp_azuero, facebook, instagram, whatsapp, website, manual
   campaign TEXT,
   ad_set TEXT,
   ad_name TEXT,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS leads (
 
   -- Pipeline
   status TEXT NOT NULL DEFAULT 'new',
-  -- Values: new, contacted, qualified, proposal_sent, won, lost
+  -- Values: new, contacted, qualified, proposal_sent, won, lost, vendor, partner, not_a_lead
   assigned_to UUID REFERENCES auth.users(id),
   lead_score INTEGER DEFAULT 0,
   notes TEXT,

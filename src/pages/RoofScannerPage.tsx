@@ -4,13 +4,22 @@ import { ScanLine, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useRoofScanner } from '@/hooks/useRoofScanner';
 import { useLeadManager } from '@/hooks/useLeadManager';
 import { useAreaSelection } from '@/hooks/useAreaSelection';
+import { useScanRequests, MAX_BBOX_SIDE_DEG } from '@/hooks/useScanRequests';
+import { useToast } from '@/components/ui/Toast';
 import { geocodeAddress, type GeocodingResult } from '@/services/geocodingService';
+import {
+  saveRoofGeom,
+  insertDetectedRoof,
+  type GeoJSONPolygon,
+  type DetectedRoofCandidate,
+} from '@/services/scannerRpcService';
 import ScannerMap from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
 import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
 import DrawToolbar from '@/components/scanner/DrawToolbar';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
+import ScanRequestsPanel from '@/components/scanner/ScanRequestsPanel';
 
 // ===== TYPES =====
 
@@ -32,6 +41,7 @@ const PANEL_SPRING = { type: 'spring' as const, damping: 28, stiffness: 280 };
 
 export default function RoofScannerPage() {
   const scanner = useRoofScanner();
+  const { toast } = useToast();
 
   const {
     buildings,
@@ -65,6 +75,9 @@ export default function RoofScannerPage() {
     enrichProgress,
   } = useLeadManager();
 
+  // Async background scan queue (separate from the instant viewport scan).
+  const { requests: scanRequests, isQueuing, queueScan } = useScanRequests();
+
   const selectedZoneNameRef = useRef<string | undefined>(undefined);
   selectedZoneNameRef.current = areaSelectedZone?.name;
 
@@ -80,6 +93,13 @@ export default function RoofScannerPage() {
   const [isSavingLeads, setIsSavingLeads] = useState(false);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
+
+  // P3 — auto-detected roof candidates awaiting confirm/reject.
+  // Sourced from the scan/detector flow; starts empty until that flow populates it.
+  const [detectedCandidates, setDetectedCandidates] = useState<DetectedRoofCandidate[]>([]);
+
+  // P2 — persisted roof_scans id per discovered-building id (created lazily on draw/save).
+  const scanIdByBuildingRef = useRef<Map<number, string>>(new Map());
 
   // Panel hover state with delayed close
   const [leftOpen, setLeftOpen] = useState(true);
@@ -129,6 +149,58 @@ export default function RoofScannerPage() {
     const bounds = getActiveBounds() ?? mapBounds;
     scanViewport(bounds);
   }, [scanViewport, mapBounds, getActiveBounds]);
+
+  // ===== Async background scan =====
+  // Uses the drawn zone bounds if one exists, else the current map viewport.
+  const handleQueueScan = useCallback(async () => {
+    const bounds = getActiveBounds() ?? mapBounds;
+    const minLng = bounds.west;
+    const minLat = bounds.south;
+    const maxLng = bounds.east;
+    const maxLat = bounds.north;
+    const bbox: number[] = [minLng, minLat, maxLng, maxLat];
+
+    // Guard: the worker rejects bboxes whose side exceeds MAX_BBOX_SIDE_DEG.
+    const sideLng = Math.abs(maxLng - minLng);
+    const sideLat = Math.abs(maxLat - minLat);
+    if (sideLng > MAX_BBOX_SIDE_DEG || sideLat > MAX_BBOX_SIDE_DEG) {
+      toast({
+        type: 'warning',
+        title: 'Área demasiado grande',
+        description: `Acerca el mapa: cada lado debe ser menor a ${MAX_BBOX_SIDE_DEG}°.`,
+      });
+      return;
+    }
+
+    // GeoJSON Polygon ring of the bbox (lng/lat, closed).
+    const areaGeojson = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [minLng, minLat],
+          [maxLng, minLat],
+          [maxLng, maxLat],
+          [minLng, maxLat],
+          [minLng, minLat],
+        ],
+      ],
+    };
+
+    const result = await queueScan(areaGeojson, bbox, {});
+    if ('error' in result) {
+      toast({
+        type: 'error',
+        title: 'No se pudo encolar el escaneo',
+        description: result.error,
+      });
+      return;
+    }
+    toast({
+      type: 'success',
+      title: 'Escaneo encolado',
+      description: 'Los leads aparecerán a medida que el worker procese el área.',
+    });
+  }, [getActiveBounds, mapBounds, queueScan, toast]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
@@ -208,6 +280,93 @@ export default function RoofScannerPage() {
     [buildings, analyzeBuilding]
   );
 
+  // ===== P2: Roof draw -> persist geometry =====
+  // scanId for the currently selected building (if one was already created).
+  const selectedScanId = selectedBuildingId != null
+    ? scanIdByBuildingRef.current.get(selectedBuildingId) ?? null
+    : null;
+
+  const handleRoofDrawn = useCallback(
+    async (payload: { polygon: GeoJSONPolygon; areaSqm: number; kwp: number }) => {
+      if (!selectedBuilding) {
+        toast({ type: 'warning', title: 'Selecciona un edificio primero' });
+        return;
+      }
+      const { polygon, areaSqm, kwp } = payload;
+      try {
+        let scanId = scanIdByBuildingRef.current.get(selectedBuilding.id) ?? null;
+
+        // No persisted scan yet — create the roof_scans row first.
+        if (!scanId) {
+          const usableRoofM2 = Math.round(areaSqm * 0.6);
+          const candidate: DetectedRoofCandidate = {
+            address: selectedBuilding.name,
+            lat: selectedBuilding.center.lat,
+            lng: selectedBuilding.center.lng,
+            roofGeom: polygon,
+            totalRoofM2: areaSqm,
+            usableRoofM2,
+            systemKwp: kwp,
+            panelCount: Math.floor(usableRoofM2 / 2.58),
+            yearlyKwh: 0,
+            source: 'manual',
+            quality: 'MEDIUM',
+            score: selectedBuilding.suitability.score,
+          };
+          scanId = await insertDetectedRoof(candidate);
+          scanIdByBuildingRef.current.set(selectedBuilding.id, scanId);
+        }
+
+        await saveRoofGeom(scanId, polygon, areaSqm, kwp);
+        toast({
+          type: 'success',
+          title: 'Techo guardado',
+          description: `${areaSqm.toLocaleString()} m² · ~${kwp} kWp`,
+        });
+      } catch (err) {
+        toast({
+          type: 'error',
+          title: 'Error al guardar el techo',
+          description: err instanceof Error ? err.message : undefined,
+        });
+      }
+    },
+    [selectedBuilding, toast]
+  );
+
+  // ===== P3: Candidate confirm / reject =====
+  const handleConfirmCandidate = useCallback(
+    async (index: number) => {
+      const candidate = detectedCandidates[index];
+      if (!candidate) return;
+      try {
+        await insertDetectedRoof(candidate);
+        setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
+        toast({ type: 'success', title: 'Lead created' });
+      } catch (err) {
+        toast({
+          type: 'error',
+          title: 'Error al crear el lead',
+          description: err instanceof Error ? err.message : undefined,
+        });
+      }
+    },
+    [detectedCandidates, toast]
+  );
+
+  const handleRejectCandidate = useCallback((index: number) => {
+    setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  // Centroid (lng/lat) of the selected building — used for fly-to.
+  const selectedBuildingCenter = useMemo(
+    () =>
+      selectedBuilding
+        ? { lng: selectedBuilding.center.lng, lat: selectedBuilding.center.lat }
+        : null,
+    [selectedBuilding]
+  );
+
   // Score color for right tab
   const selectedScore = selectedBuilding?.suitability.score ?? 0;
   const scoreColor =
@@ -228,6 +387,12 @@ export default function RoofScannerPage() {
           measureMode={measureMode}
           onMeasureModeChange={setMeasureMode}
           selectedBuildingCoordinates={selectedBuilding?.coordinates}
+          selectedBuildingCenter={selectedBuildingCenter}
+          selectedScanId={selectedScanId}
+          onRoofDrawn={handleRoofDrawn}
+          candidates={detectedCandidates}
+          onConfirmCandidate={handleConfirmCandidate}
+          onRejectCandidate={handleRejectCandidate}
         />
       </div>
 
@@ -238,7 +403,12 @@ export default function RoofScannerPage() {
         isScanning={isScanning}
         onScanViewport={handleScanViewport}
         onClear={clearBuildings}
+        onQueueScan={handleQueueScan}
+        isQueuing={isQueuing}
       />
+
+      {/* ===== ASYNC BACKGROUND-SCAN STATUS PANEL — bottom-left corner ===== */}
+      <ScanRequestsPanel requests={scanRequests} />
 
       {/* ===== LEFT PANEL — hover-activated overlay ===== */}
       <div

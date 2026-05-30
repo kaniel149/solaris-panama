@@ -335,25 +335,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
 
             // 📡 Fire CAPI Lead event (server-side, dedups w/ browser pixel via event_id)
-            sendMetaCapiEventLogged(supabase, {
-              eventName: 'Lead',
-              eventId: payload.event_id,
-              email: payload.email,
-              phone: cleanPhone,
-              firstName: name.trim().split(' ')[0],
-              lastName: name.trim().split(' ').slice(1).join(' ') || null,
-              city: location,
-              externalId: data?.id,
-              sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || ''}`,
-              currency: 'USD',
-              contentName: `Meta Lead Form ${lead.form_id || ''}`,
-            }).then(async () => {
+            try {
+              await sendMetaCapiEventLogged(supabase, {
+                eventName: 'Lead',
+                eventId: payload.event_id,
+                email: payload.email,
+                phone: cleanPhone,
+                firstName: name.trim().split(' ')[0],
+                lastName: name.trim().split(' ').slice(1).join(' ') || null,
+                city: location,
+                externalId: data?.id,
+                sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || ''}`,
+                currency: 'USD',
+                contentName: `Meta Lead Form ${lead.form_id || ''}`,
+              });
               if (data?.id) {
                 await supabase.from('leads')
                   .update({ meta_capi_lead_sent_at: new Date().toISOString() })
                   .eq('id', data.id);
               }
-            }).catch(() => {});
+            } catch (capiErr) {
+              console.warn('[meta-leads] CAPI fire failed:', capiErr);
+            }
 
             // 🤖 Queue Meta acknowledgement WhatsApp (60 sec delay to let Omri react first)
             if (data?.id && cleanPhone && cleanPhone.startsWith('507')) {

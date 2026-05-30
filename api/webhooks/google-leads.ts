@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
+import * as crypto from 'crypto';
+import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
 
 /**
  * Google Ads Lead Form Webhook
@@ -56,6 +58,43 @@ function col(
   return null;
 }
 
+function buildGoogleLeadAckMessage(name: string): string {
+  const firstName = (name || 'amigo').split(' ')[0] || 'amigo';
+  return [
+    `Hola ${firstName}!`,
+    '',
+    'Soy Henry de Solaris Panama. Recibi tu solicitud de cotizacion solar, gracias.',
+    '',
+    'Para preparar tu propuesta en 24h, me faltan solo 2 detalles:',
+    '',
+    '1. Tu factura electrica mensual aproximada',
+    '2. La ubicacion exacta o un pin de Google Maps',
+    '',
+    'Si prefieres una llamada rapida, dime que hora te queda bien.',
+  ].join('\n');
+}
+
+function buildNewLeadAlert(params: {
+  name: string;
+  phone: string;
+  location: string | null;
+  monthlyBill: number | null;
+  gclid: string | null;
+}): string {
+  return [
+    'NUEVO LEAD - Solaris Panama',
+    '',
+    'Fuente: Google Ads Lead Form',
+    `Nombre: ${params.name}`,
+    `Telefono: +${params.phone}`,
+    `Zona: ${params.location || '?'}`,
+    `Factura: ${params.monthlyBill ? '$' + params.monthlyBill : '?'}`,
+    params.gclid ? `GCLID: ${params.gclid.slice(0, 40)}...` : '',
+    '',
+    'CRM: https://solaris-panama.com/crm-leads',
+  ].filter(Boolean).join('\n');
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -107,8 +146,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const location =
       col(cols, ['CITY', 'city', 'Ciudad', 'Provincia']) || null;
 
-    const cleanPhone = phone.replace(/[\s\-()]/g, '');
+    const cleanPhone = phone.replace(/\D/g, '');
     const leadId = body.lead_id ? String(body.lead_id) : null;
+    const eventId = crypto.randomUUID();
 
     const payload = {
       name: name.trim(),
@@ -124,6 +164,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       campaign: body.campaign_id ? String(body.campaign_id) : null,
       gclid: body.gcl_id || null,
       status: 'new',
+      event_id: eventId,
       raw_data: body,
     };
 
@@ -167,6 +208,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) {
       console.error('[google-leads] Supabase error:', error);
       return res.status(500).json({ error: 'Failed to save lead' });
+    }
+
+    try {
+      await sendMetaCapiEventLogged(supabase, {
+        eventName: 'Lead',
+        eventId,
+        email: payload.email,
+        phone: cleanPhone,
+        firstName: name.trim().split(' ')[0],
+        lastName: name.trim().split(' ').slice(1).join(' ') || null,
+        city: location,
+        externalId: data?.id,
+        sourceUrl: 'https://solaris-panama.com/?google_lead_form=1',
+        currency: 'USD',
+        contentName: `Google Lead Form ${payload.form_id || ''}`,
+      });
+      if (data?.id) {
+        await supabase.from('leads')
+          .update({ meta_capi_lead_sent_at: new Date().toISOString() })
+          .eq('id', data.id);
+      }
+    } catch (capiErr) {
+      console.warn('[google-leads] CAPI fire failed:', capiErr);
+    }
+
+    try {
+      if (data?.id && cleanPhone.startsWith('507')) {
+        await supabase.from('whatsapp_outbound_queue').insert({
+          lead_id: data.id,
+          phone: cleanPhone,
+          message: buildGoogleLeadAckMessage(name.trim()),
+          automation_type: 'meta_ack',
+          scheduled_for: new Date(Date.now() + 60 * 1000).toISOString(),
+          idempotency_key: `google_ack:${data.id}`,
+        });
+      }
+
+      await supabase.from('whatsapp_outbound_queue').insert({
+        phone: '972502213948',
+        message: buildNewLeadAlert({
+          name: name.trim(),
+          phone: cleanPhone,
+          location,
+          monthlyBill,
+          gclid: payload.gclid,
+        }),
+        automation_type: 'manual',
+        scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
+        idempotency_key: `new_lead_alert:google:${data?.id || leadId || crypto.randomUUID()}`,
+      });
+    } catch (alertErr) {
+      console.warn('[google-leads] alert enqueue failed:', alertErr);
     }
 
     return res.status(200).json({ ok: true, id: data?.id });

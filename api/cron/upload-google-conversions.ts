@@ -7,7 +7,7 @@
  *   - google_conversion_uploaded_at IS NULL
  *   - won_at IS NOT NULL
  *
- * For each lead, uploads a click-conversion via Google Ads API v18.
+ * For each lead, uploads a click-conversion via Google Ads API v24.
  * Records `google_conversion_uploaded_at` so we never double-upload.
  *
  * Required env vars:
@@ -28,7 +28,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-const API_VERSION = 'v18';
+const API_VERSION = 'v24';
 
 interface AccessTokenCache {
   token: string;

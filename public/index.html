@@ -27,6 +27,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
 <!-- Meta Pixel -->
+<script src="/lead-tracking.js"></script>
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -1384,29 +1385,14 @@ roofSlider.addEventListener('input', updateCalc);
 billSlider.addEventListener('input', updateCalc);
 updateCalc();
 
-// ═══ FORM SUBMIT → WhatsApp ═══
+// ═══ FORM SUBMIT → CRM + Tracking + WhatsApp ═══
 document.getElementById('leadForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const fd = new FormData(this);
-  const data = Object.fromEntries(fd);
-
-  const msg = `🌞 *Nueva Solicitud - Solaris Panamá*%0A%0A` +
-    `👤 *Nombre:* ${data.name}%0A` +
-    `🏢 *Negocio:* ${data.business || 'N/A'}%0A` +
-    `📞 *Teléfono:* ${data.phone}%0A` +
-    `📧 *Email:* ${data.email}%0A` +
-    `📐 *Techo:* ${data.roof_size || 'No especificado'} m²%0A` +
-    `📍 *Ubicación:* ${data.location || 'No especificada'}`;
-
-  window.open(`https://wa.me/50765831822?text=${msg}`, '_blank');
-
-  this.style.display = 'none';
-  document.getElementById('formSuccess').classList.add('show');
-
-  // Google Ads conversion
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'conversion', { send_to: 'AW-18049688013/lead_form_submit' });
-  }
+  window.SolarisLeadTracking.submitForm(this, {
+    source: 'homepage_form',
+    installation_type: 'website',
+    successElementId: 'formSuccess'
+  });
 });
 </script>
 
