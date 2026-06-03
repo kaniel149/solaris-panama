@@ -36,7 +36,7 @@ export interface RoofScanResult {
   longitude: number;
 
   // Scan status
-  source: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'manual';
+  source: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'ai_vision' | 'nasa_estimate' | 'manual';
   quality: 'HIGH' | 'MEDIUM' | 'BASE' | 'ESTIMATED';
 
   // Roof data
@@ -59,6 +59,7 @@ export interface RoofScanResult {
   // Raw data for debugging
   rawGoogleSolarData?: unknown;
   rawPvWattsData?: unknown;
+  visionMeta?: { orientation: string; roofType: string; shading: string; existingSolar: boolean; confidence: number };
 }
 
 export interface PvWattsResult {
