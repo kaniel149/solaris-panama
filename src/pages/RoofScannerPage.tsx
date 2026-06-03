@@ -13,6 +13,7 @@ import {
   type GeoJSONPolygon,
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
+import { lookupParcel } from '@/services/cadastreService';
 import { persistScan } from '@/services/scanPersistenceService';
 import { calculateSolarFinancials } from '@/services/solarFinancials';
 import { getAttribution } from '@/lib/attribution';
@@ -98,6 +99,7 @@ export default function RoofScannerPage() {
   const [isSavingLeads, setIsSavingLeads] = useState(false);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
+  const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
 
   // P3 — auto-detected roof candidates awaiting confirm/reject.
   // Sourced from the scan/detector flow; starts empty until that flow populates it.
@@ -216,6 +218,14 @@ export default function RoofScannerPage() {
         setMapCenter([building.center.lng, building.center.lat]);
         setMapZoom(16.5);
         setSearchMarker({ lng: building.center.lng, lat: building.center.lat });
+
+        // Look up the ANATI parcel boundary for the selected building's center
+        const { lat, lng } = building.center;
+        setParcelBoundary(undefined);
+        void (async () => {
+          const cadastre = await lookupParcel(lat, lng);
+          setParcelBoundary(cadastre?.parcelBoundary);
+        })();
       }
     },
     [selectBuilding, buildings]
@@ -224,6 +234,7 @@ export default function RoofScannerPage() {
   const handleCloseDetail = useCallback(() => {
     selectBuilding(null);
     setSearchMarker(null);
+    setParcelBoundary(undefined);
   }, [selectBuilding]);
 
   const handleAnalyze = useCallback(async () => {
@@ -449,6 +460,7 @@ export default function RoofScannerPage() {
           candidates={detectedCandidates}
           onConfirmCandidate={handleConfirmCandidate}
           onRejectCandidate={handleRejectCandidate}
+          parcelBoundary={parcelBoundary}
         />
       </div>
 

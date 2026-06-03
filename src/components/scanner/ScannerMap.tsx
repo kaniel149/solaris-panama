@@ -17,6 +17,7 @@ import {
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
 import BuildingDimensions from './BuildingDimensions';
+import { ParcelBoundaryLayer } from './ParcelBoundaryLayer';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 // ===== MAP STYLES =====
@@ -163,6 +164,9 @@ interface ScannerMapProps {
   onConfirmCandidate?: (index: number) => void;
   /** Reject a candidate (discard). Index into `candidates`. */
   onRejectCandidate?: (index: number) => void;
+
+  /** ANATI parcel boundary for the selected building (dashed amber outline) */
+  parcelBoundary?: Array<{ lat: number; lng: number }>;
 }
 
 interface HoverInfo {
@@ -206,6 +210,7 @@ export default function ScannerMap({
   candidates = [],
   onConfirmCandidate,
   onRejectCandidate,
+  parcelBoundary,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
@@ -755,6 +760,9 @@ export default function ScannerMap({
             }}
           />
         </Source>
+
+        {/* ANATI parcel boundary — dashed amber outline for selected building */}
+        <ParcelBoundaryLayer boundary={parcelBoundary} />
 
         {/* Building dimensions overlay — shown when measure mode ON and building selected */}
         {measureMode && selectedBuildingId != null && selectedBuildingCoordinates && selectedBuildingCoordinates.length > 2 && (
