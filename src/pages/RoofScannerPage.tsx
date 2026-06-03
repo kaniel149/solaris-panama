@@ -13,6 +13,10 @@ import {
   type GeoJSONPolygon,
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
+import { persistScan } from '@/services/scanPersistenceService';
+import { getAttribution } from '@/lib/attribution';
+import type { RoofScanResult } from '@/services/roofScannerService';
+import type { EnrichedOwnerResult } from '@/types/enrichment';
 import ScannerMap from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
@@ -249,9 +253,58 @@ export default function RoofScannerPage() {
     [selectZone, zones]
   );
 
-  const handleSaveAsLead = useCallback((enrichedData?: import('@/types/enrichment').EnrichedOwnerResult) => {
+  const handleSaveAsLead = useCallback((enrichedData?: EnrichedOwnerResult) => {
     if (!selectedBuilding) return;
+
+    // 1. Local CRM cache (existing behavior — unchanged)
     createLeadFromBuilding(selectedBuilding, selectedZoneNameRef.current, enrichedData);
+
+    // 2. Persist scan + push to /api/leads/intake (attribution + CAPI + WhatsApp alert)
+    const scan = selectedBuilding.solarAnalysis;
+    if (!scan) return; // only persist analyzed buildings (have a RoofScanResult)
+
+    const owner: EnrichedOwnerResult | null = enrichedData ?? null;
+
+    // financials not yet computed at this stage — est_annual_savings_usd /
+    // payback_years are populated once the financial engine (Task 3.1) feeds
+    // real numbers into this handler. For now persist/POST them as null.
+    const financials = null;
+    const estAnnualSavingsUsd: number | null = null;
+    const paybackYears: number | null = null;
+
+    void (async () => {
+      const saved = await persistScan(scan as RoofScanResult, owner, financials);
+
+      // Require a valid Panama phone before creating an attributed lead (mirrors server PA_PHONE_RE)
+      const rawPhone = owner?.phone ?? '';
+      const cleanPhone = rawPhone.replace(/\D/g, '');
+      if (!/^507[2-8]\d{7}$/.test(cleanPhone)) return;
+
+      const attribution = getAttribution();
+      try {
+        await fetch('/api/leads/intake', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: owner?.ownerName || scan.address || 'Scanner lead',
+            phone: cleanPhone,
+            source: 'scanner',
+            location: scan.address || owner?.address || selectedBuilding.name,
+            system_kwp: scan.maxSystemSizeKwp,
+            annual_kwh: scan.yearlyEnergyKwh,
+            est_annual_savings_usd: estAnnualSavingsUsd,
+            payback_years: paybackYears,
+            finca_number: owner?.cadastre?.fincaNumber ?? null,
+            roof_area_m2: scan.totalRoofAreaM2,
+            scan_source: scan.source,
+            roof_scan_id: saved?.id ?? null,
+            ...attribution,
+          }),
+        });
+      } catch (err) {
+        console.error('[scanner] intake POST failed:', err);
+      }
+    })();
   }, [selectedBuilding, createLeadFromBuilding]);
 
   const handleSaveAllAsLeads = useCallback(() => {
