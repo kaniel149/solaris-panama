@@ -22,6 +22,7 @@ import type { EnrichedOwnerResult, ProgressStatus } from '@/types/enrichment';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { SuitabilityResult } from '@/services/roofClassifier';
 import ScanActions from '@/components/scanner/ScanActions';
+import { SolarFinancialsPanel } from '@/components/scanner/SolarFinancialsPanel';
 
 // ===== TYPES =====
 
@@ -981,6 +982,12 @@ export default function BuildingDetail({
                   <div className="text-sm font-bold text-[#00ffcc]">{fmt(co2, 1)} t</div>
                 </div>
               </div>
+
+              {/* 25-yr financials (USD/Panama) with battery toggle */}
+              <SolarFinancialsPanel
+                systemKwp={analysis.maxSystemSizeKwp}
+                pshAvg={analysis.peakSunHoursPerYear / 365}
+              />
             </>
           )}
         </div>

@@ -14,6 +14,7 @@ import {
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
 import { persistScan } from '@/services/scanPersistenceService';
+import { calculateSolarFinancials } from '@/services/solarFinancials';
 import { getAttribution } from '@/lib/attribution';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { EnrichedOwnerResult } from '@/types/enrichment';
@@ -265,12 +266,14 @@ export default function RoofScannerPage() {
 
     const owner: EnrichedOwnerResult | null = enrichedData ?? null;
 
-    // financials not yet computed at this stage — est_annual_savings_usd /
-    // payback_years are populated once the financial engine (Task 3.1) feeds
-    // real numbers into this handler. For now persist/POST them as null.
-    const financials = null;
-    const estAnnualSavingsUsd: number | null = null;
-    const paybackYears: number | null = null;
+    // Compute 25-yr financials from the scan so financials_json is persisted and
+    // est_annual_savings_usd / payback_years reach the lead intake.
+    const financials = calculateSolarFinancials({
+      systemSizeKwp: scan.maxSystemSizeKwp,
+      pshAvg: scan.peakSunHoursPerYear / 365,
+    });
+    const estAnnualSavingsUsd: number | null = financials.annual_savings_usd;
+    const paybackYears: number | null = financials.payback_discounted_years;
 
     void (async () => {
       const saved = await persistScan(scan as RoofScanResult, owner, financials);
