@@ -62,6 +62,32 @@ const SOURCE_LABELS: Record<string, string> = {
   'Apollo.io': 'Apollo',
 };
 
+// Data-source badge for the roof-scan result (Phase 1 fallback chain).
+const SCAN_SOURCE_LABELS: Record<string, { es: string; bg: string; fg: string; border: string }> = {
+  google_solar: { es: 'Google Solar (alta precisión)', bg: 'rgba(16,185,129,0.12)', fg: '#10b981', border: 'rgba(16,185,129,0.3)' },
+  ai_vision: { es: 'Análisis IA (satélite)', bg: 'rgba(14,165,233,0.12)', fg: '#0ea5e9', border: 'rgba(14,165,233,0.3)' },
+  nasa_estimate: { es: 'Estimación NASA POWER', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  pvwatts_estimate: { es: 'Estimación PVWatts', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  local_panama: { es: 'Estimación local Panamá', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+  manual: { es: 'Entrada manual', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+};
+
+function ScanSourceBadge({ result }: { result: RoofScanResult }) {
+  const meta = SCAN_SOURCE_LABELS[result.source] ?? SCAN_SOURCE_LABELS.local_panama;
+  const confidence = result.visionMeta?.confidence
+    ? ` · ${Math.round(result.visionMeta.confidence * 100)}%`
+    : '';
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide"
+      style={{ backgroundColor: meta.bg, color: meta.fg, border: `1px solid ${meta.border}` }}
+    >
+      <Sparkles className="w-3 h-3" />
+      <span>{meta.es}{confidence}</span>
+    </div>
+  );
+}
+
 // ===== HELPERS =====
 
 function getScoreColor(score: number): string {
@@ -873,6 +899,11 @@ export default function BuildingDetail({
 
           {building.analyzed && analysis && (
             <>
+              {/* Data-source + confidence badge */}
+              <div className="flex justify-start">
+                <ScanSourceBadge result={analysis} />
+              </div>
+
               {/* Hero Metrics */}
               <div className="grid grid-cols-2 gap-2.5">
                 {[
