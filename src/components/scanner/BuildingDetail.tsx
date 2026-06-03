@@ -5,7 +5,7 @@ import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
   Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
   Search, Phone, Mail, Globe, MessageCircle, Loader2, Store, Navigation, MapPinned,
-  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp,
+  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp, FileText,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -23,6 +23,8 @@ import type { RoofScanResult } from '@/services/roofScannerService';
 import type { SuitabilityResult } from '@/services/roofClassifier';
 import ScanActions from '@/components/scanner/ScanActions';
 import { SolarFinancialsPanel } from '@/components/scanner/SolarFinancialsPanel';
+import { buildProposalOptions } from '@/services/proposalOptions';
+import { buildPrompt, type ProposalInput } from '@/services/proposalGeneratorService';
 
 // ===== TYPES =====
 
@@ -141,6 +143,7 @@ export default function BuildingDetail({
   const [showOfficers, setShowOfficers] = useState(false);
   const [showNearby, setShowNearby] = useState(false);
   const [copiedFinca, setCopiedFinca] = useState(false);
+  const [isGeneratingProposal, setIsGeneratingProposal] = useState(false);
 
   // Reset state when building changes
   useEffect(() => {
@@ -229,6 +232,80 @@ export default function BuildingDetail({
     setCopiedFinca(true);
     setTimeout(() => setCopiedFinca(false), 1500);
   }, []);
+
+  // Generate a 3-option (EPC / PPA / EPC+Battery) Spanish proposal from this scan.
+  // POSTs buildProposalOptions(...) + owner/address to /api/generate-proposal so the
+  // returned proposal includes the Spanish comparison table. Single-option path stays
+  // intact server-side because `options` is additive.
+  const handleGenerateProposal = useCallback(async () => {
+    const scan = building?.solarAnalysis;
+    if (!scan) return;
+
+    const pshAvg = scan.peakSunHoursPerYear ? scan.peakSunHoursPerYear / 365 : undefined;
+    const options = buildProposalOptions({ systemSizeKwp: scan.maxSystemSizeKwp, pshAvg });
+    const epc = options.find((o) => o.id === 'epc');
+
+    const ownerName = enrichedData?.ownerName?.trim();
+    const address = enrichedData?.address?.trim() || scan.address || building?.name || '';
+
+    const input: ProposalInput = {
+      clientName: ownerName || address || 'Cliente Solaris',
+      contactName: ownerName || 'Contacto',
+      clientEmail: enrichedData?.email ?? undefined,
+      clientPhone: enrichedData?.phone ?? undefined,
+      sector: 'commercial',
+      buildingName: building?.name,
+      buildingAddress: address,
+      roofAreaM2: scan.totalRoofAreaM2,
+      usableAreaM2: scan.usableRoofAreaM2,
+      roofType: enrichedData?.cadastre?.landUse ?? undefined,
+      systemSizeKwp: scan.maxSystemSizeKwp,
+      panelCount: scan.maxPanelCount,
+      panelModel: 'LONGi Hi-MO X6 580W',
+      inverterModel: 'Huawei SUN2000-100KTL',
+      totalInvestment: epc?.upfront_usd ?? 0,
+      annualSavings: epc?.annual_savings_usd ?? 0,
+      monthlySavings: Math.round((epc?.annual_savings_usd ?? 0) / 12),
+      paybackYears: epc?.payback_years ?? 0,
+      irr: 0,
+      npv: 0,
+      roi25Year: 0,
+      lcoe: 0,
+      year1ProductionKwh: scan.yearlyEnergyKwh,
+      lifetimeSavings: epc?.savings_25yr_usd ?? 0,
+      annualCO2OffsetTons: (epc?.co2_tons_25yr ?? 0) / 25,
+      lifetimeCO2OffsetTons: epc?.co2_tons_25yr ?? 0,
+      equivalentTrees: Math.round((epc?.co2_tons_25yr ?? 0) * 16.5),
+      selfConsumedPct: 70,
+      exportedPct: 30,
+      language: 'es',
+    };
+
+    const { systemPrompt, userPrompt } = buildPrompt(input);
+
+    setIsGeneratingProposal(true);
+    try {
+      const res = await fetch('/api/generate-proposal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ systemPrompt, userPrompt, language: 'es', options }),
+      });
+      if (!res.ok) {
+        console.error('[proposal] generate failed:', res.status);
+        return;
+      }
+      const data = await res.json();
+      const content: string = data.content || '';
+      // Open the generated proposal content in a new tab for review/download.
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank', 'noopener');
+    } catch (err) {
+      console.error('[proposal] generate error:', err);
+    } finally {
+      setIsGeneratingProposal(false);
+    }
+  }, [building, enrichedData]);
 
   if (!building) return null;
 
@@ -1008,6 +1085,15 @@ export default function BuildingDetail({
           {building.analyzed && analysis && (
             <>
               <ScanActions scanResult={analysis} className="mb-1" />
+              <Button
+                variant="accent"
+                fullWidth
+                icon={isGeneratingProposal ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                onClick={handleGenerateProposal}
+                disabled={isGeneratingProposal}
+              >
+                {isGeneratingProposal ? 'Generando…' : 'Generar Propuesta'}
+              </Button>
               <Button
                 variant="primary"
                 fullWidth

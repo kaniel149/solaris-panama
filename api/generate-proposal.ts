@@ -14,6 +14,57 @@ const MODEL = 'llama-3.3-70b-versatile';
 const MAX_TOKENS = 8000;
 const TEMPERATURE = 0.7;
 
+// ===== 3-OPTION COMPARISON (optional) =====
+
+// Mirrors `ProposalOption` from src/services/proposalOptions.ts. Kept local so this
+// serverless function has no cross-module import (Vercel api/* bundles independently).
+interface ProposalOption {
+  id: 'epc' | 'ppa' | 'epc_battery';
+  label_es: string;
+  upfront_usd: number;
+  annual_savings_usd: number;
+  payback_years: number;
+  savings_25yr_usd: number;
+  co2_tons_25yr: number;
+}
+
+function isProposalOption(o: unknown): o is ProposalOption {
+  if (!o || typeof o !== 'object') return false;
+  const r = o as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    typeof r.label_es === 'string' &&
+    typeof r.upfront_usd === 'number' &&
+    typeof r.annual_savings_usd === 'number'
+  );
+}
+
+const usd = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
+
+/**
+ * Render a Spanish 3-column comparison table (one column per option) as Markdown.
+ * Rows: Inversión inicial, Ahorro anual, Recuperación, Ahorro 25 años, CO₂ (25 años).
+ * Returned text is injected into the proposal prompt so the LLM includes it verbatim.
+ */
+function buildComparisonTable(options: ProposalOption[]): string {
+  const header = `| Concepto | ${options.map((o) => o.label_es).join(' | ')} |`;
+  const divider = `|----------|${options.map(() => '------').join('|')}|`;
+  const row = (label: string, cell: (o: ProposalOption) => string) =>
+    `| ${label} | ${options.map(cell).join(' | ')} |`;
+
+  return [
+    '### Comparación de Opciones',
+    '',
+    header,
+    divider,
+    row('Inversión inicial', (o) => (o.upfront_usd > 0 ? usd(o.upfront_usd) : 'Sin inversión inicial')),
+    row('Ahorro anual', (o) => usd(o.annual_savings_usd)),
+    row('Recuperación', (o) => (o.payback_years > 0 ? `${o.payback_years} años` : 'N/A (PPA)')),
+    row('Ahorro 25 años', (o) => usd(o.savings_25yr_usd)),
+    row('CO₂ evitado (25 años)', (o) => `${o.co2_tons_25yr} t`),
+  ].join('\n');
+}
+
 // ===== HELPERS =====
 
 function setCorsHeaders(res: VercelResponse): void {
@@ -22,7 +73,7 @@ function setCorsHeaders(res: VercelResponse): void {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-function validateRequestBody(body: unknown): { valid: true; data: { systemPrompt: string; userPrompt: string; language: string } } | { valid: false; error: string } {
+function validateRequestBody(body: unknown): { valid: true; data: { systemPrompt: string; userPrompt: string; language: string; options?: ProposalOption[] } } | { valid: false; error: string } {
   if (!body || typeof body !== 'object') {
     return { valid: false, error: 'Request body must be a JSON object' };
   }
@@ -39,12 +90,21 @@ function validateRequestBody(body: unknown): { valid: true; data: { systemPrompt
 
   const language = (body as Record<string, unknown>).language || 'en';
 
+  // Optional 3-option comparison. When present and valid, the proposal renders a
+  // Spanish comparison table. Invalid/absent → existing single-option path is unaffected.
+  const rawOptions = (body as Record<string, unknown>).options;
+  let options: ProposalOption[] | undefined;
+  if (Array.isArray(rawOptions) && rawOptions.length > 0 && rawOptions.every(isProposalOption)) {
+    options = rawOptions as ProposalOption[];
+  }
+
   return {
     valid: true,
     data: {
       systemPrompt,
       userPrompt,
       language: String(language),
+      options,
     },
   };
 }
@@ -92,7 +152,15 @@ export default async function handler(
     return;
   }
 
-  const { systemPrompt, userPrompt } = validation.data;
+  const { systemPrompt, options } = validation.data;
+  let { userPrompt } = validation.data;
+
+  // When a 3-option set is provided, append the Spanish comparison table to the user
+  // prompt and instruct the model to embed it (rendered verbatim from real numbers).
+  if (options && options.length > 0) {
+    const table = buildComparisonTable(options);
+    userPrompt += `\n\nINCLUYE LA SIGUIENTE TABLA DE COMPARACIÓN DE OPCIONES (en español, USD) tal cual en la sección de análisis financiero, sin alterar los números:\n\n${table}\n\nPresenta las tres opciones (Compra/EPC, PPA, EPC + Batería) y recomienda la más adecuada para el cliente.`;
+  }
 
   try {
     const response = await fetch(GROQ_API_URL, {
