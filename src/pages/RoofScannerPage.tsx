@@ -14,6 +14,7 @@ import {
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
 import { lookupParcel } from '@/services/cadastreService';
+import type { CadastreInfo } from '@/types/enrichment';
 import { persistScan } from '@/services/scanPersistenceService';
 import { calculateSolarFinancials } from '@/services/solarFinancials';
 import { getAttribution } from '@/lib/attribution';
@@ -100,6 +101,7 @@ export default function RoofScannerPage() {
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
   const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
+  const [cadastre, setCadastre] = useState<CadastreInfo | null>(null);
 
   // P3 — auto-detected roof candidates awaiting confirm/reject.
   // Sourced from the scan/detector flow; starts empty until that flow populates it.
@@ -222,9 +224,11 @@ export default function RoofScannerPage() {
         // Look up the ANATI parcel boundary for the selected building's center
         const { lat, lng } = building.center;
         setParcelBoundary(undefined);
+        setCadastre(null);
         void (async () => {
-          const cadastre = await lookupParcel(lat, lng);
-          setParcelBoundary(cadastre?.parcelBoundary);
+          const parcel = await lookupParcel(lat, lng);
+          setParcelBoundary(parcel?.parcelBoundary);
+          setCadastre(parcel);
         })();
       }
     },
@@ -235,6 +239,7 @@ export default function RoofScannerPage() {
     selectBuilding(null);
     setSearchMarker(null);
     setParcelBoundary(undefined);
+    setCadastre(null);
   }, [selectBuilding]);
 
   const handleAnalyze = useCallback(async () => {
@@ -576,6 +581,24 @@ export default function RoofScannerPage() {
                 onSaveAsLead={handleSaveAsLead}
                 isLeadSaved={isSelectedLeadSaved}
               />
+
+              {/* Registro Público deep-link / untitled-parcel flag */}
+              <div className="absolute left-3 right-3 bottom-3 z-10">
+                {cadastre?.fincaNumber ? (
+                  <a
+                    href={cadastre.registroPublicoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                  >
+                    Ver finca {cadastre.fincaNumber} en Registro Público
+                  </a>
+                ) : (
+                  <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
+                    Sin finca registrada — posible Derecho Posesorio (verificación en campo).
+                  </p>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}
