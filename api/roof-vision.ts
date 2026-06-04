@@ -24,7 +24,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 1. Fetch satellite tile as base64
     const tileUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`
     const img = await fetch(tileUrl)
-    if (!img.ok) return res.status(502).json({ error: 'satellite tile fetch failed' })
+    if (!img.ok) {
+      // Surface Google's own error so misconfig (API disabled / billing / key
+      // restriction) is diagnosable. Never includes the key itself.
+      const detail = await img.text().catch(() => '')
+      return res.status(502).json({
+        error: 'satellite tile fetch failed',
+        status: img.status,
+        keyConfigured: Boolean(GOOGLE_MAPS_API_KEY),
+        detail: detail.slice(0, 300),
+      })
+    }
     const b64 = Buffer.from(await img.arrayBuffer()).toString('base64')
 
     // 2. Gemini vision, JSON mode
