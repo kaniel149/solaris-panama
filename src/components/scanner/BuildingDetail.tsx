@@ -5,7 +5,7 @@ import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
   Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
   Search, Phone, Mail, Globe, MessageCircle, Loader2, Store, Navigation, MapPinned,
-  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp, FileText,
+  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp, FileText, Download,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -24,6 +24,7 @@ import type { SuitabilityResult } from '@/services/roofClassifier';
 import ScanActions from '@/components/scanner/ScanActions';
 import { SolarFinancialsPanel } from '@/components/scanner/SolarFinancialsPanel';
 import { buildProposalOptions } from '@/services/proposalOptions';
+import { downloadProposalPdf } from '@/services/proposalPdf';
 import { buildPrompt, type ProposalInput } from '@/services/proposalGeneratorService';
 
 // ===== TYPES =====
@@ -305,6 +306,22 @@ export default function BuildingDetail({
     } finally {
       setIsGeneratingProposal(false);
     }
+  }, [building, enrichedData]);
+
+  // Deterministic, client-side PDF of the 3-option comparison (EPC/PPA/Battery).
+  // Built straight from buildProposalOptions(...) via window.print() — no LLM, no
+  // network. Uses the SAME real numbers as the Groq path above.
+  const handleDownloadPdf = useCallback(() => {
+    const scan = building?.solarAnalysis;
+    if (!scan) return;
+    const pshAvg = scan.peakSunHoursPerYear ? scan.peakSunHoursPerYear / 365 : undefined;
+    downloadProposalPdf(
+      { systemSizeKwp: scan.maxSystemSizeKwp, pshAvg },
+      {
+        buildingName: building?.name,
+        address: enrichedData?.address?.trim() || scan.address,
+      },
+    );
   }, [building, enrichedData]);
 
   if (!building) return null;
@@ -1085,15 +1102,25 @@ export default function BuildingDetail({
           {building.analyzed && analysis && (
             <>
               <ScanActions scanResult={analysis} className="mb-1" />
-              <Button
-                variant="accent"
-                fullWidth
-                icon={isGeneratingProposal ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-                onClick={handleGenerateProposal}
-                disabled={isGeneratingProposal}
-              >
-                {isGeneratingProposal ? 'Generando…' : 'Generar Propuesta'}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="accent"
+                  fullWidth
+                  icon={isGeneratingProposal ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                  onClick={handleGenerateProposal}
+                  disabled={isGeneratingProposal}
+                >
+                  {isGeneratingProposal ? 'Generando…' : 'Generar Propuesta'}
+                </Button>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon={<Download className="w-4 h-4" />}
+                  onClick={handleDownloadPdf}
+                >
+                  Descargar PDF
+                </Button>
+              </div>
               <Button
                 variant="primary"
                 fullWidth
