@@ -98,6 +98,9 @@ export default function RoofScannerPage() {
     west: -79.57,
   });
   const [isSavingLeads, setIsSavingLeads] = useState(false);
+  // Server lead id (from /api/leads/intake) for the currently-selected building — used to
+  // link a generated proposal back to its lead (status → proposal_sent).
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
   const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
@@ -215,6 +218,7 @@ export default function RoofScannerPage() {
     (id: number) => {
       selectBuilding(id);
       setRightOpen(true);
+      setSavedLeadId(null); // new building → no linked server lead yet
       const building = buildings.find((b) => b.id === id);
       if (building?.center) {
         setMapCenter([building.center.lng, building.center.lat]);
@@ -240,6 +244,7 @@ export default function RoofScannerPage() {
     setSearchMarker(null);
     setParcelBoundary(undefined);
     setCadastre(null);
+    setSavedLeadId(null);
   }, [selectBuilding]);
 
   const handleAnalyze = useCallback(async () => {
@@ -301,7 +306,7 @@ export default function RoofScannerPage() {
 
       const attribution = getAttribution();
       try {
-        await fetch('/api/leads/intake', {
+        const resp = await fetch('/api/leads/intake', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -320,6 +325,9 @@ export default function RoofScannerPage() {
             ...attribution,
           }),
         });
+        // Capture the server lead id so a later proposal can link back (status → proposal_sent).
+        const json = await resp.json().catch(() => null);
+        if (json?.id) setSavedLeadId(String(json.id));
       } catch (err) {
         console.error('[scanner] intake POST failed:', err);
       }
@@ -580,6 +588,7 @@ export default function RoofScannerPage() {
                 onAnalyze={handleAnalyze}
                 onSaveAsLead={handleSaveAsLead}
                 isLeadSaved={isSelectedLeadSaved}
+                savedLeadId={savedLeadId}
               />
 
               {/* Registro Público deep-link / untitled-parcel flag */}

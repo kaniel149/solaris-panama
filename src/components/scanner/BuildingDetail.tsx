@@ -48,6 +48,8 @@ interface BuildingDetailProps {
   onAnalyze: () => void;
   onSaveAsLead?: (enrichedData?: EnrichedOwnerResult) => void;
   isLeadSaved?: boolean;
+  /** Server lead id (from /api/leads/intake) if this building was already saved as a lead. */
+  savedLeadId?: string | null;
 }
 
 // ===== CONSTANTS =====
@@ -135,6 +137,7 @@ export default function BuildingDetail({
   onAnalyze,
   onSaveAsLead,
   isLeadSaved,
+  savedLeadId,
 }: BuildingDetailProps) {
   const [enrichedData, setEnrichedData] = useState<EnrichedOwnerResult | null>(null);
   const [isResearching, setIsResearching] = useState(false);
@@ -301,12 +304,31 @@ export default function BuildingDetail({
       const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank', 'noopener');
+
+      // FU-2: link the generated proposal back to its lead (if one was already saved
+      // via the Save-as-Lead flow). No lead → no-op (silent).
+      if (savedLeadId) {
+        const proposalRef = data.proposal_ref || `proposal:${building?.osmId ?? building?.id}:${Date.now()}`;
+        try {
+          await fetch('/api/leads/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: savedLeadId,
+              status: 'proposal_sent',
+              proposal_ref: proposalRef,
+            }),
+          });
+        } catch (linkErr) {
+          console.error('[proposal] lead link failed:', linkErr);
+        }
+      }
     } catch (err) {
       console.error('[proposal] generate error:', err);
     } finally {
       setIsGeneratingProposal(false);
     }
-  }, [building, enrichedData]);
+  }, [building, enrichedData, savedLeadId]);
 
   // Deterministic, client-side PDF of the 3-option comparison (EPC/PPA/Battery).
   // Built straight from buildProposalOptions(...) via window.print() — no LLM, no
