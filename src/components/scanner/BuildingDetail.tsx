@@ -5,7 +5,7 @@ import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
   Layers, Ruler, BarChart3, ArrowRight, Sparkles, MapPin, UserPlus,
   Search, Phone, Mail, Globe, MessageCircle, Loader2, Store, Navigation, MapPinned,
-  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp,
+  Copy, Shield, Briefcase, Users, ChevronDown, ChevronUp, FileText, Download,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -22,6 +22,10 @@ import type { EnrichedOwnerResult, ProgressStatus } from '@/types/enrichment';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { SuitabilityResult } from '@/services/roofClassifier';
 import ScanActions from '@/components/scanner/ScanActions';
+import { SolarFinancialsPanel } from '@/components/scanner/SolarFinancialsPanel';
+import { buildProposalOptions } from '@/services/proposalOptions';
+import { downloadProposalPdf } from '@/services/proposalPdf';
+import { buildPrompt, type ProposalInput } from '@/services/proposalGeneratorService';
 
 // ===== TYPES =====
 
@@ -44,6 +48,8 @@ interface BuildingDetailProps {
   onAnalyze: () => void;
   onSaveAsLead?: (enrichedData?: EnrichedOwnerResult) => void;
   isLeadSaved?: boolean;
+  /** Server lead id (from /api/leads/intake) if this building was already saved as a lead. */
+  savedLeadId?: string | null;
 }
 
 // ===== CONSTANTS =====
@@ -61,6 +67,32 @@ const SOURCE_LABELS: Record<string, string> = {
   OpenCorporates: 'OpenCorp',
   'Apollo.io': 'Apollo',
 };
+
+// Data-source badge for the roof-scan result (Phase 1 fallback chain).
+const SCAN_SOURCE_LABELS: Record<string, { es: string; bg: string; fg: string; border: string }> = {
+  google_solar: { es: 'Google Solar (alta precisión)', bg: 'rgba(16,185,129,0.12)', fg: '#10b981', border: 'rgba(16,185,129,0.3)' },
+  ai_vision: { es: 'Análisis IA (satélite)', bg: 'rgba(14,165,233,0.12)', fg: '#0ea5e9', border: 'rgba(14,165,233,0.3)' },
+  nasa_estimate: { es: 'Estimación NASA POWER', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  pvwatts_estimate: { es: 'Estimación PVWatts', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  local_panama: { es: 'Estimación local Panamá', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+  manual: { es: 'Entrada manual', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+};
+
+function ScanSourceBadge({ result }: { result: RoofScanResult }) {
+  const meta = SCAN_SOURCE_LABELS[result.source] ?? SCAN_SOURCE_LABELS.local_panama;
+  const confidence = result.visionMeta?.confidence
+    ? ` · ${Math.round(result.visionMeta.confidence * 100)}%`
+    : '';
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide"
+      style={{ backgroundColor: meta.bg, color: meta.fg, border: `1px solid ${meta.border}` }}
+    >
+      <Sparkles className="w-3 h-3" />
+      <span>{meta.es}{confidence}</span>
+    </div>
+  );
+}
 
 // ===== HELPERS =====
 
@@ -105,6 +137,7 @@ export default function BuildingDetail({
   onAnalyze,
   onSaveAsLead,
   isLeadSaved,
+  savedLeadId,
 }: BuildingDetailProps) {
   const [enrichedData, setEnrichedData] = useState<EnrichedOwnerResult | null>(null);
   const [isResearching, setIsResearching] = useState(false);
@@ -114,6 +147,7 @@ export default function BuildingDetail({
   const [showOfficers, setShowOfficers] = useState(false);
   const [showNearby, setShowNearby] = useState(false);
   const [copiedFinca, setCopiedFinca] = useState(false);
+  const [isGeneratingProposal, setIsGeneratingProposal] = useState(false);
 
   // Reset state when building changes
   useEffect(() => {
@@ -202,6 +236,115 @@ export default function BuildingDetail({
     setCopiedFinca(true);
     setTimeout(() => setCopiedFinca(false), 1500);
   }, []);
+
+  // Generate a 3-option (EPC / PPA / EPC+Battery) Spanish proposal from this scan.
+  // POSTs buildProposalOptions(...) + owner/address to /api/generate-proposal so the
+  // returned proposal includes the Spanish comparison table. Single-option path stays
+  // intact server-side because `options` is additive.
+  const handleGenerateProposal = useCallback(async () => {
+    const scan = building?.solarAnalysis;
+    if (!scan) return;
+
+    const pshAvg = scan.peakSunHoursPerYear ? scan.peakSunHoursPerYear / 365 : undefined;
+    const options = buildProposalOptions({ systemSizeKwp: scan.maxSystemSizeKwp, pshAvg });
+    const epc = options.find((o) => o.id === 'epc');
+
+    const ownerName = enrichedData?.ownerName?.trim();
+    const address = enrichedData?.address?.trim() || scan.address || building?.name || '';
+
+    const input: ProposalInput = {
+      clientName: ownerName || address || 'Cliente Solaris',
+      contactName: ownerName || 'Contacto',
+      clientEmail: enrichedData?.email ?? undefined,
+      clientPhone: enrichedData?.phone ?? undefined,
+      sector: 'commercial',
+      buildingName: building?.name,
+      buildingAddress: address,
+      roofAreaM2: scan.totalRoofAreaM2,
+      usableAreaM2: scan.usableRoofAreaM2,
+      roofType: enrichedData?.cadastre?.landUse ?? undefined,
+      systemSizeKwp: scan.maxSystemSizeKwp,
+      panelCount: scan.maxPanelCount,
+      panelModel: 'LONGi Hi-MO X6 580W',
+      inverterModel: 'Huawei SUN2000-100KTL',
+      totalInvestment: epc?.upfront_usd ?? 0,
+      annualSavings: epc?.annual_savings_usd ?? 0,
+      monthlySavings: Math.round((epc?.annual_savings_usd ?? 0) / 12),
+      paybackYears: epc?.payback_years ?? 0,
+      irr: 0,
+      npv: 0,
+      roi25Year: 0,
+      lcoe: 0,
+      year1ProductionKwh: scan.yearlyEnergyKwh,
+      lifetimeSavings: epc?.savings_25yr_usd ?? 0,
+      annualCO2OffsetTons: (epc?.co2_tons_25yr ?? 0) / 25,
+      lifetimeCO2OffsetTons: epc?.co2_tons_25yr ?? 0,
+      equivalentTrees: Math.round((epc?.co2_tons_25yr ?? 0) * 16.5),
+      selfConsumedPct: 70,
+      exportedPct: 30,
+      language: 'es',
+    };
+
+    const { systemPrompt, userPrompt } = buildPrompt(input);
+
+    setIsGeneratingProposal(true);
+    try {
+      const res = await fetch('/api/generate-proposal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ systemPrompt, userPrompt, language: 'es', options }),
+      });
+      if (!res.ok) {
+        console.error('[proposal] generate failed:', res.status);
+        return;
+      }
+      const data = await res.json();
+      const content: string = data.content || '';
+      // Open the generated proposal content in a new tab for review/download.
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank', 'noopener');
+
+      // FU-2: link the generated proposal back to its lead (if one was already saved
+      // via the Save-as-Lead flow). No lead → no-op (silent).
+      if (savedLeadId) {
+        const proposalRef = data.proposal_ref || `proposal:${building?.osmId ?? building?.id}:${Date.now()}`;
+        try {
+          await fetch('/api/leads/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: savedLeadId,
+              status: 'proposal_sent',
+              proposal_ref: proposalRef,
+            }),
+          });
+        } catch (linkErr) {
+          console.error('[proposal] lead link failed:', linkErr);
+        }
+      }
+    } catch (err) {
+      console.error('[proposal] generate error:', err);
+    } finally {
+      setIsGeneratingProposal(false);
+    }
+  }, [building, enrichedData, savedLeadId]);
+
+  // Deterministic, client-side PDF of the 3-option comparison (EPC/PPA/Battery).
+  // Built straight from buildProposalOptions(...) via window.print() — no LLM, no
+  // network. Uses the SAME real numbers as the Groq path above.
+  const handleDownloadPdf = useCallback(() => {
+    const scan = building?.solarAnalysis;
+    if (!scan) return;
+    const pshAvg = scan.peakSunHoursPerYear ? scan.peakSunHoursPerYear / 365 : undefined;
+    downloadProposalPdf(
+      { systemSizeKwp: scan.maxSystemSizeKwp, pshAvg },
+      {
+        buildingName: building?.name,
+        address: enrichedData?.address?.trim() || scan.address,
+      },
+    );
+  }, [building, enrichedData]);
 
   if (!building) return null;
 
@@ -873,6 +1016,11 @@ export default function BuildingDetail({
 
           {building.analyzed && analysis && (
             <>
+              {/* Data-source + confidence badge */}
+              <div className="flex justify-start">
+                <ScanSourceBadge result={analysis} />
+              </div>
+
               {/* Hero Metrics */}
               <div className="grid grid-cols-2 gap-2.5">
                 {[
@@ -950,6 +1098,12 @@ export default function BuildingDetail({
                   <div className="text-sm font-bold text-[#00ffcc]">{fmt(co2, 1)} t</div>
                 </div>
               </div>
+
+              {/* 25-yr financials (USD/Panama) with battery toggle */}
+              <SolarFinancialsPanel
+                systemKwp={analysis.maxSystemSizeKwp}
+                pshAvg={analysis.peakSunHoursPerYear / 365}
+              />
             </>
           )}
         </div>
@@ -970,6 +1124,25 @@ export default function BuildingDetail({
           {building.analyzed && analysis && (
             <>
               <ScanActions scanResult={analysis} className="mb-1" />
+              <div className="flex gap-2">
+                <Button
+                  variant="accent"
+                  fullWidth
+                  icon={isGeneratingProposal ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                  onClick={handleGenerateProposal}
+                  disabled={isGeneratingProposal}
+                >
+                  {isGeneratingProposal ? 'Generando…' : 'Generar Propuesta'}
+                </Button>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon={<Download className="w-4 h-4" />}
+                  onClick={handleDownloadPdf}
+                >
+                  Descargar PDF
+                </Button>
+              </div>
               <Button
                 variant="primary"
                 fullWidth

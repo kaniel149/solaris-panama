@@ -56,6 +56,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       website,        // QW9: honeypot — bots fill this, humans don't
       referrer_source, // from client sessionStorage ('google_organic' | 'facebook' | 'instagram')
       referrer_url,    // raw document.referrer captured on client
+      // ☀️ Scanner solar fields (optional — columns added in migration 051)
+      system_kwp,
+      annual_kwh,
+      est_annual_savings_usd,
+      payback_years,
+      finca_number,
+      roof_area_m2,
+      scan_source,
+      roof_scan_id,
     } = req.body;
 
     // Convert monthly_bill to numeric — accepts range strings ("$50-$150"), numbers, nulls
@@ -153,6 +162,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         client_user_agent: clientUserAgent,
         lead_score: 0,
         status: 'new',
+        // ☀️ Scanner solar fields (columns from migration 051; raw_data also preserves these)
+        system_kwp: system_kwp ?? null,
+        annual_kwh: annual_kwh ?? null,
+        est_annual_savings_usd: est_annual_savings_usd ?? null,
+        payback_years: payback_years ?? null,
+        finca_number: finca_number ?? null,
+        roof_area_m2: roof_area_m2 ?? null,
+        scan_source: scan_source ?? null,
+        roof_scan_id: roof_scan_id ?? null,
         attribution_debug: resolved.attribution_debug,
         raw_data: {
           ...req.body,

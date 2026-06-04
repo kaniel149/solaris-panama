@@ -13,6 +13,13 @@ import {
   type GeoJSONPolygon,
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
+import { lookupParcel } from '@/services/cadastreService';
+import type { CadastreInfo } from '@/types/enrichment';
+import { persistScan } from '@/services/scanPersistenceService';
+import { calculateSolarFinancials } from '@/services/solarFinancials';
+import { getAttribution } from '@/lib/attribution';
+import type { RoofScanResult } from '@/services/roofScannerService';
+import type { EnrichedOwnerResult } from '@/types/enrichment';
 import ScannerMap from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
@@ -91,8 +98,13 @@ export default function RoofScannerPage() {
     west: -79.57,
   });
   const [isSavingLeads, setIsSavingLeads] = useState(false);
+  // Server lead id (from /api/leads/intake) for the currently-selected building — used to
+  // link a generated proposal back to its lead (status → proposal_sent).
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
+  const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
+  const [cadastre, setCadastre] = useState<CadastreInfo | null>(null);
 
   // P3 — auto-detected roof candidates awaiting confirm/reject.
   // Sourced from the scan/detector flow; starts empty until that flow populates it.
@@ -206,11 +218,22 @@ export default function RoofScannerPage() {
     (id: number) => {
       selectBuilding(id);
       setRightOpen(true);
+      setSavedLeadId(null); // new building → no linked server lead yet
       const building = buildings.find((b) => b.id === id);
       if (building?.center) {
         setMapCenter([building.center.lng, building.center.lat]);
         setMapZoom(16.5);
         setSearchMarker({ lng: building.center.lng, lat: building.center.lat });
+
+        // Look up the ANATI parcel boundary for the selected building's center
+        const { lat, lng } = building.center;
+        setParcelBoundary(undefined);
+        setCadastre(null);
+        void (async () => {
+          const parcel = await lookupParcel(lat, lng);
+          setParcelBoundary(parcel?.parcelBoundary);
+          setCadastre(parcel);
+        })();
       }
     },
     [selectBuilding, buildings]
@@ -219,6 +242,9 @@ export default function RoofScannerPage() {
   const handleCloseDetail = useCallback(() => {
     selectBuilding(null);
     setSearchMarker(null);
+    setParcelBoundary(undefined);
+    setCadastre(null);
+    setSavedLeadId(null);
   }, [selectBuilding]);
 
   const handleAnalyze = useCallback(async () => {
@@ -249,9 +275,63 @@ export default function RoofScannerPage() {
     [selectZone, zones]
   );
 
-  const handleSaveAsLead = useCallback((enrichedData?: import('@/types/enrichment').EnrichedOwnerResult) => {
+  const handleSaveAsLead = useCallback((enrichedData?: EnrichedOwnerResult) => {
     if (!selectedBuilding) return;
+
+    // 1. Local CRM cache (existing behavior — unchanged)
     createLeadFromBuilding(selectedBuilding, selectedZoneNameRef.current, enrichedData);
+
+    // 2. Persist scan + push to /api/leads/intake (attribution + CAPI + WhatsApp alert)
+    const scan = selectedBuilding.solarAnalysis;
+    if (!scan) return; // only persist analyzed buildings (have a RoofScanResult)
+
+    const owner: EnrichedOwnerResult | null = enrichedData ?? null;
+
+    // Compute 25-yr financials from the scan so financials_json is persisted and
+    // est_annual_savings_usd / payback_years reach the lead intake.
+    const financials = calculateSolarFinancials({
+      systemSizeKwp: scan.maxSystemSizeKwp,
+      pshAvg: scan.peakSunHoursPerYear / 365,
+    });
+    const estAnnualSavingsUsd: number | null = financials.annual_savings_usd;
+    const paybackYears: number | null = financials.payback_discounted_years;
+
+    void (async () => {
+      const saved = await persistScan(scan as RoofScanResult, owner, financials);
+
+      // Require a valid Panama phone before creating an attributed lead (mirrors server PA_PHONE_RE)
+      const rawPhone = owner?.phone ?? '';
+      const cleanPhone = rawPhone.replace(/\D/g, '');
+      if (!/^507[2-8]\d{7}$/.test(cleanPhone)) return;
+
+      const attribution = getAttribution();
+      try {
+        const resp = await fetch('/api/leads/intake', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: owner?.ownerName || scan.address || 'Scanner lead',
+            phone: cleanPhone,
+            source: 'scanner',
+            location: scan.address || owner?.address || selectedBuilding.name,
+            system_kwp: scan.maxSystemSizeKwp,
+            annual_kwh: scan.yearlyEnergyKwh,
+            est_annual_savings_usd: estAnnualSavingsUsd,
+            payback_years: paybackYears,
+            finca_number: owner?.cadastre?.fincaNumber ?? null,
+            roof_area_m2: scan.totalRoofAreaM2,
+            scan_source: scan.source,
+            roof_scan_id: saved?.id ?? null,
+            ...attribution,
+          }),
+        });
+        // Capture the server lead id so a later proposal can link back (status → proposal_sent).
+        const json = await resp.json().catch(() => null);
+        if (json?.id) setSavedLeadId(String(json.id));
+      } catch (err) {
+        console.error('[scanner] intake POST failed:', err);
+      }
+    })();
   }, [selectedBuilding, createLeadFromBuilding]);
 
   const handleSaveAllAsLeads = useCallback(() => {
@@ -393,6 +473,7 @@ export default function RoofScannerPage() {
           candidates={detectedCandidates}
           onConfirmCandidate={handleConfirmCandidate}
           onRejectCandidate={handleRejectCandidate}
+          parcelBoundary={parcelBoundary}
         />
       </div>
 
@@ -507,7 +588,26 @@ export default function RoofScannerPage() {
                 onAnalyze={handleAnalyze}
                 onSaveAsLead={handleSaveAsLead}
                 isLeadSaved={isSelectedLeadSaved}
+                savedLeadId={savedLeadId}
               />
+
+              {/* Registro Público deep-link / untitled-parcel flag */}
+              <div className="absolute left-3 right-3 bottom-3 z-10">
+                {cadastre?.fincaNumber ? (
+                  <a
+                    href={cadastre.registroPublicoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                  >
+                    Ver finca {cadastre.fincaNumber} en Registro Público
+                  </a>
+                ) : (
+                  <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
+                    Sin finca registrada — posible Derecho Posesorio (verificación en campo).
+                  </p>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}

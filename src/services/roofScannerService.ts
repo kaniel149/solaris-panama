@@ -7,6 +7,8 @@ import {
   PANAMA_DEFAULTS,
   calculateMonthlyProduction,
 } from './solarCalculator';
+import { fetchSolarIrradiance } from './irradianceService';
+import { fetchVisionRoof, visionToRoofScan } from './aiVisionRoofService';
 
 // ===== INTERFACES =====
 
@@ -36,7 +38,7 @@ export interface RoofScanResult {
   longitude: number;
 
   // Scan status
-  source: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'manual';
+  source: 'google_solar' | 'pvwatts_estimate' | 'local_panama' | 'ai_vision' | 'nasa_estimate' | 'manual';
   quality: 'HIGH' | 'MEDIUM' | 'BASE' | 'ESTIMATED';
 
   // Roof data
@@ -59,6 +61,7 @@ export interface RoofScanResult {
   // Raw data for debugging
   rawGoogleSolarData?: unknown;
   rawPvWattsData?: unknown;
+  visionMeta?: { orientation: string; roofType: string; shading: string; existingSolar: boolean; confidence: number };
 }
 
 export interface PvWattsResult {
@@ -425,7 +428,22 @@ export async function scanRoof(
     return { ...googleResult, address };
   }
 
-  // 3. Local Panama Estimator (primary fallback — no API keys needed)
+  // 3. AI-vision fallback (Panama lacks Google Solar coverage)
+  let pshAvg = 4.5;
+  try {
+    const irradiance = await fetchSolarIrradiance(lat, lng);
+    pshAvg = irradiance.annualGHI;
+  } catch { /* keep default PSH */ }
+
+  try {
+    const v = await fetchVisionRoof(lat, lng);
+    const visionResult = visionToRoofScan(v, lat, lng, pshAvg);
+    return { ...visionResult, address };
+  } catch {
+    console.log('[roofScanner] vision unavailable, using NASA/local estimate');
+  }
+
+  // 4. NASA/local estimator fallback (uses pshAvg from NASA POWER when available)
   const estimatedRoofM2 = request.roofAreaM2 ?? 500;
   const usableArea = estimatedRoofM2 * USABLE_ROOF_RATIO;
   const maxPanels = Math.floor(usableArea / PANEL_AREA_M2);
@@ -442,7 +460,7 @@ export async function scanRoof(
     address,
     latitude: lat,
     longitude: lng,
-    source: 'local_panama',
+    source: pshAvg !== 4.5 ? 'nasa_estimate' : 'local_panama',
     quality: 'ESTIMATED',
     totalRoofAreaM2: estimatedRoofM2,
     usableRoofAreaM2: usableArea,
