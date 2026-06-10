@@ -163,7 +163,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       '',
       'WhatsApp messages are NOT being sent right now.',
       'Restart the bridge:',
-      '  cd ~/Desktop/projects/solar/panama/solaris-panama/whatsapp-bridge',
+      '  cd ~/Desktop/projects/solar/panama/"solaris-panama 2"/whatsapp-bridge',
       '  npm start',
     ].join('\n');
 
