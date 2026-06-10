@@ -97,6 +97,15 @@ export default defineConfig({
       input: 'app.html',
       output: {
         manualChunks(id) {
+          // Vite virtual helper modules (preload helper, modulepreload
+          // polyfill) + the shared commonjs helpers. Without claiming them,
+          // Rollup hoisted the preload helper into vendor-map — forcing the
+          // entry chunk to statically import ~1 MB of maplibre on every page
+          // (including the public landing page). NOTE: do NOT claim all '\0'
+          // ids — commonjs-proxy modules must stay with their own library.
+          if (id.startsWith('\0vite/') || id === '\0commonjsHelpers.js') {
+            return 'vendor-react';
+          }
           // Core React libraries
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
             return 'vendor-react';
