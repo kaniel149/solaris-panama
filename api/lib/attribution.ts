@@ -21,7 +21,7 @@ export interface RawAttribution {
   utm_term?: string | null;
   gclid?: string | null;
   fbclid?: string | null;
-  /** Referrer-inferred source passed from the client ('google_organic' | 'facebook' | 'instagram') */
+  /** Referrer-inferred source passed from the client ('google_organic' | 'facebook' | 'instagram' | 'bing_organic' | 'yahoo_organic') */
   referrer_source?: string | null;
   /** Raw document.referrer captured on the client */
   referrer_url?: string | null;
@@ -55,6 +55,9 @@ const REFERRER_SOURCE_MAP: Record<string, { utm_source: string; utm_medium: stri
   google: { utm_source: 'google', utm_medium: 'organic' },
   facebook: { utm_source: 'facebook', utm_medium: 'social' },
   instagram: { utm_source: 'instagram', utm_medium: 'social' },
+  // Emitted by src/lib/attribution.ts parseReferrerSource() — keep in sync.
+  bing_organic: { utm_source: 'bing', utm_medium: 'organic' },
+  yahoo_organic: { utm_source: 'yahoo', utm_medium: 'organic' },
 };
 
 export function inferAttribution(raw: RawAttribution): ResolvedAttribution {

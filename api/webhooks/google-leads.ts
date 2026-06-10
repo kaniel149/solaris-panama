@@ -171,12 +171,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Manual dedup
     let data: { id: string } | null = null;
     let error: unknown = null;
+    let capiAlreadySent = false;
     if (leadId) {
       const { data: existing } = await supabase
         .from('leads')
-        .select('id')
+        .select('id, event_id, meta_capi_lead_sent_at')
         .eq('platform_lead_id', leadId)
         .maybeSingle();
+      // Webhook retry for an existing lead: keep the original event_id
+      // (CAPI dedup key) and don't re-fire the Lead event if already sent.
+      capiAlreadySent = !!existing?.meta_capi_lead_sent_at;
+      if (existing?.event_id) payload.event_id = existing.event_id;
       if (existing?.id) {
         const upd = await supabase
           .from('leads')
@@ -210,27 +215,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Failed to save lead' });
     }
 
-    try {
-      await sendMetaCapiEventLogged(supabase, {
-        eventName: 'Lead',
-        eventId,
-        email: payload.email,
-        phone: cleanPhone,
-        firstName: name.trim().split(' ')[0],
-        lastName: name.trim().split(' ').slice(1).join(' ') || null,
-        city: location,
-        externalId: data?.id,
-        sourceUrl: 'https://solaris-panama.com/?google_lead_form=1',
-        currency: 'USD',
-        contentName: `Google Lead Form ${payload.form_id || ''}`,
-      });
-      if (data?.id) {
-        await supabase.from('leads')
-          .update({ meta_capi_lead_sent_at: new Date().toISOString() })
-          .eq('id', data.id);
+    if (!capiAlreadySent) {
+      try {
+        await sendMetaCapiEventLogged(supabase, {
+          eventName: 'Lead',
+          eventId: payload.event_id,
+          email: payload.email,
+          phone: cleanPhone,
+          firstName: name.trim().split(' ')[0],
+          lastName: name.trim().split(' ').slice(1).join(' ') || null,
+          city: location,
+          externalId: data?.id,
+          sourceUrl: 'https://solaris-panama.com/?google_lead_form=1',
+          currency: 'USD',
+          contentName: `Google Lead Form ${payload.form_id || ''}`,
+        });
+        if (data?.id) {
+          await supabase.from('leads')
+            .update({ meta_capi_lead_sent_at: new Date().toISOString() })
+            .eq('id', data.id);
+        }
+      } catch (capiErr) {
+        console.warn('[google-leads] CAPI fire failed:', capiErr);
       }
-    } catch (capiErr) {
-      console.warn('[google-leads] CAPI fire failed:', capiErr);
     }
 
     try {

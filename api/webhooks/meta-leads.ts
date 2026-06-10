@@ -299,9 +299,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           // Manual dedup: check if lead exists (avoids needing PG unique constraint)
           const { data: existing } = await supabase
             .from('leads')
-            .select('id')
+            .select('id, event_id, meta_capi_lead_sent_at')
             .eq('platform_lead_id', lead.id)
             .maybeSingle();
+
+          // Meta retries webhooks — on the update path keep the original
+          // event_id (CAPI dedups on event_name+event_id) and remember
+          // whether the Lead event was already sent so we don't inflate
+          // Meta conversion counts with duplicates.
+          const capiAlreadySent = !!existing?.meta_capi_lead_sent_at;
+          if (existing?.event_id) payload.event_id = existing.event_id;
 
           let data: { id: string } | null = null;
           let error: unknown = null;
@@ -335,27 +342,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
 
             // 📡 Fire CAPI Lead event (server-side, dedups w/ browser pixel via event_id)
-            try {
-              await sendMetaCapiEventLogged(supabase, {
-                eventName: 'Lead',
-                eventId: payload.event_id,
-                email: payload.email,
-                phone: cleanPhone,
-                firstName: name.trim().split(' ')[0],
-                lastName: name.trim().split(' ').slice(1).join(' ') || null,
-                city: location,
-                externalId: data?.id,
-                sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || ''}`,
-                currency: 'USD',
-                contentName: `Meta Lead Form ${lead.form_id || ''}`,
-              });
-              if (data?.id) {
-                await supabase.from('leads')
-                  .update({ meta_capi_lead_sent_at: new Date().toISOString() })
-                  .eq('id', data.id);
+            // Skipped when this is a webhook-retry update for a lead whose
+            // Lead event was already reported (prevents duplicate conversions).
+            if (!capiAlreadySent) {
+              try {
+                await sendMetaCapiEventLogged(supabase, {
+                  eventName: 'Lead',
+                  eventId: payload.event_id,
+                  email: payload.email,
+                  phone: cleanPhone,
+                  firstName: name.trim().split(' ')[0],
+                  lastName: name.trim().split(' ').slice(1).join(' ') || null,
+                  city: location,
+                  externalId: data?.id,
+                  sourceUrl: `https://solaris-panama.com/?meta_form=${lead.form_id || ''}`,
+                  currency: 'USD',
+                  contentName: `Meta Lead Form ${lead.form_id || ''}`,
+                });
+                if (data?.id) {
+                  await supabase.from('leads')
+                    .update({ meta_capi_lead_sent_at: new Date().toISOString() })
+                    .eq('id', data.id);
+                }
+              } catch (capiErr) {
+                console.warn('[meta-leads] CAPI fire failed:', capiErr);
               }
-            } catch (capiErr) {
-              console.warn('[meta-leads] CAPI fire failed:', capiErr);
             }
 
             // 🤖 Queue Meta acknowledgement WhatsApp (60 sec delay to let Omri react first)
