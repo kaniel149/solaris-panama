@@ -5,9 +5,11 @@ import { searchPlaces, type GeocodingResult } from '@/services/geocodingService'
 
 interface MapSearchOverlayProps {
   onSelectPlace: (result: GeocodingResult) => void;
+  /** Override the wrapper's position/size class. Defaults to "absolute top-3 left-1/2 -translate-x-1/2 z-20 w-80" */
+  className?: string;
 }
 
-export default function MapSearchOverlay({ onSelectPlace }: MapSearchOverlayProps) {
+export default function MapSearchOverlay({ onSelectPlace, className }: MapSearchOverlayProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +95,7 @@ export default function MapSearchOverlay({ onSelectPlace }: MapSearchOverlayProp
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute top-3 left-1/2 -translate-x-1/2 z-20 w-80">
+    <div ref={containerRef} className={className ?? 'absolute top-3 left-1/2 -translate-x-1/2 z-20 w-80'}>
       {/* Search Input */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8888a0]" />

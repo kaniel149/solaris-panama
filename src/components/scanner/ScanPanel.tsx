@@ -127,7 +127,7 @@ export default function ScanPanel({
   });
 
   return (
-    <div className="w-[380px] h-full flex flex-col bg-[#0a0a0f]/95 backdrop-blur-xl border-r border-white/[0.06] overflow-hidden">
+    <div className="w-full md:w-[380px] h-full flex flex-col bg-[#0a0a0f]/95 backdrop-blur-xl md:border-r md:border-white/[0.06] overflow-hidden">
       {/* Header */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center gap-2.5 mb-1">

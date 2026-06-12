@@ -1,6 +1,10 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ScanLine, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
+import {
+  ScanLine, Building2, ChevronLeft, ChevronUp, ChevronDown,
+  Radar, Loader2, X, PencilRuler,
+  Search,
+} from 'lucide-react';
 import { useRoofScanner } from '@/hooks/useRoofScanner';
 import { useLeadManager } from '@/hooks/useLeadManager';
 import { useAreaSelection } from '@/hooks/useAreaSelection';
@@ -24,7 +28,6 @@ import ScannerMap from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
 import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
-import DrawToolbar from '@/components/scanner/DrawToolbar';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
 import ScanRequestsPanel from '@/components/scanner/ScanRequestsPanel';
 import BillUploadCard, { type BillPrefillData } from '@/components/scanner/BillUploadCard';
@@ -44,6 +47,212 @@ const EMPTY_GEOJSON: GeoJSON.FeatureCollection = {
 };
 
 const PANEL_SPRING = { type: 'spring' as const, damping: 28, stiffness: 280 };
+
+// Snap heights for the mobile bottom sheet (as % of viewport height)
+// peek = 72px (drag handle + key action row), half = 45%, full = 88%
+const SHEET_SNAP_PEEK = 72;
+const SHEET_SNAP_HALF = 0.45; // ratio of window.innerHeight
+const SHEET_SNAP_FULL = 0.88;
+
+type SheetSnap = 'peek' | 'half' | 'full';
+
+function snapToHeight(snap: SheetSnap, vh: number): number {
+  if (snap === 'peek') return SHEET_SNAP_PEEK;
+  if (snap === 'half') return Math.round(vh * SHEET_SNAP_HALF);
+  return Math.round(vh * SHEET_SNAP_FULL);
+}
+
+// ===== MOBILE BOTTOM SHEET =====
+
+interface BottomSheetProps {
+  snap: SheetSnap;
+  onSnapChange: (s: SheetSnap) => void;
+  children: React.ReactNode;
+  /** Peek-state action bar rendered above the drag handle */
+  peekContent?: React.ReactNode;
+}
+
+function BottomSheet({ snap, onSnapChange, children, peekContent }: BottomSheetProps) {
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+  const height = snapToHeight(snap, vh);
+
+  // Drag to snap
+  const dragStartY = useRef<number>(0);
+
+  return (
+    <motion.div
+      animate={{ height }}
+      transition={{ type: 'spring', damping: 32, stiffness: 340 }}
+      className="absolute bottom-0 left-0 right-0 z-30 flex flex-col rounded-t-2xl bg-[#0d0d14]/97 backdrop-blur-2xl border-t border-white/[0.07] overflow-hidden"
+      style={{ maxHeight: '92dvh' }}
+    >
+      {/* Drag handle area */}
+      <div
+        className="flex-shrink-0 flex flex-col items-center pt-2.5 pb-0 cursor-grab active:cursor-grabbing touch-none select-none"
+        onPointerDown={(e) => {
+          dragStartY.current = e.clientY;
+          const el = e.currentTarget;
+          const onMove = (mv: PointerEvent) => {
+            const dy = mv.clientY - dragStartY.current;
+            if (dy < -40 && snap !== 'full') {
+              onSnapChange(snap === 'peek' ? 'half' : 'full');
+              el.releasePointerCapture(mv.pointerId);
+            } else if (dy > 40 && snap !== 'peek') {
+              onSnapChange(snap === 'full' ? 'half' : 'peek');
+              el.releasePointerCapture(mv.pointerId);
+            }
+          };
+          const onUp = () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onUp);
+          };
+          el.setPointerCapture(e.pointerId);
+          window.addEventListener('pointermove', onMove);
+          window.addEventListener('pointerup', onUp);
+        }}
+      >
+        {/* Visual drag pill */}
+        <div className="w-10 h-1 rounded-full bg-white/20 mb-2" />
+
+        {/* Tap to cycle snaps */}
+        <button
+          onClick={() => onSnapChange(snap === 'peek' ? 'half' : snap === 'half' ? 'full' : 'peek')}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] text-[#8888a0] hover:text-[#f0f0f5] transition-colors"
+          aria-label={snap === 'full' ? 'Minimizar panel' : 'Expandir panel'}
+        >
+          {snap === 'full'
+            ? <ChevronDown className="w-3.5 h-3.5" />
+            : <ChevronUp className="w-3.5 h-3.5" />
+          }
+          <span className="hidden sm:inline">
+            {snap === 'peek' ? 'Expandir' : snap === 'half' ? 'Completo' : 'Minimizar'}
+          </span>
+        </button>
+      </div>
+
+      {/* Peek bar — always visible above fold */}
+      {peekContent && (
+        <div className="flex-shrink-0 px-4 pb-2">
+          {peekContent}
+        </div>
+      )}
+
+      {/* Scrollable content — hidden in peek state */}
+      <AnimatePresence initial={false}>
+        {snap !== 'peek' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="flex-1 overflow-y-auto overscroll-contain min-h-0"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+// ===== MODE SEGMENTED CONTROL =====
+
+type ScannerMode = 'scan' | 'draw' | 'browse';
+
+interface ModeSegmentProps {
+  mode: ScannerMode;
+  onChange: (m: ScannerMode) => void;
+  hasBuildingSelected: boolean;
+}
+
+function ModeSegment({ mode, onChange, hasBuildingSelected }: ModeSegmentProps) {
+  const options: { key: ScannerMode; label: string; icon: React.ReactNode }[] = [
+    { key: 'scan', label: 'Escanear', icon: <ScanLine className="w-3.5 h-3.5" /> },
+    { key: 'draw', label: 'Dibujar', icon: <PencilRuler className="w-3.5 h-3.5" /> },
+    { key: 'browse', label: 'Explorar', icon: <Building2 className="w-3.5 h-3.5" /> },
+  ];
+
+  return (
+    <div className="flex items-center bg-[#0a0a0f]/80 rounded-xl border border-white/[0.07] p-1 gap-0.5">
+      {options.map((opt) => {
+        const active = mode === opt.key;
+        const disabled = opt.key === 'draw' && !hasBuildingSelected;
+        return (
+          <button
+            key={opt.key}
+            onClick={() => !disabled && onChange(opt.key)}
+            disabled={disabled}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+              active
+                ? 'bg-[#00ffcc]/15 text-[#00ffcc] border border-[#00ffcc]/25'
+                : disabled
+                ? 'text-[#333340] cursor-not-allowed'
+                : 'text-[#8888a0] hover:text-[#f0f0f5]'
+            }`}
+            title={disabled ? 'Selecciona un edificio primero' : undefined}
+          >
+            {opt.icon}
+            <span className="hidden xs:inline sm:inline">{opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ===== MOBILE FAB STACK (top-right on mobile) =====
+
+interface MobileFABStackProps {
+  mode: ScannerMode;
+  onModeChange: (m: ScannerMode) => void;
+  isScanning: boolean;
+  isQueuing: boolean;
+  onScanViewport: () => void;
+  onQueueScan: () => void;
+  onOpenSearch: () => void;
+  measureMode: boolean;
+  onToggleMeasure: () => void;
+  hasBuildingSelected: boolean;
+  onOpenSheet: () => void;
+  buildingCount: number;
+}
+
+function MobileFABStack({
+  isScanning,
+  onScanViewport,
+  onOpenSearch,
+}: MobileFABStackProps) {
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Search */}
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={onOpenSearch}
+        style={{ minWidth: 44, minHeight: 44 }}
+        className="w-11 h-11 rounded-full flex items-center justify-center bg-[#12121a]/90 border border-white/[0.08] shadow-lg backdrop-blur-xl"
+        aria-label="Buscar lugar"
+      >
+        <Search className="w-5 h-5 text-[#8888a0]" />
+      </motion.button>
+
+      {/* Scan */}
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={onScanViewport}
+        disabled={isScanning}
+        style={{ minWidth: 44, minHeight: 44 }}
+        className={`w-11 h-11 rounded-full flex items-center justify-center shadow-lg backdrop-blur-xl border transition-all ${
+          isScanning
+            ? 'bg-[#00ffcc]/15 border-[#00ffcc]/30 shadow-[0_0_14px_rgba(0,255,204,0.2)]'
+            : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#00ffcc]/25'
+        }`}
+        aria-label="Escanear área"
+      >
+        <ScanLine className={`w-5 h-5 ${isScanning ? 'text-[#00ffcc] animate-spin' : 'text-[#8888a0]'}`} />
+      </motion.button>
+    </div>
+  );
+}
 
 // ===== MAIN COMPONENT =====
 
@@ -83,7 +292,6 @@ export default function RoofScannerPage() {
     enrichProgress,
   } = useLeadManager();
 
-  // Async background scan queue (separate from the instant viewport scan).
   const { requests: scanRequests, isQueuing, queueScan } = useScanRequests();
 
   const selectedZoneNameRef = useRef<string | undefined>(undefined);
@@ -93,34 +301,53 @@ export default function RoofScannerPage() {
   const [mapCenter, setMapCenter] = useState<[number, number]>([-79.52, 9.0]);
   const [mapZoom, setMapZoom] = useState(14);
   const [mapBounds, setMapBounds] = useState<MapBounds>({
-    north: 9.05,
-    south: 8.95,
-    east: -79.47,
-    west: -79.57,
+    north: 9.05, south: 8.95, east: -79.47, west: -79.57,
   });
   const [isSavingLeads, setIsSavingLeads] = useState(false);
-  // Server lead id (from /api/leads/intake) for the currently-selected building — used to
-  // link a generated proposal back to its lead (status → proposal_sent).
   const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
   const [searchMarker, setSearchMarker] = useState<{ lng: number; lat: number } | null>(null);
   const [measureMode, setMeasureMode] = useState(false);
   const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
   const [cadastre, setCadastre] = useState<CadastreInfo | null>(null);
-
-  // Bill OCR prefill — monthly kWh extracted from an uploaded bill image
   const [billPrefillKwh, setBillPrefillKwh] = useState<number | null>(null);
-
-  // Panel layout — polygon of the most recently drawn roof (for tessellation overlay)
   const [drawnRoofPolygon, setDrawnRoofPolygon] = useState<GeoJSON.Polygon | null>(null);
-
-  // P3 — auto-detected roof candidates awaiting confirm/reject.
-  // Sourced from the scan/detector flow; starts empty until that flow populates it.
   const [detectedCandidates, setDetectedCandidates] = useState<DetectedRoofCandidate[]>([]);
-
-  // P2 — persisted roof_scans id per discovered-building id (created lazily on draw/save).
   const scanIdByBuildingRef = useRef<Map<number, string>>(new Map());
 
-  // Panel hover state with delayed close
+  // ===== RESPONSIVE STATE =====
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // ===== SCANNER MODE =====
+  const [scannerMode, setScannerMode] = useState<ScannerMode>('scan');
+
+  // When a building is deselected, exit draw mode
+  useEffect(() => {
+    if (!selectedBuilding && scannerMode === 'draw') {
+      setScannerMode('scan');
+    }
+  }, [selectedBuilding, scannerMode]);
+
+  // ===== MOBILE SHEET STATE =====
+  const [sheetSnap, setSheetSnap] = useState<SheetSnap>('peek');
+
+  // When a building is selected on mobile, snap to half
+  useEffect(() => {
+    if (isMobile && selectedBuilding) {
+      setSheetSnap('half');
+    }
+  }, [isMobile, selectedBuilding]);
+
+  // ===== MOBILE SEARCH OVERLAY =====
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  // ===== DESKTOP PANEL STATE =====
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const leftTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -141,13 +368,14 @@ export default function RoofScannerPage() {
     rightTimer.current = setTimeout(() => setRightOpen(false), 400);
   }, []);
 
-  // Check if selected building is already saved as lead
+  // ===== DERIVED =====
   const isSelectedLeadSaved = useMemo(() => {
     if (!selectedBuilding) return false;
     return allLeads.some((l) => l.osmId === selectedBuilding.osmId);
   }, [selectedBuilding, allLeads]);
 
-  // Handlers
+  // ===== HANDLERS =====
+
   const handleSearch = useCallback(async (address: string) => {
     try {
       const result = await geocodeAddress(address);
@@ -158,7 +386,6 @@ export default function RoofScannerPage() {
     }
   }, []);
 
-  // Bill OCR prefill handler: store extracted kWh and fly map to bill address
   const handleBillData = useCallback(async (data: BillPrefillData) => {
     setBillPrefillKwh(data.monthly_kwh);
     if (data.address) {
@@ -168,7 +395,7 @@ export default function RoofScannerPage() {
         setMapZoom(17);
         setSearchMarker({ lng: geo.lng, lat: geo.lat });
       } catch {
-        // Address not geocodable — silently skip map fly-to
+        // silently skip
       }
     }
     toast({
@@ -182,6 +409,7 @@ export default function RoofScannerPage() {
     setMapCenter([result.lng, result.lat]);
     setMapZoom(17);
     setSearchMarker({ lng: result.lng, lat: result.lat });
+    setMobileSearchOpen(false);
   }, []);
 
   const handleScanViewport = useCallback(() => {
@@ -189,20 +417,12 @@ export default function RoofScannerPage() {
     scanViewport(bounds);
   }, [scanViewport, mapBounds, getActiveBounds]);
 
-  // ===== Async background scan =====
-  // Uses the drawn zone bounds if one exists, else the current map viewport.
   const handleQueueScan = useCallback(async () => {
     const bounds = getActiveBounds() ?? mapBounds;
-    const minLng = bounds.west;
-    const minLat = bounds.south;
-    const maxLng = bounds.east;
-    const maxLat = bounds.north;
+    const { west: minLng, south: minLat, east: maxLng, north: maxLat } = bounds;
     const bbox: number[] = [minLng, minLat, maxLng, maxLat];
 
-    // Guard: the worker rejects bboxes whose side exceeds MAX_BBOX_SIDE_DEG.
-    const sideLng = Math.abs(maxLng - minLng);
-    const sideLat = Math.abs(maxLat - minLat);
-    if (sideLng > MAX_BBOX_SIDE_DEG || sideLat > MAX_BBOX_SIDE_DEG) {
+    if (Math.abs(maxLng - minLng) > MAX_BBOX_SIDE_DEG || Math.abs(maxLat - minLat) > MAX_BBOX_SIDE_DEG) {
       toast({
         type: 'warning',
         title: 'Área demasiado grande',
@@ -211,48 +431,30 @@ export default function RoofScannerPage() {
       return;
     }
 
-    // GeoJSON Polygon ring of the bbox (lng/lat, closed).
     const areaGeojson = {
       type: 'Polygon' as const,
-      coordinates: [
-        [
-          [minLng, minLat],
-          [maxLng, minLat],
-          [maxLng, maxLat],
-          [minLng, maxLat],
-          [minLng, minLat],
-        ],
-      ],
+      coordinates: [[[minLng, minLat], [maxLng, minLat], [maxLng, maxLat], [minLng, maxLat], [minLng, minLat]]],
     };
 
     const result = await queueScan(areaGeojson, bbox, {});
     if ('error' in result) {
-      toast({
-        type: 'error',
-        title: 'No se pudo encolar el escaneo',
-        description: result.error,
-      });
+      toast({ type: 'error', title: 'No se pudo encolar el escaneo', description: result.error });
       return;
     }
-    toast({
-      type: 'success',
-      title: 'Escaneo encolado',
-      description: 'Los leads aparecerán a medida que el worker procese el área.',
-    });
+    toast({ type: 'success', title: 'Escaneo encolado', description: 'Los leads aparecerán a medida que el worker procese el área.' });
   }, [getActiveBounds, mapBounds, queueScan, toast]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
       selectBuilding(id);
       setRightOpen(true);
-      setSavedLeadId(null); // new building → no linked server lead yet
+      setSavedLeadId(null);
       const building = buildings.find((b) => b.id === id);
       if (building?.center) {
         setMapCenter([building.center.lng, building.center.lat]);
         setMapZoom(16.5);
         setSearchMarker({ lng: building.center.lng, lat: building.center.lat });
 
-        // Look up the ANATI parcel boundary for the selected building's center
         const { lat, lng } = building.center;
         setParcelBoundary(undefined);
         setCadastre(null);
@@ -273,7 +475,9 @@ export default function RoofScannerPage() {
     setCadastre(null);
     setSavedLeadId(null);
     setDrawnRoofPolygon(null);
-  }, [selectBuilding]);
+    setScannerMode('scan');
+    if (isMobile) setSheetSnap('peek');
+  }, [selectBuilding, isMobile]);
 
   const handleAnalyze = useCallback(async () => {
     if (!selectedBuilding) return;
@@ -281,9 +485,7 @@ export default function RoofScannerPage() {
   }, [selectedBuilding, analyzeBuilding]);
 
   const handleFilterChange = useCallback(
-    (filters: { minArea: number; minScore: number }) => {
-      setFilters(filters);
-    },
+    (filters: { minArea: number; minScore: number }) => setFilters(filters),
     [setFilters]
   );
 
@@ -305,18 +507,12 @@ export default function RoofScannerPage() {
 
   const handleSaveAsLead = useCallback((enrichedData?: EnrichedOwnerResult) => {
     if (!selectedBuilding) return;
-
-    // 1. Local CRM cache (existing behavior — unchanged)
     createLeadFromBuilding(selectedBuilding, selectedZoneNameRef.current, enrichedData);
 
-    // 2. Persist scan + push to /api/leads/intake (attribution + CAPI + WhatsApp alert)
     const scan = selectedBuilding.solarAnalysis;
-    if (!scan) return; // only persist analyzed buildings (have a RoofScanResult)
+    if (!scan) return;
 
     const owner: EnrichedOwnerResult | null = enrichedData ?? null;
-
-    // Compute 25-yr financials from the scan so financials_json is persisted and
-    // est_annual_savings_usd / payback_years reach the lead intake.
     const financials = calculateSolarFinancials({
       systemSizeKwp: scan.maxSystemSizeKwp,
       pshAvg: scan.peakSunHoursPerYear / 365,
@@ -326,8 +522,6 @@ export default function RoofScannerPage() {
 
     void (async () => {
       const saved = await persistScan(scan as RoofScanResult, owner, financials);
-
-      // Require a valid Panama phone before creating an attributed lead (mirrors server PA_PHONE_RE)
       const rawPhone = owner?.phone ?? '';
       const cleanPhone = rawPhone.replace(/\D/g, '');
       if (!/^507[2-8]\d{7}$/.test(cleanPhone)) return;
@@ -353,7 +547,6 @@ export default function RoofScannerPage() {
             ...attribution,
           }),
         });
-        // Capture the server lead id so a later proposal can link back (status → proposal_sent).
         const json = await resp.json().catch(() => null);
         if (json?.id) setSavedLeadId(String(json.id));
       } catch (err) {
@@ -388,8 +581,7 @@ export default function RoofScannerPage() {
     [buildings, analyzeBuilding]
   );
 
-  // ===== P2: Roof draw -> persist geometry =====
-  // scanId for the currently selected building (if one was already created).
+  // ===== P2: Roof draw =====
   const selectedScanId = selectedBuildingId != null
     ? scanIdByBuildingRef.current.get(selectedBuildingId) ?? null
     : null;
@@ -401,12 +593,9 @@ export default function RoofScannerPage() {
         return;
       }
       const { polygon, areaSqm, kwp } = payload;
-      // Capture drawn polygon for the panel tessellation overlay
       setDrawnRoofPolygon(polygon as unknown as GeoJSON.Polygon);
       try {
         let scanId = scanIdByBuildingRef.current.get(selectedBuilding.id) ?? null;
-
-        // No persisted scan yet — create the roof_scans row first.
         if (!scanId) {
           const usableRoofM2 = Math.round(areaSqm * 0.6);
           const candidate: DetectedRoofCandidate = {
@@ -426,7 +615,6 @@ export default function RoofScannerPage() {
           scanId = await insertDetectedRoof(candidate);
           scanIdByBuildingRef.current.set(selectedBuilding.id, scanId);
         }
-
         await saveRoofGeom(scanId, polygon, areaSqm, kwp);
         toast({
           type: 'success',
@@ -452,7 +640,7 @@ export default function RoofScannerPage() {
       try {
         await insertDetectedRoof(candidate);
         setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
-        toast({ type: 'success', title: 'Lead created' });
+        toast({ type: 'success', title: 'Lead creado' });
       } catch (err) {
         toast({
           type: 'error',
@@ -468,22 +656,74 @@ export default function RoofScannerPage() {
     setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  // Centroid (lng/lat) of the selected building — used for fly-to.
   const selectedBuildingCenter = useMemo(
-    () =>
-      selectedBuilding
-        ? { lng: selectedBuilding.center.lng, lat: selectedBuilding.center.lat }
-        : null,
+    () => selectedBuilding
+      ? { lng: selectedBuilding.center.lng, lat: selectedBuilding.center.lat }
+      : null,
     [selectedBuilding]
   );
 
-  // Score color for right tab
   const selectedScore = selectedBuilding?.suitability.score ?? 0;
   const scoreColor =
-    selectedScore >= 80 ? '#00ffcc' : selectedScore >= 60 ? '#22c55e' : selectedScore >= 40 ? '#f59e0b' : '#ef4444';
+    selectedScore >= 80 ? '#00ffcc' :
+    selectedScore >= 60 ? '#22c55e' :
+    selectedScore >= 40 ? '#f59e0b' : '#ef4444';
+
+  // ===== PEEK BAR CONTENT =====
+  const peekBar = (
+    <div className="flex items-center gap-2 py-1">
+      {/* Mode segmented control */}
+      <ModeSegment
+        mode={scannerMode}
+        onChange={setScannerMode}
+        hasBuildingSelected={!!selectedBuilding}
+      />
+
+      {/* Scan / queue actions */}
+      <div className="ml-auto flex items-center gap-1.5">
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={handleScanViewport}
+          disabled={isScanning}
+          style={{ minWidth: 44, minHeight: 44 }}
+          className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+            isScanning
+              ? 'bg-[#00ffcc]/15 border-[#00ffcc]/30'
+              : 'bg-white/[0.04] border-white/[0.07] hover:border-[#00ffcc]/25'
+          }`}
+          aria-label="Escanear"
+        >
+          <ScanLine className={`w-5 h-5 ${isScanning ? 'text-[#00ffcc] animate-spin' : 'text-[#8888a0]'}`} />
+        </motion.button>
+
+        {buildings.length > 0 && (
+          <button
+            onClick={clearBuildings}
+            style={{ minWidth: 44, minHeight: 44 }}
+            className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.04] border border-white/[0.07] text-[#8888a0] hover:text-[#f0f0f5] transition-colors"
+            aria-label="Limpiar edificios"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={handleQueueScan}
+          disabled={isQueuing}
+          style={{ minWidth: 44, minHeight: 44 }}
+          className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.04] border border-white/[0.07] text-[#8888a0] hover:text-[#0ea5e9] transition-colors"
+          aria-label="Escaneo en segundo plano"
+        >
+          {isQueuing ? <Loader2 className="w-5 h-5 animate-spin text-[#0ea5e9]" /> : <Radar className="w-5 h-5" />}
+        </motion.button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="h-screen w-full relative overflow-hidden bg-[#0a0a0f]">
+    <div className="h-[100dvh] w-full relative overflow-hidden bg-[#0a0a0f]">
+
       {/* ===== MAP — FULL AREA ===== */}
       <div className="absolute inset-0">
         <ScannerMap
@@ -505,157 +745,329 @@ export default function RoofScannerPage() {
           onRejectCandidate={handleRejectCandidate}
           parcelBoundary={parcelBoundary}
           panelRoofPolygon={drawnRoofPolygon}
+          capasPosition="bottom-right"
         />
       </div>
 
-      {/* ===== MAP OVERLAYS ===== */}
-      <MapSearchOverlay onSelectPlace={handleSearchPlace} />
+      {/* ===== SEARCH OVERLAY — desktop only (mobile has its own triggered overlay) ===== */}
+      {!isMobile && (
+        <MapSearchOverlay onSelectPlace={handleSearchPlace} />
+      )}
 
-      <DrawToolbar
-        isScanning={isScanning}
-        onScanViewport={handleScanViewport}
-        onClear={clearBuildings}
-        onQueueScan={handleQueueScan}
-        isQueuing={isQueuing}
-      />
-
-      {/* ===== ASYNC BACKGROUND-SCAN STATUS PANEL — bottom-left corner ===== */}
+      {/* ===== ASYNC SCAN STATUS ===== */}
       <ScanRequestsPanel requests={scanRequests} />
 
-      {/* ===== LEFT PANEL — hover-activated overlay ===== */}
-      <div
-        className="absolute left-0 top-0 bottom-0 z-30"
-        onMouseEnter={openLeft}
-        onMouseLeave={closeLeft}
-      >
-        <motion.div
-          animate={{ x: leftOpen ? 0 : -340 }}
-          transition={PANEL_SPRING}
-          className="h-full relative"
-        >
-          <ScanPanel
-            buildings={buildings}
-            selectedBuildingId={selectedBuildingId}
-            isScanning={isScanning}
-            stats={stats}
-            onSearch={handleSearch}
-            onScanViewport={handleScanViewport}
-            onBuildingSelect={handleBuildingSelect}
-            onFilterChange={handleFilterChange}
-            zones={zones}
-            selectedZoneId={areaSelectedZone?.id ?? null}
-            onSelectZone={handleSelectZone}
-            onClearZone={clearZone}
-            onSaveAllAsLeads={handleSaveAllAsLeads}
-            onEnrichAll={handleEnrichAll}
-            onAnalyzeTop={handleAnalyzeTop}
-            isSavingLeads={isSavingLeads}
-            isEnriching={isEnriching}
-            enrichProgress={enrichProgress}
-          />
-
-          {/* Bill OCR — collapsed card below the scan panel */}
-          <div className="px-2 pb-2">
-            {billPrefillKwh !== null && (
-              <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
-                <span className="text-[11px] text-[#00ffcc]">
-                  Consumo de factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
-                </span>
-              </div>
-            )}
-            <BillUploadCard onUseBillData={handleBillData} />
-          </div>
-
-          {/* Collapsed tab — sticks out on the right, offset below sidebar tab */}
+      {/* ===== DESKTOP LAYOUT (≥768px) ===== */}
+      {!isMobile && (
+        <>
+          {/* LEFT PANEL — hover-activated */}
           <div
-            className={`absolute top-20 right-0 translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer transition-opacity duration-200 ${leftOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          >
-            <ScanLine className="w-4 h-4 text-[#00ffcc]" />
-            {buildings.length > 0 && (
-              <span className="text-[10px] font-bold text-[#00ffcc] bg-[#00ffcc]/10 rounded-full min-w-[24px] h-6 flex items-center justify-center px-1">
-                {buildings.length}
-              </span>
-            )}
-            <ChevronRight className="w-3 h-3 text-[#555566]" />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* ===== MEASUREMENT PANEL — floating left of right panel ===== */}
-      <AnimatePresence>
-        {measureMode && selectedBuilding && (
-          <div className="absolute right-[440px] top-3 z-30">
-            <BuildingMeasurements
-              building={selectedBuilding}
-              onFullAnalysis={!selectedBuilding.analyzed ? handleAnalyze : undefined}
-              onSave={handleSaveAsLead}
-            />
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ===== RIGHT PANEL — hover-activated overlay ===== */}
-      <AnimatePresence>
-        {selectedBuilding && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute right-0 top-0 bottom-0 z-30"
-            onMouseEnter={openRight}
-            onMouseLeave={closeRight}
+            className="absolute left-0 top-0 bottom-0 z-30"
+            onMouseEnter={openLeft}
+            onMouseLeave={closeLeft}
           >
             <motion.div
-              animate={{ x: rightOpen ? 0 : 380 }}
+              animate={{ x: leftOpen ? 0 : -340 }}
               transition={PANEL_SPRING}
               className="h-full relative"
             >
-              {/* Collapsed tab — sticks out on the left */}
-              <div
-                className={`absolute top-3 left-0 -translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-l-xl bg-[#12121a]/90 backdrop-blur-xl border border-r-0 border-white/[0.06] cursor-pointer transition-opacity duration-200 ${rightOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-              >
-                <Building2 className="w-4 h-4" style={{ color: scoreColor }} />
-                <span
-                  className="text-[10px] font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1"
-                  style={{ color: scoreColor, backgroundColor: `${scoreColor}15` }}
-                >
-                  {selectedScore}
-                </span>
-                <ChevronLeft className="w-3 h-3 text-[#555566]" />
-              </div>
-
-              <BuildingDetail
-                building={selectedBuilding}
-                isAnalyzing={isAnalyzing}
-                onClose={handleCloseDetail}
-                onAnalyze={handleAnalyze}
-                onSaveAsLead={handleSaveAsLead}
-                isLeadSaved={isSelectedLeadSaved}
-                savedLeadId={savedLeadId}
-                monthlyKwhOverride={billPrefillKwh}
+              <ScanPanel
+                buildings={buildings}
+                selectedBuildingId={selectedBuildingId}
+                isScanning={isScanning}
+                stats={stats}
+                onSearch={handleSearch}
+                onScanViewport={handleScanViewport}
+                onBuildingSelect={handleBuildingSelect}
+                onFilterChange={handleFilterChange}
+                zones={zones}
+                selectedZoneId={areaSelectedZone?.id ?? null}
+                onSelectZone={handleSelectZone}
+                onClearZone={clearZone}
+                onSaveAllAsLeads={handleSaveAllAsLeads}
+                onEnrichAll={handleEnrichAll}
+                onAnalyzeTop={handleAnalyzeTop}
+                isSavingLeads={isSavingLeads}
+                isEnriching={isEnriching}
+                enrichProgress={enrichProgress}
               />
 
-              {/* Registro Público deep-link / untitled-parcel flag */}
-              <div className="absolute left-3 right-3 bottom-3 z-10">
-                {cadastre?.fincaNumber ? (
-                  <a
-                    href={cadastre.registroPublicoUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
-                  >
-                    Ver finca {cadastre.fincaNumber} en Registro Público
-                  </a>
-                ) : (
-                  <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
-                    Sin finca registrada — posible Derecho Posesorio (verificación en campo).
-                  </p>
+              {/* Bill OCR card */}
+              <div className="px-2 pb-2">
+                {billPrefillKwh !== null && (
+                  <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
+                    <span className="text-[11px] text-[#00ffcc]">
+                      Consumo de factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
+                    </span>
+                  </div>
                 )}
+                <BillUploadCard onUseBillData={handleBillData} />
               </div>
+
+              {/* Desktop collapse tab — sticks out right when panel is closed */}
+              <motion.div
+                animate={{ opacity: leftOpen ? 0 : 1, pointerEvents: leftOpen ? 'none' : 'auto' }}
+                transition={{ duration: 0.15 }}
+                className="absolute top-20 right-0 translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer"
+                aria-label="Abrir panel de escaneo"
+              >
+                <ScanLine className="w-4 h-4 text-[#00ffcc]" />
+                {buildings.length > 0 && (
+                  <span className="text-[10px] font-bold text-[#00ffcc] bg-[#00ffcc]/10 rounded-full min-w-[24px] h-6 flex items-center justify-center px-1">
+                    {buildings.length}
+                  </span>
+                )}
+                <ChevronLeft className="w-3 h-3 text-[#555566] rotate-180" />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {/* MEASUREMENT PANEL */}
+          <AnimatePresence>
+            {measureMode && selectedBuilding && (
+              <div className="absolute right-[440px] top-3 z-30">
+                <BuildingMeasurements
+                  building={selectedBuilding}
+                  onFullAnalysis={!selectedBuilding.analyzed ? handleAnalyze : undefined}
+                  onSave={handleSaveAsLead}
+                />
+              </div>
+            )}
+          </AnimatePresence>
+
+          {/* RIGHT PANEL — building detail */}
+          <AnimatePresence>
+            {selectedBuilding && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute right-0 top-0 bottom-0 z-30"
+                onMouseEnter={openRight}
+                onMouseLeave={closeRight}
+              >
+                <motion.div
+                  animate={{ x: rightOpen ? 0 : 380 }}
+                  transition={PANEL_SPRING}
+                  className="h-full relative"
+                >
+                  {/* Collapsed tab */}
+                  <motion.div
+                    animate={{ opacity: rightOpen ? 0 : 1, pointerEvents: rightOpen ? 'none' : 'auto' }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-3 left-0 -translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-l-xl bg-[#12121a]/90 backdrop-blur-xl border border-r-0 border-white/[0.06] cursor-pointer"
+                    aria-label="Abrir detalle del edificio"
+                  >
+                    <Building2 className="w-4 h-4" style={{ color: scoreColor }} />
+                    <span
+                      className="text-[10px] font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1"
+                      style={{ color: scoreColor, backgroundColor: `${scoreColor}15` }}
+                    >
+                      {selectedScore}
+                    </span>
+                    <ChevronLeft className="w-3 h-3 text-[#555566]" />
+                  </motion.div>
+
+                  <BuildingDetail
+                    building={selectedBuilding}
+                    isAnalyzing={isAnalyzing}
+                    onClose={handleCloseDetail}
+                    onAnalyze={handleAnalyze}
+                    onSaveAsLead={handleSaveAsLead}
+                    isLeadSaved={isSelectedLeadSaved}
+                    savedLeadId={savedLeadId}
+                    monthlyKwhOverride={billPrefillKwh}
+                  />
+
+                  {/* Registro Público / parcel info */}
+                  <div className="absolute left-3 right-3 bottom-3 z-10">
+                    {cadastre?.fincaNumber ? (
+                      <a
+                        href={cadastre.registroPublicoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                      >
+                        Ver finca {cadastre.fincaNumber} en Registro Público
+                      </a>
+                    ) : (
+                      <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
+                        Sin finca registrada — posible Derecho Posesorio.
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* DESKTOP: draw toolbar — bottom center */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 p-1.5 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleScanViewport}
+              disabled={isScanning}
+              style={{ minWidth: 44, minHeight: 44 }}
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                isScanning ? 'bg-[#00ffcc]/10 text-[#00ffcc]' : 'text-[#8888a0] hover:bg-white/[0.06] hover:text-white/80'
+              }`}
+              title="Escanear edificios en vista"
+            >
+              <ScanLine className={`w-5 h-5 ${isScanning ? 'animate-spin' : ''}`} />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleQueueScan}
+              disabled={isQueuing}
+              style={{ minWidth: 44, minHeight: 44 }}
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                isQueuing ? 'bg-[#0ea5e9]/10 text-[#0ea5e9]' : 'text-[#8888a0] hover:bg-[#0ea5e9]/10 hover:text-[#0ea5e9]'
+              }`}
+              title="Encolar escaneo de fondo"
+            >
+              {isQueuing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Radar className="w-5 h-5" />}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={clearBuildings}
+              style={{ minWidth: 44, minHeight: 44 }}
+              className="w-11 h-11 rounded-xl flex items-center justify-center text-[#8888a0] hover:bg-white/[0.06] hover:text-white/80 transition-all"
+              title="Limpiar edificios"
+            >
+              <X className="w-5 h-5" />
+            </motion.button>
+          </div>
+        </>
+      )}
+
+      {/* ===== MOBILE LAYOUT (<768px) ===== */}
+      {isMobile && (
+        <>
+          {/* Mobile: top-right FAB stack (search + scan) — above map nav controls */}
+          <div className="absolute top-3 right-3 z-20 flex flex-col gap-2"
+            style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+          >
+            <MobileFABStack
+              mode={scannerMode}
+              onModeChange={setScannerMode}
+              isScanning={isScanning}
+              isQueuing={isQueuing}
+              onScanViewport={handleScanViewport}
+              onQueueScan={handleQueueScan}
+              onOpenSearch={() => setMobileSearchOpen((v) => !v)}
+              measureMode={measureMode}
+              onToggleMeasure={() => setMeasureMode((v) => !v)}
+              hasBuildingSelected={!!selectedBuilding}
+              onOpenSheet={() => setSheetSnap('half')}
+              buildingCount={buildings.length}
+            />
+          </div>
+
+          {/* Mobile search overlay — shown when triggered */}
+          <AnimatePresence>
+            {mobileSearchOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="absolute z-30"
+                style={{
+                  top: `calc(0.75rem + env(safe-area-inset-top, 0px))`,
+                  left: '0.75rem',
+                  right: '4.5rem',
+                }}
+              >
+                <MapSearchOverlay
+                  onSelectPlace={handleSearchPlace}
+                  className="relative z-30 w-full"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Mobile bottom sheet */}
+          <BottomSheet
+            snap={sheetSnap}
+            onSnapChange={setSheetSnap}
+            peekContent={peekBar}
+          >
+            {/* When a building is selected, show building detail */}
+            {selectedBuilding ? (
+              <div className="relative pb-safe">
+                <BuildingDetail
+                  building={selectedBuilding}
+                  isAnalyzing={isAnalyzing}
+                  onClose={handleCloseDetail}
+                  onAnalyze={handleAnalyze}
+                  onSaveAsLead={handleSaveAsLead}
+                  isLeadSaved={isSelectedLeadSaved}
+                  savedLeadId={savedLeadId}
+                  monthlyKwhOverride={billPrefillKwh}
+                />
+                {/* Parcel info */}
+                <div className="px-3 pb-4">
+                  {cadastre?.fincaNumber ? (
+                    <a
+                      href={cadastre.registroPublicoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                    >
+                      Ver finca {cadastre.fincaNumber} en Registro Público
+                    </a>
+                  ) : (
+                    <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
+                      Sin finca registrada — posible Derecho Posesorio.
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* Scan results / ScanPanel content */
+              <div className="pb-safe">
+                <ScanPanel
+                  buildings={buildings}
+                  selectedBuildingId={selectedBuildingId}
+                  isScanning={isScanning}
+                  stats={stats}
+                  onSearch={handleSearch}
+                  onScanViewport={handleScanViewport}
+                  onBuildingSelect={(id) => {
+                    handleBuildingSelect(id);
+                    setSheetSnap('half');
+                  }}
+                  onFilterChange={handleFilterChange}
+                  zones={zones}
+                  selectedZoneId={areaSelectedZone?.id ?? null}
+                  onSelectZone={handleSelectZone}
+                  onClearZone={clearZone}
+                  onSaveAllAsLeads={handleSaveAllAsLeads}
+                  onEnrichAll={handleEnrichAll}
+                  onAnalyzeTop={handleAnalyzeTop}
+                  isSavingLeads={isSavingLeads}
+                  isEnriching={isEnriching}
+                  enrichProgress={enrichProgress}
+                />
+                <div className="px-3 pb-4">
+                  {billPrefillKwh !== null && (
+                    <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
+                      <span className="text-[11px] text-[#00ffcc]">
+                        Factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
+                      </span>
+                    </div>
+                  )}
+                  <BillUploadCard onUseBillData={handleBillData} />
+                </div>
+              </div>
+            )}
+          </BottomSheet>
+        </>
+      )}
     </div>
   );
 }

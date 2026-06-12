@@ -9,7 +9,7 @@ import Map, {
 import { Marker } from '@vis.gl/react-maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Satellite, Moon, MapIcon, Ruler, Building2, PencilRuler, Check, X, Layers } from 'lucide-react';
+import { Ruler, Building2, PencilRuler, Check, X, Layers } from 'lucide-react';
 import { getGradeFromScore, calculatePolygonArea } from '@/utils/geoCalculations';
 import {
   computeEstimatedKwp,
@@ -64,12 +64,6 @@ const SATELLITE_STYLE: Record<string, unknown> = {
 
 /**
  * Sentinel-2 recent imagery via Terrascope/VITO public WMTS (free, no API key).
- * Tiles are ~10 m/px resolution, updated frequently.
- * URL pattern: https://services.terrascope.be/wmts/v2 — SENTINEL2 layer, EPSG:3857.
- * Fallback: Copernicus EMS WMS converted to XYZ via standard WMTS endpoint.
- *
- * Note: These are raster tiles from a public endpoint — attribution required.
- * We add Mapbox-compatible vector labels on top so place names remain readable.
  */
 const SENTINEL_STYLE: Record<string, unknown> = {
   version: 8,
@@ -77,8 +71,6 @@ const SENTINEL_STYLE: Record<string, unknown> = {
   sources: {
     'sentinel2': {
       type: 'raster',
-      // Terrascope public WMTS — Sentinel-2 Level 2A cloud-optimised mosaic.
-      // This is a standard OGC WMTS endpoint re-expressed as XYZ tiles.
       tiles: [
         'https://services.terrascope.be/wmts/v2?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=TERRASCOPE_S2_TOC_V2&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
       ],
@@ -87,7 +79,6 @@ const SENTINEL_STYLE: Record<string, unknown> = {
       maxzoom: 17,
       minzoom: 1,
     },
-    // OpenStreetMap vector labels overlay so place names are readable on S2 imagery
     'osm-labels': {
       type: 'raster',
       tiles: [
@@ -126,7 +117,7 @@ function loadStoredStyle(): StyleMode {
   return 'dark';
 }
 
-// Spanish labels for each style (shows current mode name)
+// Spanish labels for each style
 const STYLE_LABELS_ES: Record<StyleMode, string> = {
   dark: 'Oscuro',
   street: 'Calles',
@@ -134,45 +125,14 @@ const STYLE_LABELS_ES: Record<StyleMode, string> = {
   sentinel: 'Sentinel-2',
 };
 
-// Icon for the NEXT style in the cycle
-function StyleToggleIcon({ mode }: { mode: StyleMode }) {
-  const nextIndex = (STYLE_ORDER.indexOf(mode) + 1) % STYLE_ORDER.length;
-  const next = STYLE_ORDER[nextIndex];
-  switch (next) {
-    case 'street':
-      return <MapIcon className="w-4 h-4 text-[#8888a0]" />;
-    case 'satellite':
-      return <Satellite className="w-4 h-4 text-[#8888a0]" />;
-    case 'sentinel':
-      // Sentinel gets a distinct colour badge
-      return (
-        <span className="text-[9px] font-bold text-[#22d3ee] leading-none">S2</span>
-      );
-    case 'dark':
-    default:
-      return <Moon className="w-4 h-4 text-[#8888a0]" />;
-  }
-}
-
-// Tooltip for the toggle button shows what the NEXT style will be
-const STYLE_LABELS: Record<StyleMode, string> = {
-  dark: 'Cambiar a Calles',
-  street: 'Cambiar a Satélite',
-  satellite: 'Cambiar a Sentinel-2',
-  sentinel: 'Cambiar a Oscuro',
-};
-
 // ===== SOLAR SCORE COLOR RAMP =====
-// Shared between the fill layer and the legend so they always match.
-// 0 -> red, 50 -> orange, 75 -> yellow, 90+ -> green.
 const SCORE_RAMP: Array<{ stop: number; color: string }> = [
-  { stop: 0, color: '#ef4444' }, // red
-  { stop: 50, color: '#f97316' }, // orange
-  { stop: 75, color: '#facc15' }, // yellow
-  { stop: 90, color: '#22c55e' }, // green
+  { stop: 0, color: '#ef4444' },
+  { stop: 50, color: '#f97316' },
+  { stop: 75, color: '#facc15' },
+  { stop: 90, color: '#22c55e' },
 ];
 
-// MapLibre interpolate expression built from SCORE_RAMP
 const SCORE_FILL_COLOR: any = [
   'interpolate',
   ['linear'],
@@ -204,11 +164,8 @@ interface ScannerMapProps {
   selectedBuildingCoordinates?: Array<{ lat: number; lon: number }>;
 
   // ===== P2: Draw roof tool =====
-  /** Centroid (lng/lat) of the selected building — fly-to target */
   selectedBuildingCenter?: { lng: number; lat: number } | null;
-  /** Persisted roof_scans id for the selected building (null when not yet saved) */
   selectedScanId?: string | null;
-  /** Called when the user finishes drawing a roof polygon */
   onRoofDrawn?: (payload: {
     polygon: GeoJSONPolygon;
     areaSqm: number;
@@ -216,23 +173,24 @@ interface ScannerMapProps {
   }) => void;
 
   // ===== P3: Candidate review =====
-  /** Auto-detected roof candidates awaiting confirm/reject */
   candidates?: DetectedRoofCandidate[];
-  /** Confirm a candidate (create lead). Index into `candidates`. */
   onConfirmCandidate?: (index: number) => void;
-  /** Reject a candidate (discard). Index into `candidates`. */
   onRejectCandidate?: (index: number) => void;
 
-  /** ANATI parcel boundary for the selected building (dashed amber outline) */
   parcelBoundary?: Array<{ lat: number; lng: number }>;
 
-  // ===== Panel layout overlay =====
   /**
    * GeoJSON Polygon of the currently-drawn or detected roof — used by
    * PanelLayoutOverlay to render the panel tessellation grid.
-   * Pass null / undefined when no roof polygon is available yet.
    */
   panelRoofPolygon?: GeoJSON.Polygon | null;
+
+  /**
+   * When true the Capas FAB is positioned bottom-right (mobile FAB stack mode).
+   * When false (desktop default) it sits bottom-right of the map area independently.
+   * Parent controls placement via this flag so z-index/offset can be adjusted.
+   */
+  capasPosition?: 'bottom-right' | 'bottom-left';
 }
 
 interface HoverInfo {
@@ -262,7 +220,7 @@ const OVERLAY_URLS: Record<OverlayKey, string> = {
   datacenters: '/data/datacenters-panama.geojson',
 };
 
-// ===== SCORE LEGEND DATA (synced to SCORE_RAMP) =====
+// ===== SCORE LEGEND DATA =====
 
 const SCORE_LEGEND = [
   { label: '90+', color: '#22c55e' },
@@ -270,6 +228,150 @@ const SCORE_LEGEND = [
   { label: '50', color: '#f97316' },
   { label: '0', color: '#ef4444' },
 ];
+
+// ===== CAPAS FAB =====
+// Single floating action button for all map layer/style controls.
+// Tap opens a compact popover; selecting a base style closes it,
+// toggling an overlay keeps it open.
+
+interface CapasFABProps {
+  styleMode: StyleMode;
+  onStyleChange: (mode: StyleMode) => void;
+  overlayEnabled: Record<OverlayKey, boolean>;
+  onToggleOverlay: (key: OverlayKey) => void;
+  /** Position class applied to the wrapper div */
+  positionClass?: string;
+}
+
+function CapasFAB({
+  styleMode,
+  onStyleChange,
+  overlayEnabled,
+  onToggleOverlay,
+  positionClass = 'absolute bottom-4 right-3',
+}: CapasFABProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const anyOverlay = Object.values(overlayEnabled).some(Boolean);
+
+  return (
+    <div ref={ref} className={`${positionClass} z-20`}>
+      <div className="relative">
+        {/* FAB trigger — 44px minimum touch target */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Capas del mapa"
+          style={{ minWidth: 44, minHeight: 44 }}
+          className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shadow-lg ${
+            open || anyOverlay
+              ? 'bg-[#00ffcc]/20 border border-[#00ffcc]/40 shadow-[0_0_14px_rgba(0,255,204,0.15)]'
+              : 'bg-[#12121a]/90 border border-white/[0.08] hover:border-[#00ffcc]/25'
+          }`}
+        >
+          <Layers className={`w-5 h-5 ${open || anyOverlay ? 'text-[#00ffcc]' : 'text-[#8888a0]'}`} />
+        </motion.button>
+
+        {/* Popover — opens upward from the FAB */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 6 }}
+              transition={{ duration: 0.15 }}
+              className="absolute bottom-full mb-2 right-0 w-48 rounded-2xl bg-[#12121a]/97 backdrop-blur-xl border border-white/[0.08] shadow-2xl overflow-hidden"
+              style={{ transformOrigin: 'bottom right' }}
+            >
+              {/* Base styles */}
+              <div className="px-3 pt-3 pb-1">
+                <p className="text-[9px] text-[#555566] uppercase tracking-widest font-semibold mb-2">
+                  Estilo base
+                </p>
+                <div className="grid grid-cols-2 gap-1">
+                  {STYLE_ORDER.map((mode) => {
+                    const active = styleMode === mode;
+                    return (
+                      <button
+                        key={mode}
+                        onClick={() => {
+                          onStyleChange(mode);
+                          setOpen(false);
+                        }}
+                        className={`px-2 py-2 rounded-xl text-[11px] font-medium transition-all text-center leading-none ${
+                          active
+                            ? mode === 'sentinel'
+                              ? 'bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/30'
+                              : 'bg-[#00ffcc]/15 text-[#00ffcc] border border-[#00ffcc]/30'
+                            : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        {STYLE_LABELS_ES[mode]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mx-3 my-2 border-t border-white/[0.06]" />
+
+              {/* Overlay toggles */}
+              <div className="px-3 pb-3">
+                <p className="text-[9px] text-[#555566] uppercase tracking-widest font-semibold mb-2">
+                  Capas
+                </p>
+                <div className="space-y-1">
+                  {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => {
+                    const active = overlayEnabled[key];
+                    const color = key === 'grid' ? '#f59e0b' : '#a855f7';
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => onToggleOverlay(key)}
+                        className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-[11px] font-medium transition-all text-left min-h-[44px] ${
+                          active
+                            ? key === 'grid'
+                              ? 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/25'
+                              : 'bg-[#a855f7]/10 text-[#a855f7] border border-[#a855f7]/25'
+                            : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0 transition-opacity"
+                          style={{ background: color, opacity: active ? 1 : 0.35 }}
+                        />
+                        {OVERLAY_LABELS[key]}
+                        <span
+                          className={`ml-auto w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-all ${
+                            active ? 'border-transparent' : 'border-white/20'
+                          }`}
+                          style={active ? { background: color } : {}}
+                        >
+                          {active && <Check className="w-2.5 h-2.5 text-[#0a0a0f]" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 // ===== COMPONENT =====
 
@@ -292,14 +394,13 @@ export default function ScannerMap({
   onRejectCandidate,
   parcelBoundary,
   panelRoofPolygon,
+  capasPosition = 'bottom-right',
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
-  // Overlay popup state (grid/datacenter feature click)
   const [overlayPopup, setOverlayPopup] = useState<{ lng: number; lat: number; title: string; subtitle?: string } | null>(null);
-  // Treat both satellite and sentinel as "dark background" modes for layer styling
   const isSatellite = styleMode === 'satellite' || styleMode === 'sentinel';
   const [viewState, setViewState] = useState({
     longitude: center[0],
@@ -327,18 +428,15 @@ export default function ScannerMap({
     grid: false,
     datacenters: false,
   });
-  // Lazy-loaded GeoJSON data for each overlay
   const [overlayData, setOverlayData] = useState<Record<OverlayKey, GeoJSON.FeatureCollection | null>>({
     grid: null,
     datacenters: null,
   });
-  // Tracks which overlays have started loading (to avoid duplicate fetches)
   const overlayLoadedRef = useRef<Record<OverlayKey, boolean>>({ grid: false, datacenters: false });
 
   const toggleOverlay = useCallback((key: OverlayKey) => {
     setOverlayEnabled((prev) => {
       const next = !prev[key];
-      // Lazy-load on first enable
       if (next && !overlayLoadedRef.current[key]) {
         overlayLoadedRef.current[key] = true;
         fetch(OVERLAY_URLS[key])
@@ -348,18 +446,16 @@ export default function ScannerMap({
           })
           .catch((err) => {
             console.error(`[ScannerMap] Failed to load overlay ${key}:`, err);
-            overlayLoadedRef.current[key] = false; // allow retry
+            overlayLoadedRef.current[key] = false;
           });
       }
       return { ...prev, [key]: next };
     });
   }, []);
 
-  // Track last center/zoom values to avoid redundant flyTo calls
   const prevCenter = useRef(center);
   const prevZoom = useRef(zoom);
 
-  // Sync center/zoom from parent (only when values actually change)
   useEffect(() => {
     if (
       prevCenter.current[0] === center[0] &&
@@ -387,7 +483,6 @@ export default function ScannerMap({
       fitSignatureRef.current = '';
       return;
     }
-    // Signature = count + first/last feature id (cheap, stable per result set)
     const firstId = (feats[0].properties as any)?.id ?? 0;
     const lastId = (feats[feats.length - 1].properties as any)?.id ?? 0;
     const signature = `${feats.length}:${firstId}:${lastId}`;
@@ -397,7 +492,6 @@ export default function ScannerMap({
     const map = (mapRef.current as any)?.getMap?.();
     if (!map) return;
 
-    // Compute bounds across all building rings
     let west = Infinity, south = Infinity, east = -Infinity, north = -Infinity;
     for (const f of feats) {
       const geom = f.geometry;
@@ -414,14 +508,11 @@ export default function ScannerMap({
     if (!isFinite(west) || !isFinite(south)) return;
     try {
       map.fitBounds(
-        [
-          [west, south],
-          [east, north],
-        ],
+        [[west, south], [east, north]],
         { padding: 80, maxZoom: 16, duration: 1000 }
       );
     } catch {
-      /* ignore invalid bounds */
+      /* ignore */
     }
   }, [buildings]);
 
@@ -453,20 +544,17 @@ export default function ScannerMap({
     }
   }, [styleMode]);
 
-  // Build selected filter
   const selectedFilter = selectedBuildingId != null
     ? ['==', ['get', 'id'], selectedBuildingId]
     : EMPTY_FILTER;
 
-  // Hover filter for opacity boost
   const hoverFilter = hoveredId != null
     ? ['==', ['get', 'id'], hoveredId]
     : EMPTY_FILTER;
 
-  // Selected building outline width — thicker in measure mode
   const selectedLineWidth = measureMode ? 4 : 3;
 
-  // ===== Candidates as GeoJSON (purple dashed) =====
+  // ===== Candidates as GeoJSON =====
   const candidatesGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
     const features: GeoJSON.Feature[] = [];
     candidates.forEach((c, idx) => {
@@ -480,10 +568,9 @@ export default function ScannerMap({
     return { type: 'FeatureCollection', features };
   }, [candidates]);
 
-  // ===== Live draw polygon as GeoJSON =====
+  // ===== Live draw polygon =====
   const drawGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
     if (drawVertices.length === 0) return EMPTY_FC;
-    // Build the live ring: committed vertices + cursor (rubber-band)
     const ring: Array<[number, number]> = [...drawVertices];
     if (cursorPos) ring.push(cursorPos);
     const lineFeature: GeoJSON.Feature = {
@@ -492,7 +579,6 @@ export default function ScannerMap({
       properties: {},
     };
     const features: GeoJSON.Feature[] = [lineFeature];
-    // Fill preview once we have 3+ committed vertices
     if (drawVertices.length >= 3) {
       const closed = [...ring, ring[0]];
       features.push({
@@ -504,7 +590,6 @@ export default function ScannerMap({
     return { type: 'FeatureCollection', features };
   }, [drawVertices, cursorPos]);
 
-  // Vertex markers as points
   const drawVertexGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
     return {
       type: 'FeatureCollection',
@@ -516,21 +601,17 @@ export default function ScannerMap({
     };
   }, [drawVertices]);
 
-  // ===== P2: finish drawing -> compute + emit =====
+  // ===== P2: finish drawing =====
   const finishDrawing = useCallback(() => {
     const verts = drawVerticesRef.current;
     if (verts.length < 3) {
-      // not enough points — just exit
       setDrawMode(false);
       setDrawVertices([]);
       setCursorPos(null);
       return;
     }
-    // Close ring [lng, lat]
     const closed: [number, number][] = [...verts, verts[0]];
     const polygon: GeoJSONPolygon = { type: 'Polygon', coordinates: [closed] };
-    // Reuse geoCalculations.calculatePolygonArea (shoelace + lat correction).
-    // It expects {lat, lon}.
     const areaSqm = calculatePolygonArea(verts.map(([lng, lat]) => ({ lat, lon: lng })));
     const kwp = computeEstimatedKwp(areaSqm);
 
@@ -556,7 +637,6 @@ export default function ScannerMap({
     });
   }, []);
 
-  // Keyboard: Enter finishes, Escape cancels (only while drawing)
   useEffect(() => {
     if (!drawMode) return;
     const onKey = (e: KeyboardEvent) => {
@@ -579,7 +659,6 @@ export default function ScannerMap({
       features?: Array<{ properties?: Record<string, unknown>; layer?: { id?: string } }>;
       lngLat?: { lng: number; lat: number };
     }) => {
-      // Draw mode: add a vertex
       if (drawModeRef.current) {
         if (e.lngLat) {
           setDrawVertices((prev) => [...prev, [e.lngLat!.lng, e.lngLat!.lat]]);
@@ -587,7 +666,6 @@ export default function ScannerMap({
         return;
       }
 
-      // Overlay layer clicks — grid or datacenter popup
       const overlayFeat = e.features?.find((f) =>
         f.layer?.id === 'grid-lines' ||
         f.layer?.id === 'grid-substations' ||
@@ -617,10 +695,8 @@ export default function ScannerMap({
         setOverlayPopup({ lng: e.lngLat.lng, lat: e.lngLat.lat, title, subtitle });
         return;
       }
-      // Click outside overlay features — dismiss overlay popup
       setOverlayPopup(null);
 
-      // Candidate click takes priority over building
       const candFeat = e.features?.find((f) => f.layer?.id === 'candidates-fill');
       if (candFeat?.properties?.idx != null) {
         setActiveCandidate(candFeat.properties.idx as number);
@@ -641,7 +717,6 @@ export default function ScannerMap({
       preventDefault?: () => void;
     }) => {
       if (drawModeRef.current) {
-        // double-click finishes the polygon (and don't zoom)
         e.preventDefault?.();
         finishDrawing();
         return;
@@ -711,7 +786,6 @@ export default function ScannerMap({
     });
   }, [onBoundsChange]);
 
-  // ===== Toggle double-click-zoom + crosshair cursor while drawing =====
   useEffect(() => {
     const map = (mapRef.current as any)?.getMap?.();
     if (!map) return;
@@ -731,13 +805,6 @@ export default function ScannerMap({
     };
   }, [drawMode]);
 
-  const toggleStyle = useCallback(() => {
-    setStyleMode((prev) => {
-      const idx = STYLE_ORDER.indexOf(prev);
-      return STYLE_ORDER[(idx + 1) % STYLE_ORDER.length];
-    });
-  }, []);
-
   const toggleMeasure = useCallback(() => {
     onMeasureModeChange?.(!measureMode);
   }, [measureMode, onMeasureModeChange]);
@@ -751,11 +818,15 @@ export default function ScannerMap({
   ];
   const buildingCount = buildings.features.length;
 
-  // active candidate for the review panel
   const activeCand = activeCandidate != null ? candidates[activeCandidate] : null;
   const activeCandCenter = activeCand
     ? { lng: activeCand.lng, lat: activeCand.lat }
     : null;
+
+  // Capas FAB position — bottom-right by default, or custom
+  const capasPosClass = capasPosition === 'bottom-left'
+    ? 'absolute bottom-4 left-3'
+    : 'absolute bottom-4 right-3';
 
   return (
     <div className="relative w-full h-full">
@@ -785,7 +856,6 @@ export default function ScannerMap({
 
         {/* Building polygons */}
         <Source id="buildings" type="geojson" data={buildings}>
-          {/* Fill layer - color by SOLAR SCORE ramp */}
           <Layer
             id="buildings-fill"
             type="fill"
@@ -799,9 +869,6 @@ export default function ScannerMap({
               ],
             }}
           />
-
-          {/* Outline layer — solid for real roof_geom, dashed for synthetic.
-              `synthetic` property (truthy) marks area-derived footprints. */}
           <Layer
             id="buildings-outline"
             type="line"
@@ -821,8 +888,6 @@ export default function ScannerMap({
               'line-dasharray': [2, 2],
             }}
           />
-
-          {/* Hover highlight */}
           <Layer
             id="buildings-hover"
             type="line"
@@ -832,8 +897,6 @@ export default function ScannerMap({
               'line-width': isSatellite ? 3 : 2,
             }}
           />
-
-          {/* Selected building highlight — glow outline */}
           <Layer
             id="selected-building"
             type="line"
@@ -843,8 +906,6 @@ export default function ScannerMap({
               'line-width': selectedLineWidth,
             }}
           />
-
-          {/* Selected building fill — bright overlay */}
           <Layer
             id="selected-building-fill"
             type="fill"
@@ -854,8 +915,6 @@ export default function ScannerMap({
               'fill-opacity': 0.18,
             }}
           />
-
-          {/* Selected building area label */}
           <Layer
             id="selected-building-label"
             type="symbol"
@@ -874,7 +933,7 @@ export default function ScannerMap({
           />
         </Source>
 
-        {/* ===== P3: Candidate roofs — purple dashed ===== */}
+        {/* P3: Candidate roofs */}
         <Source id="candidates" type="geojson" data={candidatesGeoJSON}>
           <Layer
             id="candidates-fill"
@@ -892,7 +951,7 @@ export default function ScannerMap({
           />
         </Source>
 
-        {/* ===== P2: Live draw overlay ===== */}
+        {/* P2: Live draw overlay */}
         <Source id="roof-draw" type="geojson" data={drawGeoJSON}>
           <Layer
             id="roof-draw-fill"
@@ -920,17 +979,11 @@ export default function ScannerMap({
           />
         </Source>
 
-        {/* ANATI parcel boundary — dashed amber outline for selected building */}
         <ParcelBoundaryLayer boundary={parcelBoundary} />
 
-        {/* ===== OVERLAY: Red eléctrica (power grid) ===== */}
+        {/* OVERLAY: Red eléctrica */}
         {overlayEnabled.grid && (
-          <Source
-            id="grid-overlay"
-            type="geojson"
-            data={overlayData.grid ?? EMPTY_FC}
-          >
-            {/* Transmission lines — amber/yellow, width by voltage */}
+          <Source id="grid-overlay" type="geojson" data={overlayData.grid ?? EMPTY_FC}>
             <Layer
               id="grid-lines"
               type="line"
@@ -939,8 +992,8 @@ export default function ScannerMap({
                 'line-color': [
                   'case',
                   ['>=', ['to-number', ['get', 'voltage'], 0], 200000],
-                  '#f59e0b', // 230 kV — amber
-                  '#fbbf24', // 115 kV — yellow
+                  '#f59e0b',
+                  '#fbbf24',
                 ],
                 'line-width': [
                   'case',
@@ -951,7 +1004,6 @@ export default function ScannerMap({
                 'line-opacity': 0.85,
               }}
             />
-            {/* Substation diamonds/circles */}
             <Layer
               id="grid-substations"
               type="circle"
@@ -967,13 +1019,9 @@ export default function ScannerMap({
           </Source>
         )}
 
-        {/* ===== OVERLAY: Data centers ===== */}
+        {/* OVERLAY: Data centers */}
         {overlayEnabled.datacenters && (
-          <Source
-            id="dc-overlay"
-            type="geojson"
-            data={overlayData.datacenters ?? EMPTY_FC}
-          >
+          <Source id="dc-overlay" type="geojson" data={overlayData.datacenters ?? EMPTY_FC}>
             <Layer
               id="dc-circles"
               type="circle"
@@ -982,8 +1030,8 @@ export default function ScannerMap({
                 'circle-color': [
                   'case',
                   ['==', ['get', 'source'], 'osm'],
-                  '#22d3ee', // cyan for OSM-verified
-                  '#a855f7', // purple for curated
+                  '#22d3ee',
+                  '#a855f7',
                 ],
                 'circle-stroke-color': '#0a0a0f',
                 'circle-stroke-width': 1.5,
@@ -993,13 +1041,11 @@ export default function ScannerMap({
           </Source>
         )}
 
-        {/* Panel layout tessellation overlay */}
         <PanelLayoutOverlay
           roofPolygon={panelLayout.roofPolygon ?? undefined}
           visible={panelLayout.visible}
         />
 
-        {/* Building dimensions overlay — shown when measure mode ON and building selected */}
         {measureMode && selectedBuildingId != null && selectedBuildingCoordinates && selectedBuildingCoordinates.length > 2 && (
           <BuildingDimensions coordinates={selectedBuildingCoordinates} />
         )}
@@ -1050,7 +1096,7 @@ export default function ScannerMap({
           </Marker>
         )}
 
-        {/* ===== P3: Candidate review popup ===== */}
+        {/* P3: Candidate review popup */}
         {activeCand && activeCandCenter && (
           <Marker
             longitude={activeCandCenter.lng}
@@ -1098,7 +1144,7 @@ export default function ScannerMap({
           </Marker>
         )}
 
-        {/* ===== Overlay feature popup (grid / datacenter) ===== */}
+        {/* Overlay feature popup (grid / datacenter) */}
         {overlayPopup && (
           <Marker
             longitude={overlayPopup.lng}
@@ -1130,7 +1176,7 @@ export default function ScannerMap({
           </Marker>
         )}
 
-        {/* Pin marker with pulsing ring */}
+        {/* Search pin marker */}
         {searchMarker && (
           <Marker
             longitude={searchMarker.lng}
@@ -1138,10 +1184,8 @@ export default function ScannerMap({
             anchor="bottom"
           >
             <div className="relative flex items-center justify-center">
-              {/* Pulsing ring */}
               <div className="absolute w-12 h-12 rounded-full bg-[#00ffcc]/20 animate-ping" />
               <div className="absolute w-8 h-8 rounded-full bg-[#00ffcc]/25" />
-              {/* Pin */}
               <svg width="32" height="40" viewBox="0 0 32 40" fill="none" className="relative drop-shadow-lg">
                 <path
                   d="M16 0C7.163 0 0 7.163 0 16c0 12 16 24 16 24s16-12 16-24C32 7.163 24.837 0 16 0z"
@@ -1154,50 +1198,45 @@ export default function ScannerMap({
         )}
       </Map>
 
-      {/* ===== TOP-RIGHT CONTROLS ===== */}
-
-      {/* Style cycle button — quick cycle through all styles */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={toggleStyle}
-        className="absolute top-3 right-14 z-10 p-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06] hover:border-[#00ffcc]/20 transition-all"
-        title={STYLE_LABELS[styleMode]}
-      >
-        <StyleToggleIcon mode={styleMode} />
-      </motion.button>
-
-      {/* Measure toggle button */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={toggleMeasure}
-        className={`absolute top-3 right-[6.5rem] z-10 p-2.5 rounded-xl backdrop-blur-xl border transition-all ${
-          measureMode
-            ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 shadow-[0_0_12px_rgba(139,92,246,0.15)]'
-            : 'bg-[#12121a]/80 border-white/[0.06] hover:border-[#8b5cf6]/20'
-        }`}
-        title={measureMode ? 'Disable measurements' : 'Enable measurements'}
-      >
-        <Ruler className={`w-4 h-4 ${measureMode ? 'text-[#8b5cf6]' : 'text-[#8888a0]'}`} />
-      </motion.button>
-
-      {/* Draw Roof toggle button — only when a building is selected */}
-      {selectedBuildingId != null && (
+      {/* ===== MAP CONTROLS (measure + draw) — top-right, below nav controls ===== */}
+      {/* These sit in the map, the parent's FAB stack (mobile) or can be hidden on mobile
+          because the parent exposes them via the mode switcher. We keep them visible
+          on desktop only. */}
+      <div className="hidden md:flex absolute top-[6.5rem] right-3 z-10 flex-col gap-2">
+        {/* Measure toggle */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={toggleDraw}
-          className={`absolute top-3 right-[9.5rem] z-10 p-2.5 rounded-xl backdrop-blur-xl border transition-all ${
-            drawMode
-              ? 'bg-[#00ffcc]/20 border-[#00ffcc]/40 shadow-[0_0_12px_rgba(0,255,204,0.15)]'
-              : 'bg-[#12121a]/80 border-white/[0.06] hover:border-[#00ffcc]/20'
+          onClick={toggleMeasure}
+          style={{ minWidth: 44, minHeight: 44 }}
+          className={`w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-xl border transition-all shadow-md ${
+            measureMode
+              ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 shadow-[0_0_12px_rgba(139,92,246,0.15)]'
+              : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#8b5cf6]/25'
           }`}
-          title={drawMode ? 'Cancelar dibujo (Esc)' : 'Dibujar techo'}
+          title={measureMode ? 'Desactivar medidas' : 'Activar medidas'}
         >
-          <PencilRuler className={`w-4 h-4 ${drawMode ? 'text-[#00ffcc]' : 'text-[#8888a0]'}`} />
+          <Ruler className={`w-5 h-5 ${measureMode ? 'text-[#8b5cf6]' : 'text-[#8888a0]'}`} />
         </motion.button>
-      )}
+
+        {/* Draw Roof toggle — only when a building is selected */}
+        {selectedBuildingId != null && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleDraw}
+            style={{ minWidth: 44, minHeight: 44 }}
+            className={`w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-xl border transition-all shadow-md ${
+              drawMode
+                ? 'bg-[#00ffcc]/20 border-[#00ffcc]/40 shadow-[0_0_12px_rgba(0,255,204,0.15)]'
+                : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#00ffcc]/25'
+            }`}
+            title={drawMode ? 'Cancelar dibujo (Esc)' : 'Dibujar techo'}
+          >
+            <PencilRuler className={`w-5 h-5 ${drawMode ? 'text-[#00ffcc]' : 'text-[#8888a0]'}`} />
+          </motion.button>
+        )}
+      </div>
 
       {/* ===== DRAW MODE HINT BANNER ===== */}
       <AnimatePresence>
@@ -1206,18 +1245,18 @@ export default function ScannerMap({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-16 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-[#00ffcc]/20"
+            className="absolute top-14 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-[#00ffcc]/20 max-w-[90vw]"
           >
-            <PencilRuler className="w-4 h-4 text-[#00ffcc]" />
+            <PencilRuler className="w-4 h-4 text-[#00ffcc] shrink-0" />
             <span className="text-xs text-[#f0f0f5]">
               {drawVertices.length < 3
                 ? `Haz clic para agregar puntos (${drawVertices.length})`
-                : 'Doble clic o Enter para finalizar · Esc para cancelar'}
+                : 'Doble clic o Enter para finalizar'}
             </span>
             {drawVertices.length >= 3 && (
               <button
                 onClick={finishDrawing}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#00ffcc]/15 text-[#00ffcc] hover:bg-[#00ffcc]/25 transition-colors text-[11px] font-medium"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#00ffcc]/15 text-[#00ffcc] hover:bg-[#00ffcc]/25 transition-colors text-[11px] font-medium shrink-0"
               >
                 <Check className="w-3 h-3" /> Listo
               </button>
@@ -1226,7 +1265,7 @@ export default function ScannerMap({
         )}
       </AnimatePresence>
 
-      {/* ===== TOP: Buildings found counter ===== */}
+      {/* ===== Buildings found counter — top-center ===== */}
       <AnimatePresence>
         {buildingCount > 0 && !drawMode && (
           <motion.div
@@ -1237,20 +1276,20 @@ export default function ScannerMap({
           >
             <Building2 className="w-3.5 h-3.5 text-[#8888a0]" />
             <span className="text-xs font-medium text-[#f0f0f5]">
-              {buildingCount} building{buildingCount !== 1 ? 's' : ''} found
+              {buildingCount} edificio{buildingCount !== 1 ? 's' : ''} encontrado{buildingCount !== 1 ? 's' : ''}
             </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ===== BOTTOM-RIGHT: Solar score legend (synced to SCORE_RAMP) ===== */}
+      {/* ===== BOTTOM-RIGHT: Solar score legend ===== */}
       <AnimatePresence>
         {(buildingCount > 0 || candidates.length > 0) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-4 right-3 z-10 px-3 py-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]"
+            className="absolute bottom-16 right-3 z-10 px-3 py-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]"
           >
             <div className="text-[10px] text-[#555566] uppercase tracking-wider mb-2 font-semibold">
               Solar score
@@ -1258,37 +1297,31 @@ export default function ScannerMap({
             <div className="space-y-1.5">
               {SCORE_LEGEND.map((item) => (
                 <div key={item.label} className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-sm"
-                    style={{ background: item.color }}
-                  />
-                  <span className="text-[10px] text-[#8888a0] font-medium">
-                    {item.label}
-                  </span>
+                  <div className="w-3 h-3 rounded-sm" style={{ background: item.color }} />
+                  <span className="text-[10px] text-[#8888a0] font-medium">{item.label}</span>
                 </div>
               ))}
             </div>
             {candidates.length > 0 && (
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/[0.06]">
                 <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" />
-                <span className="text-[10px] text-[#8888a0] font-medium">Detected</span>
+                <span className="text-[10px] text-[#8888a0] font-medium">Detectado</span>
               </div>
             )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* No-scan-id guard hint (passed up via onRoofDrawn handler in parent;
-          here we surface a subtle indicator if drawing without a scanId) */}
+      {/* No-scan-id guard hint */}
       {drawMode && selectedScanId == null && (
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 px-3 py-1.5 rounded-lg bg-[#f59e0b]/15 border border-[#f59e0b]/30 text-[10px] text-[#f59e0b]">
           El techo se guardará al finalizar el dibujo
         </div>
       )}
 
-      {/* Panel layout badge — shown when a roof polygon is set and panels computed */}
+      {/* Panel layout badge */}
       {!drawMode && panelLayout.roofPolygon && (
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-28 right-3 z-10">
           <PanelLayoutBadge
             roofPolygon={panelLayout.roofPolygon}
             visible={panelLayout.visible}
@@ -1297,65 +1330,14 @@ export default function ScannerMap({
         </div>
       )}
 
-      {/* ===== LAYER SWITCHER — floating control bottom-left ===== */}
-      <div className="absolute bottom-4 left-3 z-10">
-        <div className="flex flex-col gap-1 p-1.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
-          {/* Base style section */}
-          <div className="text-[9px] text-[#555566] uppercase tracking-wider px-1.5 pt-0.5 pb-1 font-semibold">
-            Capa
-          </div>
-          {STYLE_ORDER.map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setStyleMode(mode)}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
-                styleMode === mode
-                  ? mode === 'sentinel'
-                    ? 'bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/30'
-                    : 'bg-[#00ffcc]/15 text-[#00ffcc] border border-[#00ffcc]/30'
-                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
-              }`}
-              title={STYLE_LABELS_ES[mode]}
-            >
-              {STYLE_LABELS_ES[mode]}
-            </button>
-          ))}
-
-          {/* Divider */}
-          <div className="border-t border-white/[0.06] mt-0.5 mb-0.5" />
-
-          {/* Overlay layers section */}
-          <div className="flex items-center gap-1 px-1.5 pb-1 pt-0.5">
-            <Layers className="w-3 h-3 text-[#555566]" />
-            <span className="text-[9px] text-[#555566] uppercase tracking-wider font-semibold">
-              Capas
-            </span>
-          </div>
-          {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => (
-            <button
-              key={key}
-              onClick={() => toggleOverlay(key)}
-              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
-                overlayEnabled[key]
-                  ? key === 'grid'
-                    ? 'bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30'
-                    : 'bg-[#a855f7]/15 text-[#a855f7] border border-[#a855f7]/30'
-                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
-              }`}
-            >
-              {/* Colour swatch */}
-              <span
-                className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{
-                  background: key === 'grid' ? '#f59e0b' : '#a855f7',
-                  opacity: overlayEnabled[key] ? 1 : 0.4,
-                }}
-              />
-              {OVERLAY_LABELS[key]}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* ===== CAPAS FAB — single unified layer/style control ===== */}
+      <CapasFAB
+        styleMode={styleMode}
+        onStyleChange={setStyleMode}
+        overlayEnabled={overlayEnabled}
+        onToggleOverlay={toggleOverlay}
+        positionClass={capasPosClass}
+      />
     </div>
   );
 }
