@@ -9,7 +9,7 @@ import Map, {
 import { Marker } from '@vis.gl/react-maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Satellite, Moon, MapIcon, Ruler, Building2, PencilRuler, Check, X } from 'lucide-react';
+import { Satellite, Moon, MapIcon, Ruler, Building2, PencilRuler, Check, X, Layers } from 'lucide-react';
 import { getGradeFromScore, calculatePolygonArea } from '@/utils/geoCalculations';
 import {
   computeEstimatedKwp,
@@ -248,6 +248,20 @@ const EMPTY_FILTER = ['==', ['get', 'id'], -1];
 
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
 
+// ===== OVERLAY LAYERS =====
+
+type OverlayKey = 'grid' | 'datacenters';
+
+const OVERLAY_LABELS: Record<OverlayKey, string> = {
+  grid: 'Red eléctrica',
+  datacenters: 'Data centers',
+};
+
+const OVERLAY_URLS: Record<OverlayKey, string> = {
+  grid: '/data/grid-panama.geojson',
+  datacenters: '/data/datacenters-panama.geojson',
+};
+
 // ===== SCORE LEGEND DATA (synced to SCORE_RAMP) =====
 
 const SCORE_LEGEND = [
@@ -283,6 +297,8 @@ export default function ScannerMap({
   const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  // Overlay popup state (grid/datacenter feature click)
+  const [overlayPopup, setOverlayPopup] = useState<{ lng: number; lat: number; title: string; subtitle?: string } | null>(null);
   // Treat both satellite and sentinel as "dark background" modes for layer styling
   const isSatellite = styleMode === 'satellite' || styleMode === 'sentinel';
   const [viewState, setViewState] = useState({
@@ -305,6 +321,39 @@ export default function ScannerMap({
 
   // ===== Panel layout overlay state =====
   const panelLayout = usePanelLayout(panelRoofPolygon ?? null);
+
+  // ===== Overlay layers state =====
+  const [overlayEnabled, setOverlayEnabled] = useState<Record<OverlayKey, boolean>>({
+    grid: false,
+    datacenters: false,
+  });
+  // Lazy-loaded GeoJSON data for each overlay
+  const [overlayData, setOverlayData] = useState<Record<OverlayKey, GeoJSON.FeatureCollection | null>>({
+    grid: null,
+    datacenters: null,
+  });
+  // Tracks which overlays have started loading (to avoid duplicate fetches)
+  const overlayLoadedRef = useRef<Record<OverlayKey, boolean>>({ grid: false, datacenters: false });
+
+  const toggleOverlay = useCallback((key: OverlayKey) => {
+    setOverlayEnabled((prev) => {
+      const next = !prev[key];
+      // Lazy-load on first enable
+      if (next && !overlayLoadedRef.current[key]) {
+        overlayLoadedRef.current[key] = true;
+        fetch(OVERLAY_URLS[key])
+          .then((r) => r.json())
+          .then((data: GeoJSON.FeatureCollection) => {
+            setOverlayData((d) => ({ ...d, [key]: data }));
+          })
+          .catch((err) => {
+            console.error(`[ScannerMap] Failed to load overlay ${key}:`, err);
+            overlayLoadedRef.current[key] = false; // allow retry
+          });
+      }
+      return { ...prev, [key]: next };
+    });
+  }, []);
 
   // Track last center/zoom values to avoid redundant flyTo calls
   const prevCenter = useRef(center);
@@ -538,6 +587,39 @@ export default function ScannerMap({
         return;
       }
 
+      // Overlay layer clicks — grid or datacenter popup
+      const overlayFeat = e.features?.find((f) =>
+        f.layer?.id === 'grid-lines' ||
+        f.layer?.id === 'grid-substations' ||
+        f.layer?.id === 'dc-circles'
+      );
+      if (overlayFeat && e.lngLat) {
+        const p = (overlayFeat.properties ?? {}) as Record<string, unknown>;
+        const layerId = overlayFeat.layer?.id;
+        let title: string = (p.name as string) || (layerId === 'dc-circles' ? 'Data center' : 'Línea de transmisión');
+        let subtitle: string | undefined;
+        if (layerId === 'grid-lines') {
+          const parts: string[] = [];
+          if (p.voltage) parts.push(`${parseInt(p.voltage as string, 10) / 1000} kV`);
+          if (p.operator) parts.push(p.operator as string);
+          subtitle = parts.join(' · ') || undefined;
+        } else if (layerId === 'grid-substations') {
+          const parts: string[] = ['Subestación'];
+          if (p.voltage) parts.push(`${parseInt(p.voltage as string, 10) / 1000} kV`);
+          if (p.operator) parts.push(p.operator as string);
+          subtitle = parts.join(' · ');
+        } else if (layerId === 'dc-circles') {
+          const parts: string[] = [];
+          if (p.operator) parts.push(p.operator as string);
+          if (p.source === 'osm') parts.push('OSM');
+          subtitle = parts.join(' · ') || undefined;
+        }
+        setOverlayPopup({ lng: e.lngLat.lng, lat: e.lngLat.lat, title, subtitle });
+        return;
+      }
+      // Click outside overlay features — dismiss overlay popup
+      setOverlayPopup(null);
+
       // Candidate click takes priority over building
       const candFeat = e.features?.find((f) => f.layer?.id === 'candidates-fill');
       if (candFeat?.properties?.idx != null) {
@@ -660,7 +742,13 @@ export default function ScannerMap({
     onMeasureModeChange?.(!measureMode);
   }, [measureMode, onMeasureModeChange]);
 
-  const interactiveLayerIds = ['buildings-fill', 'candidates-fill'];
+  const interactiveLayerIds = [
+    'buildings-fill',
+    'candidates-fill',
+    'grid-lines',
+    'grid-substations',
+    'dc-circles',
+  ];
   const buildingCount = buildings.features.length;
 
   // active candidate for the review panel
@@ -835,6 +923,76 @@ export default function ScannerMap({
         {/* ANATI parcel boundary — dashed amber outline for selected building */}
         <ParcelBoundaryLayer boundary={parcelBoundary} />
 
+        {/* ===== OVERLAY: Red eléctrica (power grid) ===== */}
+        {overlayEnabled.grid && (
+          <Source
+            id="grid-overlay"
+            type="geojson"
+            data={overlayData.grid ?? EMPTY_FC}
+          >
+            {/* Transmission lines — amber/yellow, width by voltage */}
+            <Layer
+              id="grid-lines"
+              type="line"
+              filter={['==', ['geometry-type'], 'LineString']}
+              paint={{
+                'line-color': [
+                  'case',
+                  ['>=', ['to-number', ['get', 'voltage'], 0], 200000],
+                  '#f59e0b', // 230 kV — amber
+                  '#fbbf24', // 115 kV — yellow
+                ],
+                'line-width': [
+                  'case',
+                  ['>=', ['to-number', ['get', 'voltage'], 0], 200000],
+                  2.5,
+                  1.5,
+                ],
+                'line-opacity': 0.85,
+              }}
+            />
+            {/* Substation diamonds/circles */}
+            <Layer
+              id="grid-substations"
+              type="circle"
+              filter={['==', ['geometry-type'], 'Point']}
+              paint={{
+                'circle-radius': 5,
+                'circle-color': '#f59e0b',
+                'circle-stroke-color': '#0a0a0f',
+                'circle-stroke-width': 1.5,
+                'circle-opacity': 0.9,
+              }}
+            />
+          </Source>
+        )}
+
+        {/* ===== OVERLAY: Data centers ===== */}
+        {overlayEnabled.datacenters && (
+          <Source
+            id="dc-overlay"
+            type="geojson"
+            data={overlayData.datacenters ?? EMPTY_FC}
+          >
+            <Layer
+              id="dc-circles"
+              type="circle"
+              paint={{
+                'circle-radius': 7,
+                'circle-color': [
+                  'case',
+                  ['==', ['get', 'source'], 'osm'],
+                  '#22d3ee', // cyan for OSM-verified
+                  '#a855f7', // purple for curated
+                ],
+                'circle-stroke-color': '#0a0a0f',
+                'circle-stroke-width': 1.5,
+                'circle-opacity': 0.9,
+              }}
+            />
+          </Source>
+        )}
+
         {/* Panel layout tessellation overlay */}
         <PanelLayoutOverlay
           roofPolygon={panelLayout.roofPolygon ?? undefined}
@@ -936,6 +1094,38 @@ export default function ScannerMap({
                   <X className="w-3 h-3" /> Rechazar
                 </button>
               </div>
+            </div>
+          </Marker>
+        )}
+
+        {/* ===== Overlay feature popup (grid / datacenter) ===== */}
+        {overlayPopup && (
+          <Marker
+            longitude={overlayPopup.lng}
+            latitude={overlayPopup.lat}
+            anchor="bottom"
+            offset={[0, -8] as [number, number]}
+          >
+            <div
+              className="relative px-3 py-2 text-xs shadow-lg"
+              style={{
+                background: '#12121aee',
+                borderRadius: 8,
+                border: '1px solid rgba(245,158,11,0.3)',
+                backdropFilter: 'blur(8px)',
+                maxWidth: 220,
+              }}
+            >
+              <div className="font-semibold text-[#f0f0f5] truncate mb-0.5 pr-4">{overlayPopup.title}</div>
+              {overlayPopup.subtitle && (
+                <div className="text-[10px] text-[#8888a0]">{overlayPopup.subtitle}</div>
+              )}
+              <button
+                onClick={() => setOverlayPopup(null)}
+                className="absolute top-1 right-1.5 text-[#555566] hover:text-[#8888a0] text-[10px]"
+              >
+                ✕
+              </button>
             </div>
           </Marker>
         )}
@@ -1110,6 +1300,7 @@ export default function ScannerMap({
       {/* ===== LAYER SWITCHER — floating control bottom-left ===== */}
       <div className="absolute bottom-4 left-3 z-10">
         <div className="flex flex-col gap-1 p-1.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
+          {/* Base style section */}
           <div className="text-[9px] text-[#555566] uppercase tracking-wider px-1.5 pt-0.5 pb-1 font-semibold">
             Capa
           </div>
@@ -1127,6 +1318,40 @@ export default function ScannerMap({
               title={STYLE_LABELS_ES[mode]}
             >
               {STYLE_LABELS_ES[mode]}
+            </button>
+          ))}
+
+          {/* Divider */}
+          <div className="border-t border-white/[0.06] mt-0.5 mb-0.5" />
+
+          {/* Overlay layers section */}
+          <div className="flex items-center gap-1 px-1.5 pb-1 pt-0.5">
+            <Layers className="w-3 h-3 text-[#555566]" />
+            <span className="text-[9px] text-[#555566] uppercase tracking-wider font-semibold">
+              Capas
+            </span>
+          </div>
+          {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => toggleOverlay(key)}
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
+                overlayEnabled[key]
+                  ? key === 'grid'
+                    ? 'bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30'
+                    : 'bg-[#a855f7]/15 text-[#a855f7] border border-[#a855f7]/30'
+                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
+              }`}
+            >
+              {/* Colour swatch */}
+              <span
+                className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{
+                  background: key === 'grid' ? '#f59e0b' : '#a855f7',
+                  opacity: overlayEnabled[key] ? 1 : 0.4,
+                }}
+              />
+              {OVERLAY_LABELS[key]}
             </button>
           ))}
         </div>
