@@ -18,6 +18,7 @@ import {
 } from '@/services/scannerRpcService';
 import BuildingDimensions from './BuildingDimensions';
 import { ParcelBoundaryLayer } from './ParcelBoundaryLayer';
+import { PanelLayoutOverlay, PanelLayoutBadge, usePanelLayout } from './PanelLayoutOverlay';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 // ===== MAP STYLES =====
@@ -61,27 +62,77 @@ const SATELLITE_STYLE: Record<string, unknown> = {
   ],
 };
 
-type StyleMode = 'dark' | 'street' | 'satellite';
+/**
+ * Sentinel-2 recent imagery via Terrascope/VITO public WMTS (free, no API key).
+ * Tiles are ~10 m/px resolution, updated frequently.
+ * URL pattern: https://services.terrascope.be/wmts/v2 — SENTINEL2 layer, EPSG:3857.
+ * Fallback: Copernicus EMS WMS converted to XYZ via standard WMTS endpoint.
+ *
+ * Note: These are raster tiles from a public endpoint — attribution required.
+ * We add Mapbox-compatible vector labels on top so place names remain readable.
+ */
+const SENTINEL_STYLE: Record<string, unknown> = {
+  version: 8,
+  glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
+  sources: {
+    'sentinel2': {
+      type: 'raster',
+      // Terrascope public WMTS — Sentinel-2 Level 2A cloud-optimised mosaic.
+      // This is a standard OGC WMTS endpoint re-expressed as XYZ tiles.
+      tiles: [
+        'https://services.terrascope.be/wmts/v2?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=TERRASCOPE_S2_TOC_V2&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
+      ],
+      tileSize: 256,
+      attribution: '&copy; ESA / Terrascope (VITO)',
+      maxzoom: 17,
+      minzoom: 1,
+    },
+    // OpenStreetMap vector labels overlay so place names are readable on S2 imagery
+    'osm-labels': {
+      type: 'raster',
+      tiles: [
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+    },
+  },
+  layers: [
+    { id: 'sentinel2-tiles', type: 'raster', source: 'sentinel2' },
+    { id: 'osm-label-overlay', type: 'raster', source: 'osm-labels', paint: { 'raster-opacity': 0.8 } },
+  ],
+};
+
+type StyleMode = 'dark' | 'street' | 'satellite' | 'sentinel';
 
 const STYLE_MAP: Record<StyleMode, string | Record<string, unknown>> = {
   dark: DARK_STYLE,
   street: STREET_STYLE,
   satellite: SATELLITE_STYLE,
+  sentinel: SENTINEL_STYLE,
 };
 
-const STYLE_ORDER: StyleMode[] = ['dark', 'street', 'satellite'];
+const STYLE_ORDER: StyleMode[] = ['dark', 'street', 'satellite', 'sentinel'];
 
 const STYLE_STORAGE_KEY = 'scanner.mapStyle';
 
 function loadStoredStyle(): StyleMode {
   try {
     const raw = localStorage.getItem(STYLE_STORAGE_KEY);
-    if (raw === 'dark' || raw === 'street' || raw === 'satellite') return raw;
+    if (raw === 'dark' || raw === 'street' || raw === 'satellite' || raw === 'sentinel') return raw;
   } catch {
     /* ignore */
   }
   return 'dark';
 }
+
+// Spanish labels for each style (shows current mode name)
+const STYLE_LABELS_ES: Record<StyleMode, string> = {
+  dark: 'Oscuro',
+  street: 'Calles',
+  satellite: 'Satélite',
+  sentinel: 'Sentinel-2',
+};
 
 // Icon for the NEXT style in the cycle
 function StyleToggleIcon({ mode }: { mode: StyleMode }) {
@@ -92,16 +143,23 @@ function StyleToggleIcon({ mode }: { mode: StyleMode }) {
       return <MapIcon className="w-4 h-4 text-[#8888a0]" />;
     case 'satellite':
       return <Satellite className="w-4 h-4 text-[#8888a0]" />;
+    case 'sentinel':
+      // Sentinel gets a distinct colour badge
+      return (
+        <span className="text-[9px] font-bold text-[#22d3ee] leading-none">S2</span>
+      );
     case 'dark':
     default:
       return <Moon className="w-4 h-4 text-[#8888a0]" />;
   }
 }
 
+// Tooltip for the toggle button shows what the NEXT style will be
 const STYLE_LABELS: Record<StyleMode, string> = {
-  dark: 'Street view',
-  street: 'Satellite view',
-  satellite: 'Dark view',
+  dark: 'Cambiar a Calles',
+  street: 'Cambiar a Satélite',
+  satellite: 'Cambiar a Sentinel-2',
+  sentinel: 'Cambiar a Oscuro',
 };
 
 // ===== SOLAR SCORE COLOR RAMP =====
@@ -167,6 +225,14 @@ interface ScannerMapProps {
 
   /** ANATI parcel boundary for the selected building (dashed amber outline) */
   parcelBoundary?: Array<{ lat: number; lng: number }>;
+
+  // ===== Panel layout overlay =====
+  /**
+   * GeoJSON Polygon of the currently-drawn or detected roof — used by
+   * PanelLayoutOverlay to render the panel tessellation grid.
+   * Pass null / undefined when no roof polygon is available yet.
+   */
+  panelRoofPolygon?: GeoJSON.Polygon | null;
 }
 
 interface HoverInfo {
@@ -211,12 +277,14 @@ export default function ScannerMap({
   onConfirmCandidate,
   onRejectCandidate,
   parcelBoundary,
+  panelRoofPolygon,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
-  const isSatellite = styleMode === 'satellite';
+  // Treat both satellite and sentinel as "dark background" modes for layer styling
+  const isSatellite = styleMode === 'satellite' || styleMode === 'sentinel';
   const [viewState, setViewState] = useState({
     longitude: center[0],
     latitude: center[1],
@@ -234,6 +302,9 @@ export default function ScannerMap({
 
   // ===== P3 candidate review state =====
   const [activeCandidate, setActiveCandidate] = useState<number | null>(null);
+
+  // ===== Panel layout overlay state =====
+  const panelLayout = usePanelLayout(panelRoofPolygon ?? null);
 
   // Track last center/zoom values to avoid redundant flyTo calls
   const prevCenter = useRef(center);
@@ -764,6 +835,12 @@ export default function ScannerMap({
         {/* ANATI parcel boundary — dashed amber outline for selected building */}
         <ParcelBoundaryLayer boundary={parcelBoundary} />
 
+        {/* Panel layout tessellation overlay */}
+        <PanelLayoutOverlay
+          roofPolygon={panelLayout.roofPolygon ?? undefined}
+          visible={panelLayout.visible}
+        />
+
         {/* Building dimensions overlay — shown when measure mode ON and building selected */}
         {measureMode && selectedBuildingId != null && selectedBuildingCoordinates && selectedBuildingCoordinates.length > 2 && (
           <BuildingDimensions coordinates={selectedBuildingCoordinates} />
@@ -889,7 +966,7 @@ export default function ScannerMap({
 
       {/* ===== TOP-RIGHT CONTROLS ===== */}
 
-      {/* Style toggle button — 3-way cycle */}
+      {/* Style cycle button — quick cycle through all styles */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -1018,6 +1095,42 @@ export default function ScannerMap({
           El techo se guardará al finalizar el dibujo
         </div>
       )}
+
+      {/* Panel layout badge — shown when a roof polygon is set and panels computed */}
+      {!drawMode && panelLayout.roofPolygon && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10">
+          <PanelLayoutBadge
+            roofPolygon={panelLayout.roofPolygon}
+            visible={panelLayout.visible}
+            onToggle={panelLayout.toggle}
+          />
+        </div>
+      )}
+
+      {/* ===== LAYER SWITCHER — floating control bottom-left ===== */}
+      <div className="absolute bottom-4 left-3 z-10">
+        <div className="flex flex-col gap-1 p-1.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
+          <div className="text-[9px] text-[#555566] uppercase tracking-wider px-1.5 pt-0.5 pb-1 font-semibold">
+            Capa
+          </div>
+          {STYLE_ORDER.map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setStyleMode(mode)}
+              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
+                styleMode === mode
+                  ? mode === 'sentinel'
+                    ? 'bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/30'
+                    : 'bg-[#00ffcc]/15 text-[#00ffcc] border border-[#00ffcc]/30'
+                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
+              }`}
+              title={STYLE_LABELS_ES[mode]}
+            >
+              {STYLE_LABELS_ES[mode]}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

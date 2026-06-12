@@ -27,6 +27,7 @@ import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
 import DrawToolbar from '@/components/scanner/DrawToolbar';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
 import ScanRequestsPanel from '@/components/scanner/ScanRequestsPanel';
+import BillUploadCard, { type BillPrefillData } from '@/components/scanner/BillUploadCard';
 
 // ===== TYPES =====
 
@@ -106,6 +107,12 @@ export default function RoofScannerPage() {
   const [parcelBoundary, setParcelBoundary] = useState<Array<{ lat: number; lng: number }> | undefined>(undefined);
   const [cadastre, setCadastre] = useState<CadastreInfo | null>(null);
 
+  // Bill OCR prefill — monthly kWh extracted from an uploaded bill image
+  const [billPrefillKwh, setBillPrefillKwh] = useState<number | null>(null);
+
+  // Panel layout — polygon of the most recently drawn roof (for tessellation overlay)
+  const [drawnRoofPolygon, setDrawnRoofPolygon] = useState<GeoJSON.Polygon | null>(null);
+
   // P3 — auto-detected roof candidates awaiting confirm/reject.
   // Sourced from the scan/detector flow; starts empty until that flow populates it.
   const [detectedCandidates, setDetectedCandidates] = useState<DetectedRoofCandidate[]>([]);
@@ -150,6 +157,26 @@ export default function RoofScannerPage() {
       console.error('Geocoding failed:', err);
     }
   }, []);
+
+  // Bill OCR prefill handler: store extracted kWh and fly map to bill address
+  const handleBillData = useCallback(async (data: BillPrefillData) => {
+    setBillPrefillKwh(data.monthly_kwh);
+    if (data.address) {
+      try {
+        const geo = await geocodeAddress(data.address);
+        setMapCenter([geo.lng, geo.lat]);
+        setMapZoom(17);
+        setSearchMarker({ lng: geo.lng, lat: geo.lat });
+      } catch {
+        // Address not geocodable — silently skip map fly-to
+      }
+    }
+    toast({
+      type: 'success',
+      title: 'Factura procesada',
+      description: `Consumo mensual: ${data.monthly_kwh.toLocaleString('es-PA')} kWh/mes`,
+    });
+  }, [toast]);
 
   const handleSearchPlace = useCallback((result: GeocodingResult) => {
     setMapCenter([result.lng, result.lat]);
@@ -245,6 +272,7 @@ export default function RoofScannerPage() {
     setParcelBoundary(undefined);
     setCadastre(null);
     setSavedLeadId(null);
+    setDrawnRoofPolygon(null);
   }, [selectBuilding]);
 
   const handleAnalyze = useCallback(async () => {
@@ -373,6 +401,8 @@ export default function RoofScannerPage() {
         return;
       }
       const { polygon, areaSqm, kwp } = payload;
+      // Capture drawn polygon for the panel tessellation overlay
+      setDrawnRoofPolygon(polygon as unknown as GeoJSON.Polygon);
       try {
         let scanId = scanIdByBuildingRef.current.get(selectedBuilding.id) ?? null;
 
@@ -474,6 +504,7 @@ export default function RoofScannerPage() {
           onConfirmCandidate={handleConfirmCandidate}
           onRejectCandidate={handleRejectCandidate}
           parcelBoundary={parcelBoundary}
+          panelRoofPolygon={drawnRoofPolygon}
         />
       </div>
 
@@ -522,6 +553,18 @@ export default function RoofScannerPage() {
             isEnriching={isEnriching}
             enrichProgress={enrichProgress}
           />
+
+          {/* Bill OCR — collapsed card below the scan panel */}
+          <div className="px-2 pb-2">
+            {billPrefillKwh !== null && (
+              <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
+                <span className="text-[11px] text-[#00ffcc]">
+                  Consumo de factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
+                </span>
+              </div>
+            )}
+            <BillUploadCard onUseBillData={handleBillData} />
+          </div>
 
           {/* Collapsed tab — sticks out on the right, offset below sidebar tab */}
           <div
@@ -589,6 +632,7 @@ export default function RoofScannerPage() {
                 onSaveAsLead={handleSaveAsLead}
                 isLeadSaved={isSelectedLeadSaved}
                 savedLeadId={savedLeadId}
+                monthlyKwhOverride={billPrefillKwh}
               />
 
               {/* Registro Público deep-link / untitled-parcel flag */}
