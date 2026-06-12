@@ -197,15 +197,21 @@ out geom;`;
 }
 
 async function fetchOverpass(query: string): Promise<OverpassResponse> {
-  const url = process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter';
+  const primary = process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter';
+  const fallback = 'https://overpass.kumi.systems/api/interpreter';
 
-  const attempt = async (): Promise<Response> => {
+  const attempt = async (url: string): Promise<Response> => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), OVERPASS_TIMEOUT_MS);
     try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          // overpass-api.de returns 406 for requests without a User-Agent
+          'User-Agent': 'SolarisPanama/1.0 (roof scanner; solaris-panama.com)',
+          Accept: 'application/json',
+        },
         body: `data=${encodeURIComponent(query)}`,
         signal: controller.signal,
       });
@@ -217,11 +223,16 @@ async function fetchOverpass(query: string): Promise<OverpassResponse> {
 
   let res: Response;
   try {
-    res = await attempt();
+    res = await attempt(primary);
+    if (!res.ok && res.status !== 400) {
+      // server-side rejection (406/429/504...) — try the fallback mirror
+      await new Promise((r) => setTimeout(r, OVERPASS_RETRY_DELAY_MS));
+      res = await attempt(fallback);
+    }
   } catch (_e) {
-    // one retry after backoff
+    // network error — one retry on the fallback mirror after backoff
     await new Promise((r) => setTimeout(r, OVERPASS_RETRY_DELAY_MS));
-    res = await attempt();
+    res = await attempt(fallback);
   }
 
   if (!res.ok) {
