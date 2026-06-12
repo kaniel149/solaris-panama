@@ -9,7 +9,7 @@ import Map, {
 import { Marker } from '@vis.gl/react-maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Satellite, Moon, MapIcon, Ruler, Building2, PencilRuler, Check, X } from 'lucide-react';
+import { Satellite, Moon, MapIcon, Ruler, Building2, PencilRuler, Check, X, Layers } from 'lucide-react';
 import { getGradeFromScore, calculatePolygonArea } from '@/utils/geoCalculations';
 import {
   computeEstimatedKwp,
@@ -18,6 +18,7 @@ import {
 } from '@/services/scannerRpcService';
 import BuildingDimensions from './BuildingDimensions';
 import { ParcelBoundaryLayer } from './ParcelBoundaryLayer';
+import { PanelLayoutOverlay, PanelLayoutBadge, usePanelLayout } from './PanelLayoutOverlay';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 // ===== MAP STYLES =====
@@ -61,27 +62,77 @@ const SATELLITE_STYLE: Record<string, unknown> = {
   ],
 };
 
-type StyleMode = 'dark' | 'street' | 'satellite';
+/**
+ * Sentinel-2 recent imagery via Terrascope/VITO public WMTS (free, no API key).
+ * Tiles are ~10 m/px resolution, updated frequently.
+ * URL pattern: https://services.terrascope.be/wmts/v2 — SENTINEL2 layer, EPSG:3857.
+ * Fallback: Copernicus EMS WMS converted to XYZ via standard WMTS endpoint.
+ *
+ * Note: These are raster tiles from a public endpoint — attribution required.
+ * We add Mapbox-compatible vector labels on top so place names remain readable.
+ */
+const SENTINEL_STYLE: Record<string, unknown> = {
+  version: 8,
+  glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
+  sources: {
+    'sentinel2': {
+      type: 'raster',
+      // Terrascope public WMTS — Sentinel-2 Level 2A cloud-optimised mosaic.
+      // This is a standard OGC WMTS endpoint re-expressed as XYZ tiles.
+      tiles: [
+        'https://services.terrascope.be/wmts/v2?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=TERRASCOPE_S2_TOC_V2&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
+      ],
+      tileSize: 256,
+      attribution: '&copy; ESA / Terrascope (VITO)',
+      maxzoom: 17,
+      minzoom: 1,
+    },
+    // OpenStreetMap vector labels overlay so place names are readable on S2 imagery
+    'osm-labels': {
+      type: 'raster',
+      tiles: [
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+    },
+  },
+  layers: [
+    { id: 'sentinel2-tiles', type: 'raster', source: 'sentinel2' },
+    { id: 'osm-label-overlay', type: 'raster', source: 'osm-labels', paint: { 'raster-opacity': 0.8 } },
+  ],
+};
+
+type StyleMode = 'dark' | 'street' | 'satellite' | 'sentinel';
 
 const STYLE_MAP: Record<StyleMode, string | Record<string, unknown>> = {
   dark: DARK_STYLE,
   street: STREET_STYLE,
   satellite: SATELLITE_STYLE,
+  sentinel: SENTINEL_STYLE,
 };
 
-const STYLE_ORDER: StyleMode[] = ['dark', 'street', 'satellite'];
+const STYLE_ORDER: StyleMode[] = ['dark', 'street', 'satellite', 'sentinel'];
 
 const STYLE_STORAGE_KEY = 'scanner.mapStyle';
 
 function loadStoredStyle(): StyleMode {
   try {
     const raw = localStorage.getItem(STYLE_STORAGE_KEY);
-    if (raw === 'dark' || raw === 'street' || raw === 'satellite') return raw;
+    if (raw === 'dark' || raw === 'street' || raw === 'satellite' || raw === 'sentinel') return raw;
   } catch {
     /* ignore */
   }
   return 'dark';
 }
+
+// Spanish labels for each style (shows current mode name)
+const STYLE_LABELS_ES: Record<StyleMode, string> = {
+  dark: 'Oscuro',
+  street: 'Calles',
+  satellite: 'Satélite',
+  sentinel: 'Sentinel-2',
+};
 
 // Icon for the NEXT style in the cycle
 function StyleToggleIcon({ mode }: { mode: StyleMode }) {
@@ -92,16 +143,23 @@ function StyleToggleIcon({ mode }: { mode: StyleMode }) {
       return <MapIcon className="w-4 h-4 text-[#8888a0]" />;
     case 'satellite':
       return <Satellite className="w-4 h-4 text-[#8888a0]" />;
+    case 'sentinel':
+      // Sentinel gets a distinct colour badge
+      return (
+        <span className="text-[9px] font-bold text-[#22d3ee] leading-none">S2</span>
+      );
     case 'dark':
     default:
       return <Moon className="w-4 h-4 text-[#8888a0]" />;
   }
 }
 
+// Tooltip for the toggle button shows what the NEXT style will be
 const STYLE_LABELS: Record<StyleMode, string> = {
-  dark: 'Street view',
-  street: 'Satellite view',
-  satellite: 'Dark view',
+  dark: 'Cambiar a Calles',
+  street: 'Cambiar a Satélite',
+  satellite: 'Cambiar a Sentinel-2',
+  sentinel: 'Cambiar a Oscuro',
 };
 
 // ===== SOLAR SCORE COLOR RAMP =====
@@ -167,6 +225,14 @@ interface ScannerMapProps {
 
   /** ANATI parcel boundary for the selected building (dashed amber outline) */
   parcelBoundary?: Array<{ lat: number; lng: number }>;
+
+  // ===== Panel layout overlay =====
+  /**
+   * GeoJSON Polygon of the currently-drawn or detected roof — used by
+   * PanelLayoutOverlay to render the panel tessellation grid.
+   * Pass null / undefined when no roof polygon is available yet.
+   */
+  panelRoofPolygon?: GeoJSON.Polygon | null;
 }
 
 interface HoverInfo {
@@ -181,6 +247,20 @@ interface HoverInfo {
 const EMPTY_FILTER = ['==', ['get', 'id'], -1];
 
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
+
+// ===== OVERLAY LAYERS =====
+
+type OverlayKey = 'grid' | 'datacenters';
+
+const OVERLAY_LABELS: Record<OverlayKey, string> = {
+  grid: 'Red eléctrica',
+  datacenters: 'Data centers',
+};
+
+const OVERLAY_URLS: Record<OverlayKey, string> = {
+  grid: '/data/grid-panama.geojson',
+  datacenters: '/data/datacenters-panama.geojson',
+};
 
 // ===== SCORE LEGEND DATA (synced to SCORE_RAMP) =====
 
@@ -211,12 +291,16 @@ export default function ScannerMap({
   onConfirmCandidate,
   onRejectCandidate,
   parcelBoundary,
+  panelRoofPolygon,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
-  const isSatellite = styleMode === 'satellite';
+  // Overlay popup state (grid/datacenter feature click)
+  const [overlayPopup, setOverlayPopup] = useState<{ lng: number; lat: number; title: string; subtitle?: string } | null>(null);
+  // Treat both satellite and sentinel as "dark background" modes for layer styling
+  const isSatellite = styleMode === 'satellite' || styleMode === 'sentinel';
   const [viewState, setViewState] = useState({
     longitude: center[0],
     latitude: center[1],
@@ -234,6 +318,42 @@ export default function ScannerMap({
 
   // ===== P3 candidate review state =====
   const [activeCandidate, setActiveCandidate] = useState<number | null>(null);
+
+  // ===== Panel layout overlay state =====
+  const panelLayout = usePanelLayout(panelRoofPolygon ?? null);
+
+  // ===== Overlay layers state =====
+  const [overlayEnabled, setOverlayEnabled] = useState<Record<OverlayKey, boolean>>({
+    grid: false,
+    datacenters: false,
+  });
+  // Lazy-loaded GeoJSON data for each overlay
+  const [overlayData, setOverlayData] = useState<Record<OverlayKey, GeoJSON.FeatureCollection | null>>({
+    grid: null,
+    datacenters: null,
+  });
+  // Tracks which overlays have started loading (to avoid duplicate fetches)
+  const overlayLoadedRef = useRef<Record<OverlayKey, boolean>>({ grid: false, datacenters: false });
+
+  const toggleOverlay = useCallback((key: OverlayKey) => {
+    setOverlayEnabled((prev) => {
+      const next = !prev[key];
+      // Lazy-load on first enable
+      if (next && !overlayLoadedRef.current[key]) {
+        overlayLoadedRef.current[key] = true;
+        fetch(OVERLAY_URLS[key])
+          .then((r) => r.json())
+          .then((data: GeoJSON.FeatureCollection) => {
+            setOverlayData((d) => ({ ...d, [key]: data }));
+          })
+          .catch((err) => {
+            console.error(`[ScannerMap] Failed to load overlay ${key}:`, err);
+            overlayLoadedRef.current[key] = false; // allow retry
+          });
+      }
+      return { ...prev, [key]: next };
+    });
+  }, []);
 
   // Track last center/zoom values to avoid redundant flyTo calls
   const prevCenter = useRef(center);
@@ -467,6 +587,39 @@ export default function ScannerMap({
         return;
       }
 
+      // Overlay layer clicks — grid or datacenter popup
+      const overlayFeat = e.features?.find((f) =>
+        f.layer?.id === 'grid-lines' ||
+        f.layer?.id === 'grid-substations' ||
+        f.layer?.id === 'dc-circles'
+      );
+      if (overlayFeat && e.lngLat) {
+        const p = (overlayFeat.properties ?? {}) as Record<string, unknown>;
+        const layerId = overlayFeat.layer?.id;
+        let title: string = (p.name as string) || (layerId === 'dc-circles' ? 'Data center' : 'Línea de transmisión');
+        let subtitle: string | undefined;
+        if (layerId === 'grid-lines') {
+          const parts: string[] = [];
+          if (p.voltage) parts.push(`${parseInt(p.voltage as string, 10) / 1000} kV`);
+          if (p.operator) parts.push(p.operator as string);
+          subtitle = parts.join(' · ') || undefined;
+        } else if (layerId === 'grid-substations') {
+          const parts: string[] = ['Subestación'];
+          if (p.voltage) parts.push(`${parseInt(p.voltage as string, 10) / 1000} kV`);
+          if (p.operator) parts.push(p.operator as string);
+          subtitle = parts.join(' · ');
+        } else if (layerId === 'dc-circles') {
+          const parts: string[] = [];
+          if (p.operator) parts.push(p.operator as string);
+          if (p.source === 'osm') parts.push('OSM');
+          subtitle = parts.join(' · ') || undefined;
+        }
+        setOverlayPopup({ lng: e.lngLat.lng, lat: e.lngLat.lat, title, subtitle });
+        return;
+      }
+      // Click outside overlay features — dismiss overlay popup
+      setOverlayPopup(null);
+
       // Candidate click takes priority over building
       const candFeat = e.features?.find((f) => f.layer?.id === 'candidates-fill');
       if (candFeat?.properties?.idx != null) {
@@ -589,7 +742,13 @@ export default function ScannerMap({
     onMeasureModeChange?.(!measureMode);
   }, [measureMode, onMeasureModeChange]);
 
-  const interactiveLayerIds = ['buildings-fill', 'candidates-fill'];
+  const interactiveLayerIds = [
+    'buildings-fill',
+    'candidates-fill',
+    'grid-lines',
+    'grid-substations',
+    'dc-circles',
+  ];
   const buildingCount = buildings.features.length;
 
   // active candidate for the review panel
@@ -764,6 +923,82 @@ export default function ScannerMap({
         {/* ANATI parcel boundary — dashed amber outline for selected building */}
         <ParcelBoundaryLayer boundary={parcelBoundary} />
 
+        {/* ===== OVERLAY: Red eléctrica (power grid) ===== */}
+        {overlayEnabled.grid && (
+          <Source
+            id="grid-overlay"
+            type="geojson"
+            data={overlayData.grid ?? EMPTY_FC}
+          >
+            {/* Transmission lines — amber/yellow, width by voltage */}
+            <Layer
+              id="grid-lines"
+              type="line"
+              filter={['==', ['geometry-type'], 'LineString']}
+              paint={{
+                'line-color': [
+                  'case',
+                  ['>=', ['to-number', ['get', 'voltage'], 0], 200000],
+                  '#f59e0b', // 230 kV — amber
+                  '#fbbf24', // 115 kV — yellow
+                ],
+                'line-width': [
+                  'case',
+                  ['>=', ['to-number', ['get', 'voltage'], 0], 200000],
+                  2.5,
+                  1.5,
+                ],
+                'line-opacity': 0.85,
+              }}
+            />
+            {/* Substation diamonds/circles */}
+            <Layer
+              id="grid-substations"
+              type="circle"
+              filter={['==', ['geometry-type'], 'Point']}
+              paint={{
+                'circle-radius': 5,
+                'circle-color': '#f59e0b',
+                'circle-stroke-color': '#0a0a0f',
+                'circle-stroke-width': 1.5,
+                'circle-opacity': 0.9,
+              }}
+            />
+          </Source>
+        )}
+
+        {/* ===== OVERLAY: Data centers ===== */}
+        {overlayEnabled.datacenters && (
+          <Source
+            id="dc-overlay"
+            type="geojson"
+            data={overlayData.datacenters ?? EMPTY_FC}
+          >
+            <Layer
+              id="dc-circles"
+              type="circle"
+              paint={{
+                'circle-radius': 7,
+                'circle-color': [
+                  'case',
+                  ['==', ['get', 'source'], 'osm'],
+                  '#22d3ee', // cyan for OSM-verified
+                  '#a855f7', // purple for curated
+                ],
+                'circle-stroke-color': '#0a0a0f',
+                'circle-stroke-width': 1.5,
+                'circle-opacity': 0.9,
+              }}
+            />
+          </Source>
+        )}
+
+        {/* Panel layout tessellation overlay */}
+        <PanelLayoutOverlay
+          roofPolygon={panelLayout.roofPolygon ?? undefined}
+          visible={panelLayout.visible}
+        />
+
         {/* Building dimensions overlay — shown when measure mode ON and building selected */}
         {measureMode && selectedBuildingId != null && selectedBuildingCoordinates && selectedBuildingCoordinates.length > 2 && (
           <BuildingDimensions coordinates={selectedBuildingCoordinates} />
@@ -863,6 +1098,38 @@ export default function ScannerMap({
           </Marker>
         )}
 
+        {/* ===== Overlay feature popup (grid / datacenter) ===== */}
+        {overlayPopup && (
+          <Marker
+            longitude={overlayPopup.lng}
+            latitude={overlayPopup.lat}
+            anchor="bottom"
+            offset={[0, -8] as [number, number]}
+          >
+            <div
+              className="relative px-3 py-2 text-xs shadow-lg"
+              style={{
+                background: '#12121aee',
+                borderRadius: 8,
+                border: '1px solid rgba(245,158,11,0.3)',
+                backdropFilter: 'blur(8px)',
+                maxWidth: 220,
+              }}
+            >
+              <div className="font-semibold text-[#f0f0f5] truncate mb-0.5 pr-4">{overlayPopup.title}</div>
+              {overlayPopup.subtitle && (
+                <div className="text-[10px] text-[#8888a0]">{overlayPopup.subtitle}</div>
+              )}
+              <button
+                onClick={() => setOverlayPopup(null)}
+                className="absolute top-1 right-1.5 text-[#555566] hover:text-[#8888a0] text-[10px]"
+              >
+                ✕
+              </button>
+            </div>
+          </Marker>
+        )}
+
         {/* Pin marker with pulsing ring */}
         {searchMarker && (
           <Marker
@@ -889,7 +1156,7 @@ export default function ScannerMap({
 
       {/* ===== TOP-RIGHT CONTROLS ===== */}
 
-      {/* Style toggle button — 3-way cycle */}
+      {/* Style cycle button — quick cycle through all styles */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -1018,6 +1285,77 @@ export default function ScannerMap({
           El techo se guardará al finalizar el dibujo
         </div>
       )}
+
+      {/* Panel layout badge — shown when a roof polygon is set and panels computed */}
+      {!drawMode && panelLayout.roofPolygon && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10">
+          <PanelLayoutBadge
+            roofPolygon={panelLayout.roofPolygon}
+            visible={panelLayout.visible}
+            onToggle={panelLayout.toggle}
+          />
+        </div>
+      )}
+
+      {/* ===== LAYER SWITCHER — floating control bottom-left ===== */}
+      <div className="absolute bottom-4 left-3 z-10">
+        <div className="flex flex-col gap-1 p-1.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
+          {/* Base style section */}
+          <div className="text-[9px] text-[#555566] uppercase tracking-wider px-1.5 pt-0.5 pb-1 font-semibold">
+            Capa
+          </div>
+          {STYLE_ORDER.map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setStyleMode(mode)}
+              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
+                styleMode === mode
+                  ? mode === 'sentinel'
+                    ? 'bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/30'
+                    : 'bg-[#00ffcc]/15 text-[#00ffcc] border border-[#00ffcc]/30'
+                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
+              }`}
+              title={STYLE_LABELS_ES[mode]}
+            >
+              {STYLE_LABELS_ES[mode]}
+            </button>
+          ))}
+
+          {/* Divider */}
+          <div className="border-t border-white/[0.06] mt-0.5 mb-0.5" />
+
+          {/* Overlay layers section */}
+          <div className="flex items-center gap-1 px-1.5 pb-1 pt-0.5">
+            <Layers className="w-3 h-3 text-[#555566]" />
+            <span className="text-[9px] text-[#555566] uppercase tracking-wider font-semibold">
+              Capas
+            </span>
+          </div>
+          {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => toggleOverlay(key)}
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all text-left ${
+                overlayEnabled[key]
+                  ? key === 'grid'
+                    ? 'bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30'
+                    : 'bg-[#a855f7]/15 text-[#a855f7] border border-[#a855f7]/30'
+                  : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent'
+              }`}
+            >
+              {/* Colour swatch */}
+              <span
+                className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{
+                  background: key === 'grid' ? '#f59e0b' : '#a855f7',
+                  opacity: overlayEnabled[key] ? 1 : 0.4,
+                }}
+              />
+              {OVERLAY_LABELS[key]}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

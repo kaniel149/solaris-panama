@@ -50,6 +50,11 @@ interface BuildingDetailProps {
   isLeadSaved?: boolean;
   /** Server lead id (from /api/leads/intake) if this building was already saved as a lead. */
   savedLeadId?: string | null;
+  /**
+   * Monthly kWh from a scanned electricity bill — drives the financial simulation
+   * instead of the default consumption estimate derived from kWp alone.
+   */
+  monthlyKwhOverride?: number | null;
 }
 
 // ===== CONSTANTS =====
@@ -138,6 +143,7 @@ export default function BuildingDetail({
   onSaveAsLead,
   isLeadSaved,
   savedLeadId,
+  monthlyKwhOverride,
 }: BuildingDetailProps) {
   const [enrichedData, setEnrichedData] = useState<EnrichedOwnerResult | null>(null);
   const [isResearching, setIsResearching] = useState(false);
@@ -1099,10 +1105,11 @@ export default function BuildingDetail({
                 </div>
               </div>
 
-              {/* 25-yr financials (USD/Panama) with battery toggle */}
+              {/* 25-yr financials (USD/Panama) with battery toggle + optional bill override */}
               <SolarFinancialsPanel
                 systemKwp={analysis.maxSystemSizeKwp}
                 pshAvg={analysis.peakSunHoursPerYear / 365}
+                monthlyKwhOverride={monthlyKwhOverride}
               />
             </>
           )}
