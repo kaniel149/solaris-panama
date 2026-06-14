@@ -119,7 +119,27 @@
       "clickToScan": "לחץ בכל מקום על המפה כדי לסרוק מבנה",
       "searchPlaceholder": "חפש כתובת או לחץ על המפה...",
       "resultsTitle": "תוצאות סריקה",
-      "shareReport": "שתף דוח"
+      "shareReport": "שתף דוח",
+      "panelTitle": "סורק גגות AI",
+      "panelSubtitle": "גלה הזדמנויות סולאריות",
+      "searchAddress": "חפש כתובת בפנמה...",
+      "scanArea": "סרוק אזור זה",
+      "scanningArea": "סורק אזור...",
+      "filters": "פילטרים",
+      "savedScansLabel": "סריקות שמורות",
+      "emptyState": "חפש כתובת או סרוק את אזור המפה כדי לגלות מבנים",
+      "tip": "טיפ: התקרב לאזור מסחרי לתוצאות טובות יותר",
+      "topnav": {
+        "roofs": "גגות",
+        "lands": "קרקע",
+        "map": "מפה",
+        "scanner": "סורק",
+        "panel": "לוח",
+        "leads": "לידים",
+        "all": "הכל",
+        "legend": "מקרא",
+        "menu": "תפריט"
+      }
     }
   },
   "leads": {

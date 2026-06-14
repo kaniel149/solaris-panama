@@ -35,12 +35,20 @@ const Layout: React.FC = () => {
   }, []);
 
   const isImmersive = IMMERSIVE_ROUTES.some((r) => location.pathname.startsWith(r));
+  const isScannerRoute = location.pathname.startsWith('/tools/scanner');
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Listen for the ScannerTopNav hamburger to open the drawer
+  useEffect(() => {
+    const handler = () => setDrawerOpen(true);
+    window.addEventListener('open-app-drawer', handler);
+    return () => window.removeEventListener('open-app-drawer', handler);
   }, []);
 
   // Reset hover state when navigating away
@@ -106,52 +114,44 @@ const Layout: React.FC = () => {
         <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
         {/*
-         * PERSISTENT NAVIGATION FAB — always visible in immersive mode.
+         * PERSISTENT NAVIGATION FAB — always visible in non-scanner immersive routes.
          *
-         * Problem: on mobile the sidebar is hover-only overlay (no hover on touch),
-         * so users get "stuck" in the scanner with no obvious way out.
-         *
-         * Solution: a fixed, always-visible FAB button in the top-left corner
-         * (below the sidebar pull-tab area on desktop, primary nav on mobile).
-         * Tapping it opens the mobile drawer (mobile) or navigates to Dashboard (desktop).
-         * The button is ≥44px for easy thumb tap.
+         * On /tools/scanner this is intentionally hidden: the ScannerTopNav now provides
+         * a hamburger button (left) that fires the open-app-drawer event, and the
+         * hover sidebar pull-tab on desktop remains available. Hiding these prevents
+         * the z-[60] FABs from overlapping the scanner's top nav bar.
          */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.2 }}
-          onClick={() => {
-            if (isMobile) {
-              setDrawerOpen(true);
-            } else {
-              // On desktop the hover sidebar is there; FAB opens it programmatically
-              // by navigating — but we trigger the drawer as a universal fallback too
-              setDrawerOpen(true);
-            }
-          }}
-          className="fixed top-4 left-4 z-[60] flex items-center gap-2 pl-2 pr-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.1] shadow-lg shadow-black/40 text-white/70 hover:text-white hover:border-[#D4A843]/40 hover:bg-[#1a1a24]/90 transition-all duration-150 group"
-          aria-label="Menú de navegación"
-          // Hide on desktop when sidebar is visible/hovering — avoids redundancy
-          style={{ display: isMobile || !sidebarHover ? undefined : 'none' }}
-        >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center shrink-0">
-            <img src="/solaris-icon.png" alt="Solaris" className="w-5 h-5" />
-          </div>
-          <span className="text-xs font-semibold tracking-wide">Menú</span>
-        </motion.button>
+        {!isScannerRoute && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.2 }}
+            onClick={() => setDrawerOpen(true)}
+            className="fixed top-4 left-4 z-[60] flex items-center gap-2 pl-2 pr-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.1] shadow-lg shadow-black/40 text-white/70 hover:text-white hover:border-[#D4A843]/40 hover:bg-[#1a1a24]/90 transition-all duration-150 group"
+            aria-label="Menú de navegación"
+            style={{ display: isMobile || !sidebarHover ? undefined : 'none' }}
+          >
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center shrink-0">
+              <img src="/solaris-icon.png" alt="Solaris" className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold tracking-wide">Menú</span>
+          </motion.button>
+        )}
 
-        {/* Quick back-to-dashboard button — top-right, always visible */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.2 }}
-          onClick={() => navigate('/dashboard')}
-          className="fixed top-4 right-4 z-[60] flex items-center gap-2 px-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.08] shadow-lg shadow-black/40 text-white/50 hover:text-white hover:border-[#D4A843]/30 hover:bg-[#1a1a24]/90 transition-all duration-150"
-          aria-label="Ir al panel"
-        >
-          <LayoutDashboard className="w-4 h-4" />
-          <span className="text-xs font-medium">Panel</span>
-        </motion.button>
+        {/* Quick back-to-dashboard button — hidden on scanner route (ScannerTopNav handles nav) */}
+        {!isScannerRoute && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.2 }}
+            onClick={() => navigate('/dashboard')}
+            className="fixed top-4 right-4 z-[60] flex items-center gap-2 px-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.08] shadow-lg shadow-black/40 text-white/50 hover:text-white hover:border-[#D4A843]/30 hover:bg-[#1a1a24]/90 transition-all duration-150"
+            aria-label="Ir al panel"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span className="text-xs font-medium">Panel</span>
+          </motion.button>
+        )}
       </div>
     );
   }

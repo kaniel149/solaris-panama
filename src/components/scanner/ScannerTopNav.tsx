@@ -16,9 +16,11 @@
  *   - ScannerTopNavProps (type)
  */
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Map as MapIcon, Grid, BarChart2, Users, BookOpen, ChevronLeft, ChevronRight,
+  Menu as MenuIcon, Globe,
 } from 'lucide-react';
 
 // ===== TYPES =====
@@ -70,11 +72,17 @@ export const PANAMA_ZONES: PanamaZone[] = [
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
 
-const MODE_DEFS: { mode: ScannerMode; label: string; Icon: typeof MapIcon }[] = [
-  { mode: 'mapa',    label: 'Mapa',     Icon: MapIcon },
-  { mode: 'escaner', label: 'Escáner',  Icon: Grid },
-  { mode: 'panel',   label: 'Panel',    Icon: BarChart2 },
-  { mode: 'leads',   label: 'Leads',    Icon: Users },
+const MODE_DEFS: { mode: ScannerMode; tKey: string; Icon: typeof MapIcon }[] = [
+  { mode: 'mapa',    tKey: 'tools.scanner.topnav.map',     Icon: MapIcon },
+  { mode: 'escaner', tKey: 'tools.scanner.topnav.scanner', Icon: Grid },
+  { mode: 'panel',   tKey: 'tools.scanner.topnav.panel',   Icon: BarChart2 },
+  { mode: 'leads',   tKey: 'tools.scanner.topnav.leads',   Icon: Users },
+];
+
+const LANG_OPTIONS: { code: string; label: string }[] = [
+  { code: 'es', label: 'ES' },
+  { code: 'en', label: 'EN' },
+  { code: 'he', label: 'עב' },
 ];
 
 /** Grade → display color */
@@ -115,16 +123,50 @@ export default function ScannerTopNav({
   onOpenLegend,
   counts,
 }: ScannerTopNavProps) {
+  const { t, i18n } = useTranslation();
   const zoneScrollRef = useRef<HTMLDivElement>(null);
+  const [langDropOpen, setLangDropOpen] = useState(false);
+  const langDropRef = useRef<HTMLDivElement>(null);
 
   const scrollZones = (dir: -1 | 1) => {
     if (!zoneScrollRef.current) return;
     zoneScrollRef.current.scrollBy({ left: dir * 140, behavior: 'smooth' });
   };
 
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (langDropRef.current && !langDropRef.current.contains(e.target as Node)) {
+        setLangDropOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const currentLang = LANG_OPTIONS.find((l) => l.code === i18n.language) ?? LANG_OPTIONS[0];
+
+  const handleMenuClick = () => {
+    window.dispatchEvent(new CustomEvent('open-app-drawer'));
+  };
+
   return (
     <div className="absolute top-0 left-0 right-0 z-20 pointer-events-none">
       <div className="pointer-events-auto mx-3 mt-3 flex items-center gap-2 flex-wrap">
+
+        {/* ── Hamburger / App drawer ── */}
+        <button
+          onClick={handleMenuClick}
+          className={cn(
+            'flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-semibold min-h-[44px]',
+            'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
+            'text-[#555566] hover:text-[#D4A843] hover:border-[#D4A843]/25 hover:bg-white/[0.03] transition-colors'
+          )}
+          aria-label={t('tools.scanner.topnav.menu')}
+          title={t('tools.scanner.topnav.menu')}
+        >
+          <MenuIcon className="w-4 h-4 shrink-0" />
+        </button>
 
         {/* ── Tipo toggle: Techos / Terrenos ── */}
         <GlassPill>
@@ -137,10 +179,10 @@ export default function ScannerTopNav({
                 : 'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03]'
             )}
             aria-pressed={tipo === 'roof'}
-            aria-label="Ver techos"
+            aria-label={t('tools.scanner.topnav.roofs')}
           >
-            <span role="img" aria-label="techo">🏠</span>
-            <span className="hidden sm:inline">Techos</span>
+            <span role="img" aria-hidden="true">🏠</span>
+            <span className="hidden sm:inline">{t('tools.scanner.topnav.roofs')}</span>
             {counts && tipo !== 'roof' && counts.roofs > 0 && (
               <span className="text-[9px] text-[#555566] bg-white/[0.04] rounded-full px-1">
                 {counts.roofs}
@@ -156,10 +198,10 @@ export default function ScannerTopNav({
                 : 'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03]'
             )}
             aria-pressed={tipo === 'land'}
-            aria-label="Ver terrenos"
+            aria-label={t('tools.scanner.topnav.lands')}
           >
-            <span role="img" aria-label="terreno">🌾</span>
-            <span className="hidden sm:inline">Terrenos</span>
+            <span role="img" aria-hidden="true">🌾</span>
+            <span className="hidden sm:inline">{t('tools.scanner.topnav.lands')}</span>
             {counts && tipo !== 'land' && counts.land > 0 && (
               <span className="text-[9px] text-[#555566] bg-white/[0.04] rounded-full px-1">
                 {counts.land}
@@ -170,7 +212,7 @@ export default function ScannerTopNav({
 
         {/* ── Mode tabs: Mapa / Escáner / Panel / Leads ── */}
         <GlassPill>
-          {MODE_DEFS.map(({ mode: m, label, Icon }, idx) => (
+          {MODE_DEFS.map(({ mode: m, tKey, Icon }, idx) => (
             <button
               key={m}
               onClick={() => onMode(m)}
@@ -182,10 +224,10 @@ export default function ScannerTopNav({
                   : 'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03]'
               )}
               aria-pressed={mode === m}
-              aria-label={label}
+              aria-label={t(tKey)}
             >
               <Icon className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden md:inline">{label}</span>
+              <span className="hidden md:inline">{t(tKey)}</span>
             </button>
           ))}
         </GlassPill>
@@ -253,9 +295,9 @@ export default function ScannerTopNav({
                 )}
                 style={isActive ? { color, backgroundColor: `${color}18` } : undefined}
                 aria-pressed={isActive}
-                aria-label={`Filtrar grado ${g === 'all' ? 'todos' : g}`}
+                aria-label={`Filtrar grado ${g === 'all' ? t('tools.scanner.topnav.all') : g}`}
               >
-                {g === 'all' ? 'Todos' : g}
+                {g === 'all' ? t('tools.scanner.topnav.all') : g}
               </button>
             );
           })}
@@ -269,12 +311,58 @@ export default function ScannerTopNav({
             'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
             'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03] transition-colors'
           )}
-          aria-label="Abrir leyenda del mapa"
-          title="Leyenda"
+          aria-label={t('tools.scanner.topnav.legend')}
+          title={t('tools.scanner.topnav.legend')}
         >
           <BookOpen className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden lg:inline">Leyenda</span>
+          <span className="hidden lg:inline">{t('tools.scanner.topnav.legend')}</span>
         </button>
+
+        {/* ── Language switcher ── */}
+        <div className="relative shrink-0" ref={langDropRef}>
+          <button
+            onClick={() => setLangDropOpen((o) => !o)}
+            className={cn(
+              'flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-bold min-h-[44px]',
+              'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
+              'text-[#8888a0] hover:text-white hover:border-[#00ffcc]/25 hover:bg-white/[0.03] transition-colors'
+            )}
+            aria-label="Switch language"
+            aria-expanded={langDropOpen}
+            aria-haspopup="listbox"
+          >
+            <Globe className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden sm:inline tracking-wider">{currentLang.label}</span>
+          </button>
+
+          {langDropOpen && (
+            <div
+              className="absolute right-0 top-full mt-1.5 rounded-xl bg-[#12121a]/95 backdrop-blur-xl border border-white/[0.08] shadow-2xl overflow-hidden z-30 min-w-[80px]"
+              role="listbox"
+              aria-label="Select language"
+            >
+              {LANG_OPTIONS.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    i18n.changeLanguage(lang.code);
+                    setLangDropOpen(false);
+                  }}
+                  role="option"
+                  aria-selected={i18n.language === lang.code}
+                  className={cn(
+                    'w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold transition-colors text-left min-h-[44px]',
+                    i18n.language === lang.code
+                      ? 'bg-[#00ffcc]/[0.07] text-[#00ffcc]'
+                      : 'text-[#8888a0] hover:text-white hover:bg-white/[0.04]'
+                  )}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* ── Pending badge (far right) ── */}
         {counts && counts.pending > 0 && (

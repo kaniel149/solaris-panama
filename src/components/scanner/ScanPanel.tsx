@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, MapPin, ScanLine, Building2, Filter, ChevronDown,
@@ -100,6 +101,7 @@ export default function ScanPanel({
   isEnriching,
   enrichProgress,
 }: ScanPanelProps) {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [minArea, setMinArea] = useState(0);
@@ -136,10 +138,10 @@ export default function ScanPanel({
           </div>
           <div>
             <h1 className="text-base font-bold bg-gradient-to-r from-[#00ffcc] via-[#0ea5e9] to-[#8b5cf6] bg-clip-text text-transparent leading-tight">
-              AI Roof Scanner
+              {t('tools.scanner.panelTitle')}
             </h1>
             <p className="text-[10px] text-[#555566] mt-0.5">
-              Discover solar opportunities
+              {t('tools.scanner.panelSubtitle')}
             </p>
           </div>
         </div>
@@ -155,7 +157,7 @@ export default function ScanPanel({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Search address in Panama..."
+            placeholder={t('tools.scanner.searchAddress')}
             className="flex-1 bg-transparent text-[#f0f0f5] placeholder-[#555566] px-3 py-3 text-sm outline-none"
           />
           <button
@@ -189,7 +191,7 @@ export default function ScanPanel({
           loading={isScanning}
           onClick={onScanViewport}
         >
-          {isScanning ? 'Scanning Area...' : 'Scan This Area'}
+          {isScanning ? t('tools.scanner.scanningArea') : t('tools.scanner.scanArea')}
         </Button>
       </div>
 
@@ -242,7 +244,7 @@ export default function ScanPanel({
           className="flex items-center gap-2 text-xs text-[#8888a0] hover:text-[#f0f0f5] transition-colors w-full"
         >
           <Filter className="w-3.5 h-3.5" />
-          <span>Filters</span>
+          <span>{t('tools.scanner.filters')}</span>
           <ChevronDown
             className={cn(
               'w-3.5 h-3.5 ml-auto transition-transform duration-200',
@@ -401,10 +403,10 @@ export default function ScanPanel({
               <MapIcon className="w-7 h-7 text-[#555566]" />
             </div>
             <p className="text-sm text-[#8888a0] mb-2">
-              Search an address or scan the map area to discover buildings
+              {t('tools.scanner.emptyState')}
             </p>
             <p className="text-xs text-[#555566]">
-              Tip: Zoom into a commercial area for best results
+              {t('tools.scanner.tip')}
             </p>
           </div>
         )}

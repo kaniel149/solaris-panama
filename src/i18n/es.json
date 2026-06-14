@@ -253,7 +253,27 @@
       "clickToScan": "Haga clic en cualquier lugar del mapa para escanear un edificio",
       "searchPlaceholder": "Buscar dirección o hacer clic en el mapa...",
       "resultsTitle": "Resultados del Escaneo",
-      "shareReport": "Compartir Reporte"
+      "shareReport": "Compartir Reporte",
+      "panelTitle": "Escaner de Techos IA",
+      "panelSubtitle": "Descubre oportunidades solares",
+      "searchAddress": "Buscar dirección en Panamá...",
+      "scanArea": "Escanear esta zona",
+      "scanningArea": "Escaneando zona...",
+      "filters": "Filtros",
+      "savedScansLabel": "Escaneos guardados",
+      "emptyState": "Busca una dirección o escanea el mapa para descubrir edificios",
+      "tip": "Consejo: Acércate a una zona comercial para mejores resultados",
+      "topnav": {
+        "roofs": "Techos",
+        "lands": "Terrenos",
+        "map": "Mapa",
+        "scanner": "Escáner",
+        "panel": "Panel",
+        "leads": "Leads",
+        "all": "Todos",
+        "legend": "Leyenda",
+        "menu": "Menú"
+      }
     },
     "proposalGenerator": {
       "title": "Generador de Propuestas IA",

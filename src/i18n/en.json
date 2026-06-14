@@ -253,7 +253,27 @@
       "clickToScan": "Click anywhere on the map to scan a building",
       "searchPlaceholder": "Search address or click on map...",
       "resultsTitle": "Scan Results",
-      "shareReport": "Share Report"
+      "shareReport": "Share Report",
+      "panelTitle": "AI Roof Scanner",
+      "panelSubtitle": "Discover solar opportunities",
+      "searchAddress": "Search address in Panama...",
+      "scanArea": "Scan This Area",
+      "scanningArea": "Scanning Area...",
+      "filters": "Filters",
+      "savedScansLabel": "Saved Scans",
+      "emptyState": "Search an address or scan the map area to discover buildings",
+      "tip": "Tip: Zoom into a commercial area for best results",
+      "topnav": {
+        "roofs": "Roofs",
+        "lands": "Land",
+        "map": "Map",
+        "scanner": "Scanner",
+        "panel": "Panel",
+        "leads": "Leads",
+        "all": "All",
+        "legend": "Legend",
+        "menu": "Menu"
+      }
     },
     "proposalGenerator": {
       "title": "AI Proposal Generator",

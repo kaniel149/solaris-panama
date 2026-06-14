@@ -1003,10 +1003,8 @@ export default function RoofScannerPage() {
         onClose={() => setLegendOpen(false)}
       />
 
-      {/* ===== SEARCH OVERLAY — desktop only (mobile has its own triggered overlay) ===== */}
-      {!isMobile && (
-        <MapSearchOverlay onSelectPlace={handleSearchPlace} />
-      )}
+      {/* Desktop search is handled by the ScanPanel search bar on the left hover panel.
+          Mobile search overlay is retained below (triggered by the search icon). */}
 
       {/* ===== ASYNC SCAN STATUS ===== */}
       <ScanRequestsPanel requests={scanRequests} />
