@@ -183,8 +183,15 @@ export default function ScannerTopNav({
           >
             <span role="img" aria-hidden="true">🏠</span>
             <span className="hidden sm:inline">{t('tools.scanner.topnav.roofs')}</span>
-            {counts && tipo !== 'roof' && counts.roofs > 0 && (
-              <span className="text-[9px] text-[#555566] bg-white/[0.04] rounded-full px-1">
+            {counts && counts.roofs > 0 && (
+              <span
+                className={cn(
+                  'text-[9px] font-bold rounded-full px-1.5 py-0.5 leading-none shrink-0',
+                  tipo === 'roof'
+                    ? 'bg-[#D4A843]/20 text-[#D4A843]'
+                    : 'bg-white/[0.06] text-[#555566]'
+                )}
+              >
                 {counts.roofs}
               </span>
             )}
@@ -202,8 +209,15 @@ export default function ScannerTopNav({
           >
             <span role="img" aria-hidden="true">🌾</span>
             <span className="hidden sm:inline">{t('tools.scanner.topnav.lands')}</span>
-            {counts && tipo !== 'land' && counts.land > 0 && (
-              <span className="text-[9px] text-[#555566] bg-white/[0.04] rounded-full px-1">
+            {counts && counts.land > 0 && (
+              <span
+                className={cn(
+                  'text-[9px] font-bold rounded-full px-1.5 py-0.5 leading-none shrink-0',
+                  tipo === 'land'
+                    ? 'bg-[#D4A843]/20 text-[#D4A843]'
+                    : 'bg-white/[0.06] text-[#555566]'
+                )}
+              >
                 {counts.land}
               </span>
             )}
@@ -212,24 +226,41 @@ export default function ScannerTopNav({
 
         {/* ── Mode tabs: Mapa / Escáner / Panel / Leads ── */}
         <GlassPill>
-          {MODE_DEFS.map(({ mode: m, tKey, Icon }, idx) => (
-            <button
-              key={m}
-              onClick={() => onMode(m)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors min-h-[44px]',
-                idx > 0 && 'border-l border-white/[0.06]',
-                mode === m
-                  ? 'bg-[#00ffcc]/[0.07] text-[#00ffcc]'
-                  : 'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03]'
-              )}
-              aria-pressed={mode === m}
-              aria-label={t(tKey)}
-            >
-              <Icon className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden md:inline">{t(tKey)}</span>
-            </button>
-          ))}
+          {MODE_DEFS.map(({ mode: m, tKey, Icon }, idx) => {
+            const isEscaner = m === 'escaner';
+            const showBadge = isEscaner && counts && counts.pending > 0;
+            return (
+              <button
+                key={m}
+                onClick={() => onMode(m)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors min-h-[44px]',
+                  idx > 0 && 'border-l border-white/[0.06]',
+                  mode === m
+                    ? 'bg-[#00ffcc]/[0.07] text-[#00ffcc]'
+                    : 'text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.03]'
+                )}
+                aria-pressed={mode === m}
+                aria-label={t(tKey)}
+              >
+                <Icon className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden md:inline">{t(tKey)}</span>
+                {showBadge && (
+                  <span
+                    className={cn(
+                      'text-[9px] font-black rounded-full px-1.5 py-0.5 shrink-0 leading-none',
+                      mode === m
+                        ? 'bg-[#D4A843]/20 text-[#D4A843]'
+                        : 'bg-[#D4A843]/15 text-[#D4A843] animate-pulse'
+                    )}
+                    aria-label={`${counts!.pending} candidatos pendientes`}
+                  >
+                    {counts!.pending > 99 ? '99+' : counts!.pending}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </GlassPill>
 
         {/* ── Zone chips (horizontally scrollable) ── */}

@@ -272,7 +272,13 @@
         "leads": "Leads",
         "all": "All",
         "legend": "Legend",
-        "menu": "Menu"
+        "menu": "Menu",
+        "reviewCta": "Review candidates ({{count}})"
+      },
+      "review": {
+        "emptyTitle": "No pending {{kind}} to review.",
+        "switchHint": "Switch to {{otherKind}} — {{count}} parcels waiting",
+        "emptyScan": "Run a scan (Scan this area) to generate candidates."
       }
     },
     "proposalGenerator": {

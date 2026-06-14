@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ScanLine, Building2, ChevronLeft, ChevronUp, ChevronDown,
@@ -316,6 +317,7 @@ export default function RoofScannerPage() {
   const scanner = useRoofScanner();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     buildings,
@@ -409,10 +411,12 @@ export default function RoofScannerPage() {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | undefined>(undefined);
 
   // ===== CANDIDATE FETCH =====
-  const loadCandidates = useCallback(async (kind: ScannerTipo) => {
+  // Always fetch ALL pending candidates (both kinds) so badge counts are accurate
+  // regardless of which tipo is active.
+  const loadCandidates = useCallback(async () => {
     setCandidatesLoading(true);
     try {
-      const data = await fetchCandidates({ kind });
+      const data = await fetchCandidates({ /* no kind filter → all pending */ });
       setCandidates(data);
     } catch (err) {
       console.error('[RoofScannerPage] fetchCandidates error:', err);
@@ -421,16 +425,17 @@ export default function RoofScannerPage() {
     }
   }, []);
 
-  // Fetch on mount and whenever tipo changes
+  // Fetch on mount and after approve/reject (callers call loadCandidates directly)
   useEffect(() => {
-    void loadCandidates(tipo);
-  }, [tipo, loadCandidates]);
+    void loadCandidates();
+  }, [loadCandidates]);
 
-  // ===== GRADE-FILTERED CANDIDATES =====
+  // ===== GRADE-FILTERED CANDIDATES (active tipo only) =====
   const filteredCandidates = useMemo<ScanCandidate[]>(() => {
-    if (gradeFilter === 'all') return candidates;
-    return candidates.filter((c) => c.grade === gradeFilter);
-  }, [candidates, gradeFilter]);
+    const byKind = candidates.filter((c) => c.kind === tipo);
+    if (gradeFilter === 'all') return byKind;
+    return byKind.filter((c) => c.grade === gradeFilter);
+  }, [candidates, gradeFilter, tipo]);
 
   /** Mapped to ScannerMap's local shape */
   const mapCandidates = useMemo<MapScanCandidate[]>(
@@ -438,11 +443,11 @@ export default function RoofScannerPage() {
     [filteredCandidates]
   );
 
-  // ===== COUNTS FOR TOP NAV =====
+  // ===== COUNTS FOR TOP NAV (both kinds, independent of grade filter) =====
   const candidateCounts = useMemo(() => {
     const roofs = candidates.filter((c) => c.kind === 'roof').length;
     const land = candidates.filter((c) => c.kind === 'land').length;
-    const pending = candidates.length; // all fetched are pending by default
+    const pending = candidates.length;
     return { roofs, land, pending };
   }, [candidates]);
 
@@ -787,7 +792,7 @@ export default function RoofScannerPage() {
     try {
       await approveCandidate(id);
       toast({ type: 'success', title: 'Lead creado' });
-      void loadCandidates(tipo);
+      void loadCandidates();
     } catch (err) {
       toast({
         type: 'error',
@@ -795,12 +800,12 @@ export default function RoofScannerPage() {
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [tipo, loadCandidates, toast]);
+  }, [loadCandidates, toast]);
 
   const handleRejectCandidateFromPanel = useCallback(async (id: string, reason: CandidateRejectionReason) => {
     try {
       await rejectCandidate(id, reason);
-      void loadCandidates(tipo);
+      void loadCandidates();
     } catch (err) {
       toast({
         type: 'error',
@@ -808,24 +813,24 @@ export default function RoofScannerPage() {
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [tipo, loadCandidates, toast]);
+  }, [loadCandidates, toast]);
 
   const handleBulkApprove = useCallback(async (ids: string[]) => {
     await Promise.allSettled(ids.map((id) => approveCandidate(id)));
     toast({ type: 'success', title: `${ids.length} leads creados` });
-    void loadCandidates(tipo);
-  }, [tipo, loadCandidates, toast]);
+    void loadCandidates();
+  }, [loadCandidates, toast]);
 
   const handleBulkReject = useCallback(async (ids: string[]) => {
     await Promise.allSettled(ids.map((id) => rejectCandidate(id, 'other')));
-    void loadCandidates(tipo);
-  }, [tipo, loadCandidates]);
+    void loadCandidates();
+  }, [loadCandidates]);
 
   const handleReScan = useCallback(async () => {
     try {
       await applyLearnedFilters();
       toast({ type: 'success', title: 'Filtros aplicados', description: 'Lista actualizada con filtros aprendidos.' });
-      void loadCandidates(tipo);
+      void loadCandidates();
     } catch (err) {
       toast({
         type: 'error',
@@ -833,7 +838,7 @@ export default function RoofScannerPage() {
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [tipo, loadCandidates, toast]);
+  }, [loadCandidates, toast]);
 
   const handleFocusCandidate = useCallback((candidate: ScanCandidate) => {
     setSelectedCandidateId(candidate.id);
@@ -845,7 +850,7 @@ export default function RoofScannerPage() {
 
   const handleTipo = useCallback((t: ScannerTipo) => {
     setTipo(t);
-    // loadCandidates fires via the useEffect above on tipo change
+    // candidates are already fetched for all kinds; filteredCandidates will recompute
   }, []);
 
   const handleMode = useCallback((m: ScannerMode) => {
@@ -934,6 +939,8 @@ export default function RoofScannerPage() {
   );
 
   // ===== CANDIDATE REVIEW PANEL (shared JSX) =====
+  // otherKindCount: pending count for the OTHER tipo (used in empty-state hint)
+  const otherKindCount = tipo === 'roof' ? candidateCounts.land : candidateCounts.roofs;
   const candidateReviewPanel = (
     <CandidateReviewPanel
       candidates={filteredCandidates}
@@ -946,6 +953,8 @@ export default function RoofScannerPage() {
       selectedId={selectedCandidateId}
       loading={candidatesLoading}
       kind={tipo}
+      otherKindCount={otherKindCount}
+      onSwitchTipo={handleTipo}
     />
   );
 
@@ -1008,6 +1017,38 @@ export default function RoofScannerPage() {
 
       {/* ===== ASYNC SCAN STATUS ===== */}
       <ScanRequestsPanel requests={scanRequests} />
+
+      {/* ===== FLOATING "REVISAR CANDIDATOS" CTA =====
+          Visible in Mapa mode when there are pending candidates for the active tipo.
+          Clicking jumps to Escáner mode where the review panel is shown.
+          Positioned bottom-right to avoid the draw toolbar (bottom-center) and map controls.
+      */}
+      <AnimatePresence>
+        {navMode === 'mapa' && candidateCounts.pending > 0 && (
+          <motion.button
+            key="revisar-cta"
+            initial={{ opacity: 0, y: 16, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.92 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+            onClick={() => setNavMode('escaner')}
+            className="absolute bottom-24 right-4 md:bottom-20 md:right-6 z-20 flex items-center gap-2 px-4 py-2.5 rounded-xl
+              bg-[#D4A843]/15 border border-[#D4A843]/40 backdrop-blur-xl
+              text-[#D4A843] text-xs font-semibold min-h-[44px]
+              hover:bg-[#D4A843]/25 hover:border-[#D4A843]/60 transition-colors
+              shadow-lg shadow-[#D4A843]/10"
+            aria-label={t('tools.scanner.topnav.reviewCta', { count: candidateCounts.pending })}
+          >
+            <span
+              className="w-5 h-5 rounded-full bg-[#D4A843] text-black text-[10px] font-black
+                flex items-center justify-center shrink-0 animate-pulse"
+            >
+              {candidateCounts.pending > 99 ? '99+' : candidateCounts.pending}
+            </span>
+            <span>{t('tools.scanner.topnav.reviewCta', { count: candidateCounts.pending })}</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* ===== DESKTOP LAYOUT (>=768px) ===== */}
       {!isMobile && (

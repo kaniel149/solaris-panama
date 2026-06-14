@@ -18,6 +18,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Check, X, Loader2, RefreshCw, CheckCircle2,
@@ -38,6 +39,10 @@ export interface CandidateReviewPanelProps {
   selectedId?: string | null;
   loading?: boolean;
   kind: 'roof' | 'land';
+  /** Pending count for the OTHER kind — used in empty-state hint */
+  otherKindCount?: number;
+  /** Called when the empty-state "switch tipo" hint is clicked */
+  onSwitchTipo?: (kind: 'roof' | 'land') => void;
 }
 
 // ===== HELPERS =====
@@ -273,7 +278,10 @@ export default function CandidateReviewPanel({
   selectedId,
   loading = false,
   kind,
+  otherKindCount = 0,
+  onSwitchTipo,
 }: CandidateReviewPanelProps) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [bulkWorking, setBulkWorking] = useState(false);
@@ -453,14 +461,33 @@ export default function CandidateReviewPanel({
         )}
 
         {!loading && sorted.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-10 text-center px-4">
-            <span className="text-2xl mb-2">{kind === 'land' ? '🌾' : '🏠'}</span>
+          <div className="flex flex-col items-center justify-center py-10 text-center px-4 gap-2">
+            <span className="text-2xl">{kind === 'land' ? '🌾' : '🏠'}</span>
             <p className="text-xs text-[#555566]">
-              No hay {kindLabel} pendientes de revisión.
+              {t('tools.scanner.review.emptyTitle', { kind: kindLabel })}
             </p>
-            <p className="text-[10px] text-[#3a3a4f] mt-1">
-              Ejecuta un escaneo para generar candidatos.
-            </p>
+            {otherKindCount > 0 && onSwitchTipo ? (
+              <button
+                onClick={() => onSwitchTipo(kind === 'roof' ? 'land' : 'roof')}
+                className="mt-1 flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-semibold
+                  bg-[#D4A843]/10 border border-[#D4A843]/25 text-[#D4A843]
+                  hover:bg-[#D4A843]/20 hover:border-[#D4A843]/40 transition-colors"
+              >
+                <span>{kind === 'roof' ? '🌾' : '🏠'}</span>
+                <span>
+                  {t('tools.scanner.review.switchHint', {
+                    otherKind: kind === 'roof'
+                      ? t('tools.scanner.topnav.lands')
+                      : t('tools.scanner.topnav.roofs'),
+                    count: otherKindCount,
+                  })}
+                </span>
+              </button>
+            ) : (
+              <p className="text-[10px] text-[#3a3a4f]">
+                {t('tools.scanner.review.emptyScan')}
+              </p>
+            )}
           </div>
         )}
 

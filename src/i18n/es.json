@@ -272,7 +272,13 @@
         "leads": "Leads",
         "all": "Todos",
         "legend": "Leyenda",
-        "menu": "Menú"
+        "menu": "Menú",
+        "reviewCta": "Revisar candidatos ({{count}})"
+      },
+      "review": {
+        "emptyTitle": "No hay {{kind}} pendientes de revisión.",
+        "switchHint": "Cambiar a {{otherKind}} — {{count}} parcelas esperan",
+        "emptyScan": "Escanea una zona (Escanear esta zona) para generar candidatos."
       }
     },
     "proposalGenerator": {
