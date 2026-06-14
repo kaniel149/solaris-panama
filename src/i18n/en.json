@@ -279,6 +279,16 @@
         "emptyTitle": "No pending {{kind}} to review.",
         "switchHint": "Switch to {{otherKind}} — {{count}} parcels waiting",
         "emptyScan": "Run a scan (Scan this area) to generate candidates."
+      },
+      "savedRoofsLayer": {
+        "label": "Saved roofs",
+        "unnamed": "Saved roof",
+        "kwp": "System",
+        "area": "Area",
+        "quality": "Quality",
+        "viewLead": "View lead",
+        "closePopup": "Close",
+        "suspicious": "⚠ suspicious (>100 kWp)"
       }
     },
     "proposalGenerator": {
@@ -362,5 +372,254 @@
     "title": "Page Not Found",
     "subtitle": "The page you're looking for doesn't exist",
     "goHome": "Go to Dashboard"
+  },
+  "marketing": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "about": "About",
+      "projects": "Projects",
+      "process": "How It Works",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "getQuote": "Free Quote",
+      "callUs": "Call Us",
+      "crm": "CRM"
+    },
+    "hero": {
+      "badge": "Law 417 — Tax-free solar equipment",
+      "title": "Solar Energy",
+      "titleAccent": "for Your Home and Business",
+      "titleSuffix": "in Panama",
+      "subtitle": "Professional solar panel installation in the Azuero Peninsula and Panama City. Save up to 95% on your electricity bill with a 25-year warranty and tax-free equipment under Law 417.",
+      "ctaPrimary": "Request a Free Quote",
+      "ctaSecondary": "WhatsApp Us",
+      "trustLine": "Tier-1 equipment · 25-year warranty · Law 417 applied · Monitoring included",
+      "stats": {
+        "installations": { "value": 200, "suffix": "+", "label": "Installations completed" },
+        "capacity": { "value": 1, "suffix": " MWp", "label": "Installed capacity" },
+        "warranty": { "value": 25, "suffix": " yr", "label": "System warranty" },
+        "savings": { "value": 95, "suffix": "%", "label": "Max bill savings" }
+      }
+    },
+    "gateway": {
+      "tag": "CHOOSE YOUR PATH",
+      "title": "Solar solutions for homes, businesses, and industry",
+      "subtitle": "Tell us who you are and we'll take you to the exact solution for you.",
+      "residential": {
+        "title": "Homes & Villas",
+        "body": "Rooftop solar and battery backup designed for Panama's climate. Cut your bill and keep your home powered during outages.",
+        "points": [
+          "Rooftop solar + battery backup",
+          "Free site survey",
+          "Designed for tropical conditions"
+        ],
+        "cta": "I own a home or villa"
+      },
+      "commercial": {
+        "title": "Business & Industry",
+        "body": "Solar EPC and PPA for high electricity bills — bill review, ROI estimate, and a clear path from survey to funded installation.",
+        "points": [
+          "Solar EPC / PPA for high bills",
+          "No upfront CAPEX options",
+          "Bill review + ROI estimate"
+        ],
+        "cta": "I manage a business or factory"
+      }
+    },
+    "services": {
+      "sectionTag": "WHAT WE DO",
+      "title": "Our Services",
+      "subtitle": "From rooftop residential systems to utility-scale solar farms.",
+      "residential": {
+        "title": "Residential Solar",
+        "description": "Rooftop systems for homes and villas. Reduce your electricity bill and increase property value.",
+        "cta": "Learn More"
+      },
+      "commercial": {
+        "title": "Commercial Solar",
+        "description": "Clean energy for your hotel, farm, business, or industry. Maximize ROI with our PPA options.",
+        "cta": "Learn More"
+      },
+      "solarFarm": {
+        "title": "Solar Farms",
+        "description": "Ground-mount installations from 1 MW. Full licensing and grid connection.",
+        "cta": "Learn More"
+      },
+      "batteryStorage": {
+        "title": "Battery Storage",
+        "description": "Blackout protection and 24/7 energy independence. Battery systems for homes and businesses.",
+        "cta": "Learn More"
+      }
+    },
+    "why": {
+      "sectionTag": "OUR ADVANTAGE",
+      "title": "Why Solaris?",
+      "subtitle": "We are the leading solar installation company in the Azuero Peninsula.",
+      "items": [
+        {
+          "title": "Guaranteed ROI",
+          "description": "Your investment pays for itself in 3 to 5 years. After that, nearly free electricity for over 20 years."
+        },
+        {
+          "title": "25-Year Warranty",
+          "description": "Tier-1 panels with performance warranty. Inverters with 10 to 25 years of protection."
+        },
+        {
+          "title": "Professional Installation",
+          "description": "Certified team. Clean installation in a single day. Remote monitoring included."
+        },
+        {
+          "title": "Law 417 Applied",
+          "description": "We import tax-free equipment thanks to Law 417 of renewable energy incentives."
+        },
+        {
+          "title": "Panama Experts",
+          "description": "We know Azuero and Panama City: Pedasí, Las Tablas, Chitré, Los Santos, and the capital."
+        },
+        {
+          "title": "Immediate Savings",
+          "description": "You see the difference from month one. Our client in Pedasí went from $280 to $35 per month."
+        }
+      ]
+    },
+    "process": {
+      "sectionTag": "SIMPLE PROCESS",
+      "title": "How Solar Installation Works",
+      "subtitle": "4 simple steps from consultation to clean energy.",
+      "steps": [
+        {
+          "title": "Free Assessment",
+          "description": "We visit your property and assess roof orientation, shading, and electricity usage."
+        },
+        {
+          "title": "Custom Design",
+          "description": "We design a solar system specifically for your home or business in Panama."
+        },
+        {
+          "title": "Professional Installation",
+          "description": "Certified team, typically in a single day from start to finish."
+        },
+        {
+          "title": "Monitor & Maintain",
+          "description": "Real-time app monitoring, handover guidance, and ongoing support."
+        }
+      ],
+      "statsLine": "Install time and payback are modeled from your roof and your bill.",
+      "cta": "Request a Free Assessment"
+    },
+    "projects": {
+      "sectionTag": "PROJECTS",
+      "title": "Solar Installations in Panama",
+      "subtitle": "Examples of systems installed in homes and businesses across the region.",
+      "viewAll": "View All Projects",
+      "items": [
+        { "name": "Private Home", "location": "Pedasí, Los Santos", "size": "5 kW", "savings": "88%", "type": "Residential" },
+        { "name": "Boutique Hotel", "location": "Las Tablas", "size": "45 kW", "savings": "52%", "type": "Commercial" },
+        { "name": "Farm Estate", "location": "Chitré, Herrera", "size": "30 kW", "savings": "61%", "type": "Commercial" },
+        { "name": "Residence", "location": "Costa del Este, Panama", "size": "12 kW", "savings": "74%", "type": "Residential" },
+        { "name": "Industrial Warehouse", "location": "Panama City", "size": "120 kW", "savings": "58%", "type": "Industrial" },
+        { "name": "Villa with Batteries", "location": "Playa Venao", "size": "8 kW + Battery", "savings": "95%", "type": "Residential" }
+      ]
+    },
+    "scrollAnimation": {
+      "sectionTag": "SEE THE PROCESS",
+      "title": "Watch Your Solar System Come to Life",
+      "subtitle": "Scroll through a real installation — from bare roof to a fully powered solar system.",
+      "types": {
+        "concrete": "Concrete Roof",
+        "villa": "Tile Roof Villa",
+        "tropical": "Tropical Eco-Lodge",
+        "factory": "Factory",
+        "largeroof": "Logistics Roof",
+        "field": "Solar Field",
+        "parking": "Solar Carport"
+      }
+    },
+    "faq": {
+      "sectionTag": "FREQUENTLY ASKED QUESTIONS",
+      "title": "Solar Energy FAQ for Panama",
+      "subtitle": "Everything you need to know before installing your solar panels.",
+      "items": [
+        {
+          "question": "How much does solar installation cost in Panama?",
+          "answer": "A residential system (3-15 kW) typically costs between $4,000 and $20,000 depending on roof size, consumption, and equipment type. Thanks to Law 417, solar equipment is imported tax-free, lowering the cost. Request a free quote for your exact price."
+        },
+        {
+          "question": "How much can I save on my electricity bill?",
+          "answer": "Savings depend on your daytime usage and utility tariff. Our clients in Azuero went from paying $280 to $35 per month — up to 95% savings. We calculate your real savings from your bill, not a generic percentage."
+        },
+        {
+          "question": "What is Law 417 and how does it benefit me?",
+          "answer": "Law 417 is Panama's renewable energy incentive that allows importing solar equipment with no import duties or ITBMS tax. This significantly reduces the total cost of your system. We handle the entire process for you."
+        },
+        {
+          "question": "What is the payback period for solar?",
+          "answer": "With Panama's electricity tariffs, the typical payback is 3 to 5 years for residential and commercial systems. After that, you enjoy nearly free electricity for over 20 years, since panels carry a 25-year warranty."
+        },
+        {
+          "question": "Do solar panels work during the rainy season?",
+          "answer": "Yes. Modern panels generate electricity even on cloudy days, producing 10% to 25% of peak capacity. Panama receives abundant sunshine year-round, especially in the Azuero Peninsula."
+        },
+        {
+          "question": "How long does installation take?",
+          "answer": "Most residential systems are installed in a single day. Commercial systems (30 kW+) take 3 to 7 days. Our certified team delivers a clean, professional installation with remote monitoring included."
+        },
+        {
+          "question": "What warranty do you offer?",
+          "answer": "We install Tier-1 panels with a 25-year performance warranty and inverters with 10 to 25 years of protection. Each proposal lists equipment warranties and Solaris workmanship coverage in writing."
+        },
+        {
+          "question": "Do I need permits to install solar panels?",
+          "answer": "Yes, grid-connected systems require utility approval and, in many cases, ASEP approval. Solaris handles the entire interconnection process for you — from application to final connection."
+        }
+      ]
+    },
+    "cta": {
+      "sectionTag": "START TODAY",
+      "title": "Start Saving Today",
+      "subtitle": "Request your free quote and discover how much you can save with solar energy.",
+      "ctaPrimary": "Request a Free Quote",
+      "ctaWhatsapp": "WhatsApp Us",
+      "ctaCall": "Call Now",
+      "urgency": "100% free · No obligation · Response within 24 hours"
+    },
+    "testimonial": {
+      "sectionTag": "REAL CASE",
+      "quotePrefix": "Our client in Pedasí went from",
+      "quoteFrom": "$280",
+      "quoteMid": "to",
+      "quoteTo": "$35",
+      "quoteSuffix": "on their monthly bill.",
+      "savingsLabel": "Annual savings",
+      "savingsValue": "$2,940",
+      "savingsUnit": "per year",
+      "author": "— Client in Pedasí, Los Santos · 5 kW system installed 2024",
+      "rating": "5 out of 5 stars"
+    },
+    "footer": {
+      "tagline": "Solar energy for homes, businesses, and industry in the Azuero Peninsula and Panama City.",
+      "quickLinks": "Quick Links",
+      "servicesTitle": "Services",
+      "contactTitle": "Contact",
+      "rights": "All rights reserved.",
+      "copyright": "© 2026 Solaris Panama — Solar Energy in Panama"
+    },
+    "stickyWhatsapp": {
+      "generic": "Questions? Message us on WhatsApp",
+      "residential": "Quote your home solar system",
+      "commercial": "Request your commercial solar proposal",
+      "aria": "Contact via WhatsApp"
+    },
+    "seo": {
+      "homeTitle": "Solar Panels in Panama · Free Quote",
+      "homeDescription": "Professional solar panel installation in Panama and the Azuero Peninsula. Save up to 95% on your electricity bill. Tax-free equipment (Law 417) and 25-year warranty.",
+      "servicesTitle": "Solar Energy Services in Panama",
+      "servicesDescription": "Residential, commercial, and industrial solar energy in Panama. Design, installation, and maintenance with Tier-1 equipment and a 25-year warranty.",
+      "aboutTitle": "About — Solar Energy Company in Panama",
+      "aboutDescription": "Solaris is the leading solar panel installation company in the Azuero Peninsula. Meet our team, experience, and commitment to clean energy.",
+      "projectsTitle": "Solar Projects in Panama",
+      "projectsDescription": "See our solar installations in homes, businesses, and industry in Pedasí, Las Tablas, Chitré, and Panama City."
+    }
   }
 }

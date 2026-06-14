@@ -279,6 +279,16 @@
         "emptyTitle": "No hay {{kind}} pendientes de revisión.",
         "switchHint": "Cambiar a {{otherKind}} — {{count}} parcelas esperan",
         "emptyScan": "Escanea una zona (Escanear esta zona) para generar candidatos."
+      },
+      "savedRoofsLayer": {
+        "label": "Techos guardados",
+        "unnamed": "Techo guardado",
+        "kwp": "Sistema",
+        "area": "Área",
+        "quality": "Calidad",
+        "viewLead": "Ver lead",
+        "closePopup": "Cerrar",
+        "suspicious": "⚠ sospechoso (>100 kWp)"
       }
     },
     "proposalGenerator": {
@@ -362,5 +372,254 @@
     "title": "Pagina No Encontrada",
     "subtitle": "La pagina que buscas no existe",
     "goHome": "Ir al Panel"
+  },
+  "marketing": {
+    "nav": {
+      "home": "Inicio",
+      "services": "Servicios",
+      "about": "Nosotros",
+      "projects": "Proyectos",
+      "process": "Cómo Funciona",
+      "faq": "Preguntas",
+      "contact": "Contacto",
+      "getQuote": "Cotización Gratis",
+      "callUs": "Llámanos",
+      "crm": "CRM"
+    },
+    "hero": {
+      "badge": "Ley 417 — Equipos solares sin impuestos",
+      "title": "Energía Solar",
+      "titleAccent": "para tu Hogar y tu Empresa",
+      "titleSuffix": "en Panamá",
+      "subtitle": "Instalación profesional de paneles solares en la Península de Azuero y Ciudad de Panamá. Ahorra hasta 95% en tu factura eléctrica con garantía de 25 años y equipos sin impuestos bajo la Ley 417.",
+      "ctaPrimary": "Solicitar Cotización Gratis",
+      "ctaSecondary": "WhatsApp Directo",
+      "trustLine": "Equipos Tier-1 · Garantía 25 años · Ley 417 aplicada · Monitoreo incluido",
+      "stats": {
+        "installations": { "value": 200, "suffix": "+", "label": "Instalaciones realizadas" },
+        "capacity": { "value": 1, "suffix": " MWp", "label": "Capacidad instalada" },
+        "warranty": { "value": 25, "suffix": " años", "label": "Garantía del sistema" },
+        "savings": { "value": 95, "suffix": "%", "label": "Ahorro máximo en factura" }
+      }
+    },
+    "gateway": {
+      "tag": "ELIGE TU CAMINO",
+      "title": "Soluciones solares para hogares, comercios e industrias",
+      "subtitle": "Cuéntanos quién eres y te llevamos a la solución exacta para ti.",
+      "residential": {
+        "title": "Hogares y Villas",
+        "body": "Paneles solares en techo y respaldo con baterías diseñados para el clima de Panamá. Reduce tu factura y mantén tu hogar encendido durante los apagones.",
+        "points": [
+          "Paneles solares en techo + baterías",
+          "Evaluación del sitio gratuita",
+          "Diseñado para el clima tropical"
+        ],
+        "cta": "Tengo una casa o villa"
+      },
+      "commercial": {
+        "title": "Comercios e Industrias",
+        "body": "Energía solar EPC y PPA para facturas eléctricas altas — revisión de tu factura, estimación de ROI y un camino claro desde la evaluación hasta la instalación financiada.",
+        "points": [
+          "Solar EPC / PPA para facturas altas",
+          "Opciones sin inversión inicial",
+          "Revisión de factura + estimación de ROI"
+        ],
+        "cta": "Administro un comercio o industria"
+      }
+    },
+    "services": {
+      "sectionTag": "LO QUE HACEMOS",
+      "title": "Nuestros Servicios",
+      "subtitle": "Desde sistemas residenciales en techo hasta parques solares de gran escala.",
+      "residential": {
+        "title": "Energía Solar Residencial",
+        "description": "Sistemas en techo para hogares y villas. Reduce tu factura eléctrica y aumenta el valor de tu propiedad.",
+        "cta": "Saber Más"
+      },
+      "commercial": {
+        "title": "Energía Solar Comercial",
+        "description": "Energía limpia para tu hotel, finca, comercio o industria. Maximiza tu ROI con nuestras opciones PPA.",
+        "cta": "Saber Más"
+      },
+      "solarFarm": {
+        "title": "Parques Solares",
+        "description": "Instalaciones montadas en suelo desde 1 MW. Licenciamiento completo y conexión a la red.",
+        "cta": "Saber Más"
+      },
+      "batteryStorage": {
+        "title": "Almacenamiento con Baterías",
+        "description": "Protección ante apagones e independencia energética 24/7. Sistemas de baterías para hogares y negocios.",
+        "cta": "Saber Más"
+      }
+    },
+    "why": {
+      "sectionTag": "NUESTRA VENTAJA",
+      "title": "¿Por Qué Solaris?",
+      "subtitle": "Somos la empresa líder en instalación solar en la Península de Azuero.",
+      "items": [
+        {
+          "title": "ROI Garantizado",
+          "description": "Tu inversión se paga sola en 3 a 5 años. Después, electricidad casi gratis por más de 20 años."
+        },
+        {
+          "title": "Garantía de 25 Años",
+          "description": "Paneles Tier-1 con garantía de rendimiento. Inversores con 10 a 25 años de protección."
+        },
+        {
+          "title": "Instalación Profesional",
+          "description": "Equipo certificado. Instalación limpia en un solo día. Monitoreo remoto incluido."
+        },
+        {
+          "title": "Ley 417 Aplicada",
+          "description": "Importamos equipos sin impuestos gracias a la Ley 417 de incentivos a la energía renovable."
+        },
+        {
+          "title": "Expertos en Panamá",
+          "description": "Conocemos Azuero y Ciudad de Panamá: Pedasí, Las Tablas, Chitré, Los Santos y la capital."
+        },
+        {
+          "title": "Ahorro Inmediato",
+          "description": "Desde el primer mes ves la diferencia. Nuestro cliente en Pedasí pasó de $280 a $35 al mes."
+        }
+      ]
+    },
+    "process": {
+      "sectionTag": "PROCESO SENCILLO",
+      "title": "Cómo Funciona la Instalación Solar",
+      "subtitle": "4 pasos simples desde la consulta hasta tu energía limpia.",
+      "steps": [
+        {
+          "title": "Evaluación Gratuita",
+          "description": "Visitamos tu propiedad, evaluamos la orientación del techo, sombras y consumo eléctrico."
+        },
+        {
+          "title": "Diseño a Medida",
+          "description": "Diseñamos un sistema solar específico para tu hogar o negocio en Panamá."
+        },
+        {
+          "title": "Instalación Profesional",
+          "description": "Equipo certificado, normalmente en un solo día de inicio a fin."
+        },
+        {
+          "title": "Monitoreo y Mantenimiento",
+          "description": "Monitoreo en tiempo real por app, acompañamiento en la entrega y soporte continuo."
+        }
+      ],
+      "statsLine": "El tiempo de instalación y el retorno se calculan a partir de tu techo y tu factura.",
+      "cta": "Solicitar Evaluación Gratuita"
+    },
+    "projects": {
+      "sectionTag": "PROYECTOS",
+      "title": "Instalaciones Solares en Panamá",
+      "subtitle": "Ejemplos de sistemas instalados en hogares y negocios de la región.",
+      "viewAll": "Ver Todos los Proyectos",
+      "items": [
+        { "name": "Casa Privada", "location": "Pedasí, Los Santos", "size": "5 kW", "savings": "88%", "type": "Residencial" },
+        { "name": "Hotel Boutique", "location": "Las Tablas", "size": "45 kW", "savings": "52%", "type": "Comercial" },
+        { "name": "Finca Agrícola", "location": "Chitré, Herrera", "size": "30 kW", "savings": "61%", "type": "Comercial" },
+        { "name": "Residencia", "location": "Costa del Este, Panamá", "size": "12 kW", "savings": "74%", "type": "Residencial" },
+        { "name": "Bodega Industrial", "location": "Ciudad de Panamá", "size": "120 kW", "savings": "58%", "type": "Industrial" },
+        { "name": "Villa con Baterías", "location": "Playa Venao", "size": "8 kW + Batería", "savings": "95%", "type": "Residencial" }
+      ]
+    },
+    "scrollAnimation": {
+      "sectionTag": "MIRA EL PROCESO",
+      "title": "Observa tu Sistema Solar Cobrar Vida",
+      "subtitle": "Desliza para ver una instalación real — desde el techo vacío hasta el sistema solar funcionando.",
+      "types": {
+        "concrete": "Techo de Concreto",
+        "villa": "Villa con Tejado",
+        "tropical": "Eco-Lodge Tropical",
+        "factory": "Fábrica",
+        "largeroof": "Techo Logístico",
+        "field": "Parque Solar",
+        "parking": "Estacionamiento Solar"
+      }
+    },
+    "faq": {
+      "sectionTag": "PREGUNTAS FRECUENTES",
+      "title": "Preguntas Frecuentes sobre Energía Solar en Panamá",
+      "subtitle": "Todo lo que necesitas saber antes de instalar tus paneles solares.",
+      "items": [
+        {
+          "question": "¿Cuánto cuesta instalar paneles solares en Panamá?",
+          "answer": "Un sistema residencial (3-15 kW) suele costar entre $4,000 y $20,000 según el tamaño del techo, el consumo y el tipo de equipo. Gracias a la Ley 417, los equipos solares se importan sin impuestos, lo que reduce el costo. Solicita una cotización gratuita para conocer tu precio exacto."
+        },
+        {
+          "question": "¿Cuánto puedo ahorrar en mi factura eléctrica?",
+          "answer": "El ahorro depende de tu consumo diurno y de la tarifa de tu distribuidora. Nuestros clientes en Azuero pasaron de pagar $280 a $35 al mes — un ahorro de hasta el 95%. Calculamos tu ahorro real a partir de tu factura, no con un porcentaje genérico."
+        },
+        {
+          "question": "¿Qué es la Ley 417 y cómo me beneficia?",
+          "answer": "La Ley 417 es el incentivo panameño a la energía renovable que permite importar equipos solares sin impuestos de importación ni ITBMS. Esto reduce significativamente el costo total de tu sistema. Nosotros gestionamos todo el trámite por ti."
+        },
+        {
+          "question": "¿En cuánto tiempo recupero mi inversión?",
+          "answer": "Con las tarifas eléctricas de Panamá, el retorno típico es de 3 a 5 años para sistemas residenciales y comerciales. Después, disfrutas de electricidad casi gratis por más de 20 años, ya que los paneles tienen garantía de 25 años."
+        },
+        {
+          "question": "¿Los paneles funcionan en época lluviosa?",
+          "answer": "Sí. Los paneles modernos generan electricidad incluso en días nublados, produciendo entre el 10% y el 25% de su capacidad máxima. Panamá recibe abundante sol todo el año, especialmente en la Península de Azuero."
+        },
+        {
+          "question": "¿Cuánto tarda la instalación?",
+          "answer": "La mayoría de los sistemas residenciales se instalan en un solo día. Los sistemas comerciales (30 kW+) toman de 3 a 7 días. Nuestro equipo certificado realiza una instalación limpia y profesional, con monitoreo remoto incluido."
+        },
+        {
+          "question": "¿Qué garantía ofrecen?",
+          "answer": "Instalamos paneles Tier-1 con garantía de rendimiento de 25 años e inversores con 10 a 25 años de protección. Cada propuesta detalla por escrito las garantías de los equipos y la cobertura de mano de obra de Solaris."
+        },
+        {
+          "question": "¿Necesito permisos para instalar paneles solares?",
+          "answer": "Sí, los sistemas conectados a la red requieren la aprobación de la distribuidora eléctrica y, en muchos casos, de la ASEP. Solaris gestiona todo el trámite de interconexión por ti — desde la solicitud hasta la conexión final."
+        }
+      ]
+    },
+    "cta": {
+      "sectionTag": "EMPIEZA HOY",
+      "title": "Empieza a Ahorrar Hoy",
+      "subtitle": "Solicita tu cotización gratuita y descubre cuánto puedes ahorrar con energía solar.",
+      "ctaPrimary": "Solicitar Cotización Gratis",
+      "ctaWhatsapp": "WhatsApp Directo",
+      "ctaCall": "Llamar Ahora",
+      "urgency": "100% gratis · Sin compromiso · Respuesta en menos de 24 horas"
+    },
+    "testimonial": {
+      "sectionTag": "CASO REAL",
+      "quotePrefix": "Nuestro cliente en Pedasí pasó de",
+      "quoteFrom": "$280",
+      "quoteMid": "a",
+      "quoteTo": "$35",
+      "quoteSuffix": "en su factura mensual.",
+      "savingsLabel": "Ahorro anual",
+      "savingsValue": "$2,940",
+      "savingsUnit": "por año",
+      "author": "— Cliente en Pedasí, Los Santos · Sistema 5 kW instalado 2024",
+      "rating": "5 de 5 estrellas"
+    },
+    "footer": {
+      "tagline": "Energía solar para hogares, comercios e industrias en la Península de Azuero y Ciudad de Panamá.",
+      "quickLinks": "Enlaces Rápidos",
+      "servicesTitle": "Servicios",
+      "contactTitle": "Contacto",
+      "rights": "Todos los derechos reservados.",
+      "copyright": "© 2026 Solaris Panamá — Energía Solar en Panamá"
+    },
+    "stickyWhatsapp": {
+      "generic": "¿Tienes preguntas? Escríbenos por WhatsApp",
+      "residential": "Cotiza tu sistema solar para el hogar",
+      "commercial": "Solicita tu propuesta solar comercial",
+      "aria": "Contactar por WhatsApp"
+    },
+    "seo": {
+      "homeTitle": "Paneles Solares en Panamá — Energía Solar en Azuero",
+      "homeDescription": "Instalación de paneles solares en Panamá. Ahorra hasta 95% en tu factura de luz con la Ley 417 (equipos sin impuestos). +150 instalaciones en Azuero y garantía de 25 años. Cotiza gratis.",
+      "servicesTitle": "Servicios de Energía Solar en Panamá",
+      "servicesDescription": "Energía solar residencial, comercial, off-grid y mantenimiento en Panamá. Diseño, instalación en un día y monitoreo, con equipos Tier-1 y garantía de 25 años. Cotiza gratis.",
+      "aboutTitle": "Sobre Nosotros — Empresa de Paneles Solares en Panamá",
+      "aboutDescription": "Solaris: empresa de paneles solares en la Península de Azuero. +150 instalaciones, 95% de clientes satisfechos y certificación bajo la Ley 417. Tu empresa solar de confianza.",
+      "projectsTitle": "Proyectos Solares en Panamá — Casos Reales",
+      "projectsDescription": "Proyectos reales de energía solar en Panamá: hogares, comercios e industrias del Azuero que ahorran hasta 95% en luz. Mira capacidad (kWp), payback y ahorros documentados."
+    }
   }
 }

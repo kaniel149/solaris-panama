@@ -10,16 +10,21 @@ import { Marker } from '@vis.gl/react-maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ruler, Building2, PencilRuler, Check, X, Layers } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getGradeFromScore, calculatePolygonArea } from '@/utils/geoCalculations';
 import {
   computeEstimatedKwp,
   type GeoJSONPolygon,
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
+import type { SavedRoof } from '@/services/savedRoofsService';
 import BuildingDimensions from './BuildingDimensions';
 import { ParcelBoundaryLayer } from './ParcelBoundaryLayer';
 import { PanelLayoutOverlay, PanelLayoutBadge, usePanelLayout } from './PanelLayoutOverlay';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+// Re-export SavedRoof so parent can import from this file too
+export type { SavedRoof };
 
 // ===== MAP STYLES =====
 
@@ -270,6 +275,26 @@ interface ScannerMapProps {
    * always wins — this only controls the *initial* default per tipo.
    */
   tipo?: 'roof' | 'land';
+
+  // ===== Saved roofs layer =====
+
+  /** Previously scanned roofs from the roof_scans table, fetched by parent. */
+  savedRoofs?: SavedRoof[];
+
+  /** When true (default), the saved roofs layer is visible. */
+  showSavedRoofs?: boolean;
+
+  /**
+   * Fired when the user toggles the saved roofs layer via the Capas FAB.
+   * The parent holds the showSavedRoofs state and must flip it on call.
+   */
+  onToggleSavedRoofs?: () => void;
+
+  /**
+   * Fired when the user clicks a saved roof polygon/circle on the map.
+   * Parent can use this to open a lead detail sidebar or navigate.
+   */
+  onSavedRoofClick?: (roof: SavedRoof) => void;
 }
 
 interface HoverInfo {
@@ -299,6 +324,29 @@ const OVERLAY_URLS: Record<OverlayKey, string> = {
   datacenters: '/data/datacenters-panama.geojson',
 };
 
+// ===== SAVED ROOFS COLOR RAMP =====
+// Color by kWp to surface outliers (abnormally large = likely merged OSM polygon)
+// ≤30 kWp: normal residential (green)
+// 30–100: large commercial (amber)
+// >100: suspicious/oversized (red — likely merged OSM footprint)
+const SAVED_ROOF_COLOR_EXPR: any = [
+  'case',
+  ['>', ['coalesce', ['get', 'kwp'], 0], 100],
+  '#ef4444',
+  ['>', ['coalesce', ['get', 'kwp'], 0], 30],
+  '#f59e0b',
+  '#22c55e',
+];
+
+// Quality accent: MEDIUM (AI-verified) → solid outline; ESTIMATED → dashed
+// We encode quality as a numeric property: 1 = solid (MEDIUM/HIGH/BASE), 0 = dashed (ESTIMATED)
+const SAVED_ROOF_OUTLINE_DASH: any = [
+  'case',
+  ['==', ['get', 'quality_solid'], 1],
+  ['literal', [1, 0]],       // solid line
+  ['literal', [2.5, 2]],     // dashed
+];
+
 // ===== SCORE LEGEND DATA =====
 
 const SCORE_LEGEND = [
@@ -318,6 +366,12 @@ interface CapasFABProps {
   onStyleChange: (mode: StyleMode) => void;
   overlayEnabled: Record<OverlayKey, boolean>;
   onToggleOverlay: (key: OverlayKey) => void;
+  /** Whether the saved roofs layer is currently shown */
+  showSavedRoofs: boolean;
+  /** Toggle saved roofs visibility */
+  onToggleSavedRoofs: () => void;
+  /** Number of currently loaded saved roofs (for badge) */
+  savedRoofsCount: number;
   /** Position class applied to the wrapper div */
   positionClass?: string;
 }
@@ -327,8 +381,12 @@ function CapasFAB({
   onStyleChange,
   overlayEnabled,
   onToggleOverlay,
+  showSavedRoofs,
+  onToggleSavedRoofs,
+  savedRoofsCount,
   positionClass = 'absolute bottom-4 right-3',
 }: CapasFABProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -341,7 +399,7 @@ function CapasFAB({
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
-  const anyOverlay = Object.values(overlayEnabled).some(Boolean);
+  const anyOverlay = Object.values(overlayEnabled).some(Boolean) || showSavedRoofs;
 
   return (
     <div ref={ref} className={`${positionClass} z-20`}>
@@ -411,6 +469,37 @@ function CapasFAB({
                   Capas
                 </p>
                 <div className="space-y-1">
+                  {/* Saved roofs toggle */}
+                  <button
+                    onClick={onToggleSavedRoofs}
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-[11px] font-medium transition-all text-left min-h-[44px] ${
+                      showSavedRoofs
+                        ? 'bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/25'
+                        : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0 transition-opacity"
+                      style={{ background: '#22c55e', opacity: showSavedRoofs ? 1 : 0.35 }}
+                    />
+                    <span className="flex-1 min-w-0 truncate">
+                      {t('tools.scanner.savedRoofsLayer.label', 'Techos guardados')}
+                    </span>
+                    {showSavedRoofs && savedRoofsCount > 0 && (
+                      <span className="text-[9px] text-[#22c55e]/70 font-normal shrink-0">
+                        {savedRoofsCount}
+                      </span>
+                    )}
+                    <span
+                      className={`ml-1 w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-all ${
+                        showSavedRoofs ? 'border-transparent' : 'border-white/20'
+                      }`}
+                      style={showSavedRoofs ? { background: '#22c55e' } : {}}
+                    >
+                      {showSavedRoofs && <Check className="w-2.5 h-2.5 text-[#0a0a0f]" />}
+                    </span>
+                  </button>
+
                   {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => {
                     const active = overlayEnabled[key];
                     const color = key === 'grid' ? '#f59e0b' : '#a855f7';
@@ -478,7 +567,12 @@ export default function ScannerMap({
   selectedCandidateId,
   onCandidateClick,
   tipo,
+  savedRoofs = [],
+  showSavedRoofs = true,
+  onToggleSavedRoofs,
+  onSavedRoofClick,
 }: ScannerMapProps) {
+  const { t } = useTranslation();
   const mapRef = useRef<MapRef>(null);
 
   // tipo-aware initial style: when tipo='land' and the user has no stored preference,
@@ -518,6 +612,57 @@ export default function ScannerMap({
 
   // ===== Panel layout overlay state =====
   const panelLayout = usePanelLayout(panelRoofPolygon ?? null);
+
+  // ===== Saved roof popup state =====
+  const [savedRoofPopup, setSavedRoofPopup] = useState<{
+    roof: SavedRoof;
+    lng: number;
+    lat: number;
+  } | null>(null);
+
+  // ===== Saved roofs as GeoJSON (polygon or circle fallback) =====
+  const savedRoofsGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
+    const features: GeoJSON.Feature[] = [];
+    for (const r of savedRoofs) {
+      const kwp = r.system_kwp ?? 0;
+      // quality_solid: 1 = solid outline (MEDIUM/HIGH/BASE), 0 = dashed (ESTIMATED)
+      const qualitySolid = r.quality === 'ESTIMATED' ? 0 : 1;
+
+      if (r.roof_geom && r.roof_geom.type === 'Polygon') {
+        features.push({
+          type: 'Feature',
+          geometry: r.roof_geom,
+          properties: {
+            id: r.id,
+            kwp,
+            quality: r.quality ?? 'ESTIMATED',
+            quality_solid: qualitySolid,
+            lead_id: r.lead_id ?? null,
+            address: r.address ?? null,
+            total_m2: r.total_roof_m2 ?? null,
+            render_as: 'polygon',
+          },
+        });
+      } else {
+        // No polygon stored — render as a small point circle
+        features.push({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [r.longitude, r.latitude] },
+          properties: {
+            id: r.id,
+            kwp,
+            quality: r.quality ?? 'ESTIMATED',
+            quality_solid: qualitySolid,
+            lead_id: r.lead_id ?? null,
+            address: r.address ?? null,
+            total_m2: r.total_roof_m2 ?? null,
+            render_as: 'point',
+          },
+        });
+      }
+    }
+    return { type: 'FeatureCollection', features };
+  }, [savedRoofs]);
 
   // ===== Overlay layers state =====
   const [overlayEnabled, setOverlayEnabled] = useState<Record<OverlayKey, boolean>>({
@@ -805,6 +950,20 @@ export default function ScannerMap({
         return;
       }
 
+      // Saved roofs layer click
+      const savedRoofFeat = e.features?.find(
+        (f) => f.layer?.id === 'saved-roofs-hit' || f.layer?.id === 'saved-roofs-point-hit'
+      );
+      if (savedRoofFeat?.properties?.id != null && e.lngLat) {
+        const roofId = savedRoofFeat.properties.id as string;
+        const matchedRoof = savedRoofs.find((r) => r.id === roofId);
+        if (matchedRoof) {
+          setSavedRoofPopup({ roof: matchedRoof, lng: e.lngLat.lng, lat: e.lngLat.lat });
+          onSavedRoofClick?.(matchedRoof);
+        }
+        return;
+      }
+
       const overlayFeat = e.features?.find((f) =>
         f.layer?.id === 'grid-lines' ||
         f.layer?.id === 'grid-substations' ||
@@ -835,6 +994,7 @@ export default function ScannerMap({
         return;
       }
       setOverlayPopup(null);
+      setSavedRoofPopup(null);
 
       // Phase 3 scan-candidate layer click
       const scanCandFeat = e.features?.find((f) => f.layer?.id === 'scan-candidates-fill');
@@ -854,7 +1014,7 @@ export default function ScannerMap({
         onBuildingSelect(feature.properties.id as number);
       }
     },
-    [onBuildingSelect]
+    [onBuildingSelect, savedRoofs, onSavedRoofClick]
   );
 
   const handleDblClick = useCallback(
@@ -959,6 +1119,8 @@ export default function ScannerMap({
     'buildings-fill',
     'candidates-fill',
     'scan-candidates-fill',
+    'saved-roofs-hit',
+    'saved-roofs-point-hit',
     'grid-lines',
     'grid-substations',
     'dc-circles',
@@ -1197,6 +1359,62 @@ export default function ScannerMap({
 
         <ParcelBoundaryLayer boundary={parcelBoundary} />
 
+        {/* ===== SAVED ROOFS LAYER ===== */}
+        {/* Separate source/layer from scan_candidates (purple) — uses green/amber/red kWp ramp */}
+        {showSavedRoofs && (
+          <Source id="saved-roofs" type="geojson" data={savedRoofsGeoJSON}>
+            {/* Polygon fill — green/amber/red by kWp */}
+            <Layer
+              id="saved-roofs-polygon-fill"
+              type="fill"
+              filter={['==', ['get', 'render_as'], 'polygon']}
+              paint={{
+                'fill-color': SAVED_ROOF_COLOR_EXPR,
+                'fill-opacity': 0.35,
+              }}
+            />
+            {/* Polygon outline — solid for MEDIUM/HIGH/BASE, dashed for ESTIMATED */}
+            <Layer
+              id="saved-roofs-polygon-outline"
+              type="line"
+              filter={['==', ['get', 'render_as'], 'polygon']}
+              paint={{
+                'line-color': SAVED_ROOF_COLOR_EXPR,
+                'line-width': 1.5,
+                'line-dasharray': SAVED_ROOF_OUTLINE_DASH,
+              }}
+            />
+            {/* Point circle for roofs without stored geometry */}
+            <Layer
+              id="saved-roofs-point"
+              type="circle"
+              filter={['==', ['get', 'render_as'], 'point']}
+              paint={{
+                'circle-radius': 5,
+                'circle-color': SAVED_ROOF_COLOR_EXPR,
+                'circle-opacity': 0.8,
+                'circle-stroke-color': SAVED_ROOF_COLOR_EXPR,
+                'circle-stroke-width': 1,
+                'circle-stroke-opacity': 1,
+              }}
+            />
+            {/* Invisible wider polygon fill for hit-testing */}
+            <Layer
+              id="saved-roofs-hit"
+              type="fill"
+              filter={['==', ['get', 'render_as'], 'polygon']}
+              paint={{ 'fill-color': '#000000', 'fill-opacity': 0 }}
+            />
+            {/* Invisible wider circle for hit-testing */}
+            <Layer
+              id="saved-roofs-point-hit"
+              type="circle"
+              filter={['==', ['get', 'render_as'], 'point']}
+              paint={{ 'circle-radius': 10, 'circle-opacity': 0 }}
+            />
+          </Source>
+        )}
+
         {/* OVERLAY: Red eléctrica */}
         {overlayEnabled.grid && (
           <Source id="grid-overlay" type="geojson" data={overlayData.grid ?? EMPTY_FC}>
@@ -1392,6 +1610,86 @@ export default function ScannerMap({
           </Marker>
         )}
 
+        {/* Saved roof popup */}
+        {savedRoofPopup && (
+          <Marker
+            longitude={savedRoofPopup.lng}
+            latitude={savedRoofPopup.lat}
+            anchor="bottom"
+            offset={[0, -8] as [number, number]}
+          >
+            <div
+              className="relative px-3 py-2.5 text-xs shadow-lg w-[240px]"
+              style={{
+                background: '#12121aee',
+                borderRadius: 10,
+                border: '1px solid rgba(34,197,94,0.35)',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <button
+                onClick={() => setSavedRoofPopup(null)}
+                className="absolute top-1.5 right-2 text-[#555566] hover:text-[#8888a0] text-[10px]"
+                aria-label={t('tools.scanner.savedRoofsLayer.closePopup', 'Cerrar')}
+              >
+                ✕
+              </button>
+              <div className="font-semibold text-[#f0f0f5] truncate mb-1 pr-4">
+                {savedRoofPopup.roof.address || t('tools.scanner.savedRoofsLayer.unnamed', 'Techo guardado')}
+              </div>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-[#8888a0] mb-2">
+                {savedRoofPopup.roof.system_kwp != null && (
+                  <>
+                    <span>{t('tools.scanner.savedRoofsLayer.kwp', 'Sistema')}</span>
+                    <span
+                      className="font-semibold"
+                      style={{
+                        color:
+                          savedRoofPopup.roof.system_kwp > 100
+                            ? '#ef4444'
+                            : savedRoofPopup.roof.system_kwp > 30
+                            ? '#f59e0b'
+                            : '#22c55e',
+                      }}
+                    >
+                      {savedRoofPopup.roof.system_kwp.toFixed(1)} kWp
+                      {savedRoofPopup.roof.system_kwp > 100 && (
+                        <span className="ml-1 text-[9px] text-[#ef4444]/80">
+                          {t('tools.scanner.savedRoofsLayer.suspicious', '⚠ sospechoso')}
+                        </span>
+                      )}
+                    </span>
+                  </>
+                )}
+                {savedRoofPopup.roof.total_roof_m2 != null && (
+                  <>
+                    <span>{t('tools.scanner.savedRoofsLayer.area', 'Área')}</span>
+                    <span className="text-[#f0f0f5]">
+                      {Math.round(savedRoofPopup.roof.total_roof_m2).toLocaleString()} m²
+                    </span>
+                  </>
+                )}
+                {savedRoofPopup.roof.quality && (
+                  <>
+                    <span>{t('tools.scanner.savedRoofsLayer.quality', 'Calidad')}</span>
+                    <span className="text-[#f0f0f5] capitalize">
+                      {savedRoofPopup.roof.quality.toLowerCase()}
+                    </span>
+                  </>
+                )}
+              </div>
+              {savedRoofPopup.roof.lead_id && (
+                <a
+                  href={`/leads/${savedRoofPopup.roof.lead_id}`}
+                  className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg bg-[#22c55e]/15 text-[#22c55e] hover:bg-[#22c55e]/25 transition-colors text-[11px] font-medium"
+                >
+                  {t('tools.scanner.savedRoofsLayer.viewLead', 'Ver lead')}
+                </a>
+              )}
+            </div>
+          </Marker>
+        )}
+
         {/* Search pin marker */}
         {searchMarker && (
           <Marker
@@ -1500,7 +1798,7 @@ export default function ScannerMap({
 
       {/* ===== BOTTOM-RIGHT: Solar score legend ===== */}
       <AnimatePresence>
-        {(buildingCount > 0 || candidates.length > 0 || scanCandidates.length > 0) && (
+        {(buildingCount > 0 || candidates.length > 0 || scanCandidates.length > 0 || (showSavedRoofs && savedRoofs.length > 0)) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1518,6 +1816,27 @@ export default function ScannerMap({
                 </div>
               ))}
             </div>
+            {showSavedRoofs && savedRoofs.length > 0 && (
+              <div className="mt-2 pt-2 border-t border-white/[0.06]">
+                <div className="text-[9px] text-[#555566] uppercase tracking-wider mb-1.5 font-semibold">
+                  {t('tools.scanner.savedRoofsLayer.label', 'Techos guardados')}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-sm" style={{ background: '#22c55e', opacity: 0.7 }} />
+                    <span className="text-[10px] text-[#8888a0]">≤30 kWp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-sm" style={{ background: '#f59e0b', opacity: 0.7 }} />
+                    <span className="text-[10px] text-[#8888a0]">30–100 kWp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-sm" style={{ background: '#ef4444', opacity: 0.7 }} />
+                    <span className="text-[10px] text-[#8888a0]">{t('tools.scanner.savedRoofsLayer.suspicious', '>100 kWp ⚠')}</span>
+                  </div>
+                </div>
+              </div>
+            )}
             {candidates.length > 0 && (
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/[0.06]">
                 <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" />
@@ -1588,6 +1907,9 @@ export default function ScannerMap({
         onStyleChange={setStyleMode}
         overlayEnabled={overlayEnabled}
         onToggleOverlay={toggleOverlay}
+        showSavedRoofs={showSavedRoofs}
+        onToggleSavedRoofs={onToggleSavedRoofs ?? (() => undefined)}
+        savedRoofsCount={savedRoofs.length}
         positionClass={capasPosClass}
       />
     </div>

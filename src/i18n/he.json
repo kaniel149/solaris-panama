@@ -145,6 +145,16 @@
         "emptyTitle": "אין {{kind}} ממתינים לסקירה.",
         "switchHint": "עבור ל-{{otherKind}} — {{count}} חלקות ממתינות",
         "emptyScan": "הפעל סריקה (סרוק אזור זה) כדי לייצר מועמדים."
+      },
+      "savedRoofsLayer": {
+        "label": "גגות שמורים",
+        "unnamed": "גג שמור",
+        "kwp": "מערכת",
+        "area": "שטח",
+        "quality": "איכות",
+        "viewLead": "צפה בליד",
+        "closePopup": "סגור",
+        "suspicious": "⚠ חשוד (>100 kWp)"
       }
     }
   },

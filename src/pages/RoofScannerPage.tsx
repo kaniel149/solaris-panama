@@ -19,6 +19,10 @@ import {
   type GeoJSONPolygon,
   type DetectedRoofCandidate,
 } from '@/services/scannerRpcService';
+import {
+  fetchSavedRoofs,
+  type SavedRoof,
+} from '@/services/savedRoofsService';
 import { lookupParcel } from '@/services/cadastreService';
 import type { CadastreInfo } from '@/types/enrichment';
 import { persistScan } from '@/services/scanPersistenceService';
@@ -370,6 +374,14 @@ export default function RoofScannerPage() {
   const [cadastre, setCadastre] = useState<CadastreInfo | null>(null);
   const [billPrefillKwh, setBillPrefillKwh] = useState<number | null>(null);
   const [drawnRoofPolygon, setDrawnRoofPolygon] = useState<GeoJSON.Polygon | null>(null);
+
+  // ===== SAVED ROOFS STATE =====
+  const [savedRoofs, setSavedRoofs] = useState<SavedRoof[]>([]);
+  const [showSavedRoofs, setShowSavedRoofs] = useState(true);
+  /** Debounce timer ref for saved-roofs viewport fetch */
+  const savedRoofsDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Always-current zoom ref (avoids stale closure in debounced fetch) */
+  const mapZoomRef = useRef(mapZoom);
   const [detectedCandidates, setDetectedCandidates] = useState<DetectedRoofCandidate[]>([]);
   const scanIdByBuildingRef = useRef<Map<number, string>>(new Map());
 
@@ -382,6 +394,9 @@ export default function RoofScannerPage() {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Keep zoom ref current so saved-roofs debounce sees fresh value
+  useEffect(() => { mapZoomRef.current = mapZoom; }, [mapZoom]);
 
   // ===== INTERNAL SCANNER MODE (scan/draw/browse within building detail) =====
   const [scannerMode, setScannerMode] = useState<InternalScannerMode>('scan');
@@ -429,6 +444,52 @@ export default function RoofScannerPage() {
   useEffect(() => {
     void loadCandidates();
   }, [loadCandidates]);
+
+  // ===== SAVED ROOFS FETCH =====
+
+  /**
+   * Fetch saved roofs for a bounding box.
+   * Only fires when zoom >= 12 to avoid huge full-table scans.
+   */
+  const loadSavedRoofs = useCallback(
+    (bounds: MapBounds, zoom: number) => {
+      if (zoom < 12) return;
+      const bbox: [number, number, number, number] = [
+        bounds.west, bounds.south, bounds.east, bounds.north,
+      ];
+      void fetchSavedRoofs(bbox).then(setSavedRoofs);
+    },
+    []
+  );
+
+  /**
+   * Called on every map moveEnd — debounced 500ms before fetching.
+   * Replaces the original handleBoundsChange (which only called setMapBounds).
+   */
+  const handleBoundsChangeWithSavedRoofs = useCallback(
+    (bounds: MapBounds) => {
+      setMapBounds(bounds);
+
+      if (!showSavedRoofs) return;
+
+      if (savedRoofsDebounceRef.current !== null) {
+        clearTimeout(savedRoofsDebounceRef.current);
+      }
+      savedRoofsDebounceRef.current = setTimeout(() => {
+        // Use ref so we get the freshest zoom (avoids stale closure)
+        loadSavedRoofs(bounds, mapZoomRef.current);
+      }, 500);
+    },
+    [showSavedRoofs, loadSavedRoofs]
+  );
+
+  // Load saved roofs on mount using initial bounds/zoom
+  useEffect(() => {
+    if (showSavedRoofs) {
+      loadSavedRoofs(mapBounds, mapZoom);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally runs once on mount
 
   // ===== GRADE-FILTERED CANDIDATES (active tipo only) =====
   const filteredCandidates = useMemo<ScanCandidate[]>(() => {
@@ -611,9 +672,7 @@ export default function RoofScannerPage() {
     [setFilters]
   );
 
-  const handleBoundsChange = useCallback((bounds: MapBounds) => {
-    setMapBounds(bounds);
-  }, []);
+  // handleBoundsChange merged into handleBoundsChangeWithSavedRoofs above
 
   const handleSelectZone = useCallback(
     (zoneId: string) => {
@@ -861,7 +920,21 @@ export default function RoofScannerPage() {
     setActiveZone(zone.id);
     setMapCenter(zone.center);
     setMapZoom(zone.zoom);
-  }, []);
+    // After fly animation (~1.2s), fetch saved roofs for the new zone viewport.
+    // We approximate the bbox from the zone center + a ~0.05° half-side.
+    if (showSavedRoofs) {
+      setTimeout(() => {
+        const halfSide = 0.05;
+        const approxBounds: MapBounds = {
+          north: zone.center[1] + halfSide,
+          south: zone.center[1] - halfSide,
+          east: zone.center[0] + halfSide,
+          west: zone.center[0] - halfSide,
+        };
+        loadSavedRoofs(approxBounds, zone.zoom);
+      }, 1400);
+    }
+  }, [showSavedRoofs, loadSavedRoofs]);
 
   // ===== DERIVED =====
 
@@ -961,7 +1034,7 @@ export default function RoofScannerPage() {
           buildings={buildingsGeoJSON ?? EMPTY_GEOJSON}
           selectedBuildingId={selectedBuildingId}
           onBuildingSelect={handleBuildingSelect}
-          onBoundsChange={handleBoundsChange}
+          onBoundsChange={handleBoundsChangeWithSavedRoofs}
           searchMarker={searchMarker}
           measureMode={measureMode}
           onMeasureModeChange={setMeasureMode}
@@ -979,6 +1052,15 @@ export default function RoofScannerPage() {
           selectedCandidateId={selectedCandidateId}
           onCandidateClick={setSelectedCandidateId}
           tipo={tipo}
+          savedRoofs={savedRoofs}
+          showSavedRoofs={showSavedRoofs}
+          onToggleSavedRoofs={() => setShowSavedRoofs((v) => !v)}
+          onSavedRoofClick={(roof) => {
+            if (roof.lead_id) {
+              // Navigate to lead detail — use react-router navigate
+              navigate(`/leads/${roof.lead_id}`);
+            }
+          }}
         />
       </div>
 
