@@ -16,7 +16,7 @@
  *   - ScannerTopNavProps (type)
  */
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Map as MapIcon, Grid, BarChart2, Users, BookOpen, ChevronLeft, ChevronRight,
@@ -125,26 +125,21 @@ export default function ScannerTopNav({
 }: ScannerTopNavProps) {
   const { t, i18n } = useTranslation();
   const zoneScrollRef = useRef<HTMLDivElement>(null);
-  const [langDropOpen, setLangDropOpen] = useState(false);
-  const langDropRef = useRef<HTMLDivElement>(null);
 
   const scrollZones = (dir: -1 | 1) => {
     if (!zoneScrollRef.current) return;
     zoneScrollRef.current.scrollBy({ left: dir * 140, behavior: 'smooth' });
   };
 
-  // Close lang dropdown on outside click
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (langDropRef.current && !langDropRef.current.contains(e.target as Node)) {
-        setLangDropOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
   const currentLang = LANG_OPTIONS.find((l) => l.code === i18n.language) ?? LANG_OPTIONS[0];
+
+  // Cycle language on click: es → en → he → es (single click switches, no dropdown).
+  const cycleLanguage = () => {
+    const idx = LANG_OPTIONS.findIndex((l) => l.code === currentLang.code);
+    const next = LANG_OPTIONS[(idx + 1) % LANG_OPTIONS.length];
+    i18n.changeLanguage(next.code);
+    try { localStorage.setItem('solaris_lang', next.code); } catch { /* ignore */ }
+  };
 
   const handleMenuClick = () => {
     window.dispatchEvent(new CustomEvent('open-app-drawer'));
@@ -349,51 +344,20 @@ export default function ScannerTopNav({
           <span className="hidden lg:inline">{t('tools.scanner.topnav.legend')}</span>
         </button>
 
-        {/* ── Language switcher ── */}
-        <div className="relative shrink-0" ref={langDropRef}>
-          <button
-            onClick={() => setLangDropOpen((o) => !o)}
-            className={cn(
-              'flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-bold min-h-[44px]',
-              'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
-              'text-[#8888a0] hover:text-white hover:border-[#00ffcc]/25 hover:bg-white/[0.03] transition-colors'
-            )}
-            aria-label="Switch language"
-            aria-expanded={langDropOpen}
-            aria-haspopup="listbox"
-          >
-            <Globe className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline tracking-wider">{currentLang.label}</span>
-          </button>
-
-          {langDropOpen && (
-            <div
-              className="absolute right-0 top-full mt-1.5 rounded-xl bg-[#12121a]/95 backdrop-blur-xl border border-white/[0.08] shadow-2xl overflow-hidden z-30 min-w-[80px]"
-              role="listbox"
-              aria-label="Select language"
-            >
-              {LANG_OPTIONS.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => {
-                    i18n.changeLanguage(lang.code);
-                    setLangDropOpen(false);
-                  }}
-                  role="option"
-                  aria-selected={i18n.language === lang.code}
-                  className={cn(
-                    'w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold transition-colors text-left min-h-[44px]',
-                    i18n.language === lang.code
-                      ? 'bg-[#00ffcc]/[0.07] text-[#00ffcc]'
-                      : 'text-[#8888a0] hover:text-white hover:bg-white/[0.04]'
-                  )}
-                >
-                  {lang.label}
-                </button>
-              ))}
-            </div>
+        {/* ── Language switcher: single click cycles es → en → he ── */}
+        <button
+          onClick={cycleLanguage}
+          className={cn(
+            'flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-bold min-h-[44px] shrink-0',
+            'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
+            'text-[#8888a0] hover:text-white hover:border-[#00ffcc]/35 hover:bg-white/[0.03] transition-colors'
           )}
-        </div>
+          aria-label={`Idioma: ${currentLang.label} — clic para cambiar`}
+          title={`Idioma: ${currentLang.label} (clic para cambiar)`}
+        >
+          <Globe className="w-3.5 h-3.5 shrink-0" />
+          <span className="tracking-wider">{currentLang.label}</span>
+        </button>
 
         {/* ── Pending badge (far right) ── */}
         {counts && counts.pending > 0 && (
