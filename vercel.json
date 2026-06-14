@@ -14,6 +14,7 @@
     { "source": "/settings", "destination": "/app.html" },
     { "source": "/tools/:path*", "destination": "/app.html" },
     { "source": "/mapa-solar", "destination": "/app.html" },
+    { "source": "/mapa-comercial", "destination": "/app.html" },
     { "source": "/lp/:path*", "destination": "/app.html" },
     { "source": "/azuero", "destination": "/app.html" }
   ],
