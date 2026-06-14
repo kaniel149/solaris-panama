@@ -149,6 +149,61 @@ interface MapBounds {
   west: number;
 }
 
+// ===== SCAN CANDIDATE (Phase 3 land + roof review queue) =====
+// Minimal local interface — integrator will align candidateService.ts to this shape.
+// Intentionally self-contained so ScannerMap has no import dependency on an
+// unfinished file; the integrator aligns the service type to match this contract.
+export interface ScanCandidate {
+  id: string;
+  kind: 'roof' | 'land';
+  /** GeoJSON Polygon geometry. When present it is used directly; otherwise
+   *  a synthetic square is computed from lat/lng + area_m2. */
+  geom?: GeoJSON.Polygon;
+  lat: number;
+  lng: number;
+  area_m2: number;
+  /** kWp for roof candidates */
+  kwp?: number;
+  /** MWp for land candidates */
+  mwp?: number;
+  /** comercial | agro | utility (land only) */
+  tier?: 'comercial' | 'agro' | 'utility';
+  grade?: 'A' | 'B' | 'C' | 'D';
+  address?: string;
+}
+
+// Tier → fill color for land candidates
+const LAND_TIER_FILL: Record<string, string> = {
+  comercial: '#38bdf8',
+  agro: '#C026D3',
+  utility: '#f59e0b',
+};
+const LAND_TIER_OUTLINE: Record<string, string> = {
+  comercial: '#7dd3fc',
+  agro: '#E879F9',
+  utility: '#fbbf24',
+};
+const LAND_DEFAULT_FILL = '#C026D3';
+const LAND_DEFAULT_OUTLINE = '#E879F9';
+
+/** Build a synthetic 5-point square ring centered on [lng, lat] sized by area_m2 */
+function syntheticSquareRing(
+  lat: number,
+  lng: number,
+  area_m2: number
+): [number, number][] {
+  const side = Math.sqrt(area_m2 > 0 ? area_m2 : 100);
+  const dLat = side / 2 / 110574;
+  const dLng = side / 2 / (111320 * Math.cos((lat * Math.PI) / 180));
+  return [
+    [lng - dLng, lat - dLat],
+    [lng + dLng, lat - dLat],
+    [lng + dLng, lat + dLat],
+    [lng - dLng, lat + dLat],
+    [lng - dLng, lat - dLat],
+  ];
+}
+
 interface ScannerMapProps {
   buildings: GeoJSON.FeatureCollection;
   selectedBuildingId: number | null;
@@ -191,6 +246,30 @@ interface ScannerMapProps {
    * Parent controls placement via this flag so z-index/offset can be adjusted.
    */
   capasPosition?: 'bottom-right' | 'bottom-left';
+
+  // ===== Phase 3: Scan candidate review layer (land + roof) =====
+
+  /**
+   * Scan candidates from the review queue (kind='roof' or 'land').
+   * Rendered as purple/magenta polygons distinct from the existing detected-roof
+   * candidates (DetectedRoofCandidate[]).  Named `scanCandidates` to avoid
+   * collision with the existing `candidates: DetectedRoofCandidate[]` prop.
+   */
+  scanCandidates?: ScanCandidate[];
+
+  /** Highlight this candidate with a cyan outline (width 3). */
+  selectedCandidateId?: string;
+
+  /** Fired when a candidate polygon is clicked on the map. */
+  onCandidateClick?: (id: string) => void;
+
+  /**
+   * Scan tipo hint ('roof' | 'land').  When 'land' and the user has not yet
+   * manually chosen a base style this session, the map defaults to satellite
+   * (land parcels are hard to read on dark tiles).  The user's explicit choice
+   * always wins — this only controls the *initial* default per tipo.
+   */
+  tipo?: 'roof' | 'land';
 }
 
 interface HoverInfo {
@@ -395,9 +474,26 @@ export default function ScannerMap({
   parcelBoundary,
   panelRoofPolygon,
   capasPosition = 'bottom-right',
+  scanCandidates = [],
+  selectedCandidateId,
+  onCandidateClick,
+  tipo,
 }: ScannerMapProps) {
   const mapRef = useRef<MapRef>(null);
-  const [styleMode, setStyleMode] = useState<StyleMode>(loadStoredStyle);
+
+  // tipo-aware initial style: when tipo='land' and the user has no stored preference,
+  // default to satellite (land parcels read better on aerial imagery).
+  // Stored user choice always wins — we only influence the very first render.
+  const [styleMode, setStyleMode] = useState<StyleMode>(() => {
+    const stored = loadStoredStyle();
+    // loadStoredStyle returns 'dark' as fallback when nothing is stored.
+    // Distinguish "genuinely stored" vs "fallback dark" by re-reading localStorage.
+    const hasStored = (() => {
+      try { return localStorage.getItem(STYLE_STORAGE_KEY) !== null; } catch { return false; }
+    })();
+    if (!hasStored && tipo === 'land') return 'satellite';
+    return stored;
+  });
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [overlayPopup, setOverlayPopup] = useState<{ lng: number; lat: number; title: string; subtitle?: string } | null>(null);
@@ -568,6 +664,49 @@ export default function ScannerMap({
     return { type: 'FeatureCollection', features };
   }, [candidates]);
 
+  // ===== Phase 3: Scan candidates GeoJSON (land + roof) =====
+  const scanCandidatesGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
+    const features: GeoJSON.Feature[] = [];
+    for (const c of scanCandidates) {
+      let geometry: GeoJSON.Polygon;
+      if (c.geom && c.geom.type === 'Polygon') {
+        geometry = c.geom;
+      } else {
+        // Synthesize a square footprint from lat/lng + area_m2
+        geometry = {
+          type: 'Polygon',
+          coordinates: [syntheticSquareRing(c.lat, c.lng, c.area_m2)],
+        };
+      }
+      const fill =
+        c.kind === 'land'
+          ? (LAND_TIER_FILL[c.tier ?? ''] ?? LAND_DEFAULT_FILL)
+          : '#a855f7';
+      const outline =
+        c.kind === 'land'
+          ? (LAND_TIER_OUTLINE[c.tier ?? ''] ?? LAND_DEFAULT_OUTLINE)
+          : '#a855f7';
+      features.push({
+        type: 'Feature',
+        geometry,
+        properties: {
+          id: c.id,
+          kind: c.kind,
+          tier: c.tier ?? null,
+          fill,
+          outline,
+          selected: c.id === selectedCandidateId ? 1 : 0,
+          label: c.address ?? (c.kind === 'land' ? 'Terreno' : 'Techo'),
+          area_m2: Math.round(c.area_m2),
+          kwp: c.kwp ?? null,
+          mwp: c.mwp ?? null,
+          grade: c.grade ?? null,
+        },
+      });
+    }
+    return { type: 'FeatureCollection', features };
+  }, [scanCandidates, selectedCandidateId]);
+
   // ===== Live draw polygon =====
   const drawGeoJSON = useMemo<GeoJSON.FeatureCollection>(() => {
     if (drawVertices.length === 0) return EMPTY_FC;
@@ -697,6 +836,13 @@ export default function ScannerMap({
       }
       setOverlayPopup(null);
 
+      // Phase 3 scan-candidate layer click
+      const scanCandFeat = e.features?.find((f) => f.layer?.id === 'scan-candidates-fill');
+      if (scanCandFeat?.properties?.id != null) {
+        onCandidateClick?.(scanCandFeat.properties.id as string);
+        return;
+      }
+
       const candFeat = e.features?.find((f) => f.layer?.id === 'candidates-fill');
       if (candFeat?.properties?.idx != null) {
         setActiveCandidate(candFeat.properties.idx as number);
@@ -812,6 +958,7 @@ export default function ScannerMap({
   const interactiveLayerIds = [
     'buildings-fill',
     'candidates-fill',
+    'scan-candidates-fill',
     'grid-lines',
     'grid-substations',
     'dc-circles',
@@ -947,6 +1094,75 @@ export default function ScannerMap({
               'line-color': '#a855f7',
               'line-width': 2.5,
               'line-dasharray': [2, 2],
+            }}
+          />
+        </Source>
+
+        {/* Phase 3: Scan candidate review layer (land + roof) */}
+        {/* Uses data-driven fill/outline colors so tier coloring works without
+            separate sources. Selected candidate gets a bright cyan outline via
+            the 'scan-candidates-selected-outline' layer (filtered by selected=1). */}
+        <Source id="scan-candidates" type="geojson" data={scanCandidatesGeoJSON}>
+          {/* Roof candidates: purple fill 0.25 */}
+          <Layer
+            id="scan-candidates-roof-fill"
+            type="fill"
+            filter={['==', ['get', 'kind'], 'roof']}
+            paint={{
+              'fill-color': '#a855f7',
+              'fill-opacity': 0.25,
+            }}
+          />
+          {/* Roof candidates: purple dashed outline */}
+          <Layer
+            id="scan-candidates-roof-outline"
+            type="line"
+            filter={['==', ['get', 'kind'], 'roof']}
+            paint={{
+              'line-color': '#a855f7',
+              'line-width': 1.5,
+              'line-dasharray': [2, 2],
+            }}
+          />
+          {/* Land candidates: tier-colored fill 0.30 (data-driven via 'fill' property) */}
+          <Layer
+            id="scan-candidates-land-fill"
+            type="fill"
+            filter={['==', ['get', 'kind'], 'land']}
+            paint={{
+              'fill-color': ['get', 'fill'],
+              'fill-opacity': 0.3,
+            }}
+          />
+          {/* Land candidates: tier-colored dashed outline (data-driven via 'outline' property) */}
+          <Layer
+            id="scan-candidates-land-outline"
+            type="line"
+            filter={['==', ['get', 'kind'], 'land']}
+            paint={{
+              'line-color': ['get', 'outline'],
+              'line-width': 1.5,
+              'line-dasharray': [2, 2],
+            }}
+          />
+          {/* Invisible wider fill for hit-testing — covers both kinds */}
+          <Layer
+            id="scan-candidates-fill"
+            type="fill"
+            paint={{
+              'fill-color': '#000000',
+              'fill-opacity': 0,
+            }}
+          />
+          {/* Selected candidate highlight — cyan outline, width 3 */}
+          <Layer
+            id="scan-candidates-selected-outline"
+            type="line"
+            filter={['==', ['get', 'selected'], 1]}
+            paint={{
+              'line-color': '#00ffcc',
+              'line-width': 3,
+              'line-opacity': 1,
             }}
           />
         </Source>
@@ -1284,7 +1500,7 @@ export default function ScannerMap({
 
       {/* ===== BOTTOM-RIGHT: Solar score legend ===== */}
       <AnimatePresence>
-        {(buildingCount > 0 || candidates.length > 0) && (
+        {(buildingCount > 0 || candidates.length > 0 || scanCandidates.length > 0) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1307,6 +1523,42 @@ export default function ScannerMap({
                 <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" />
                 <span className="text-[10px] text-[#8888a0] font-medium">Detectado</span>
               </div>
+            )}
+            {scanCandidates.some((c) => c.kind === 'roof') && (
+              <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/[0.06]">
+                <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" style={{ background: 'rgba(168,85,247,0.25)' }} />
+                <span className="text-[10px] text-[#8888a0] font-medium">Techo (revisión)</span>
+              </div>
+            )}
+            {scanCandidates.some((c) => c.kind === 'land') && (
+              <>
+                <div className="text-[9px] text-[#555566] uppercase tracking-wider mt-2 pt-2 border-t border-white/[0.06] font-semibold">
+                  Terrenos
+                </div>
+                {(['comercial', 'agro', 'utility'] as const).map((tier) =>
+                  scanCandidates.some((c) => c.tier === tier) ? (
+                    <div key={tier} className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-sm border-2 border-dashed"
+                        style={{
+                          background: `${LAND_TIER_FILL[tier]}44`,
+                          borderColor: LAND_TIER_OUTLINE[tier],
+                        }}
+                      />
+                      <span className="text-[10px] text-[#8888a0] font-medium capitalize">{tier}</span>
+                    </div>
+                  ) : null
+                )}
+                {scanCandidates.some((c) => c.kind === 'land' && !c.tier) && (
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-sm border-2 border-dashed"
+                      style={{ background: `${LAND_DEFAULT_FILL}44`, borderColor: LAND_DEFAULT_OUTLINE }}
+                    />
+                    <span className="text-[10px] text-[#8888a0] font-medium">Terreno</span>
+                  </div>
+                )}
+              </>
             )}
           </motion.div>
         )}
