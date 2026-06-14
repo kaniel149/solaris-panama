@@ -63,3 +63,9 @@ body {
 *:focus-visible {
   @apply outline-none ring-2 ring-accent/50 ring-offset-2 ring-offset-space-950;
 }
+
+/* Scanner map: push MapLibre top-right controls (zoom/geolocate) below the
+   ScannerTopNav bar so they don't overlap the Legend + language switcher. */
+.scanner-map-wrap .maplibregl-ctrl-top-right {
+  margin-top: 64px;
+}

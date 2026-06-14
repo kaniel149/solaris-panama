@@ -976,7 +976,7 @@ export default function ScannerMap({
     : 'absolute bottom-4 right-3';
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full scanner-map-wrap">
       <Map
         ref={mapRef}
         {...viewState}
