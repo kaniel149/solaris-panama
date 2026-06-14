@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ScanLine, Building2, ChevronLeft, ChevronUp, ChevronDown,
@@ -24,13 +25,31 @@ import { calculateSolarFinancials } from '@/services/solarFinancials';
 import { getAttribution } from '@/lib/attribution';
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { EnrichedOwnerResult } from '@/types/enrichment';
+import {
+  fetchCandidates,
+  approveCandidate,
+  rejectCandidate,
+  applyLearnedFilters,
+  type ScanCandidate,
+  type CandidateRejectionReason,
+} from '@/services/candidateService';
 import ScannerMap from '@/components/scanner/ScannerMap';
+// Import ScannerMap's local ScanCandidate shape for the prop (different from service shape).
+import type { ScanCandidate as MapScanCandidate } from '@/components/scanner/ScannerMap';
 import ScanPanel from '@/components/scanner/ScanPanel';
 import BuildingDetail from '@/components/scanner/BuildingDetail';
 import BuildingMeasurements from '@/components/scanner/BuildingMeasurements';
 import MapSearchOverlay from '@/components/scanner/MapSearchOverlay';
 import ScanRequestsPanel from '@/components/scanner/ScanRequestsPanel';
 import BillUploadCard, { type BillPrefillData } from '@/components/scanner/BillUploadCard';
+import ScannerTopNav, {
+  type ScannerMode,
+  type ScannerTipo,
+  type GradeFilter,
+  type PanamaZone,
+} from '@/components/scanner/ScannerTopNav';
+import CandidateReviewPanel from '@/components/scanner/CandidateReviewPanel';
+import ScannerLegend from '@/components/scanner/ScannerLegend';
 
 // ===== TYPES =====
 
@@ -155,18 +174,18 @@ function BottomSheet({ snap, onSnapChange, children, peekContent }: BottomSheetP
   );
 }
 
-// ===== MODE SEGMENTED CONTROL =====
+// ===== MODE SEGMENTED CONTROL (internal legacy scan/draw/browse) =====
 
-type ScannerMode = 'scan' | 'draw' | 'browse';
+type InternalScannerMode = 'scan' | 'draw' | 'browse';
 
 interface ModeSegmentProps {
-  mode: ScannerMode;
-  onChange: (m: ScannerMode) => void;
+  mode: InternalScannerMode;
+  onChange: (m: InternalScannerMode) => void;
   hasBuildingSelected: boolean;
 }
 
 function ModeSegment({ mode, onChange, hasBuildingSelected }: ModeSegmentProps) {
-  const options: { key: ScannerMode; label: string; icon: React.ReactNode }[] = [
+  const options: { key: InternalScannerMode; label: string; icon: React.ReactNode }[] = [
     { key: 'scan', label: 'Escanear', icon: <ScanLine className="w-3.5 h-3.5" /> },
     { key: 'draw', label: 'Dibujar', icon: <PencilRuler className="w-3.5 h-3.5" /> },
     { key: 'browse', label: 'Explorar', icon: <Building2 className="w-3.5 h-3.5" /> },
@@ -203,8 +222,8 @@ function ModeSegment({ mode, onChange, hasBuildingSelected }: ModeSegmentProps) 
 // ===== MOBILE FAB STACK (top-right on mobile) =====
 
 interface MobileFABStackProps {
-  mode: ScannerMode;
-  onModeChange: (m: ScannerMode) => void;
+  mode: InternalScannerMode;
+  onModeChange: (m: InternalScannerMode) => void;
   isScanning: boolean;
   isQueuing: boolean;
   onScanViewport: () => void;
@@ -254,11 +273,49 @@ function MobileFABStack({
   );
 }
 
+// ===== SHAPE MAPPING =====
+
+/**
+ * Maps a candidateService.ScanCandidate (DB shape) to the local ScannerMap
+ * ScanCandidate shape.  The two types differ in field names:
+ *   service: latitude/longitude, estimated_kwp/estimated_mwp, geom: Record<string,unknown>|null
+ *   map:     lat/lng,           kwp/mwp,                      geom?: GeoJSON.Polygon
+ */
+function toMapCandidate(c: ScanCandidate): MapScanCandidate {
+  // candidateService stores geom as Record<string,unknown>|null (raw DB JSON).
+  // We need GeoJSON.Polygon for ScannerMap — cast after validating type field.
+  let geom: GeoJSON.Polygon | undefined;
+  if (
+    c.geom &&
+    typeof c.geom === 'object' &&
+    (c.geom as { type?: unknown }).type === 'Polygon'
+  ) {
+    // The PostGIS geom column returns valid GeoJSON; the cast is safe here.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    geom = c.geom as unknown as GeoJSON.Polygon;
+  }
+
+  return {
+    id: c.id,
+    kind: c.kind,
+    geom,
+    lat: c.latitude,
+    lng: c.longitude,
+    area_m2: c.area_m2,
+    kwp: c.estimated_kwp > 0 ? c.estimated_kwp : undefined,
+    mwp: c.estimated_mwp > 0 ? c.estimated_mwp : undefined,
+    tier: c.tier,
+    grade: c.grade,
+    address: c.address ?? undefined,
+  };
+}
+
 // ===== MAIN COMPONENT =====
 
 export default function RoofScannerPage() {
   const scanner = useRoofScanner();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const {
     buildings,
@@ -324,8 +381,8 @@ export default function RoofScannerPage() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // ===== SCANNER MODE =====
-  const [scannerMode, setScannerMode] = useState<ScannerMode>('scan');
+  // ===== INTERNAL SCANNER MODE (scan/draw/browse within building detail) =====
+  const [scannerMode, setScannerMode] = useState<InternalScannerMode>('scan');
 
   // When a building is deselected, exit draw mode
   useEffect(() => {
@@ -333,6 +390,61 @@ export default function RoofScannerPage() {
       setScannerMode('scan');
     }
   }, [selectedBuilding, scannerMode]);
+
+  // ===== TOP NAV STATE =====
+  /** tipo: which kind of candidates are active — roofs or land parcels */
+  const [tipo, setTipo] = useState<ScannerTipo>('roof');
+  /** navMode: top-level display mode from ScannerTopNav */
+  const [navMode, setNavMode] = useState<ScannerMode>('mapa');
+  /** grade filter: which grade letters to show */
+  const [gradeFilter, setGradeFilter] = useState<GradeFilter>('all');
+  /** active zone chip id */
+  const [activeZone, setActiveZone] = useState<string | undefined>(undefined);
+  /** legend popover open */
+  const [legendOpen, setLegendOpen] = useState(false);
+
+  // ===== CANDIDATE STATE =====
+  const [candidates, setCandidates] = useState<ScanCandidate[]>([]);
+  const [candidatesLoading, setCandidatesLoading] = useState(false);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | undefined>(undefined);
+
+  // ===== CANDIDATE FETCH =====
+  const loadCandidates = useCallback(async (kind: ScannerTipo) => {
+    setCandidatesLoading(true);
+    try {
+      const data = await fetchCandidates({ kind });
+      setCandidates(data);
+    } catch (err) {
+      console.error('[RoofScannerPage] fetchCandidates error:', err);
+    } finally {
+      setCandidatesLoading(false);
+    }
+  }, []);
+
+  // Fetch on mount and whenever tipo changes
+  useEffect(() => {
+    void loadCandidates(tipo);
+  }, [tipo, loadCandidates]);
+
+  // ===== GRADE-FILTERED CANDIDATES =====
+  const filteredCandidates = useMemo<ScanCandidate[]>(() => {
+    if (gradeFilter === 'all') return candidates;
+    return candidates.filter((c) => c.grade === gradeFilter);
+  }, [candidates, gradeFilter]);
+
+  /** Mapped to ScannerMap's local shape */
+  const mapCandidates = useMemo<MapScanCandidate[]>(
+    () => filteredCandidates.map(toMapCandidate),
+    [filteredCandidates]
+  );
+
+  // ===== COUNTS FOR TOP NAV =====
+  const candidateCounts = useMemo(() => {
+    const roofs = candidates.filter((c) => c.kind === 'roof').length;
+    const land = candidates.filter((c) => c.kind === 'land').length;
+    const pending = candidates.length; // all fetched are pending by default
+    return { roofs, land, pending };
+  }, [candidates]);
 
   // ===== MOBILE SHEET STATE =====
   const [sheetSnap, setSheetSnap] = useState<SheetSnap>('peek');
@@ -436,13 +548,26 @@ export default function RoofScannerPage() {
       coordinates: [[[minLng, minLat], [maxLng, minLat], [maxLng, maxLat], [minLng, maxLat], [minLng, minLat]]],
     };
 
-    const result = await queueScan(areaGeojson, bbox, {});
+    // Thread scan_type via the filters bag.
+    // The create_scan_request RPC passes filters to the cron as a jsonb column;
+    // the cron reads filters.scan_type to branch between roof and land logic.
+    // This avoids needing an RPC signature change — the filters bag is already
+    // forwarded verbatim to the cron worker.
+    const filters: Record<string, unknown> = { scan_type: tipo };
+
+    const result = await queueScan(areaGeojson, bbox, filters);
     if ('error' in result) {
       toast({ type: 'error', title: 'No se pudo encolar el escaneo', description: result.error });
       return;
     }
-    toast({ type: 'success', title: 'Escaneo encolado', description: 'Los leads aparecerán a medida que el worker procese el área.' });
-  }, [getActiveBounds, mapBounds, queueScan, toast]);
+    toast({
+      type: 'success',
+      title: 'Escaneo encolado',
+      description: tipo === 'land'
+        ? 'El cron buscará terrenos en el área seleccionada.'
+        : 'Los leads aparecerán a medida que el worker procese el área.',
+    });
+  }, [getActiveBounds, mapBounds, queueScan, toast, tipo]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
@@ -632,7 +757,7 @@ export default function RoofScannerPage() {
     [selectedBuilding, toast]
   );
 
-  // ===== P3: Candidate confirm / reject =====
+  // ===== P3: Candidate confirm / reject (legacy DetectedRoofCandidate flow) =====
   const handleConfirmCandidate = useCallback(
     async (index: number) => {
       const candidate = detectedCandidates[index];
@@ -655,6 +780,93 @@ export default function RoofScannerPage() {
   const handleRejectCandidate = useCallback((index: number) => {
     setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
   }, []);
+
+  // ===== CandidateReviewPanel handlers (scan_candidates table) =====
+
+  const handleApproveCandidate = useCallback(async (id: string) => {
+    try {
+      await approveCandidate(id);
+      toast({ type: 'success', title: 'Lead creado' });
+      void loadCandidates(tipo);
+    } catch (err) {
+      toast({
+        type: 'error',
+        title: 'Error al aprobar candidato',
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }, [tipo, loadCandidates, toast]);
+
+  const handleRejectCandidateFromPanel = useCallback(async (id: string, reason: CandidateRejectionReason) => {
+    try {
+      await rejectCandidate(id, reason);
+      void loadCandidates(tipo);
+    } catch (err) {
+      toast({
+        type: 'error',
+        title: 'Error al rechazar candidato',
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }, [tipo, loadCandidates, toast]);
+
+  const handleBulkApprove = useCallback(async (ids: string[]) => {
+    await Promise.allSettled(ids.map((id) => approveCandidate(id)));
+    toast({ type: 'success', title: `${ids.length} leads creados` });
+    void loadCandidates(tipo);
+  }, [tipo, loadCandidates, toast]);
+
+  const handleBulkReject = useCallback(async (ids: string[]) => {
+    await Promise.allSettled(ids.map((id) => rejectCandidate(id, 'other')));
+    void loadCandidates(tipo);
+  }, [tipo, loadCandidates]);
+
+  const handleReScan = useCallback(async () => {
+    try {
+      await applyLearnedFilters();
+      toast({ type: 'success', title: 'Filtros aplicados', description: 'Lista actualizada con filtros aprendidos.' });
+      void loadCandidates(tipo);
+    } catch (err) {
+      toast({
+        type: 'error',
+        title: 'Error al re-escanear',
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }, [tipo, loadCandidates, toast]);
+
+  const handleFocusCandidate = useCallback((candidate: ScanCandidate) => {
+    setSelectedCandidateId(candidate.id);
+    setMapCenter([candidate.longitude, candidate.latitude]);
+    setMapZoom(17);
+  }, []);
+
+  // ===== TOP NAV HANDLERS =====
+
+  const handleTipo = useCallback((t: ScannerTipo) => {
+    setTipo(t);
+    // loadCandidates fires via the useEffect above on tipo change
+  }, []);
+
+  const handleMode = useCallback((m: ScannerMode) => {
+    if (m === 'panel') {
+      navigate('/dashboard');
+      return;
+    }
+    if (m === 'leads') {
+      navigate('/leads');
+      return;
+    }
+    setNavMode(m);
+  }, [navigate]);
+
+  const handleZone = useCallback((zone: PanamaZone) => {
+    setActiveZone(zone.id);
+    setMapCenter(zone.center);
+    setMapZoom(zone.zoom);
+  }, []);
+
+  // ===== DERIVED =====
 
   const selectedBuildingCenter = useMemo(
     () => selectedBuilding
@@ -721,6 +933,22 @@ export default function RoofScannerPage() {
     </div>
   );
 
+  // ===== CANDIDATE REVIEW PANEL (shared JSX) =====
+  const candidateReviewPanel = (
+    <CandidateReviewPanel
+      candidates={filteredCandidates}
+      onApprove={handleApproveCandidate}
+      onReject={handleRejectCandidateFromPanel}
+      onBulkApprove={handleBulkApprove}
+      onBulkReject={handleBulkReject}
+      onReScan={handleReScan}
+      onFocus={handleFocusCandidate}
+      selectedId={selectedCandidateId}
+      loading={candidatesLoading}
+      kind={tipo}
+    />
+  );
+
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden bg-[#0a0a0f]">
 
@@ -746,8 +974,34 @@ export default function RoofScannerPage() {
           parcelBoundary={parcelBoundary}
           panelRoofPolygon={drawnRoofPolygon}
           capasPosition="bottom-right"
+          scanCandidates={mapCandidates}
+          selectedCandidateId={selectedCandidateId}
+          onCandidateClick={setSelectedCandidateId}
+          tipo={tipo}
         />
       </div>
+
+      {/* ===== SCANNER TOP NAV ===== */}
+      {/* Sits above the map at z-20; ScannerMap controls are at z-10/z-20 */}
+      <ScannerTopNav
+        tipo={tipo}
+        onTipo={handleTipo}
+        mode={navMode}
+        onMode={handleMode}
+        zone={activeZone}
+        onZone={handleZone}
+        gradeFilter={gradeFilter}
+        onGrade={setGradeFilter}
+        onOpenLegend={() => setLegendOpen(true)}
+        counts={candidateCounts}
+      />
+
+      {/* ===== LEGEND POPOVER ===== */}
+      {/* Floats top-right, below the nav bar — ScannerLegend uses absolute top-[60px] right-3 */}
+      <ScannerLegend
+        open={legendOpen}
+        onClose={() => setLegendOpen(false)}
+      />
 
       {/* ===== SEARCH OVERLAY — desktop only (mobile has its own triggered overlay) ===== */}
       {!isMobile && (
@@ -757,7 +1011,7 @@ export default function RoofScannerPage() {
       {/* ===== ASYNC SCAN STATUS ===== */}
       <ScanRequestsPanel requests={scanRequests} />
 
-      {/* ===== DESKTOP LAYOUT (≥768px) ===== */}
+      {/* ===== DESKTOP LAYOUT (>=768px) ===== */}
       {!isMobile && (
         <>
           {/* LEFT PANEL — hover-activated */}
@@ -771,26 +1025,29 @@ export default function RoofScannerPage() {
               transition={PANEL_SPRING}
               className="h-full relative"
             >
-              <ScanPanel
-                buildings={buildings}
-                selectedBuildingId={selectedBuildingId}
-                isScanning={isScanning}
-                stats={stats}
-                onSearch={handleSearch}
-                onScanViewport={handleScanViewport}
-                onBuildingSelect={handleBuildingSelect}
-                onFilterChange={handleFilterChange}
-                zones={zones}
-                selectedZoneId={areaSelectedZone?.id ?? null}
-                onSelectZone={handleSelectZone}
-                onClearZone={clearZone}
-                onSaveAllAsLeads={handleSaveAllAsLeads}
-                onEnrichAll={handleEnrichAll}
-                onAnalyzeTop={handleAnalyzeTop}
-                isSavingLeads={isSavingLeads}
-                isEnriching={isEnriching}
-                enrichProgress={enrichProgress}
-              />
+              {/* Extra top padding so the panel content clears the ScannerTopNav (~56px) */}
+              <div className="pt-14">
+                <ScanPanel
+                  buildings={buildings}
+                  selectedBuildingId={selectedBuildingId}
+                  isScanning={isScanning}
+                  stats={stats}
+                  onSearch={handleSearch}
+                  onScanViewport={handleScanViewport}
+                  onBuildingSelect={handleBuildingSelect}
+                  onFilterChange={handleFilterChange}
+                  zones={zones}
+                  selectedZoneId={areaSelectedZone?.id ?? null}
+                  onSelectZone={handleSelectZone}
+                  onClearZone={clearZone}
+                  onSaveAllAsLeads={handleSaveAllAsLeads}
+                  onEnrichAll={handleEnrichAll}
+                  onAnalyzeTop={handleAnalyzeTop}
+                  isSavingLeads={isSavingLeads}
+                  isEnriching={isEnriching}
+                  enrichProgress={enrichProgress}
+                />
+              </div>
 
               {/* Bill OCR card */}
               <div className="px-2 pb-2">
@@ -825,7 +1082,7 @@ export default function RoofScannerPage() {
           {/* MEASUREMENT PANEL */}
           <AnimatePresence>
             {measureMode && selectedBuilding && (
-              <div className="absolute right-[440px] top-3 z-30">
+              <div className="absolute right-[440px] top-16 z-30">
                 <BuildingMeasurements
                   building={selectedBuilding}
                   onFullAnalysis={!selectedBuilding.analyzed ? handleAnalyze : undefined}
@@ -835,71 +1092,88 @@ export default function RoofScannerPage() {
             )}
           </AnimatePresence>
 
-          {/* RIGHT PANEL — building detail */}
-          <AnimatePresence>
-            {selectedBuilding && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute right-0 top-0 bottom-0 z-30"
-                onMouseEnter={openRight}
-                onMouseLeave={closeRight}
-              >
+          {/* RIGHT PANEL — building detail OR candidate review (Escáner mode) */}
+          {navMode === 'escaner' && !selectedBuilding ? (
+            /* Candidate review panel — full-height right panel */
+            <motion.div
+              initial={{ opacity: 0, x: 340 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 340 }}
+              transition={PANEL_SPRING}
+              className="absolute right-0 top-14 bottom-0 z-30 w-[340px] overflow-hidden"
+              onMouseEnter={openRight}
+              onMouseLeave={closeRight}
+            >
+              <div className="h-full overflow-y-auto overscroll-contain">
+                {candidateReviewPanel}
+              </div>
+            </motion.div>
+          ) : (
+            <AnimatePresence>
+              {selectedBuilding && (
                 <motion.div
-                  animate={{ x: rightOpen ? 0 : 380 }}
-                  transition={PANEL_SPRING}
-                  className="h-full relative"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute right-0 top-0 bottom-0 z-30"
+                  onMouseEnter={openRight}
+                  onMouseLeave={closeRight}
                 >
-                  {/* Collapsed tab */}
                   <motion.div
-                    animate={{ opacity: rightOpen ? 0 : 1, pointerEvents: rightOpen ? 'none' : 'auto' }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-3 left-0 -translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-l-xl bg-[#12121a]/90 backdrop-blur-xl border border-r-0 border-white/[0.06] cursor-pointer"
-                    aria-label="Abrir detalle del edificio"
+                    animate={{ x: rightOpen ? 0 : 380 }}
+                    transition={PANEL_SPRING}
+                    className="h-full relative"
                   >
-                    <Building2 className="w-4 h-4" style={{ color: scoreColor }} />
-                    <span
-                      className="text-[10px] font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1"
-                      style={{ color: scoreColor, backgroundColor: `${scoreColor}15` }}
+                    {/* Collapsed tab */}
+                    <motion.div
+                      animate={{ opacity: rightOpen ? 0 : 1, pointerEvents: rightOpen ? 'none' : 'auto' }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-3 left-0 -translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-l-xl bg-[#12121a]/90 backdrop-blur-xl border border-r-0 border-white/[0.06] cursor-pointer"
+                      aria-label="Abrir detalle del edificio"
                     >
-                      {selectedScore}
-                    </span>
-                    <ChevronLeft className="w-3 h-3 text-[#555566]" />
-                  </motion.div>
-
-                  <BuildingDetail
-                    building={selectedBuilding}
-                    isAnalyzing={isAnalyzing}
-                    onClose={handleCloseDetail}
-                    onAnalyze={handleAnalyze}
-                    onSaveAsLead={handleSaveAsLead}
-                    isLeadSaved={isSelectedLeadSaved}
-                    savedLeadId={savedLeadId}
-                    monthlyKwhOverride={billPrefillKwh}
-                  />
-
-                  {/* Registro Público / parcel info */}
-                  <div className="absolute left-3 right-3 bottom-3 z-10">
-                    {cadastre?.fincaNumber ? (
-                      <a
-                        href={cadastre.registroPublicoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                      <Building2 className="w-4 h-4" style={{ color: scoreColor }} />
+                      <span
+                        className="text-[10px] font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1"
+                        style={{ color: scoreColor, backgroundColor: `${scoreColor}15` }}
                       >
-                        Ver finca {cadastre.fincaNumber} en Registro Público
-                      </a>
-                    ) : (
-                      <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
-                        Sin finca registrada — posible Derecho Posesorio.
-                      </p>
-                    )}
-                  </div>
+                        {selectedScore}
+                      </span>
+                      <ChevronLeft className="w-3 h-3 text-[#555566]" />
+                    </motion.div>
+
+                    <BuildingDetail
+                      building={selectedBuilding}
+                      isAnalyzing={isAnalyzing}
+                      onClose={handleCloseDetail}
+                      onAnalyze={handleAnalyze}
+                      onSaveAsLead={handleSaveAsLead}
+                      isLeadSaved={isSelectedLeadSaved}
+                      savedLeadId={savedLeadId}
+                      monthlyKwhOverride={billPrefillKwh}
+                    />
+
+                    {/* Registro Público / parcel info */}
+                    <div className="absolute left-3 right-3 bottom-3 z-10">
+                      {cadastre?.fincaNumber ? (
+                        <a
+                          href={cadastre.registroPublicoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                        >
+                          Ver finca {cadastre.fincaNumber} en Registro Público
+                        </a>
+                      ) : (
+                        <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
+                          Sin finca registrada — posible Derecho Posesorio.
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          )}
 
           {/* DESKTOP: draw toolbar — bottom center */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 p-1.5 rounded-2xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]">
@@ -949,8 +1223,10 @@ export default function RoofScannerPage() {
       {isMobile && (
         <>
           {/* Mobile: top-right FAB stack (search + scan) — above map nav controls */}
-          <div className="absolute top-3 right-3 z-20 flex flex-col gap-2"
-            style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+          {/* Pushed down by the top nav bar (~56px + 3 gap = ~60px offset) */}
+          <div
+            className="absolute right-3 z-20 flex flex-col gap-2"
+            style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}
           >
             <MobileFABStack
               mode={scannerMode}
@@ -977,7 +1253,7 @@ export default function RoofScannerPage() {
                 exit={{ opacity: 0, y: -8 }}
                 className="absolute z-30"
                 style={{
-                  top: `calc(0.75rem + env(safe-area-inset-top, 0px))`,
+                  top: `calc(64px + env(safe-area-inset-top, 0px))`,
                   left: '0.75rem',
                   right: '4.5rem',
                 }}
@@ -1027,8 +1303,13 @@ export default function RoofScannerPage() {
                   )}
                 </div>
               </div>
+            ) : navMode === 'escaner' ? (
+              /* Escáner mode: show candidate review queue in the sheet */
+              <div className="pb-safe">
+                {candidateReviewPanel}
+              </div>
             ) : (
-              /* Scan results / ScanPanel content */
+              /* Mapa mode: Scan results / ScanPanel content */
               <div className="pb-safe">
                 <ScanPanel
                   buildings={buildings}
