@@ -467,16 +467,8 @@ export default function RoofScannerPage() {
   // ===== DESKTOP PANEL STATE =====
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
-  const leftTimer = useRef<ReturnType<typeof setTimeout>>();
   const rightTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  const openLeft = useCallback(() => {
-    clearTimeout(leftTimer.current);
-    setLeftOpen(true);
-  }, []);
-  const closeLeft = useCallback(() => {
-    leftTimer.current = setTimeout(() => setLeftOpen(false), 400);
-  }, []);
   const openRight = useCallback(() => {
     clearTimeout(rightTimer.current);
     setRightOpen(true);
@@ -1053,11 +1045,9 @@ export default function RoofScannerPage() {
       {/* ===== DESKTOP LAYOUT (>=768px) ===== */}
       {!isMobile && (
         <>
-          {/* LEFT PANEL — hover-activated */}
+          {/* LEFT PANEL — click-toggled (no hover auto-open) */}
           <div
             className="absolute left-0 top-0 bottom-0 z-30"
-            onMouseEnter={openLeft}
-            onMouseLeave={closeLeft}
           >
             <motion.div
               animate={{ x: leftOpen ? 0 : -340 }}
@@ -1100,12 +1090,12 @@ export default function RoofScannerPage() {
                 <BillUploadCard onUseBillData={handleBillData} />
               </div>
 
-              {/* Desktop collapse tab — sticks out right when panel is closed */}
-              <motion.div
-                animate={{ opacity: leftOpen ? 0 : 1, pointerEvents: leftOpen ? 'none' : 'auto' }}
-                transition={{ duration: 0.15 }}
-                className="absolute top-20 right-0 translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer"
-                aria-label="Abrir panel de escaneo"
+              {/* Desktop toggle tab — always visible; click to open/close */}
+              <button
+                onClick={() => setLeftOpen((o) => !o)}
+                className="absolute top-20 right-0 translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer hover:bg-[#1a1a24]/90 transition-colors"
+                aria-label={leftOpen ? 'Cerrar panel de escaneo' : 'Abrir panel de escaneo'}
+                title={leftOpen ? 'Cerrar panel' : 'Abrir panel'}
               >
                 <ScanLine className="w-4 h-4 text-[#00ffcc]" />
                 {buildings.length > 0 && (
@@ -1113,8 +1103,8 @@ export default function RoofScannerPage() {
                     {buildings.length}
                   </span>
                 )}
-                <ChevronLeft className="w-3 h-3 text-[#555566] rotate-180" />
-              </motion.div>
+                <ChevronLeft className={`w-3 h-3 text-[#555566] transition-transform ${leftOpen ? '' : 'rotate-180'}`} />
+              </button>
             </motion.div>
           </div>
 
