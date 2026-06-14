@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { mainNavItems, bottomNavItems } from '../../config/navigation';
+import { navGroups, bottomNavItems } from '../../config/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
@@ -29,8 +29,6 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ open, onClose }) => {
     navigate(path);
     onClose();
   };
-
-  const allItems = [...mainNavItems, ...bottomNavItems];
 
   return (
     <AnimatePresence>
@@ -72,40 +70,83 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ open, onClose }) => {
               </button>
             </div>
 
-            {/* Nav items */}
+            {/* Nav items — grouped */}
             <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-              {allItems.map((item) => {
-                const active = isActive(item.path);
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.key}
-                    onClick={() => handleNav(item.path)}
-                    className={cn(
-                      'w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 relative',
-                      active
-                        ? 'bg-[#D4A843]/10 text-[#D4A843]'
-                        : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
-                    )}
-                  >
-                    {active && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]" />
-                    )}
-                    <Icon
-                      className={cn(
-                        'w-5 h-5 shrink-0',
-                        active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]'
-                      )}
-                    />
-                    <span className="text-sm font-medium">{t(item.labelKey)}</span>
-                    {item.badge && item.badge > 0 && (
-                      <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
-                        {item.badge}
+              {navGroups.map((group, groupIndex) => (
+                <div key={group.key}>
+                  {/* Group header — shown between groups (not before the first) */}
+                  {groupIndex > 0 && (
+                    <div className="pt-3 pb-2 px-0">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-[#555566]">
+                        {t(group.labelKey)}
                       </span>
-                    )}
-                  </button>
-                );
-              })}
+                    </div>
+                  )}
+
+                  {/* Group items */}
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const active = isActive(item.path);
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={item.key}
+                          onClick={() => handleNav(item.path)}
+                          className={cn(
+                            'w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 relative',
+                            active
+                              ? 'bg-[#D4A843]/10 text-[#D4A843]'
+                              : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+                          )}
+                        >
+                          {active && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]" />
+                          )}
+                          <Icon
+                            className={cn(
+                              'w-5 h-5 shrink-0',
+                              active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]'
+                            )}
+                          />
+                          <span className="text-sm font-medium">{t(item.labelKey)}</span>
+                          {item.badge && item.badge > 0 && (
+                            <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {/* Divider before settings */}
+              <div className="pt-1">
+                <div className="w-full h-px bg-white/[0.06] mb-2" />
+                {bottomNavItems.map((item) => {
+                  const active = isActive(item.path);
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => handleNav(item.path)}
+                      className={cn(
+                        'w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 relative',
+                        active
+                          ? 'bg-[#D4A843]/10 text-[#D4A843]'
+                          : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+                      )}
+                    >
+                      {active && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]" />
+                      )}
+                      <Icon className="w-5 h-5 shrink-0" />
+                      <span className="text-sm font-medium">{t(item.labelKey)}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </nav>
 
             {/* User info at bottom */}

@@ -3,12 +3,75 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { mainNavItems, toolsNavItems, bottomNavItems } from '../../config/navigation';
+import { navGroups, bottomNavItems } from '../../config/navigation';
+import type { NavItem } from '../../config/navigation';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
 
 const SIDEBAR_KEY = 'solaris-sidebar-collapsed';
+
+// Shared nav button — used in both sidebar groups and mobile drawer
+export function NavButton({
+  item,
+  active,
+  collapsed,
+  onClick,
+}: {
+  item: NavItem;
+  active: boolean;
+  collapsed: boolean;
+  onClick: () => void;
+}) {
+  const { t } = useTranslation();
+  const Icon = item.icon;
+
+  return (
+    <button
+      key={item.key}
+      onClick={onClick}
+      title={collapsed ? t(item.labelKey) : undefined}
+      className={cn(
+        'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative',
+        active
+          ? 'bg-[#D4A843]/10 text-[#D4A843]'
+          : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+      )}
+    >
+      {active && (
+        <motion.div
+          layoutId="sidebar-active"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]"
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        />
+      )}
+      <Icon
+        className={cn(
+          'w-5 h-5 shrink-0',
+          active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]'
+        )}
+      />
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: 'auto' }}
+            exit={{ opacity: 0, width: 0 }}
+            transition={{ duration: 0.15 }}
+            className="text-sm font-medium whitespace-nowrap overflow-hidden"
+          >
+            {t(item.labelKey)}
+          </motion.span>
+        )}
+      </AnimatePresence>
+      {!collapsed && item.badge && item.badge > 0 && (
+        <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+          {item.badge}
+        </span>
+      )}
+    </button>
+  );
+}
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(() => {
@@ -61,113 +124,47 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Main nav */}
+      {/* Nav groups */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
-        {mainNavItems.map((item) => {
-          const active = isActive(item.path);
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.key}
-              onClick={() => navigate(item.path)}
-              title={collapsed ? t(item.labelKey) : undefined}
-              className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative',
-                active
-                  ? 'bg-[#D4A843]/10 text-[#D4A843]'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
-              )}
-            >
-              {active && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
-              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]')} />
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="text-sm font-medium whitespace-nowrap overflow-hidden"
-                  >
-                    {t(item.labelKey)}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-              {!collapsed && item.badge && item.badge > 0 && (
-                <span className="ml-auto text-xs bg-[#0B3D2E] text-white rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
-
-        {/* Tools section divider */}
-        <div className="pt-3 pb-1 px-3">
-          <AnimatePresence>
-            {!collapsed ? (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-[10px] font-semibold uppercase tracking-widest text-[#555566]"
-              >
-                {t('nav.tools')}
-              </motion.span>
-            ) : (
-              <div className="w-full h-px bg-white/[0.06]" />
+        {navGroups.map((group, groupIndex) => (
+          <div key={group.key}>
+            {/* Group divider — shown between groups (not before the first) */}
+            {groupIndex > 0 && (
+              <div className="pt-3 pb-1 px-3">
+                <AnimatePresence>
+                  {!collapsed ? (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="text-[10px] font-semibold uppercase tracking-widest text-[#555566]"
+                    >
+                      {t(group.labelKey)}
+                    </motion.span>
+                  ) : (
+                    <div className="w-full h-px bg-white/[0.06]" />
+                  )}
+                </AnimatePresence>
+              </div>
             )}
-          </AnimatePresence>
-        </div>
 
-        {toolsNavItems.map((item) => {
-          const active = isActive(item.path);
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.key}
-              onClick={() => navigate(item.path)}
-              title={collapsed ? t(item.labelKey) : undefined}
-              className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative',
-                active
-                  ? 'bg-[#D4A843]/10 text-[#D4A843]'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
-              )}
-            >
-              {active && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#D4A843]"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            {/* Group items */}
+            <div className="space-y-1">
+              {group.items.map((item) => (
+                <NavButton
+                  key={item.key}
+                  item={item}
+                  active={isActive(item.path)}
+                  collapsed={collapsed}
+                  onClick={() => navigate(item.path)}
                 />
-              )}
-              <Icon className={cn('w-5 h-5 shrink-0', active && 'drop-shadow-[0_0_8px_rgba(212,168,67,0.5)]')} />
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="text-sm font-medium whitespace-nowrap overflow-hidden"
-                  >
-                    {t(item.labelKey)}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
-          );
-        })}
+              ))}
+            </div>
+          </div>
+        ))}
       </nav>
 
-      {/* Bottom nav */}
+      {/* Bottom nav (settings) */}
       <div className="py-3 px-2 border-t border-white/[0.06] space-y-1">
         {bottomNavItems.map((item) => {
           const active = isActive(item.path);
@@ -212,7 +209,7 @@ const Sidebar: React.FC = () => {
           ) : (
             <>
               <ChevronLeft className="w-5 h-5 shrink-0" />
-              <span className="text-sm font-medium">Collapse</span>
+              <span className="text-sm font-medium">Colapsar</span>
             </>
           )}
         </button>
