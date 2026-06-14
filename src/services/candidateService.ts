@@ -76,29 +76,40 @@ export async function fetchCandidates(
 ): Promise<ScanCandidate[]> {
   const { kind, status = 'pending', bbox } = opts;
 
-  let query = supabase
-    .from('scan_candidates')
-    .select('*')
-    .eq('status', status)
-    .order('score', { ascending: false });
+  // Paginate past Supabase's 1000-row cap so counts/badges stay accurate when
+  // there are thousands of candidates (e.g. a city-wide roof scan).
+  const PAGE = 1000;
+  const all: ScanCandidate[] = [];
+  for (let from = 0; ; from += PAGE) {
+    let query = supabase
+      .from('scan_candidates')
+      .select('*')
+      .eq('status', status)
+      .order('score', { ascending: false })
+      .order('id', { ascending: true })
+      .range(from, from + PAGE - 1);
 
-  if (kind) {
-    query = query.eq('kind', kind);
+    if (kind) {
+      query = query.eq('kind', kind);
+    }
+
+    if (bbox) {
+      const [minLng, minLat, maxLng, maxLat] = bbox;
+      query = query
+        .gte('longitude', minLng)
+        .lte('longitude', maxLng)
+        .gte('latitude', minLat)
+        .lte('latitude', maxLat);
+    }
+
+    const { data, error } = await query;
+    if (error) throw new Error(`fetchCandidates failed: ${error.message}`);
+    const rows = (data ?? []) as ScanCandidate[];
+    all.push(...rows);
+    if (rows.length < PAGE || from >= 20000) break;
   }
 
-  if (bbox) {
-    const [minLng, minLat, maxLng, maxLat] = bbox;
-    query = query
-      .gte('longitude', minLng)
-      .lte('longitude', maxLng)
-      .gte('latitude', minLat)
-      .lte('latitude', maxLat);
-  }
-
-  const { data, error } = await query;
-
-  if (error) throw new Error(`fetchCandidates failed: ${error.message}`);
-  return (data ?? []) as ScanCandidate[];
+  return all;
 }
 
 // ===== APPROVE =====
