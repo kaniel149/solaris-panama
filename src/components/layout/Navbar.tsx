@@ -4,10 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Bell, Menu, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mainNavItems } from '../../config/navigation';
+import { navGroups, bottomNavItems } from '../../config/navigation';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
   classes.filter(Boolean).join(' ');
+
+// Flat list of ALL nav items across every group (for page-title lookup)
+const allNavItems = [
+  ...navGroups.flatMap((g) => g.items),
+  ...bottomNavItems,
+];
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -20,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const { t, i18n } = useTranslation();
   const { user, signOut } = useAuth();
 
-  const currentNav = mainNavItems.find((item) =>
+  const currentNav = allNavItems.find((item) =>
     item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path)
   );
   const pageTitle = currentNav ? t(currentNav.labelKey) : '';

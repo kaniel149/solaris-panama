@@ -11,6 +11,11 @@
     "scanner": "Roof Scanner",
     "proposalGenerator": "AI Proposals",
     "leads": "Lead Pipeline",
+    "crmLeads": "CRM Leads",
+    "mapaComercial": "Commercial Map",
+    "mapaSolar": "Solar Map",
+    "groupCrm": "CRM",
+    "groupMapsTools": "Maps & Tools",
     "settings": "Settings",
     "logout": "Logout"
   },

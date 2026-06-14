@@ -11,6 +11,11 @@
     "scanner": "סורק גגות",
     "proposalGenerator": "הצעות AI",
     "leads": "לידים",
+    "crmLeads": "לידים CRM",
+    "mapaComercial": "מפה מסחרית",
+    "mapaSolar": "מפה סולארית",
+    "groupCrm": "CRM",
+    "groupMapsTools": "מפות וכלים",
     "settings": "הגדרות",
     "logout": "התנתק"
   },

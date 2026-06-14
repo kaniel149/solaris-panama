@@ -11,6 +11,11 @@
     "scanner": "Escaner de Techos",
     "proposalGenerator": "Propuestas IA",
     "leads": "Pipeline de Prospectos",
+    "crmLeads": "Leads CRM",
+    "mapaComercial": "Mapa Comercial",
+    "mapaSolar": "Mapa Solar",
+    "groupCrm": "CRM",
+    "groupMapsTools": "Mapas y Herramientas",
     "settings": "Configuracion",
     "logout": "Cerrar Sesion"
   },

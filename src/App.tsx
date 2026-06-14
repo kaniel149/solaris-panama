@@ -32,6 +32,7 @@ const ProposalGeneratorPage = lazy(() => import('@/pages/ProposalGeneratorPage')
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const LeadsPage = lazy(() => import('@/pages/LeadsPage'));
 const LeadDetailPage = lazy(() => import('@/pages/LeadDetailPage'));
+const MapaComercialPage = lazy(() => import('@/pages/MapaComercialPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 // Loading fallback
@@ -190,6 +191,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageLoader />}>
                     <SettingsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/mapa-comercial"
+                element={
+                  <Suspense fallback={<PageLoader />}>
+                    <MapaComercialPage />
                   </Suspense>
                 }
               />
