@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/", "destination": "/app.html" },
     { "source": "/landing", "destination": "/app.html" },
     { "source": "/dashboard", "destination": "/app.html" },
     { "source": "/login", "destination": "/app.html" },
@@ -16,7 +17,12 @@
     { "source": "/mapa-solar", "destination": "/app.html" },
     { "source": "/mapa-comercial", "destination": "/app.html" },
     { "source": "/lp/:path*", "destination": "/app.html" },
-    { "source": "/azuero", "destination": "/app.html" }
+    { "source": "/azuero", "destination": "/app.html" },
+    { "source": "/nosotros", "destination": "/app.html" },
+    { "source": "/servicios", "destination": "/app.html" },
+    { "source": "/proyectos", "destination": "/app.html" },
+    { "source": "/ubicaciones", "destination": "/app.html" },
+    { "source": "/ubicaciones/:path*", "destination": "/app.html" }
   ],
   "crons": [
     {

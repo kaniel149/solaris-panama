@@ -1,10 +1,10 @@
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { motion, type Variants } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   ChevronRight,
   Phone,
-  MessageCircle,
   CheckCircle2,
   Shield,
   Users,
@@ -12,476 +12,458 @@ import {
   MapPin,
   Zap,
   Heart,
+  Sun,
 } from 'lucide-react';
+import { Button, SectionHeader } from '../components/marketing';
+import {
+  SEOHead,
+  organizationSchema,
+  webPageSchema,
+  breadcrumbSchema,
+  pageBreadcrumb,
+  BASE_URL,
+} from '../components/seo';
 
 const WHATSAPP_NUMBER = '50765831822';
+const WHATSAPP_PREFILL =
+  'Hola Solaris, quiero conocer más sobre sus servicios de energía solar.';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.1, ease: 'easeOut' },
-  }),
+// ─── Motion variants ─────────────────────────────────────────────────────────
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
+const staggerContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+const revealViewport = { once: true, margin: '-80px' } as const;
 
+// ─── Content data (Spanish — preserved Panama facts) ─────────────────────────
 const valores = [
   {
-    icon: <Zap className="w-6 h-6" />,
+    icon: Zap,
     titulo: 'Velocidad',
-    desc: 'Propuesta en 24 horas. Instalacion en un dia. Sin burocracia.',
+    desc: 'Propuesta en 24 horas. Instalación en un día. Sin burocracia.',
   },
   {
-    icon: <Shield className="w-6 h-6" />,
+    icon: Shield,
     titulo: 'Transparencia',
-    desc: 'Numeros reales, garantias claras. Sin letra pequena ni sorpresas.',
+    desc: 'Números reales, garantías claras. Sin letra pequeña ni sorpresas.',
   },
   {
-    icon: <Heart className="w-6 h-6" />,
-    titulo: 'Compromiso Local',
-    desc: 'Somos de Azuero. Conocemos la peninsula, el clima y las necesidades de cada familia.',
+    icon: Heart,
+    titulo: 'Compromiso local',
+    desc: 'Somos de Azuero. Conocemos la península, el clima y las necesidades de cada familia.',
   },
   {
-    icon: <Award className="w-6 h-6" />,
-    titulo: 'Calidad Premium',
-    desc: 'Solo paneles Tier-1 certificados. Inversores con 10-25 anos de garantia.',
+    icon: Award,
+    titulo: 'Calidad premium',
+    desc: 'Solo paneles Tier-1 certificados. Inversores con 10-25 años de garantía.',
   },
 ];
 
 const hitos = [
-  { año: '2019', evento: 'Fundacion de Solaris Panama en Chitre, Herrera.' },
-  { año: '2021', evento: 'Primeras 50 instalaciones residenciales en la Peninsula de Azuero.' },
-  { año: '2023', evento: 'Expansion a proyectos comerciales. Primer sistema de 100+ kWp instalado.' },
-  { año: '2024', evento: 'Mas de 150 instalaciones completadas. Certificacion bajo Ley 417.' },
-  { año: '2025', evento: 'Lanzamiento de plataforma digital de monitoreo para clientes.' },
-  { año: '2026', evento: 'Expansion a toda la region de Azuero. ROI promedio de clientes: 3.8 anos.' },
+  { anio: '2019', evento: 'Fundación de Solaris Panamá en Chitré, Herrera.' },
+  { anio: '2021', evento: 'Primeras 50 instalaciones residenciales en la Península de Azuero.' },
+  { anio: '2023', evento: 'Expansión a proyectos comerciales. Primer sistema de 100+ kWp instalado.' },
+  { anio: '2024', evento: 'Más de 150 instalaciones completadas. Certificación bajo Ley 417.' },
+  { anio: '2025', evento: 'Lanzamiento de plataforma digital de monitoreo para clientes.' },
+  { anio: '2026', evento: 'Expansión a toda la región de Azuero. ROI promedio de clientes: 3.8 años.' },
 ];
 
+const stats = [
+  { value: '150+', label: 'Instalaciones completadas' },
+  { value: '95%', label: 'Clientes satisfechos' },
+  { value: '7 años', label: 'Experiencia en Azuero' },
+  { value: '$2,940', label: 'Ahorro anual promedio' },
+];
+
+const equipoTags = [
+  'Ingenieros certificados',
+  'Técnicos locales',
+  'Asesores bilingües',
+  'Soporte post-instalación',
+];
+
+// ─── Shared marketing chrome ─────────────────────────────────────────────────
+
+function MarketingNav() {
+  const { t } = useTranslation();
+  return (
+    <header className="sticky top-0 z-40 border-b border-grove/10 bg-shell/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <Link to="/" className="flex items-center gap-3">
+          <img src="/solaris-icon.png" alt="Solaris Panamá" className="h-9 w-9" />
+          <span className="font-display text-xl tracking-wide text-ink">
+            SOLARIS <span className="text-base text-bustan-lagoon/80">Panamá</span>
+          </span>
+        </Link>
+        <nav className="hidden items-center gap-1 md:flex">
+          <Link to="/nosotros" className="rounded-lg px-3 py-2 text-sm font-semibold text-ink">
+            {t('marketing.nav.about')}
+          </Link>
+          <Link to="/servicios" className="rounded-lg px-3 py-2 text-sm text-ink/60 transition-colors hover:text-ink">
+            {t('marketing.nav.services')}
+          </Link>
+          <Link to="/proyectos" className="rounded-lg px-3 py-2 text-sm text-ink/60 transition-colors hover:text-ink">
+            {t('marketing.nav.projects')}
+          </Link>
+        </nav>
+        <div className="flex items-center gap-3">
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden items-center gap-2 text-sm text-ink/60 transition-colors hover:text-ink sm:flex"
+          >
+            <Phone className="h-4 w-4" />
+            507-6583-1822
+          </a>
+          <Button to="/landing" size="sm" icon={null}>
+            {t('marketing.nav.getQuote')}
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function MarketingFooter() {
+  const { t } = useTranslation();
+  return (
+    <footer className="relative z-10 border-t border-grove/10 px-6 py-10">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-xs text-ink/40 sm:flex-row">
+        <div className="flex items-center gap-3">
+          <img src="/solaris-icon.png" alt="Solaris Panamá" className="h-5 w-5 opacity-70" />
+          <span>{t('marketing.footer.tagline')}</span>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link to="/servicios" className="transition-colors hover:text-ink">
+            {t('marketing.nav.services')}
+          </Link>
+          <Link to="/proyectos" className="transition-colors hover:text-ink">
+            {t('marketing.nav.projects')}
+          </Link>
+          <Link to="/login" className="transition-colors hover:text-ink">
+            {t('marketing.nav.crm')}
+          </Link>
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-ink"
+          >
+            507-6583-1822
+          </a>
+          <span>{t('marketing.footer.copyright')}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
+
 export default function NosotrosPage() {
-  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const schemas = [
+    organizationSchema(),
+    webPageSchema({
+      name: t('marketing.seo.aboutTitle'),
+      description: t('marketing.seo.aboutDescription'),
+      url: `${BASE_URL}/nosotros`,
+    }),
+    breadcrumbSchema(pageBreadcrumb('Nosotros', '/nosotros')),
+  ];
 
   return (
-    <div className="min-h-screen text-[#FEFDFB] overflow-x-hidden" style={{ background: '#071F17' }}>
-      {/* Background */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(212,168,67,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.2) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full bg-[#0B3D2E]/40 blur-[160px]" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-[#D4A843]/[0.06] blur-[120px]" />
+    <div className="bustan-home min-h-screen overflow-x-hidden">
+      <SEOHead
+        title={t('marketing.seo.aboutTitle')}
+        description={t('marketing.seo.aboutDescription')}
+        path="/nosotros"
+        schema={schemas}
+      />
+
+      <MarketingNav />
+
+      {/* Breadcrumb */}
+      <div className="mx-auto max-w-6xl px-6 pt-4">
+        <nav className="flex items-center gap-1.5 text-xs text-ink/40">
+          <Link to="/" className="transition-colors hover:text-ink">
+            {t('marketing.nav.home')}
+          </Link>
+          <ChevronRight className="h-3 w-3" />
+          <span className="text-ink/70">{t('marketing.nav.about')}</span>
+        </nav>
       </div>
 
-      {/* Navbar */}
-      <header className="relative z-10 border-b border-[#D4A843]/10">
-        <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-3"
-          >
-            <img src="/solaris-icon.png" alt="Solaris" className="w-9 h-9" />
-            <div>
-              <span className="text-lg font-bold tracking-wide text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-                SOLARIS
-              </span>
-              <span className="ml-2 text-xs text-[#D4A843]/60 font-normal">Panama</span>
-            </div>
-          </button>
-          <div className="flex items-center gap-3">
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-white/60 hover:text-white transition-colors"
+      {/* ── HERO ── */}
+      <section className="relative px-6 pb-16 pt-16 md:pt-20">
+        <div className="mx-auto max-w-4xl">
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
+            <motion.div
+              variants={fadeUp}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-bustan-sun/30 bg-bustan-sun/10 px-4 py-1.5 text-xs font-medium text-bustan-grove"
             >
-              <Phone className="w-4 h-4" />
-              507-6583-1822
-            </a>
-            <button
-              onClick={() => navigate('/landing')}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-[#D4A843]/20"
-              style={{ background: 'linear-gradient(135deg, #D4A843, #f5d080)', color: '#071F17' }}
-            >
-              Cotizacion Gratis
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Breadcrumb */}
-        <div className="px-6 pb-3 max-w-6xl mx-auto">
-          <nav className="text-xs text-white/30 flex items-center gap-1.5">
-            <button onClick={() => navigate('/')} className="hover:text-white/60 transition-colors">Inicio</button>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-white/60">Sobre Nosotros</span>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="relative z-10 px-6 pt-20 pb-20 max-w-6xl mx-auto">
-        <div className="max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4A843]/10 border border-[#D4A843]/20 text-[#D4A843] text-xs font-medium mb-6">
-              <MapPin className="w-3.5 h-3.5" />
-              Fundada en Chitre, Herrera · 2019
-            </div>
-
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-6"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              <MapPin className="h-3.5 w-3.5 text-bustan-sun" />
+              Fundada en Chitré, Herrera · 2019
+            </motion.div>
+            <motion.h1
+              variants={fadeUp}
+              className="font-display text-display-md leading-[1.08] text-ink md:text-display-xl"
             >
               La empresa solar{' '}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{ backgroundImage: 'linear-gradient(135deg, #D4A843 0%, #f5d080 50%, #D4A843 100%)' }}
-              >
-                de tu vecino
-              </span>
-            </h1>
-
-            <p className="text-lg text-white/50 leading-relaxed mb-8 max-w-2xl">
-              No somos una empresa de la capital. Somos de Azuero. Conocemos
-              el calor, las lluvias, las tarifas de ENSA y EDEMET, y la vida
-              en la peninsula. Eso nos hace diferentes.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <motion.button
-                onClick={() => navigate('/landing')}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2 px-7 py-4 rounded-2xl font-semibold text-base shadow-lg shadow-[#D4A843]/25"
-                style={{ background: 'linear-gradient(135deg, #D4A843, #f5d080)', color: '#071F17' }}
-              >
-                Solicitar Cotizacion Gratis
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-              <button
-                onClick={() => navigate('/servicios')}
-                className="flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border border-white/10 text-white/70 hover:text-white hover:border-white/20 text-base font-medium transition-all"
-              >
-                Ver Nuestros Servicios
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+              <span className="text-bustan-gradient">de tu vecino</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/[0.66]">
+              No somos una empresa de la capital. Somos de Azuero. Conocemos el calor, las lluvias,
+              las tarifas de ENSA y EDEMET, y la vida en la península. Eso nos hace diferentes.
+            </motion.p>
+            <motion.div variants={fadeUp} className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button to="/landing" size="lg" icon={null}>
+                {t('marketing.hero.ctaPrimary')}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button to="/servicios" variant="secondary" size="lg" icon={null}>
+                Ver nuestros servicios
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="relative z-10 px-6 py-12 max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { value: '150+', label: 'Instalaciones completadas' },
-            { value: '95%', label: 'Clientes satisfechos' },
-            { value: '7 anos', label: 'Experiencia en Azuero' },
-            { value: '$2,940', label: 'Ahorro anual promedio' },
-          ].map((stat, i) => (
+      {/* ── STATS BAND ── */}
+      <section className="border-y border-grove/12 bg-shell/64 px-6 py-12">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
+          {stats.map((stat) => (
             <motion.div
-              key={stat.value}
-              custom={i}
+              key={stat.label}
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              className="flex flex-col items-center gap-2 px-5 py-6 rounded-2xl border border-[#D4A843]/10"
-              style={{ background: 'rgba(11,61,46,0.4)' }}
+              viewport={revealViewport}
+              className="flex flex-col items-center gap-2 text-center"
             >
-              <span className="text-2xl font-bold text-white">{stat.value}</span>
-              <span className="text-xs text-white/40 text-center">{stat.label}</span>
+              <span className="font-display text-display-sm text-bustan-grove">{stat.value}</span>
+              <span className="text-xs text-ink/[0.55]">{stat.label}</span>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Mision */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* ── MISSION (split) ── */}
+      <section className="px-6 py-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
           <motion.div
-            initial={{ opacity: 0, x: -24 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={revealViewport}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h2
-              className="text-3xl sm:text-4xl font-bold text-white mb-5"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Nuestra Mision
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-bustan-lagoon">
+              Nuestra misión
+            </p>
+            <h2 className="font-display text-display-sm leading-[1.1] text-ink md:text-display-md">
+              Energía solar accesible para cada familia de Azuero
             </h2>
-            <p className="text-base text-white/50 leading-relaxed mb-6">
-              Hacer que la energia solar sea accesible, simple y rentable para
-              cada familia y empresa en la Peninsula de Azuero. Sin tecnicismos,
-              sin promesas vacias. Solo resultados reales.
+            <p className="mt-5 text-base leading-relaxed text-ink/[0.66]">
+              Hacer que la energía solar sea accesible, simple y rentable para cada familia y empresa
+              en la Península de Azuero. Sin tecnicismos, sin promesas vacías. Solo resultados reales.
             </p>
-            <p className="text-base text-white/50 leading-relaxed mb-8">
-              Creemos que cada techo en Panama tiene el potencial de convertirse
-              en una fuente de ingreso pasivo. Nuestra mision es hacer que eso
-              ocurra — con rapidez, transparencia y garantias reales.
+            <p className="mt-4 text-base leading-relaxed text-ink/[0.66]">
+              Creemos que cada techo en Panamá tiene el potencial de convertirse en una fuente de
+              ahorro. Nuestra misión es hacer que eso ocurra — con rapidez, transparencia y garantías
+              reales.
             </p>
-            <div className="space-y-3">
+            <div className="mt-8 space-y-3">
               {[
                 'Propuesta personalizada en menos de 24 horas',
-                'Instalacion profesional en un solo dia',
+                'Instalación profesional en un solo día',
                 'Monitoreo remoto incluido sin costo adicional',
-                'Garantia de rendimiento por 25 anos',
+                'Garantía de rendimiento por 25 años',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#22c55e] flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/60">{item}</span>
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-bustan-lagoon" />
+                  <span className="text-sm text-ink/70">{item}</span>
                 </div>
               ))}
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 24 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="rounded-2xl p-8 border border-[#D4A843]/15"
-            style={{ background: 'linear-gradient(135deg, rgba(11,61,46,0.6) 0%, rgba(7,31,23,0.9) 60%)' }}
+            viewport={revealViewport}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-card border border-grove/12 bg-bustan-grove p-8 text-bustan-shell shadow-lift md:p-10"
           >
-            <h3
-              className="text-xl font-bold text-white mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Por que Azuero?
-            </h3>
-            <div className="space-y-4 text-sm text-white/50 leading-relaxed">
+            <Sun className="mb-4 h-9 w-9 text-bustan-sun" />
+            <h3 className="font-display text-2xl text-bustan-shell">¿Por qué Azuero?</h3>
+            <div className="mt-5 space-y-4 text-sm leading-relaxed text-bustan-shell/85">
               <p>
-                La Peninsula de Azuero recibe en promedio <strong className="text-[#D4A843]">5.0 horas de sol por dia</strong> — incluso en temporada de lluvias. Eso nos situa entre las mejores zonas del mundo para energia solar.
+                La Península de Azuero recibe en promedio{' '}
+                <strong className="text-bustan-sun">5.0 horas de sol pico por día</strong> — incluso en
+                temporada de lluvias. Eso nos sitúa entre las mejores zonas del mundo para energía solar.
               </p>
               <p>
-                Las tarifas electricas de ENSA y EDEMET son de las mas altas de Centroamerica a nivel residencial. Eso significa que el retorno de inversion de un sistema solar aqui es extraordinario: entre <strong className="text-[#D4A843]">3 y 5 anos</strong>.
+                Las tarifas eléctricas de ENSA y EDEMET son de las más altas de Centroamérica a nivel
+                residencial. Eso hace que el retorno de inversión de un sistema solar aquí sea
+                extraordinario: entre <strong className="text-bustan-sun">3 y 5 años</strong>.
               </p>
               <p>
-                Ademas, la Ley 417 de Panama exonera del pago de impuestos de importacion a todos los equipos de energia renovable. Eso reduce el costo del sistema entre un <strong className="text-[#D4A843]">15 y 20%</strong> versus otros paises.
+                Además, la Ley 417 de Panamá exonera del pago de impuestos de importación a los equipos
+                de energía renovable, reduciendo el costo del sistema entre un{' '}
+                <strong className="text-bustan-sun">15 y 20%</strong> versus otros países.
               </p>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Valores */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-white mb-3"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+      {/* ── VALUES ── */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader
+            tag="Nuestros valores"
+            title="Los principios que nos guían"
+            subtitle="Cada decisión, cada instalación y cada llamada con un cliente nacen de estos valores."
+          />
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={revealViewport}
+            className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
           >
-            Nuestros Valores
-          </h2>
-          <p className="text-base text-white/40 max-w-xl mx-auto">
-            Los principios que guian cada decision, cada instalacion y cada llamada con un cliente
-          </p>
-        </motion.div>
+            {valores.map((v) => {
+              const Icon = v.icon;
+              return (
+                <motion.div
+                  key={v.titulo}
+                  variants={fadeUp}
+                  className="group rounded-card border border-grove/12 bg-shell/70 p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-bustan-lagoon/10 text-bustan-lagoon transition-colors group-hover:bg-bustan-lagoon/20">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mb-2 text-base font-semibold text-ink">{v.titulo}</h3>
+                  <p className="text-sm leading-relaxed text-ink/[0.6]">{v.desc}</p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {valores.map((v, i) => (
+      {/* ── HISTORY TIMELINE ── */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader
+            tag="Nuestra historia"
+            title="De una idea en Chitré a la referencia solar de Azuero"
+            subtitle="Siete años construyendo confianza, techo por techo."
+          />
+          <div className="relative mx-auto mt-16 max-w-2xl">
+            <div className="absolute bottom-0 left-6 top-0 w-px bg-gradient-to-b from-bustan-sun/50 via-bustan-lagoon/30 to-transparent" />
             <motion.div
-              key={v.titulo}
-              custom={i}
-              variants={fadeUp}
+              variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              className="group p-6 rounded-2xl border border-[#D4A843]/8 hover:border-[#D4A843]/20 transition-all duration-300"
-              style={{ background: 'rgba(11,61,46,0.25)' }}
+              viewport={revealViewport}
+              className="space-y-8"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#D4A843]/10 flex items-center justify-center text-[#D4A843] mb-4 group-hover:bg-[#D4A843]/20 transition-colors">
-                {v.icon}
-              </div>
-              <h3 className="text-base font-semibold text-white mb-2">{v.titulo}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{v.desc}</p>
+              {hitos.map((h) => (
+                <motion.div key={h.anio} variants={fadeUp} className="relative flex gap-6 pl-14">
+                  <div className="absolute left-6 top-1.5 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-bustan-paper bg-bustan-sun" />
+                  <div>
+                    <div className="mb-1 text-sm font-bold text-bustan-lagoon">{h.anio}</div>
+                    <p className="text-sm leading-relaxed text-ink/70">{h.evento}</p>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Historia */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-white mb-3"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Nuestra Historia
-          </h2>
-          <p className="text-base text-white/40 max-w-xl mx-auto">
-            Desde una idea en Chitre hasta la empresa solar de referencia en Azuero
-          </p>
-        </motion.div>
-
-        <div className="relative max-w-2xl mx-auto">
-          {/* Timeline line */}
-          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-[#D4A843]/40 via-[#D4A843]/20 to-transparent" />
-
-          <div className="space-y-8">
-            {hitos.map((h, i) => (
-              <motion.div
-                key={h.año}
-                custom={i}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="flex gap-6 pl-14 relative"
-              >
-                {/* Dot */}
-                <div className="absolute left-4 top-1.5 w-4 h-4 rounded-full bg-[#D4A843] border-2 border-[#071F17] -translate-x-1/2" />
-
-                <div>
-                  <div className="text-xs font-bold text-[#D4A843] mb-1">{h.año}</div>
-                  <p className="text-sm text-white/60 leading-relaxed">{h.evento}</p>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Equipo */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="rounded-2xl p-8 md:p-12 border border-[#D4A843]/15 text-center"
-          style={{ background: 'linear-gradient(135deg, rgba(11,61,46,0.6) 0%, rgba(7,31,23,0.9) 60%)' }}
-        >
-          <Users className="w-10 h-10 text-[#D4A843] mx-auto mb-5" />
-          <h2
-            className="text-2xl sm:text-3xl font-bold text-white mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+      {/* ── TEAM ── */}
+      <section className="px-6 py-12">
+        <div className="mx-auto max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={revealViewport}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-card border border-grove/12 bg-shell/82 p-8 text-center shadow-lift backdrop-blur-xl md:p-12"
           >
-            Un equipo local, comprometido
-          </h2>
-          <p className="text-base text-white/50 leading-relaxed max-w-2xl mx-auto mb-6">
-            Nuestro equipo esta formado por tecnicos certificados, ingenieros electricos
-            y asesores de ventas — todos con experiencia en el mercado panaméno y
-            residentes en la Peninsula de Azuero. Cuando llamas a Solaris, hablas
-            con alguien que conoce tu zona, tu distribuidor electrico y tu situacion.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 text-xs text-white/30">
-            <span className="px-3 py-1.5 rounded-full border border-white/10">Ingenieros certificados</span>
-            <span className="px-3 py-1.5 rounded-full border border-white/10">Tecnicos locales</span>
-            <span className="px-3 py-1.5 rounded-full border border-white/10">Asesores bilingues</span>
-            <span className="px-3 py-1.5 rounded-full border border-white/10">Soporte post-instalacion</span>
-          </div>
-        </motion.div>
+            <Users className="mx-auto mb-5 h-10 w-10 text-bustan-lagoon" />
+            <h2 className="font-display text-display-sm text-ink md:text-display-md">
+              Un equipo local, comprometido
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-ink/[0.66]">
+              Nuestro equipo está formado por técnicos certificados, ingenieros eléctricos y asesores
+              de ventas — todos con experiencia en el mercado panameño y residentes en la Península de
+              Azuero. Cuando llamas a Solaris, hablas con alguien que conoce tu zona, tu distribuidor
+              eléctrico y tu situación.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3 text-xs text-ink/[0.55]">
+              {equipoTags.map((tag) => (
+                <span key={tag} className="rounded-full border border-grove/15 bg-bustan-mist/40 px-3 py-1.5">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative z-10 px-6 py-20 max-w-3xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#22c55e] text-xs font-medium mb-5">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            100% Gratis — Sin compromiso
-          </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-white mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Conocenos en persona
-          </h2>
-          <p className="text-base text-white/40 mb-8 max-w-lg mx-auto">
-            Visitamos tu propiedad sin costo. Te mostramos el calculo real de
-            ahorro y la propuesta completa. Sin presion.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <motion.button
-              onClick={() => navigate('/landing')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base shadow-lg shadow-[#D4A843]/25"
-              style={{ background: 'linear-gradient(135deg, #D4A843, #f5d080)', color: '#071F17' }}
-            >
-              Solicitar Cotizacion Gratis
-              <ArrowRight className="w-4 h-4" />
-            </motion.button>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border border-white/10 text-white/70 hover:text-white hover:border-white/20 text-base font-medium transition-all"
-            >
-              <MessageCircle className="w-4 h-4 text-[#25d366]" />
-              WhatsApp Directo
-            </a>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-[#D4A843]/10 px-6 py-8 max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/25">
-          <div className="flex items-center gap-3">
-            <img src="/solaris-icon.png" alt="Solaris" className="w-5 h-5 opacity-50" />
-            <span>Solaris Panama — Energia Solar en la Peninsula de Azuero</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/servicios')} className="hover:text-white/50 transition-colors">
-              Servicios
-            </button>
-            <button onClick={() => navigate('/proyectos')} className="hover:text-white/50 transition-colors">
-              Proyectos
-            </button>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white/50 transition-colors"
-            >
-              507-6583-1822
-            </a>
-            <span>© 2025 Solaris Panama</span>
+      {/* ── CTA ── */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-3xl">
+          <div className="relative overflow-hidden rounded-card border border-grove/12 bg-shell/82 p-10 text-center shadow-lift backdrop-blur-2xl md:p-14">
+            <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-bustan-lagoon/10 blur-3xl" />
+            <div className="relative">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-bustan-lagoon/20 bg-bustan-lagoon/10 px-3 py-1.5 text-xs font-medium text-bustan-lagoon">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                {t('marketing.cta.urgency')}
+              </div>
+              <h2 className="font-display text-display-sm text-ink md:text-display-md">
+                Conócenos en persona
+              </h2>
+              <p className="mx-auto mt-4 max-w-lg text-base text-ink/[0.6]">
+                Visitamos tu propiedad sin costo. Te mostramos el cálculo real de ahorro y la propuesta
+                completa. Sin presión.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Button to="/landing" size="lg" icon={null}>
+                  {t('marketing.cta.ctaPrimary')}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_PREFILL)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="whatsapp"
+                  size="lg"
+                >
+                  {t('marketing.cta.ctaWhatsapp')}
+                </Button>
+                <Button href="tel:+50765831822" variant="secondary" size="lg" icon={<Phone className="h-4 w-4" />}>
+                  {t('marketing.cta.ctaCall')}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </footer>
+      </section>
 
-      {/* Floating WhatsApp */}
-      <motion.a
-        href={`https://wa.me/${WHATSAPP_NUMBER}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.5, duration: 0.4 }}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Contactar por WhatsApp"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl"
-        style={{ background: 'linear-gradient(135deg, #25d366 0%, #128c4e 100%)' }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 fill-white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
-        <span className="absolute inset-0 rounded-full animate-ping bg-[#25d366]/30 -z-10" />
-      </motion.a>
+      <MarketingFooter />
+      {/* Global segment-aware StickyWhatsApp is mounted once in App.tsx. */}
     </div>
   );
 }

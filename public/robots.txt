@@ -1,15 +1,58 @@
+# robots.txt — Solaris Panamá (https://solaris-panama.com)
+# Marketing pages are crawlable. App/CRM, paid landing pages, and internal
+# tools are blocked. AI answer-engine crawlers are explicitly allowed so the
+# brand can surface in AI Overviews / ChatGPT / Perplexity for local queries.
+
 User-agent: *
 Allow: /
+
+# App / CRM (private)
 Disallow: /dashboard
 Disallow: /login
 Disallow: /crm-leads
 Disallow: /projects
 Disallow: /clients
+Disallow: /proposals
 Disallow: /settings
 Disallow: /api/
 Disallow: /tools/
 Disallow: /leads
 Disallow: /monitoring
 Disallow: /calendar
+
+# Paid landing pages (noindex) + interactive maps
+Disallow: /landing
+Disallow: /lp/
+Disallow: /azuero
+Disallow: /mapa-solar
+Disallow: /mapa-comercial
+Disallow: /solar-map
+
+# Internal / non-public HTML
+Disallow: /portal.html
+Disallow: /hub.html
+Disallow: /marketing.html
+Disallow: /proposal
+Disallow: /proposals/
+Disallow: /dekel-panama-leads.html
+
+# AI / answer-engine crawlers — explicitly allowed (GEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://solaris-panama.com/sitemap.xml
