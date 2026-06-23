@@ -15,33 +15,38 @@ export async function lookupParcel(lat: number, lng: number): Promise<CadastreIn
     const response = await fetch(url);
     if (!response.ok) return null;
 
+    // The /api/roof-scan cadastre-lookup endpoint returns a FLAT object
+    // ({ finca, owners, ownerIds, province, ... }), not a raw ArcGIS feature.
     const data = await response.json();
     if (!data || data.error) return null;
 
-    // Parse ArcGIS feature response
-    const feature = data.features?.[0];
-    if (!feature) return null;
+    const fincaNumber = data.finca || '';
+    const hasOwners = Array.isArray(data.owners) && data.owners.length > 0;
+    // Nothing useful at this location.
+    if (!fincaNumber && !hasOwners) return null;
 
-    const attrs = feature.attributes || {};
-    const fincaNumber = attrs.FINCA || attrs.finca || attrs.numero_finca || '';
-    if (!fincaNumber) return null;
-
-    // Parse boundary from geometry rings if available
+    // Parse boundary from geometry rings if available (rings are [lng, lat]).
     let parcelBoundary: Array<{ lat: number; lng: number }> | undefined;
-    if (feature.geometry?.rings?.[0]) {
-      parcelBoundary = feature.geometry.rings[0].map((coord: number[]) => ({
+    if (data.geometry?.rings?.[0]) {
+      parcelBoundary = data.geometry.rings[0].map((coord: number[]) => ({
         lat: coord[1],
         lng: coord[0],
       }));
     }
 
     return {
-      fincaNumber: String(fincaNumber),
-      parcelArea: attrs.AREA || attrs.area || attrs.superficie || 0,
-      landUse: attrs.USO_SUELO || attrs.uso_suelo || attrs.land_use || 'unknown',
-      assessedValue: attrs.VALOR_CATASTRAL || attrs.valor_catastral || undefined,
+      fincaNumber: String(fincaNumber || ''),
+      parcelArea: data.parcelArea || 0,
+      landUse: data.landUse || 'unknown',
+      assessedValue: data.assessedValue || undefined,
       parcelBoundary,
-      registroPublicoUrl: getRegistroPublicoUrl(String(fincaNumber)),
+      registroPublicoUrl: getRegistroPublicoUrl(String(fincaNumber || '')),
+      owners: hasOwners ? data.owners : undefined,
+      ownerIds: Array.isArray(data.ownerIds) ? data.ownerIds : undefined,
+      ownerCount: typeof data.ownerCount === 'number' ? data.ownerCount : undefined,
+      province: data.province || undefined,
+      district: data.district || undefined,
+      corregimiento: data.corregimiento || undefined,
     };
   } catch {
     return null;

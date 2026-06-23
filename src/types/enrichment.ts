@@ -27,6 +27,13 @@ export interface CadastreInfo {
   assessedValue?: number;
   parcelBoundary?: Array<{ lat: number; lng: number }>;
   registroPublicoUrl: string;
+  // Registered owner(s) from ANATI CAPA_DE_PROPIETARIO__MIGRADA
+  owners?: string[];
+  ownerIds?: string[]; // national IDs (cédula)
+  ownerCount?: number;
+  province?: string;
+  district?: string;
+  corregimiento?: string;
 }
 
 /** Panama Emprende business license (Aviso de Operacion) */

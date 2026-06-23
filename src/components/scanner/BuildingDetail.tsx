@@ -681,6 +681,34 @@ export default function BuildingDetail({
                         )}
                       </button>
                     </div>
+                    {enrichedData.cadastre.owners && enrichedData.cadastre.owners.length > 0 && (
+                      <div>
+                        <div className="text-[11px] text-[#555566]">
+                          Registered Owner{enrichedData.cadastre.owners.length > 1 ? 's' : ''} (ANATI)
+                        </div>
+                        {enrichedData.cadastre.owners.map((owner, i) => (
+                          <div key={i} className="text-sm text-[#f0f0f5] font-medium">
+                            {owner}
+                            {enrichedData.cadastre!.ownerIds?.[i] && (
+                              <span className="text-[11px] text-[#8888a0] ml-1.5">
+                                ({enrichedData.cadastre!.ownerIds![i]})
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {(enrichedData.cadastre.district || enrichedData.cadastre.province) && (
+                      <div>
+                        <div className="text-[11px] text-[#555566]">Location</div>
+                        <div className="text-sm text-[#f0f0f5] font-medium capitalize">
+                          {[enrichedData.cadastre.corregimiento, enrichedData.cadastre.district, enrichedData.cadastre.province]
+                            .filter(Boolean)
+                            .join(', ')
+                            .toLowerCase()}
+                        </div>
+                      </div>
+                    )}
                     {enrichedData.cadastre.parcelArea > 0 && (
                       <div>
                         <div className="text-[11px] text-[#555566]">Parcel Area</div>
