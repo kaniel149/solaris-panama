@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import Layout from '@/components/layout/Layout';
 import RouteTracker from '@/components/RouteTracker';
+import StickyWhatsApp from '@/components/StickyWhatsApp';
 
 // Eagerly loaded (public pages)
 import HomePage from '@/pages/HomePage';
@@ -16,6 +17,8 @@ import ServiciosPage from '@/pages/ServiciosPage';
 import ProyectosPage from '@/pages/ProyectosPage';
 
 // Lazy loaded (secondary pages)
+const UbicacionesHubPage = lazy(() => import('@/pages/UbicacionesHubPage'));
+const UbicacionPage = lazy(() => import('@/pages/UbicacionPage'));
 const PublicSolarMapPage = lazy(() => import('@/pages/PublicSolarMapPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const CrmLeadsPage = lazy(() => import('@/pages/CrmLeadsPage'));
@@ -53,6 +56,8 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <RouteTracker />
+          {/* Segment-aware marketing WhatsApp CTA; self-hides on app/CRM/login routes */}
+          <StickyWhatsApp />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<HomePage />} />
@@ -63,6 +68,23 @@ export default function App() {
             <Route path="/nosotros" element={<NosotrosPage />} />
             <Route path="/servicios" element={<ServiciosPage />} />
             <Route path="/proyectos" element={<ProyectosPage />} />
+            {/* SEO location pages — coverage hub + data-driven town pages */}
+            <Route
+              path="/ubicaciones"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <UbicacionesHubPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/ubicaciones/:slug"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <UbicacionPage />
+                </Suspense>
+              }
+            />
             <Route
               path="/mapa-solar"
               element={

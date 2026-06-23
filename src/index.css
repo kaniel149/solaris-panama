@@ -1,6 +1,70 @@
+/* ── Bustan premium marketing fonts (must precede all other statements) ── */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Bustan premium light theme tokens — ADDITIVE.
+   These CSS variables back the ported marketing primitives (Button,
+   SectionHeader) and the `.bustan-home` marketing surface. They do NOT alter
+   the CRM/dashboard dark theme, which uses Tailwind space and accent tokens.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --bustan-ink: #27342f;
+  --bustan-grove: #24463e;
+  --bustan-canopy: #2f5d52;
+  --bustan-lagoon: #006f6b;
+  --bustan-lagoon-bright: #008f8a;
+  --bustan-sun: #f2b84b;
+  --bustan-sun-light: #ffd27a;
+  --bustan-papaya: #ff6b4a;
+  --bustan-paper: #f4ead8;
+  --bustan-shell: #fff4e2;
+  --bustan-mist: #d8ece8;
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Marketing surface — opt-in via className, scoped so the CRM stays dark. */
+.bustan-home {
+  font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  background:
+    linear-gradient(180deg, rgba(216, 236, 232, 0.52) 0%, transparent 18%),
+    linear-gradient(20deg, rgba(242, 184, 75, 0.14), transparent 36%),
+    var(--bustan-paper);
+  color: var(--bustan-ink);
+  scroll-behavior: smooth;
+}
+
+.bustan-home ::selection {
+  background: rgba(242, 184, 75, 0.32);
+  color: var(--bustan-ink);
+}
+
+/* Marketing utility classes (additive — won't affect CRM components) */
+@layer utilities {
+  .font-display {
+    font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+  }
+  .text-bustan-gradient {
+    background-image: linear-gradient(135deg, #f2b84b 0%, #ffd27a 50%, #f2b84b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .bustan-glass {
+    background: rgba(255, 244, 226, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(36, 70, 62, 0.12);
+  }
+  .ease-out-soft {
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
 
 /* Base */
 html {

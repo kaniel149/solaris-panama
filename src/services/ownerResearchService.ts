@@ -514,11 +514,20 @@ export async function researchBuildingOwner(request: {
   const cadastreDataPoints: string[] = [];
   if (cadastreResult) {
     cadastre = cadastreResult;
-    cadastreDataPoints.push('finca_number');
+    if (cadastreResult.fincaNumber) cadastreDataPoints.push('finca_number');
     if (cadastreResult.parcelArea) cadastreDataPoints.push('parcel_area');
     if (cadastreResult.landUse && cadastreResult.landUse !== 'unknown') cadastreDataPoints.push('land_use');
     if (cadastreResult.assessedValue) cadastreDataPoints.push('assessed_value');
     if (cadastreResult.parcelBoundary) cadastreDataPoints.push('boundary');
+    // Registered legal owner from ANATI — the most authoritative owner source.
+    // Use it as the owner name (business-name guesses from OSM/Places are weaker).
+    if (cadastreResult.owners && cadastreResult.owners.length > 0) {
+      ownerName = cadastreResult.owners.join(' | ');
+      cadastreDataPoints.push('registered_owner');
+      if (cadastreResult.ownerIds && cadastreResult.ownerIds.length > 0) {
+        cadastreDataPoints.push('owner_id');
+      }
+    }
   }
   progress('ANATI Cadastre', cadastreResult ? 'done' : 'error');
   enrichmentSources.push({

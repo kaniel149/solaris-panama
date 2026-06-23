@@ -49,6 +49,8 @@ function appHtmlFallback(): Plugin {
     '/nosotros',
     '/servicios',
     '/proyectos',
+    '/ubicaciones',
+    '/',
   ];
 
   return {
