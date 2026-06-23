@@ -594,9 +594,17 @@ interface CadastreResult {
   province: string | null;
   district: string | null;
   corregimiento: string | null;
+  // Owner intelligence (ANATI CAPA_DE_PROPIETARIO__MIGRADA)
+  owners: string[] | null;
+  ownerIds: string[] | null;
+  ownerCount: number | null;
+  titleholders: string[] | null;
+  cotitleholders: string[] | null;
+  titleDate: string | null;
   geometry: {
     rings: number[][][];
   } | null;
+  source: string | null;
   rawAttributes: Record<string, unknown>;
 }
 
@@ -605,48 +613,63 @@ async function handleCadastreLookup(
   lng: string,
   res: VercelResponse
 ): Promise<void> {
-  // ANATI Geoportal ArcGIS REST endpoint for cadastral parcels
-  const baseUrl =
-    'https://services.arcgis.com/LBbVDC0hKPAnLRpO5se6HQ/arcgis/rest/services';
-  const servicePaths = [
-    'Catastro_Nacional/FeatureServer/0',
-    'CATASTRO/FeatureServer/0',
-    'Parcelas_Catastro/FeatureServer/0',
-  ];
+  // ANATI (Autoridad Nacional de Administración de Tierras) public ArcGIS Server.
+  //   CAPA_DE_PROPIETARIO__MIGRADA → owner names + national IDs (cédula) per parcel.
+  //   PREDIOS_TITULADOS_MIGRADOS  → finca number + province/district/corregimiento names.
+  // IMPORTANT: this server returns HTTP 403 without a browser-like User-Agent.
+  // Coverage is currently limited to migrated/titled parcels (not yet nationwide).
+  const ANATI_BASE =
+    'https://sigigntg.anati.gob.pa/arcgisserver/rest/services/Hosted';
+  const OWNER_LAYER = 'CAPA_DE_PROPIETARIO__MIGRADA/FeatureServer/0';
+  const PREDIO_LAYER = 'PREDIOS_TITULADOS_MIGRADOS/FeatureServer/0';
+  const UA =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
 
-  const queryParams = new URLSearchParams({
-    geometry: `${lng},${lat}`,
-    geometryType: 'esriGeometryPoint',
-    spatialRel: 'esriSpatialRelIntersects',
-    outFields: '*',
-    returnGeometry: 'true',
-    f: 'json',
-    inSR: '4326',
-    outSR: '4326',
+  const pointGeom = JSON.stringify({
+    x: parseFloat(lng),
+    y: parseFloat(lat),
+    spatialReference: { wkid: 4326 },
   });
 
-  let data: any = null;
-
-  // Try multiple possible service paths (ArcGIS service names can vary)
-  for (const servicePath of servicePaths) {
-    const url = `${baseUrl}/${servicePath}/query?${queryParams.toString()}`;
+  async function queryLayer(
+    layer: string,
+    outFields: string,
+    withGeometry: boolean
+  ): Promise<any | null> {
+    const params = new URLSearchParams({
+      geometry: pointGeom,
+      geometryType: 'esriGeometryPoint',
+      inSR: '4326',
+      outSR: '4326',
+      spatialRel: 'esriSpatialRelIntersects',
+      outFields,
+      returnGeometry: withGeometry ? 'true' : 'false',
+      f: 'json',
+    });
+    const url = `${ANATI_BASE}/${layer}/query?${params.toString()}`;
     try {
-      const response = await fetch(url);
-      if (response.ok) {
-        const parsed = await response.json();
-        if (parsed.features && parsed.features.length > 0) {
-          data = parsed;
-          break;
-        }
-        // If response was OK but no features, try next service path
-        if (!data) data = parsed;
-      }
+      const r = await fetch(url, { headers: { 'User-Agent': UA } });
+      if (!r.ok) return null;
+      return await r.json();
     } catch {
-      // Try next service path
+      return null;
     }
   }
 
-  if (!data) {
+  const [ownerData, predioData] = await Promise.all([
+    queryLayer(
+      OWNER_LAYER,
+      'propietarios,identificaciones_propietarios,titulares,cotitulares,cantidad_propietarios,baunit_nombre',
+      true
+    ),
+    queryLayer(
+      PREDIO_LAYER,
+      'numero_finca,provincia_nombre,distrito_nombre,corregimiento_nombre,predio_descuento_descripcion,fecha_titulo,label',
+      false
+    ),
+  ]);
+
+  if (ownerData === null && predioData === null) {
     res.status(502).json({
       error: 'Failed to connect to ANATI Geoportal',
       code: 'CADASTRE_UNAVAILABLE',
@@ -655,7 +678,14 @@ async function handleCadastreLookup(
     return;
   }
 
-  if (!data.features || data.features.length === 0) {
+  // Prefer a feature that actually carries an owner; fall back to first feature.
+  const ownerFeature =
+    (ownerData?.features || []).find((f: any) => f?.attributes?.propietarios) ||
+    ownerData?.features?.[0] ||
+    null;
+  const predioFeature = predioData?.features?.[0] || null;
+
+  if (!ownerFeature && !predioFeature) {
     res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h for empty results
     res.status(200).json({
       finca: null,
@@ -664,30 +694,54 @@ async function handleCadastreLookup(
       province: null,
       district: null,
       corregimiento: null,
+      owners: null,
+      ownerIds: null,
+      ownerCount: null,
+      titleholders: null,
+      cotitleholders: null,
+      titleDate: null,
       geometry: null,
+      source: null,
       rawAttributes: {},
-      message: 'No cadastral parcel found at this location',
+      message:
+        'No titled parcel found at this location (ANATI coverage is limited to migrated/titled areas).',
     });
     return;
   }
 
-  const feature = data.features[0];
-  const attrs = feature.attributes || {};
+  const o = ownerFeature?.attributes || {};
+  const p = predioFeature?.attributes || {};
+
+  // ANATI stores multi-owner values as " A | B | C " — split into arrays.
+  const splitList = (v: unknown): string[] | null => {
+    if (!v || typeof v !== 'string') return null;
+    const parts = v
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return parts.length ? parts : null;
+  };
 
   const result: CadastreResult = {
-    finca: attrs.FINCA || attrs.Finca || attrs.finca || attrs.NUM_FINCA || null,
-    parcelArea:
-      attrs.AREA || attrs.Area || attrs.area || attrs.SHAPE_Area || null,
-    landUse:
-      attrs.USO_SUELO || attrs.Uso_Suelo || attrs.uso_suelo || attrs.LAND_USE || null,
-    province:
-      attrs.PROVINCIA || attrs.Provincia || attrs.provincia || null,
-    district:
-      attrs.DISTRITO || attrs.Distrito || attrs.distrito || null,
-    corregimiento:
-      attrs.CORREGIMIENTO || attrs.Corregimiento || attrs.corregimiento || null,
-    geometry: feature.geometry || null,
-    rawAttributes: attrs,
+    finca: p.numero_finca || o.baunit_nombre || null,
+    parcelArea: o.SHAPE__Area || null,
+    landUse: p.predio_descuento_descripcion || null,
+    province: p.provincia_nombre || null,
+    district: p.distrito_nombre || null,
+    corregimiento: p.corregimiento_nombre || null,
+    owners: splitList(o.propietarios),
+    ownerIds: splitList(o.identificaciones_propietarios),
+    ownerCount: o.cantidad_propietarios
+      ? parseInt(String(o.cantidad_propietarios), 10) || null
+      : null,
+    titleholders: splitList(o.titulares),
+    cotitleholders: splitList(o.cotitulares),
+    titleDate: p.fecha_titulo || null,
+    geometry: ownerFeature?.geometry || null,
+    source: ownerFeature
+      ? 'ANATI CAPA_DE_PROPIETARIO__MIGRADA'
+      : 'ANATI PREDIOS_TITULADOS_MIGRADOS',
+    rawAttributes: { ...o, ...p },
   };
 
   res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
