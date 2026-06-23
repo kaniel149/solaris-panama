@@ -613,158 +613,96 @@ async function handleCadastreLookup(
   lng: string,
   res: VercelResponse
 ): Promise<void> {
-  // ANATI (Autoridad Nacional de Administración de Tierras) public ArcGIS Server.
-  //   CAPA_DE_PROPIETARIO__MIGRADA → owner names + national IDs (cédula) per parcel.
-  //   PREDIOS_TITULADOS_MIGRADOS  → finca number + province/district/corregimiento names.
-  // IMPORTANT: this server returns HTTP 403 without a browser-like User-Agent.
-  // Coverage is currently limited to migrated/titled parcels (not yet nationwide).
-  const ANATI_BASE =
-    'https://sigigntg.anati.gob.pa/arcgisserver/rest/services/Hosted';
-  const OWNER_LAYER = 'CAPA_DE_PROPIETARIO__MIGRADA/FeatureServer/0';
-  const PREDIO_LAYER = 'PREDIOS_TITULADOS_MIGRADOS/FeatureServer/0';
-  const UA =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+  // Owner data is cached in Supabase PostGIS (public.cadastre_parcels), imported
+  // from ANATI CAPA_DE_PROPIETARIO__MIGRADA. We query a SECURITY DEFINER RPC
+  // (lookup_parcel_owner) instead of ANATI directly because ANATI's WAF returns
+  // HTTP 403 to Vercel datacenter IPs. Coverage = ANATI-migrated/titled parcels
+  // (currently Panamá / San Miguelito / Colón-Chepo; not yet Azuero).
+  const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  const pointGeom = JSON.stringify({
-    x: parseFloat(lng),
-    y: parseFloat(lat),
-    spatialReference: { wkid: 4326 },
-  });
+  const emptyResult: CadastreResult = {
+    finca: null,
+    parcelArea: null,
+    landUse: null,
+    province: null,
+    district: null,
+    corregimiento: null,
+    owners: null,
+    ownerIds: null,
+    ownerCount: null,
+    titleholders: null,
+    cotitleholders: null,
+    titleDate: null,
+    geometry: null,
+    source: null,
+    rawAttributes: {},
+  };
 
-  const diag: string[] = [];
-
-  async function queryLayer(
-    layer: string,
-    outFields: string,
-    withGeometry: boolean
-  ): Promise<any | null> {
-    const params = new URLSearchParams({
-      geometry: pointGeom,
-      geometryType: 'esriGeometryPoint',
-      inSR: '4326',
-      outSR: '4326',
-      spatialRel: 'esriSpatialRelIntersects',
-      outFields,
-      returnGeometry: withGeometry ? 'true' : 'false',
-      f: 'json',
+  if (!SUPABASE_URL || !KEY) {
+    res.status(503).json({
+      error: 'Cadastre cache not configured',
+      code: 'NO_DB',
+      hint: 'Set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in the Vercel project.',
     });
-    const url = `${ANATI_BASE}/${layer}/query?${params.toString()}`;
-    const short = layer.split('/')[0];
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 9000);
-      const r = await fetch(url, {
-        headers: {
-          'User-Agent': UA,
-          Referer: 'https://geoportal-catastronacional.hub.arcgis.com/',
-          Accept: 'application/json, text/plain, */*',
-        },
-        signal: ctrl.signal,
+    return;
+  }
+
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/lookup_parcel_owner`, {
+      method: 'POST',
+      headers: {
+        apikey: KEY,
+        Authorization: `Bearer ${KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_lat: parseFloat(lat), p_lng: parseFloat(lng) }),
+    });
+
+    if (!r.ok) {
+      const body = await r.text();
+      console.error('[roof-scan] cadastre RPC error:', r.status, body.slice(0, 200));
+      res.status(502).json({
+        error: 'Cadastre lookup failed',
+        code: 'CADASTRE_RPC_ERROR',
+        debug: `HTTP ${r.status}`,
       });
-      clearTimeout(timer);
-      if (!r.ok) {
-        diag.push(`${short}: HTTP ${r.status}`);
-        return null;
-      }
-      return await r.json();
-    } catch (e: any) {
-      diag.push(`${short}: ${e?.cause?.code || e?.name || e?.message || 'fetch_error'}`);
-      return null;
+      return;
     }
-  }
 
-  const [ownerData, predioData] = await Promise.all([
-    queryLayer(
-      OWNER_LAYER,
-      'propietarios,identificaciones_propietarios,titulares,cotitulares,cantidad_propietarios,baunit_nombre',
-      true
-    ),
-    queryLayer(
-      PREDIO_LAYER,
-      'numero_finca,provincia_nombre,distrito_nombre,corregimiento_nombre,predio_descuento_descripcion,fecha_titulo,label',
-      false
-    ),
-  ]);
+    const rows = await r.json();
+    const row = Array.isArray(rows) ? rows[0] : null;
 
-  if (ownerData === null && predioData === null) {
-    console.error('[roof-scan] ANATI unreachable from Vercel:', diag.join(' | '));
+    if (!row) {
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h for empty results
+      res.status(200).json({
+        ...emptyResult,
+        message:
+          'No titled parcel found at this location (ANATI coverage is limited to migrated/titled areas).',
+      });
+      return;
+    }
+
+    const result: CadastreResult = {
+      ...emptyResult,
+      finca: row.finca || null,
+      owners: Array.isArray(row.owners) && row.owners.length ? row.owners : null,
+      ownerIds:
+        Array.isArray(row.owner_ids) && row.owner_ids.length ? row.owner_ids : null,
+      ownerCount: typeof row.owner_count === 'number' ? row.owner_count : null,
+      source: 'ANATI cache (Supabase PostGIS)',
+    };
+
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
+    res.status(200).json(result);
+  } catch (e: any) {
+    console.error('[roof-scan] cadastre lookup exception:', e?.message);
     res.status(502).json({
-      error: 'Failed to connect to ANATI Geoportal',
-      code: 'CADASTRE_UNAVAILABLE',
-      debug: diag,
-      hint: 'The ANATI ArcGIS service may be temporarily unavailable.',
+      error: 'Cadastre lookup failed',
+      code: 'CADASTRE_RPC_ERROR',
+      debug: e?.message || 'fetch_error',
     });
-    return;
   }
-
-  // Prefer a feature that actually carries an owner; fall back to first feature.
-  const ownerFeature =
-    (ownerData?.features || []).find((f: any) => f?.attributes?.propietarios) ||
-    ownerData?.features?.[0] ||
-    null;
-  const predioFeature = predioData?.features?.[0] || null;
-
-  if (!ownerFeature && !predioFeature) {
-    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h for empty results
-    res.status(200).json({
-      finca: null,
-      parcelArea: null,
-      landUse: null,
-      province: null,
-      district: null,
-      corregimiento: null,
-      owners: null,
-      ownerIds: null,
-      ownerCount: null,
-      titleholders: null,
-      cotitleholders: null,
-      titleDate: null,
-      geometry: null,
-      source: null,
-      rawAttributes: {},
-      message:
-        'No titled parcel found at this location (ANATI coverage is limited to migrated/titled areas).',
-    });
-    return;
-  }
-
-  const o = ownerFeature?.attributes || {};
-  const p = predioFeature?.attributes || {};
-
-  // ANATI stores multi-owner values as " A | B | C " — split into arrays.
-  const splitList = (v: unknown): string[] | null => {
-    if (!v || typeof v !== 'string') return null;
-    const parts = v
-      .split('|')
-      .map((s) => s.trim())
-      .filter(Boolean);
-    return parts.length ? parts : null;
-  };
-
-  const result: CadastreResult = {
-    finca: p.numero_finca || o.baunit_nombre || null,
-    parcelArea: o.SHAPE__Area || null,
-    landUse: p.predio_descuento_descripcion || null,
-    province: p.provincia_nombre || null,
-    district: p.distrito_nombre || null,
-    corregimiento: p.corregimiento_nombre || null,
-    owners: splitList(o.propietarios),
-    ownerIds: splitList(o.identificaciones_propietarios),
-    ownerCount: o.cantidad_propietarios
-      ? parseInt(String(o.cantidad_propietarios), 10) || null
-      : null,
-    titleholders: splitList(o.titulares),
-    cotitleholders: splitList(o.cotitulares),
-    titleDate: p.fecha_titulo || null,
-    geometry: ownerFeature?.geometry || null,
-    source: ownerFeature
-      ? 'ANATI CAPA_DE_PROPIETARIO__MIGRADA'
-      : 'ANATI PREDIOS_TITULADOS_MIGRADOS',
-    rawAttributes: { ...o, ...p },
-  };
-
-  res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
-  res.status(200).json(result);
 }
 
 // ===== PANAMA EMPRENDE (Business Registry) =====
