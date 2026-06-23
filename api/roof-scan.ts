@@ -631,6 +631,8 @@ async function handleCadastreLookup(
     spatialReference: { wkid: 4326 },
   });
 
+  const diag: string[] = [];
+
   async function queryLayer(
     layer: string,
     outFields: string,
@@ -647,11 +649,26 @@ async function handleCadastreLookup(
       f: 'json',
     });
     const url = `${ANATI_BASE}/${layer}/query?${params.toString()}`;
+    const short = layer.split('/')[0];
     try {
-      const r = await fetch(url, { headers: { 'User-Agent': UA } });
-      if (!r.ok) return null;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 9000);
+      const r = await fetch(url, {
+        headers: {
+          'User-Agent': UA,
+          Referer: 'https://geoportal-catastronacional.hub.arcgis.com/',
+          Accept: 'application/json, text/plain, */*',
+        },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timer);
+      if (!r.ok) {
+        diag.push(`${short}: HTTP ${r.status}`);
+        return null;
+      }
       return await r.json();
-    } catch {
+    } catch (e: any) {
+      diag.push(`${short}: ${e?.cause?.code || e?.name || e?.message || 'fetch_error'}`);
       return null;
     }
   }
@@ -670,9 +687,11 @@ async function handleCadastreLookup(
   ]);
 
   if (ownerData === null && predioData === null) {
+    console.error('[roof-scan] ANATI unreachable from Vercel:', diag.join(' | '));
     res.status(502).json({
       error: 'Failed to connect to ANATI Geoportal',
       code: 'CADASTRE_UNAVAILABLE',
+      debug: diag,
       hint: 'The ANATI ArcGIS service may be temporarily unavailable.',
     });
     return;
