@@ -49,3 +49,7 @@ Thumbs.db
 # Supabase
 supabase/.temp/
 .supabase/
+
+# Compiled vite config (generated from vite.config.ts)
+vite.config.js
+vite.config.d.ts
