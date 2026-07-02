@@ -28,6 +28,7 @@ import { buildProposalOptions } from '@/services/proposalOptions';
 import { downloadProposalPdf } from '@/services/proposalPdf';
 import { buildPrompt, type ProposalInput } from '@/services/proposalGeneratorService';
 import { writeScanHandoff } from '@/services/scanHandoff';
+import { OwnerOsintTools, type ManualOwnerInput } from '@/components/scanner/OwnerOsintTools';
 
 // ===== TYPES =====
 
@@ -382,6 +383,42 @@ export default function BuildingDetail({
     navigate('/tools/proposal-generator');
   }, [building, enrichedData, navigate]);
 
+  // Merge a manually-found owner (from the OSINT launchpad) into enrichedData so it
+  // flows into Save-as-Lead, the proposal generator, and the WhatsApp/Call buttons —
+  // exactly as if the automated waterfall had found it. Panama has no free owner API,
+  // and ANATI cadastre covers Panamá province only, so Azuero owners are entered here.
+  const handleManualOwner = useCallback((owner: ManualOwnerInput) => {
+    if (!building) return;
+    const fallbackAddress = building.solarAnalysis?.address ?? building.name ?? null;
+    setEnrichedData((prev) => {
+      const base: EnrichedOwnerResult = prev ?? {
+        ownerName: null, email: null, phone: null, website: null,
+        address: fallbackAddress,
+        socialMedia: { facebook: null, instagram: null, linkedin: null },
+        cadastre: null, businessLicense: null, corporateInfo: null,
+        nearbyBusinesses: [],
+        confidenceScore: 0, enrichmentSources: [],
+        googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${building.center.lat},${building.center.lng}`,
+        googleSearchUrl: '',
+        registroPublicoUrl: null,
+        whatsappUrl: null, callUrl: null,
+        researchedAt: new Date().toISOString(),
+        totalSourcesQueried: 0, totalSourcesWithData: 0,
+      };
+      return {
+        ...base,
+        ownerName: owner.ownerName || base.ownerName,
+        phone: owner.phone || base.phone,
+        email: owner.email || base.email,
+        whatsappUrl: owner.whatsappUrl ?? base.whatsappUrl,
+        callUrl: owner.callUrl ?? base.callUrl,
+        // Manual entry is rep-verified → treat as reasonably high confidence.
+        confidenceScore: Math.max(base.confidenceScore, 65),
+      };
+    });
+    setResearchAttempted(true);
+  }, [building]);
+
   if (!building) return null;
 
   const scoreColor = getScoreColor(building.suitability.score);
@@ -679,6 +716,17 @@ export default function BuildingDetail({
               </div>
             )}
           </GlassCard>
+
+          {/* OSINT launchpad + manual owner entry — always available. ANATI auto-fills
+              owners for Panamá province; for Azuero (no cadastre coverage) the rep finds
+              and enters the owner here, and it flows into lead + proposal + WhatsApp. */}
+          <OwnerOsintTools
+            buildingName={building.name}
+            center={building.center}
+            address={enrichedData?.address ?? building.solarAnalysis?.address ?? null}
+            fincaNumber={enrichedData?.cadastre?.fincaNumber ?? null}
+            onManualOwner={handleManualOwner}
+          />
 
           {/* Cadastre Section */}
           <AnimatePresence>
