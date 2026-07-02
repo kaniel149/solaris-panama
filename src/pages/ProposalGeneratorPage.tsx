@@ -12,6 +12,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import { calculateFinancials, PANAMA_DEFAULTS } from '@/services/solarCalculator';
 import type { CalculatorInputs, CalculatorResults } from '@/services/solarCalculator';
+import { readScanHandoff } from '@/services/scanHandoff';
 
 // ===== Local Helpers =====
 
@@ -614,8 +615,28 @@ export default function ProposalGeneratorPage() {
     return () => observer.disconnect();
   }, [currentStep, form.generatedProposal]);
 
-  // Load draft from localStorage on mount
+  // On mount: a fresh scan handoff (from the Roof Scanner) wins over any draft.
   useEffect(() => {
+    const handoff = readScanHandoff();
+    if (handoff) {
+      setForm((prev) => ({
+        ...prev,
+        clientName: handoff.clientName ?? prev.clientName,
+        contactName: handoff.contactName ?? prev.contactName,
+        clientEmail: handoff.clientEmail ?? prev.clientEmail,
+        clientPhone: handoff.clientPhone ?? prev.clientPhone,
+        sector: handoff.sector ?? prev.sector,
+        buildingName: handoff.buildingName ?? prev.buildingName,
+        buildingAddress: handoff.buildingAddress ?? prev.buildingAddress,
+        roofAreaM2: handoff.roofAreaM2 ?? prev.roofAreaM2,
+        monthlyBill: handoff.monthlyBill ?? prev.monthlyBill,
+        monthlyConsumptionKwh: handoff.monthlyConsumptionKwh ?? prev.monthlyConsumptionKwh,
+      }));
+      // Client + building come pre-filled from the scan → start at System Design.
+      setCurrentStep(2);
+      return;
+    }
+    // Otherwise restore the last draft from localStorage.
     try {
       const saved = localStorage.getItem('solaris_proposal_draft');
       if (saved) {

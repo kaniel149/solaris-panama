@@ -1,5 +1,6 @@
 // framer-motion removed — parent handles animation
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
@@ -26,6 +27,7 @@ import { SolarFinancialsPanel } from '@/components/scanner/SolarFinancialsPanel'
 import { buildProposalOptions } from '@/services/proposalOptions';
 import { downloadProposalPdf } from '@/services/proposalPdf';
 import { buildPrompt, type ProposalInput } from '@/services/proposalGeneratorService';
+import { writeScanHandoff } from '@/services/scanHandoff';
 
 // ===== TYPES =====
 
@@ -145,6 +147,7 @@ export default function BuildingDetail({
   savedLeadId,
   monthlyKwhOverride,
 }: BuildingDetailProps) {
+  const navigate = useNavigate();
   const [enrichedData, setEnrichedData] = useState<EnrichedOwnerResult | null>(null);
   const [isResearching, setIsResearching] = useState(false);
   const [researchAttempted, setResearchAttempted] = useState(false);
@@ -351,6 +354,33 @@ export default function BuildingDetail({
       },
     );
   }, [building, enrichedData]);
+
+  // Continuous path: carry the scan + owner context into the full Proposal Editor.
+  // (Old behavior set window.location.hash — a no-op under BrowserRouter, so the
+  // button navigated nowhere and lost all data.)
+  const handleOpenProposalEditor = useCallback(() => {
+    const scan = building?.solarAnalysis;
+    const ownerName = enrichedData?.ownerName?.trim();
+    const addr = enrichedData?.address?.trim() || scan?.address || building?.name || '';
+    const monthlyConsumptionKwh = scan ? Math.round(scan.yearlyEnergyKwh / 12) : undefined;
+    const monthlyBill = monthlyConsumptionKwh
+      ? Math.round(monthlyConsumptionKwh * PANAMA_DEFAULTS.electricityRate)
+      : undefined;
+    writeScanHandoff({
+      clientName: ownerName || addr || 'Cliente Solaris',
+      contactName: ownerName || '',
+      clientEmail: enrichedData?.email || '',
+      clientPhone: enrichedData?.phone || '',
+      sector: 'commercial',
+      buildingName: building?.name,
+      buildingAddress: addr,
+      roofAreaM2: scan?.totalRoofAreaM2,
+      monthlyBill,
+      monthlyConsumptionKwh,
+      systemSizeKwp: scan?.maxSystemSizeKwp,
+    });
+    navigate('/tools/proposal-generator');
+  }, [building, enrichedData, navigate]);
 
   if (!building) return null;
 
@@ -1182,17 +1212,17 @@ export default function BuildingDetail({
                 variant="primary"
                 fullWidth
                 icon={<ArrowRight className="w-4 h-4" />}
-                onClick={() => { window.location.hash = '#/tools/proposal-generator'; }}
+                onClick={handleOpenProposalEditor}
               >
-                Generate Proposal
+                Abrir editor de propuesta
               </Button>
               <Button
                 variant="secondary"
                 fullWidth
                 icon={<ExternalLink className="w-4 h-4" />}
-                onClick={() => { window.location.hash = '#/projects'; }}
+                onClick={() => navigate('/projects')}
               >
-                Save to Project
+                Guardar en proyecto
               </Button>
             </>
           )}
