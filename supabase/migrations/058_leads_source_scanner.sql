@@ -1,29 +1,35 @@
--- 058_leads_source_scanner.sql
--- The roof scanner posts leads with source='scanner'
--- (RoofScannerPage.tsx → POST /api/leads/intake → leads.insert({ source })).
--- But leads_source_check (migration 009) never included 'scanner', so EVERY
--- scanner-originated lead violated the CHECK and was rejected at insert time
--- (the lead was silently lost). Add 'scanner' to the allow-list so scanner
--- leads persist while keeping their true attribution (rather than masquerading
--- them as 'manual').
+-- 058_leads_source_scanner.sql — NEUTRALIZED (intentional no-op). DO NOT re-add the
+-- original constraint as written; it would drop live leads.
+--
+-- Original intent: add 'scanner' to a leads_source_check CHECK constraint so
+-- roof-scanner leads (RoofScannerPage -> /api/leads/intake) pass insert.
+--
+-- WHY NEUTRALIZED — verified against prod (Supabase ubuazgwxourbzruanxvs) 2026-07-02:
+--   1. There is NO leads_source_check constraint on prod at all. Migration 009's
+--      constraint was never applied to this database, so scanner leads are NOT
+--      being rejected by any CHECK. The bug this migration targeted does not
+--      exist here.
+--   2. The original allow-list OMITTED source values that the live deployed forms
+--      send verbatim through /api/leads/intake (which inserts `source` unmodified):
+--        - homepage_form          (public/home.html, public/index.html)
+--        - contact_form           (public/contacto.html)
+--        - solar_comercial_form   (public/solar-comercial.html)
+--        - solar_residencial_form (public/solar-residencial.html)
+--      Applying the constraint as written would reject every future submission
+--      from those four live channels — a silent lead-loss regression.
+--
+-- Decision (review plan, 2026-07-02): SKIP. This file is deliberately a no-op.
+--
+-- If a source allow-list guard is ever desired, apply the COMPLETE list below
+-- (every current live source + 'scanner') deliberately and re-verify distinct
+-- leads.source values first:
+--
+--   ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_source_check;
+--   ALTER TABLE leads ADD CONSTRAINT leads_source_check CHECK (source IN (
+--     'google_ads','meta_ads','lp_azuero','facebook','instagram','whatsapp',
+--     'website','manual','referral','cold_call','event','debug_test',
+--     'capi_verify','scanner',
+--     'homepage_form','contact_form','solar_comercial_form','solar_residencial_form'
+--   )) NOT VALID;
 
-ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_source_check;
-
-ALTER TABLE leads
-  ADD CONSTRAINT leads_source_check
-  CHECK (source IN (
-    'google_ads',
-    'meta_ads',
-    'lp_azuero',
-    'facebook',
-    'instagram',
-    'whatsapp',
-    'website',
-    'manual',
-    'referral',
-    'cold_call',
-    'event',
-    'debug_test',
-    'capi_verify',
-    'scanner'
-  )) NOT VALID;
+SELECT 1; -- no-op
