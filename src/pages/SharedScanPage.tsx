@@ -182,7 +182,7 @@ export default function SharedScanPage() {
             Interested in solar for your building?
           </p>
           <a
-            href="https://solarispanama.com"
+            href="https://solaris-panama.com"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#00ffcc]/10 text-[#00ffcc] border border-[#00ffcc]/20 rounded-xl text-sm font-medium hover:bg-[#00ffcc]/20 transition-colors"
           >
             <Sun className="w-4 h-4" />

@@ -763,7 +763,7 @@ export function LeadReportPreview({ lead, className }: LeadReportPreviewProps) {
         <div className="space-y-1">
           <p className="text-xs text-[#8888a0] font-medium">Solaris Panama</p>
           <p className="text-[11px] text-[#555570]">
-            info@solarispanama.com | +507 000-0000 | Panama City, Panama
+            info@solaris-panama.com | +507 000-0000 | Panama City, Panama
           </p>
         </div>
       </motion.div>

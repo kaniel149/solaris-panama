@@ -228,8 +228,8 @@ We speak like a **knowledgeable friend who happens to be a solar expert**. Not a
 **Solaris Energy**
 Playa Venao, Azuero Peninsula, Panamá
 📞 +507 6XXX-XXXX
-✉ info@solarispanama.com
-🌐 solarispanama.com
+✉ info@solaris-panama.com
+🌐 solaris-panama.com
 
 **Social:** @solarispanama (Instagram, Facebook, LinkedIn)
 
