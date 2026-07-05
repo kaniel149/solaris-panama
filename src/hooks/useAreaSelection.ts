@@ -63,10 +63,13 @@ export function useAreaSelection() {
   // All available zones
   const zones = useMemo(() => PANAMA_ZONES, []);
 
-  // Name of the active zone (if any)
+  // Name of the active zone (if any). Custom areas get a dated label so zone is never null for new scans.
   const activeZoneName = useMemo(() => {
     if (selectedZone) return selectedZone.name;
-    if (customBounds) return 'Custom Area';
+    if (customBounds) {
+      const date = new Date().toLocaleDateString('es-PA', { day: '2-digit', month: '2-digit', year: '2-digit' });
+      return `Área personalizada ${date}`;
+    }
     return null;
   }, [selectedZone, customBounds]);
 

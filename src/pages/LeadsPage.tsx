@@ -72,6 +72,8 @@ export default function LeadsPage() {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    zoneFilter,
+    setZoneFilter,
     sortBy,
     setSortBy,
     updateLeadStatus,
@@ -279,6 +281,27 @@ export default function LeadsPage() {
           </AnimatePresence>
         </div>
 
+        {/* Zone filter */}
+        {(() => {
+          const distinctZones = [...new Set(allLeads.map((l) => l.zone).filter((z): z is string => !!z))].sort();
+          return distinctZones.length > 0 ? (
+            <select
+              value={zoneFilter}
+              onChange={(e) => setZoneFilter(e.target.value)}
+              className={cn(
+                'px-3 py-2 rounded-lg text-sm bg-[#12121a] border border-white/[0.06] outline-none cursor-pointer hover:border-white/[0.12]',
+                zoneFilter ? 'text-[#00ffcc] border-[#00ffcc]/30' : 'text-[#8888a0]'
+              )}
+            >
+              <option value="">All Zones</option>
+              <option value="__no_zone__">No Zone</option>
+              {distinctZones.map((z) => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
+          ) : null;
+        })()}
+
         {/* Sort selector */}
         <select
           value={sortBy}
@@ -345,6 +368,7 @@ export default function LeadsPage() {
               onClick={() => {
                 setSearchQuery('');
                 setStatusFilter('all');
+                setZoneFilter('');
               }}
             >
               Clear Filters

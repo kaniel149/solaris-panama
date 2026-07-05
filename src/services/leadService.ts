@@ -44,6 +44,7 @@ export interface CrmLead {
   lead_score: number;
   notes: string | null;
   whatsapp_chat_id: string | null;
+  zone?: string | null;
 }
 
 export interface LeadNote {
