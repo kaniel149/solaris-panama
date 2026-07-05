@@ -289,7 +289,7 @@ Antes de pasar al Módulo 2, confirme que puede hacer cada uno de estos:
 - a) Tener razón, Azuero tiene demasiada lluvia para solar
 - b) El sistema almacena energía de todo el año para usarla en lluvia
 - c) Los paneles siguen generando con menor eficiencia bajo nubes, y Azuero tiene más sol que Alemania, líder mundial en solar
-- d) Ofrecerle solo el modelo de Lease para reducir el riesgo
+- d) Ofrecerle solo el PPA para evitar hablar de inversión
 
 **10.** ¿Qué dato es INDISPENSABLE conseguir en la primera visita a un prospecto?
 - a) El nombre de todos los empleados del negocio

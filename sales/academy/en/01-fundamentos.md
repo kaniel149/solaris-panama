@@ -289,7 +289,7 @@ Before moving on to Module 2, confirm you can do each of the following:
 - a) Agree — Azuero has too much rain for solar
 - b) The system stores energy all year to use during rain
 - c) The panels keep generating at lower efficiency under clouds, and Azuero gets double the solar radiation of Germany, the world leader in solar
-- d) Offer only the Lease model to reduce the risk
+- d) Offer only the PPA to avoid talking about investment
 
 **10.** What data is INDISPENSABLE to obtain on the first visit to a prospect?
 - a) The names of all the business's employees

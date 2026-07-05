@@ -79,7 +79,7 @@ Now respond — but to the real fear you uncovered, not to the surface complaint
 **R — Respond:**
 > "Let's look at your numbers together. How much do you pay for electricity per month? [Calculate together] With a [X] kW system, your payback is [Y] years. After that, it's 20+ years of essentially free electricity."
 
-If they keep resisting: present the PPA ($0 upfront, pays per kWh at a rate lower than the utility) or the lease (fixed monthly payment, lower than their current bill from day one).
+If they keep resisting: present the PPA ($0 upfront, pays per kWh at a rate lower than the utility).
 
 **Absolute rule:** Never discount the price. Add value — extended warranty, priority monitoring, additional maintenance visits.
 

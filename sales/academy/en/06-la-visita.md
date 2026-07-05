@@ -161,8 +161,6 @@ Always present in this order — start with direct purchase to anchor maximum va
 
 > "Think of it as switching electricity providers — but one that charges you less and lives on your own roof."
 
-**3. Lease:** "Fixed monthly payment, predictable, lower than your current bill. No surprises."
-
 ### Step 7 — Why Solaris
 
 > "We are the only company focused exclusively on commercial rooftop solar in Azuero. We're not based in Panama City sending technicians when there's a problem. We're here, in the region. When something happens, we show up."
@@ -319,10 +317,10 @@ d) 7–8 kWh/m²
 
 **5.** When presenting payment options, in what order are they presented?
 
-a) PPA → Lease → Direct purchase
-b) Direct purchase → PPA → Lease
+a) PPA → Direct purchase
+b) Direct purchase → PPA
 c) The order doesn't matter — it depends on the prospect
-d) Lease → PPA → Direct purchase
+d) Only one option is presented — the one that best fits the client
 
 **6.** Which of these is a CLEAR signal of genuine prospect interest?
 
@@ -371,7 +369,7 @@ d) Ask them to sign and give them three days to cancel
 
 **4. c** — Panama receives 5–6 kWh/m²/day of solar radiation, which is world-class.
 
-**5. b** — Always Direct purchase first (anchors maximum value), then PPA, then Lease.
+**5. b** — Always Direct purchase first (anchors maximum value), then PPA.
 
 **6. c** — Calling the partner or spouse to see the presentation is a strong signal of genuine interest.
 

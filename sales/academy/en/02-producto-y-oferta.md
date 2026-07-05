@@ -10,7 +10,7 @@
 
 By the end of this module you will be able to:
 
-1. Explain each of the 3 payment options (Purchase, PPA, Lease) in 60 seconds or less.
+1. Explain each of the 2 payment options (Purchase and PPA) in 60 seconds or less.
 2. Identify which option best fits each type of client.
 3. Collect the 3 data points the team needs to calculate a prospect's ROI.
 4. Describe step by step everything Solaris does for the client (from start to finish).
@@ -38,7 +38,7 @@ That phrase from the pitch deck is the heart of our value proposition. The clien
 
 ---
 
-## Part 2: The Three Payment Options
+## Part 2: The Two Payment Options
 
 ### Quick overview
 
@@ -46,7 +46,6 @@ That phrase from the pitch deck is the heart of our value proposition. The clien
 |--------|-------------------|----------------------|---------|
 | **Direct Purchase** | High (client pays for the system) | The client from day 1 | Maximum in the long term |
 | **PPA** | $0 | Solaris (for 15–20 years) | Immediate, moderate |
-| **Lease** | $0 | Solaris (for 10–15 years) | Immediate, moderate |
 
 ---
 
@@ -116,35 +115,6 @@ Solaris installs the system on the client's roof. Solaris retains ownership of t
 
 ---
 
-### Option 3: Lease
-
-#### How it works in plain language
-
-The client pays a fixed monthly fee to use the system. That fee is lower than what they currently spend on electricity, so they still save from the first month. The system remains Solaris's during the contract.
-
-#### Reference numbers (80 kW system)
-
-| Parameter | Value |
-|-----------|-------|
-| Upfront investment | **$0** |
-| Monthly lease payment | $800–$1,200/month |
-| Value of energy produced (at grid rate) | ~$1,900/month |
-| Net monthly savings | ~$700–$1,100/month |
-| Contract duration | 10–15 years |
-| At the end of the contract | Buy for $1, renew, or have the system removed |
-
-#### 60-second pitch — Lease
-
-> "With the lease, you pay a fixed monthly fee — let's say $1,000 per month — and the system produces electricity equivalent to $1,900 per month at grid rates. The difference, almost $900, is your net savings from month one. No upfront investment, no surprise fee increases, and you know exactly what you're going to pay every month. At the end of the contract, you can buy the system for $1 or return it to us."
-
-#### Who this option is for
-
-- Companies that want predictable costs and simple accounting
-- Businesses where the owner doesn't want to assume ownership of the system
-- Clients who prefer quick decisions without complex financial analysis
-
----
-
 ## Part 3: Which Option to Recommend for Each Client
 
 ### Quick decision guide
@@ -155,12 +125,12 @@ The client pays a fixed monthly fee to use the system. That fee is lower than wh
 | **Hotel / Resort (cautious owner)** | PPA | $0 upfront, starts saving immediately |
 | **Supermarket (corporate chain)** | PPA | Slow CAPEX approval process; with PPA the local GM can say yes faster |
 | **Dairy farm / agro-industrial** | PPA or Purchase | If they have capital: Purchase. If not: PPA for the immediate savings |
-| **Surf camp / boutique lodge** | PPA or Lease | Small property owners, $0 upfront is the easiest argument |
+| **Surf camp / boutique lodge** | PPA | Small property owners, $0 upfront is the easiest argument |
 | **Large farm with cash flow** | Direct Purchase | Maximum return, no third parties involved long term |
 
 ### The general presentation rule
 
-**Always present Direct Purchase first.** Anchor the system's value ($80,000–$300,000 depending on size) before showing the no-upfront-cost alternatives. That way the client understands the real value of what we're giving them "for free" with the PPA or Lease.
+**Always present Direct Purchase first.** Anchor the system's value ($80,000–$300,000 depending on size) before showing the no-upfront-cost alternative. That way the client understands the real value of what we're giving them "for free" with the PPA.
 
 ---
 
@@ -204,7 +174,7 @@ This rule is not optional. It is Solaris Panama policy and it protects both the 
 ### Why does this rule exist?
 
 1. **Prices depend on technical variables** you don't have in the field (roof type, slope, distance to the inverter, existing electrical capacity).
-2. **PPA and Lease options have contractual terms** that only the manager can formally commit to.
+2. **The PPA option has contractual terms** that only the manager can formally commit to.
 3. **A price given incorrectly creates expectations that are impossible to meet** — and that destroys trust.
 
 ### What you CAN tell the client about prices
@@ -227,9 +197,9 @@ This rule is not optional. It is Solaris Panama policy and it protects both the 
 
 ## 📞 Scripts and Key Phrases
 
-### To present the 3 options in a single conversation
+### To present the 2 options in a single conversation
 
-> "Mr. [NOMBRE], we have three ways of working together. The first is the direct purchase: you invest in the system, it's yours from day one, and after [PAYBACK] years the electricity is essentially free. The second is the PPA: we install at no cost to you, and you only pay us for the electricity you use — at a rate lower than the grid. The third is the lease: a fixed monthly payment, lower than your current bill, with no upfront investment. Which of the three fits best with how you manage your finances?"
+> "Mr. [NOMBRE], we have two ways of working together. The first is the direct purchase: you invest in the system, it's yours from day one, and after [PAYBACK] years the electricity is essentially free. The second is the PPA: we install at no cost to you, and you only pay us for the electricity you use — at a rate lower than the grid. Which of the two fits best with how you manage your finances?"
 
 ### To recommend PPA to a client with a tight budget
 
@@ -238,10 +208,6 @@ This rule is not optional. It is Solaris Panama policy and it protects both the 
 ### To recommend Purchase to a hotel with capital
 
 > "With the capital you mentioned, the direct purchase is clearly the best option for you. After [PAYBACK] years — taking advantage of the Law 417 benefits — you have essentially free electricity for 20 more years. The difference in total savings versus the PPA can be hundreds of thousands of dollars."
-
-### To explain the Lease
-
-> "The lease is the simplest option of all. You pay $[MONTO] fixed per month, no surprises. The system produces $[VALOR] in electricity per month. The difference is your net savings. No investment, no risk, no complications."
 
 ### When the client asks if they can negotiate the price
 
@@ -255,9 +221,9 @@ This rule is not optional. It is Solaris Panama policy and it protects both the 
 
 2. **Promising exact prices.** If the client insists, give ranges ("between $80,000 and $104,000") and explain that the exact number depends on the technical visit.
 
-3. **Presenting only one option.** Always present all three — even if you know which one fits best. A client who knows all three options makes their decision with more confidence.
+3. **Presenting only one option.** Always present both — even if you know which one fits best. A client who knows both options makes their decision with more confidence.
 
-4. **Confusing PPA with Lease.** In the PPA the client pays per kWh produced (variable). In the Lease they pay a fixed monthly fee. They are different contracts with different implications.
+4. **Skipping Direct Purchase because the client doesn't have capital.** Always anchor the system's value by presenting Direct Purchase first. A client who understands what they receive "for free" with the PPA makes their decision with more confidence.
 
 5. **Not collecting the bill on the first visit.** Without that data, the manager cannot prepare the proposal. If the client doesn't have the bill on hand, ask them to send a photo by WhatsApp that same day.
 
@@ -271,9 +237,8 @@ This rule is not optional. It is Solaris Panama policy and it protects both the 
 
 **Your task:**
 1. Present the PPA as the first alternative (with the reference rate and estimated savings).
-2. Also mention the Lease as a second option.
-3. When she asks "how much exactly is the PPA going to cost me?", use the correct transition phrase to avoid giving a number that hasn't been approved by the manager.
-4. Close by asking for the next step: a free technical visit.
+2. When she asks "how much exactly is the PPA going to cost me?", use the correct transition phrase to avoid giving a number that hasn't been approved by the manager.
+3. Close by asking for the next step: a free technical visit.
 
 **Practice with a colleague.** The colleague adds these objections:
 - "What if in 5 years I want to break the contract?"
@@ -290,7 +255,6 @@ Before going to the field, confirm you can do each of the following without look
 
 - [ ] Explain Direct Purchase in 60 seconds with an estimated payback.
 - [ ] Explain the PPA in 60 seconds with the reference rate ($0.14–$0.17/kWh vs. $0.20 grid).
-- [ ] Explain the Lease in 60 seconds with a sample fee and net savings.
 - [ ] State which option you would recommend for: a hotel with capital, a corporate supermarket, a farm with a limited budget.
 - [ ] Name the 5 steps of the Solaris service from start to finish.
 - [ ] Mention the 3 data points you must bring from every visit (bill $, kWh, roof area).
@@ -330,7 +294,7 @@ Before going to the field, confirm you can do each of the following without look
 - a) Direct Purchase
 - b) PPA
 - c) Neither — they don't qualify as a client
-- d) Only Lease if the amount is low
+- d) Direct Purchase always — corporations always prefer to own the asset
 
 **6.** The 3 essential data points you must bring from every visit are:
 - a) Owner's name, number of employees, type of business
@@ -338,11 +302,11 @@ Before going to the field, confirm you can do each of the following without look
 - c) Monthly bill ($), accountant's name, bank address
 - d) Consumption (kWh), number of panels that fit, competitor pricing
 
-**7.** What is the typical duration of a Lease contract at Solaris?
+**7.** What is the typical duration of a PPA contract at Solaris?
 - a) 2–5 years
 - b) 5–8 years
-- c) 10–15 years
-- d) 20–25 years
+- c) 15–20 years
+- d) 25–30 years
 
 **8.** A client tells you "Can you give me a 10% discount if I sign this week?" The correct response is:
 - a) Accept immediately to avoid losing the business
@@ -352,13 +316,13 @@ Before going to the field, confirm you can do each of the following without look
 
 **9.** Which option should you ALWAYS present to the client first, even if they don't have the capital to pay for it?
 - a) PPA, because it has $0 upfront investment
-- b) Lease, because it has a fixed fee
+- b) The most affordable option available, to avoid losing the sale
 - c) Direct Purchase, to anchor the system's value
 - d) Any of them — order doesn't matter
 
-**10.** At the end of a 10–15 year Lease contract, the client can:
-- a) Only return the system — there are no other options
-- b) Buy the system for $1, renew the contract, or have the system removed
+**10.** At the end of a 15–20 year PPA contract, the client can:
+- a) Only have the system removed — there are no other options
+- b) Buy the system, renew the PPA contract, or have the system removed
 - c) Automatically become the owner at no additional cost
 - d) [VERIFICAR CON GERENTE] — the exact terms are defined by the contract
 
@@ -374,10 +338,10 @@ Before going to the field, confirm you can do each of the following without look
 | 4 | **b** | 15–30% savings from day 1 on the solar portion |
 | 5 | **b** | PPA: the local GM can approve without a major CAPEX process |
 | 6 | **b** | Bill ($), kWh, roof area — all three to size and calculate |
-| 7 | **c** | 10–15 years for the Lease |
+| 7 | **c** | 15–20 years for the PPA contract |
 | 8 | **c** | Never commit to a discount; offer additional value; escalate to manager |
 | 9 | **c** | Direct Purchase first — anchor the value before showing free alternatives |
-| 10 | **b** | Buy for $1, renew, or have the system removed at the end of the contract |
+| 10 | **b** | Buy the system, renew the PPA, or have the system removed at the end of the contract |
 
 ---
 

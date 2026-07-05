@@ -161,8 +161,6 @@ Presente siempre en este orden — empiece por la compra directa para anclar el 
 
 > "Piénselo como cambiar de proveedor de electricidad — pero uno que le cobra menos y vive en su propio techo."
 
-**3. Arrendamiento:** "Pago mensual fijo, predecible, menor que su factura actual. Sin sorpresas."
-
 ### Paso 7 — Por Qué Solaris
 
 > "Somos la única empresa enfocada en techos solares comerciales en Azuero. No somos de Ciudad de Panamá mandando técnicos cuando hay un problema. Estamos aquí, en la región. Cuando algo pasa, llegamos."
@@ -319,10 +317,10 @@ d) 7-8 kWh/m²
 
 **5.** Al presentar las opciones de pago, ¿en qué orden se presentan?
 
-a) PPA → Arrendamiento → Compra directa  
-b) Compra directa → PPA → Arrendamiento  
-c) El orden no importa — depende del prospecto  
-d) Arrendamiento → PPA → Compra directa
+a) PPA → Compra directa
+b) Compra directa → PPA
+c) El orden no importa — depende del prospecto
+d) Solo se presenta una opción — la que mejor encaja con el cliente
 
 **6.** ¿Cuál de estas es una señal CLARA de interés real del prospecto?
 
@@ -371,7 +369,7 @@ d) Le pide que firme y le da tres días para cancelar
 
 **4. c** — Panamá recibe 5-6 kWh/m²/día de radiación solar, que es nivel mundial.
 
-**5. b** — Siempre Compra directa primero (ancla el valor máximo), luego PPA, luego Arrendamiento.
+**5. b** — Siempre Compra directa primero (ancla el valor máximo), luego PPA.
 
 **6. c** — Llamar al socio o esposa para que vea la presentación es una señal fuerte de interés real.
 

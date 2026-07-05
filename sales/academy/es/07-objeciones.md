@@ -79,7 +79,7 @@ Ahora responda — pero al miedo real que descubrió, no a la queja superficial.
 **R — Responder:**
 > "Veamos sus números juntos. ¿Cuánto paga de luz al mes? [Calcule juntos] Con un sistema de [X] kW, su retorno es en [Y] años. Después de eso, son 20+ años de electricidad prácticamente gratis."
 
-Si sigue resistiendo: presente el PPA ($0 de inversión inicial, paga por kWh a tarifa menor que la distribuidora) o el arrendamiento (pago mensual fijo, menor que su factura actual desde el día 1).
+Si sigue resistiendo: presente el PPA ($0 de inversión inicial, paga por kWh a tarifa menor que la distribuidora).
 
 **Regla absoluta:** Nunca descuente el precio. Agregue valor — garantía extendida, monitoreo prioritario, visitas de mantenimiento adicionales.
 
