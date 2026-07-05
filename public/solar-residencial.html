@@ -139,6 +139,7 @@ section { padding: clamp(4rem, 10vw, 7rem) 0; }
 .nav .container { display: flex; align-items: center; justify-content: space-between; }
 .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
 .nav-logo img { height: 28px; width: auto; }
+@media (max-width: 480px) { .nav-logo-text { display: none; } }
 .nav-links { display: none; list-style: none; gap: 1.75rem; align-items: center; }
 @media (min-width: 900px) { .nav-links { display: flex; } }
 .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
@@ -149,7 +150,7 @@ section { padding: clamp(4rem, 10vw, 7rem) 0; }
 .btn-green { background: var(--green-700); color: var(--white); }
 .btn-green:hover { background: var(--green-600); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .btn-lg { padding: 1rem 2.2rem; font-size: 1rem; }
-.hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
+.hamburger { display: flex; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 14px 10px; margin: -6px -2px; background: none; border: none; z-index: 200; }
 .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s ease; border-radius: 2px; }
 .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 .hamburger.active span:nth-child(2) { opacity: 0; }
@@ -319,6 +320,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
 .whatsapp-float { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; width: 58px; height: 58px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(37,211,102,0.45); text-decoration: none; transition: all 0.3s; }
 .whatsapp-float:hover { transform: scale(1.1); background: #1da851; }
 .whatsapp-float svg { width: 28px; height: 28px; fill: #fff; }
+@media (max-width: 899px) { .whatsapp-float { display: none; } }
 .whatsapp-pulse { position: absolute; width: 58px; height: 58px; border-radius: 50%; background: #25D366; animation: pulse 2.5s infinite; }
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(1.5); opacity: 0; } 100% { transform: scale(1.5); opacity: 0; } }
 
@@ -341,7 +343,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
   <div class="container">
     <a href="https://solaris-panama.com" class="nav-logo">
       <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="eager" decoding="async" onerror="this.style.display='none'">
-      Solaris Panamá
+      <span class="nav-logo-text">Solaris Panamá</span>
     </a>
     <ul class="nav-links">
       <li><a href="https://solaris-panama.com">Inicio</a></li>

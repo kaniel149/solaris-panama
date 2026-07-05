@@ -52,11 +52,24 @@ h3{font-size:clamp(1.1rem,2vw,1.75rem);font-weight:600}
 .container{max-width:1200px;margin:0 auto;padding:0 clamp(1.25rem,4vw,2.5rem)}
 .nav{position:sticky;top:0;z-index:100;background:var(--green);padding:1rem 0}
 .nav .container{display:flex;align-items:center;justify-content:space-between}
-.nav-logo{color:var(--pearl);font-family:'Playfair Display',serif;font-size:1.3rem;text-decoration:none}
+.nav-logo{color:var(--pearl);font-family:'Playfair Display',serif;font-size:1.3rem;text-decoration:none;display:flex;align-items:center;gap:0.5rem}
+.nav-logo img{height:28px;width:auto}
+.nav-cta{padding:0.55rem 1.1rem;font-size:0.8rem;white-space:nowrap;letter-spacing:0.04em}
+@media(max-width:480px){.nav-logo-text{display:none}}
+.hamburger{display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:14px 10px;margin:-6px -2px;background:none;border:none;z-index:200}
+.hamburger span{display:block;width:24px;height:2px;background:var(--pearl);transition:all 0.3s ease;border-radius:2px}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+@media(min-width:900px){.hamburger{display:none}}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--green);z-index:150;flex-direction:column;justify-content:center;align-items:center;gap:2rem}
+.mobile-menu.active{display:flex}
+.mobile-menu a{color:var(--pearl);text-decoration:none;font-size:1.3rem;font-weight:500;font-family:'Playfair Display',serif}
+.mobile-menu a:hover{color:var(--gold)}
 .nav-links{display:flex;gap:1.5rem;list-style:none}
 .nav-links a{color:rgba(254,253,251,0.7);text-decoration:none;font-size:0.9rem;font-weight:500}
 .nav-links a:hover{color:var(--pearl)}
-@media(max-width:768px){.nav-links{display:none}}
+@media(max-width:899px){.nav-links{display:none}}
 .hero{background:var(--green);padding:clamp(4rem,10vw,6rem) 0;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,0.1),transparent 70%)}
 .hero h1{color:var(--pearl);margin-bottom:1rem}
@@ -98,7 +111,7 @@ section{padding:clamp(3rem,8vw,6rem) 0}
 .calc-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--mist);outline:none;margin:0.5rem 0}
 .calc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--green);cursor:pointer}
 .calc-value{text-align:center;font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--green);margin-bottom:1.5rem}
-.calc-value span{font-size:0.9rem;color:var(--ash);font-family:'DM Sans',sans-serif}
+.calc-value .unit{font-size:0.9rem;color:var(--ash);font-family:'DM Sans',sans-serif}
 .calc-results{background:var(--green);padding:2rem;display:flex;flex-direction:column;justify-content:center;gap:1.25rem}
 .calc-result-label{font-size:0.75rem;color:rgba(254,253,251,0.5);text-transform:uppercase;letter-spacing:0.08em}
 .calc-result-val{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold)}
@@ -137,14 +150,27 @@ footer a{color:var(--gold);text-decoration:none}
 <body>
 
 <nav class="nav"><div class="container">
-<a href="/" class="nav-logo">Solaris Energy</a>
+<a href="/" class="nav-logo">
+<img src="/solaris-logo-dark.png" alt="Solaris Panamá — Energía Solar" width="624" height="219" loading="eager" decoding="async">
+<span class="nav-logo-text">Solaris Panamá</span>
+</a>
 <ul class="nav-links">
 <li><a href="/">Inicio</a></li>
 <li><a href="/#beneficios">Beneficios</a></li>
 <li><a href="/#calculadora">Calculadora</a></li>
 <li><a href="/#contacto">Contacto</a></li>
 </ul>
+<a href="https://wa.me/50765831822?text=Hola%2C%20quiero%20una%20cotizaci%C3%B3n%20de%20paneles%20solares%20en%20Parita" class="btn btn-gold nav-cta" target="_blank" rel="noopener">Cotización Gratis</a>
+<button class="hamburger" id="hamburger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
 </div></nav>
+
+<div class="mobile-menu" id="mobileMenu">
+<a href="/" onclick="closeMobile()">Inicio</a>
+<a href="/#beneficios" onclick="closeMobile()">Beneficios</a>
+<a href="/#calculadora" onclick="closeMobile()">Calculadora</a>
+<a href="/#contacto" onclick="closeMobile()">Contacto</a>
+<a href="https://wa.me/50765831822?text=Hola%2C%20quiero%20una%20cotizaci%C3%B3n%20de%20paneles%20solares%20en%20Parita" class="btn btn-gold" target="_blank" rel="noopener" onclick="closeMobile()">Cotización Gratis</a>
+</div>
 
 <section class="hero"><div class="container">
 <span class="label">Energía Solar en Parita</span>
@@ -164,17 +190,17 @@ footer a{color:var(--gold);text-decoration:none}
 </div>
 <div class="grid-3">
 <div class="card">
-<div class="card-icon">🏛️</div>
+<div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></div>
 <h3>Techos Amplios, Gran Potencial Solar</h3>
 <p>La arquitectura colonial de Parita, con sus viviendas de techos inclinados y amplias superficies, es ideal para instalar paneles solares. Muchas propiedades históricas del pueblo tienen techos con orientación sur-suroeste que maximizan la captación solar durante todo el día, especialmente en los meses de mayor irradiación.</p>
 </div>
 <div class="card">
-<div class="card-icon">☀️</div>
+<div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
 <h3>Clima Seco y Sol Abundante de Herrera</h3>
 <p>La Provincia de Herrera registra una de las estaciones secas más prolongadas del país, con escasa nubosidad desde diciembre hasta abril. Con una irradiancia promedio de 5.1 kWh/m² diarios, los sistemas solares en Parita producen de forma consistente y predecible, asegurando que la inversión se recupere en plazos de 4 a 6 años.</p>
 </div>
 <div class="card">
-<div class="card-icon">🎨</div>
+<div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
 <h3>Turismo y Artesanía — Energía Limpia</h3>
 <p>Parita atrae visitantes por su arte, artesanía y arquitectura colonial. Los talleres artesanales y los emprendimientos turísticos del pueblo pueden reducir sus costos operativos entre un 70% y 90% con energía solar, mejorando su rentabilidad sin alterar el entorno que atrae al turismo. Solaris instala con discreción para preservar la estética colonial.</p>
 </div>
@@ -199,7 +225,7 @@ footer a{color:var(--gold);text-decoration:none}
 </ul>
 </div>
 <p style="text-align:center;margin-top:1.5rem;color:var(--slate)">
-<a href="/blog/ley-417-panama.html" style="color:var(--green);font-weight:600">📋 Lee nuestra guía completa de la Ley 417 →</a>
+<a href="/blog/ley-417-panama.html" style="color:var(--green);font-weight:600">Lee nuestra guía completa de la Ley 417 →</a>
 </p>
 </div></section>
 
@@ -215,12 +241,12 @@ footer a{color:var(--gold);text-decoration:none}
 <div>
 <label>Área disponible en tu techo</label>
 <input type="range" class="calc-slider" id="roofSlider" min="20" max="500" value="80" step="10">
-<div class="calc-value"><span id="roofVal">80</span> <span>m²</span></div>
+<div class="calc-value"><span id="roofVal">80</span> <span class="unit">m²</span></div>
 </div>
 <div>
 <label>Tu factura mensual actual</label>
 <input type="range" class="calc-slider" id="billSlider" min="50" max="3000" value="350" step="50">
-<div class="calc-value">$<span id="billVal">350</span> <span>/mes</span></div>
+<div class="calc-value">$<span id="billVal">350</span> <span class="unit">/mes</span></div>
 </div>
 </div>
 <div class="calc-results">
@@ -275,8 +301,8 @@ footer a{color:var(--gold);text-decoration:none}
 <h2>Solicita tu Evaluación Solar Gratuita en Parita</h2>
 <p>Recibe un análisis satelital de tu propiedad con estimaciones reales de ahorro. Sin compromiso, sin costo.</p>
 <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center">
-<a href="https://wa.me/50765831822?text=Hola%2C%20quiero%20una%20evaluaci%C3%B3n%20solar%20gratuita%20en%20Parita" class="btn btn-gold">💬 WhatsApp: +507 6583-1822</a>
-<a href="/#contacto" class="btn btn-outline-light">📋 Formulario de Contacto</a>
+<a href="https://wa.me/50765831822?text=Hola%2C%20quiero%20una%20evaluaci%C3%B3n%20solar%20gratuita%20en%20Parita" class="btn btn-gold">WhatsApp: +507 6583-1822</a>
+<a href="/#contacto" class="btn btn-outline-light">Formulario de Contacto</a>
 </div>
 </div></section>
 
@@ -316,6 +342,9 @@ footer a{color:var(--gold);text-decoration:none}
 const rs=document.getElementById('roofSlider'),bs=document.getElementById('billSlider');
 function calc(){const r=+rs.value,b=+bs.value;document.getElementById('roofVal').textContent=r;document.getElementById('billVal').textContent=b;const kWp=Math.round(r*0.15*10)/10,mKWh=kWp*4.5*30*0.85,sp=Math.min(0.95,(mKWh*0.18)/b),ms=Math.round(b*sp);let t=0;for(let y=0;y<25;y++)t+=ms*12*Math.pow(1.03,y);document.getElementById('rCap').textContent=kWp+' kWp';document.getElementById('rSav').textContent='$'+ms.toLocaleString();document.getElementById('rTot').textContent='$'+Math.round(t).toLocaleString()}
 rs.addEventListener('input',calc);bs.addEventListener('input',calc);calc();
+const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');mobileMenu.classList.toggle('active');document.body.style.overflow=mobileMenu.classList.contains('active')?'hidden':''});
+function closeMobile(){hamburger.classList.remove('active');mobileMenu.classList.remove('active');document.body.style.overflow=''}
 </script>
 <script src="../lang-toggle.js"></script>
 </body>

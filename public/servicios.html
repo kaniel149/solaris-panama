@@ -129,12 +129,33 @@ section { padding: clamp(4rem, 10vw, 8rem) 0; }
 }
 .nav .container { display: flex; align-items: center; justify-content: space-between; }
 .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
-.nav-logo svg { color: var(--gold-400); }
-.nav-links { display: none; list-style: none; gap: 2rem; }
-@media (min-width: 768px) { .nav-links { display: flex; } }
+.nav-logo img { height: 32px; width: auto; }
+.nav-links { display: none; list-style: none; gap: 1.75rem; align-items: center; }
+@media (min-width: 900px) { .nav-links { display: flex; } }
 .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover, .nav-links a.active { color: var(--white); }
 .nav-cta { padding: 0.6rem 1.4rem !important; font-size: 0.85rem !important; }
+@media (max-width: 480px) {
+  .nav-logo-text { display: none; }
+  .nav-cta { padding: 0.5rem 1rem !important; white-space: nowrap; font-size: 0.85rem !important; }
+}
+
+/* Hamburger */
+.hamburger { display: flex; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 14px 10px; margin: -6px -2px; background: none; border: none; z-index: 200; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s ease; border-radius: 2px; }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+@media (min-width: 900px) { .hamburger { display: none; } }
+
+/* Mobile Menu */
+.mobile-menu {
+  display: none; position: fixed; inset: 0; background: var(--green-900);
+  z-index: 150; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+}
+.mobile-menu.active { display: flex; }
+.mobile-menu a { color: var(--white); text-decoration: none; font-size: 1.3rem; font-weight: 500; font-family: 'Playfair Display', serif; }
+.mobile-menu a:hover { color: var(--gold-400); }
 
 /* HERO */
 .hero {
@@ -257,8 +278,8 @@ footer { background: var(--gray-900); padding: 4rem 0 2rem; }
 <nav class="nav">
   <div class="container">
     <a href="/" class="nav-logo">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      Solaris Panamá
+      <img src="/solaris-logo-dark.png" alt="Solaris Panamá — Energía Solar" width="624" height="219" loading="eager" decoding="async">
+      <span class="nav-logo-text">Solaris Panamá</span>
     </a>
     <ul class="nav-links">
       <li><a href="/">Inicio</a></li>
@@ -268,8 +289,21 @@ footer { background: var(--gray-900); padding: 4rem 0 2rem; }
       <li><a href="/contacto.html">Contacto</a></li>
     </ul>
     <a href="/contacto.html" class="btn btn-primary nav-cta">Cotización Gratis</a>
+    <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/" onclick="closeMobile()">Inicio</a>
+  <a href="/servicios.html" onclick="closeMobile()">Servicios</a>
+  <a href="/towns/solar-pedasi.html" onclick="closeMobile()">Proyectos</a>
+  <a href="/blog" onclick="closeMobile()">Blog</a>
+  <a href="/contacto.html" onclick="closeMobile()">Contacto</a>
+  <a href="/contacto.html" class="btn btn-primary" onclick="closeMobile()">Cotización Gratis</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -477,7 +511,7 @@ footer { background: var(--gray-900); padding: 4rem 0 2rem; }
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="/" class="footer-logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="lazy" decoding="async" style="height:28px;width:auto;filter:brightness(0.6);">
           Solaris Panamá
         </a>
         <p>Instalador certificado bajo Ley 417. Especialistas en sistemas solares residenciales, comerciales e industriales en la Península de Azuero.</p>
@@ -532,6 +566,20 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
 }, { threshold: 0.12 });
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ═══ HAMBURGER MENU ═══
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+  document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+});
+function closeMobile() {
+  hamburger.classList.remove('active');
+  mobileMenu.classList.remove('active');
+  document.body.style.overflow = '';
+}
 </script>
 </body>
 </html>
