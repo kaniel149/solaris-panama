@@ -17,7 +17,8 @@
     "groupCrm": "CRM",
     "groupMapsTools": "מפות וכלים",
     "settings": "הגדרות",
-    "logout": "התנתק"
+    "logout": "התנתק",
+    "tasks": "משימות"
   },
   "common": {
     "search": "חיפוש...",
@@ -158,6 +159,50 @@
       }
     }
   },
+  "calendar": {
+    "title": "יומן",
+    "subtitle": "קבע וניהל פגישות",
+    "newEvent": "אירוע חדש",
+    "today": "היום",
+    "week": "שבוע",
+    "month": "חודש",
+    "siteSurvey": "ביקור אתר",
+    "meeting": "פגישה",
+    "installation": "התקנה",
+    "followUp": "מעקב",
+    "upcomingEvents": "אירועים קרובים",
+    "noUpcomingEvents": "אין אירועים קרובים",
+    "eventDetails": "פרטי אירוע",
+    "leadSelector": "בחר ליד",
+    "selectLead": "בחר ליד...",
+    "noLead": "ללא ליד מקושר",
+    "eventTypeMeeting": "פגישה",
+    "eventTypeFollowUp": "מעקב",
+    "eventTypeOther": "אחר",
+    "statusScheduled": "מתוכנן",
+    "statusDone": "הושלם",
+    "statusCancelled": "בוטל",
+    "markDone": "סמן כהושלם",
+    "cancelEvent": "בטל אירוע",
+    "deleteEvent": "מחק",
+    "dateTime": "תאריך ושעה",
+    "optionalNotes": "הערות (אופציונלי)"
+  },
+  "crm": {
+    "scheduleAppointment": "קבע פגישה",
+    "scheduleFollowUp": "תזמן מעקב",
+    "upcomingEvents": "פגישות ומעקבים קרובים",
+    "noEvents": "אין אירועים מתוכננים",
+    "overdueFollowUp": "מעקב באיחור",
+    "eventScheduled": "אירוע תוזמן",
+    "zone": "אזור",
+    "allZones": "כל האזורים"
+  },
+  "scanner": {
+    "zone": "אזור",
+    "allZones": "כל האזורים",
+    "noZone": "ללא אזור"
+  },
   "leads": {
     "title": "ניהול לידים",
     "subtitle": "נהל את הלידים הסולאריים מסריקה להצעת מחיר",
@@ -179,5 +224,36 @@
     "noLeads": "אין לידים עדיין",
     "noLeadsDesc": "השתמש בסורק הגגות כדי לגלות מבנים ולשמור אותם כלידים.",
     "goToScanner": "עבור לסורק"
+  },
+  "tasks": {
+    "title": "משימות",
+    "subtitle": "ארגן ועקוב אחר משימות",
+    "newTask": "משימה חדשה",
+    "todo": "ממתין",
+    "in_progress": "בביצוע",
+    "done": "הושלם",
+    "low": "נמוכה",
+    "medium": "בינונית",
+    "high": "גבוהה",
+    "priority": "עדיפות",
+    "dueDate": "תאריך יעד",
+    "allPriorities": "כל העדיפויות",
+    "withDueDate": "עם תאריך יעד בלבד",
+    "overdue": "באיחור",
+    "linkedLead": "ליד מקושר",
+    "noTasks": "אין משימות",
+    "overdueFollowUps": "מעקבים באיחור",
+    "noOverdueFollowUps": "אין מעקבים באיחור",
+    "goToLead": "צפה בליד"
+  },
+  "journey": {
+    "title": "מסע לקוח",
+    "timeline": "היסטוריה",
+    "noHistory": "אין היסטוריה",
+    "daysInStage": "{{days}} ימים",
+    "reached": "הושג",
+    "currentStage": "שלב נוכחי",
+    "funnel": "משפך",
+    "avgDays": "~{{days}}י ממוצע"
   }
 }

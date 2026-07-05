@@ -13,7 +13,14 @@ import {
   Facebook,
   X,
   Send,
+  CalendarDays,
+  Bell,
+  CheckCircle2,
+  XCircle,
+  TrendingUp,
+  ChevronRight,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   getLeads,
   updateLead,
@@ -26,6 +33,25 @@ import {
   type CrmLead,
   type LeadNote,
 } from '@/services/leadService';
+import {
+  listEventsForLead,
+  createEvent,
+  updateEventStatus,
+  deleteEvent,
+  type LeadEvent,
+  type EventType,
+} from '@/services/leadEventsService';
+import {
+  getStatusHistory,
+  getStatusHistoryBulk,
+  buildJourney,
+  buildTimeline,
+  computeFunnel,
+  JOURNEY_STAGES,
+  type StatusHistoryRow,
+  type TimelineItem,
+  type FunnelStageStats,
+} from '@/services/journeyService';
 
 const cn = (...c: (string | boolean | undefined | null)[]) => c.filter(Boolean).join(' ');
 
@@ -67,12 +93,19 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
 
 const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'cold', 'warm', 'hot', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
+const PANAMA_PROVINCES = [
+  'Panamá', 'Panamá Oeste', 'Colón', 'Coclé', 'Chiriquí',
+  'Herrera', 'Los Santos', 'Veraguas', 'Bocas del Toro', 'Darién',
+];
+
 export default function CrmLeadsPage() {
+  const { t } = useTranslation();
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
+  const [zoneFilter, setZoneFilter] = useState('');
   const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
   const [stats, setStats] = useState({
     total: 0,
@@ -93,6 +126,16 @@ export default function CrmLeadsPage() {
   const [addingLead, setAddingLead] = useState(false);
   const [newLeadForm, setNewLeadForm] = useState({ name: '', phone: '', source: 'manual' });
 
+  // Lead events
+  const [leadEvents, setLeadEvents] = useState<LeadEvent[]>([]);
+  const [showEventModal, setShowEventModal] = useState<EventType | null>(null);
+  const [eventForm, setEventForm] = useState({ title: '', startsAt: '', notes: '' });
+
+  // Customer journey
+  const [statusHistory, setStatusHistory] = useState<StatusHistoryRow[]>([]);
+  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+  const [funnelStats, setFunnelStats] = useState<FunnelStageStats[]>([]);
+
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
@@ -102,18 +145,36 @@ export default function CrmLeadsPage() {
       ]);
       // Default: hide vendors / partners / not_a_lead from main pipeline view
       // (still searchable via the status dropdown explicitly)
-      const filtered = res.data.filter((l) => {
+      let filtered = res.data.filter((l) => {
         if (!sourceFilter && SYSTEM_TEST_SOURCES.includes(l.source || '')) return false;
         if (!showNonCustomers && !statusFilter && NON_CUSTOMER_STATUSES.includes(l.status || '')) return false;
         return true;
       });
+      // Zone filter: match zone column or location text
+      if (zoneFilter) {
+        filtered = filtered.filter((l) =>
+          l.zone === zoneFilter ||
+          l.location?.toLowerCase().includes(zoneFilter.toLowerCase())
+        );
+      }
       setLeads(filtered);
       setStats(s);
+
+      // Compute funnel (lazy — only fetch histories for funnel stage leads, client-side)
+      const funnelLeads = res.data.filter((l) => JOURNEY_STAGES.includes(l.status as typeof JOURNEY_STAGES[number]));
+      if (funnelLeads.length > 0) {
+        try {
+          const histories = await getStatusHistoryBulk(funnelLeads.map((l) => l.id));
+          setFunnelStats(computeFunnel(funnelLeads as CrmLead[], histories));
+        } catch {
+          // funnel is best-effort
+        }
+      }
     } catch (err) {
       console.error('Failed to fetch leads:', err);
     }
     setLoading(false);
-  }, [search, statusFilter, sourceFilter, showNonCustomers]);
+  }, [search, statusFilter, sourceFilter, zoneFilter, showNonCustomers]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -130,11 +191,66 @@ export default function CrmLeadsPage() {
 
   const handleSelectLead = async (lead: CrmLead) => {
     setSelectedLead(lead);
+    setLeadEvents([]);
+    setStatusHistory([]);
+    setTimeline([]);
     try {
-      const n = await getLeadNotes(lead.id);
+      const [n, ev, hist] = await Promise.all([
+        getLeadNotes(lead.id),
+        listEventsForLead(lead.id),
+        getStatusHistory(lead.id),
+      ]);
       setNotes(n);
-    } catch { setNotes([]); }
+      setLeadEvents(ev);
+      setStatusHistory(hist);
+      setTimeline(buildTimeline(lead, hist, ev));
+    } catch {
+      setNotes([]);
+      setLeadEvents([]);
+      setStatusHistory([]);
+      setTimeline([]);
+    }
   };
+
+  const handleCreateEvent = async () => {
+    if (!selectedLead || !eventForm.startsAt || !showEventModal) return;
+    const defaultTitle = showEventModal === 'meeting'
+      ? `Cita — ${selectedLead.name}`
+      : `Seguimiento — ${selectedLead.name}`;
+    await createEvent({
+      lead_id: selectedLead.id,
+      event_type: showEventModal,
+      title: eventForm.title.trim() || defaultTitle,
+      notes: eventForm.notes.trim() || null,
+      starts_at: new Date(eventForm.startsAt).toISOString(),
+    });
+    setShowEventModal(null);
+    setEventForm({ title: '', startsAt: '', notes: '' });
+    const ev = await listEventsForLead(selectedLead.id);
+    setLeadEvents(ev);
+  };
+
+  const handleEventStatusChange = async (eventId: string, status: 'done' | 'cancelled') => {
+    await updateEventStatus(eventId, status);
+    if (selectedLead) {
+      const ev = await listEventsForLead(selectedLead.id);
+      setLeadEvents(ev);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    await deleteEvent(eventId);
+    if (selectedLead) {
+      const ev = await listEventsForLead(selectedLead.id);
+      setLeadEvents(ev);
+    }
+  };
+
+  // Distinct zone values from loaded leads + Panama provinces
+  const zoneOptions = Array.from(new Set([
+    ...leads.map((l) => l.zone).filter((z): z is string => !!z),
+    ...PANAMA_PROVINCES,
+  ])).sort();
 
   const handleAddNote = async () => {
     if (!newNote.trim() || !selectedLead) return;
@@ -231,6 +347,30 @@ export default function CrmLeadsPage() {
         ))}
       </div>
 
+      {/* Funnel card */}
+      {funnelStats.length > 0 && (
+        <div className="flex items-center gap-1 mb-4 px-4 py-3 rounded-xl bg-[#12121a]/70 border border-white/[0.06] overflow-x-auto">
+          <TrendingUp className="w-4 h-4 text-[#D4A843] shrink-0 mr-1" />
+          <span className="text-xs font-medium text-[#8888a0] mr-3 shrink-0">{t('journey.funnel')}</span>
+          {funnelStats.map((s, i) => (
+            <div key={s.stage} className="flex items-center gap-1 shrink-0">
+              {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#333344]" />}
+              <div className="flex flex-col items-center px-2">
+                <span className="text-xs font-bold text-[#f0f0f5]">{s.count}</span>
+                <span className="text-[10px] text-[#555570]">
+                  {STATUS_CONFIG[s.stage]?.label ?? s.stage}
+                </span>
+                {s.avgDays !== null && (
+                  <span className="text-[9px] text-[#333355]">
+                    ~{s.avgDays}d
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
@@ -260,6 +400,16 @@ export default function CrmLeadsPage() {
           <option value="">Todas las fuentes</option>
           {Object.entries(SOURCE_CONFIG).map(([k, v]) => (
             <option key={k} value={k}>{v.label}</option>
+          ))}
+        </select>
+        <select
+          value={zoneFilter}
+          onChange={(e) => setZoneFilter(e.target.value)}
+          className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
+        >
+          <option value="">{t('crm.allZones')}</option>
+          {zoneOptions.map((z) => (
+            <option key={z} value={z}>{z}</option>
           ))}
         </select>
         <button
@@ -450,12 +600,18 @@ export default function CrmLeadsPage() {
                   {selectedLead.campaign && (
                     <span className="text-xs text-[#555570]">· {selectedLead.campaign}</span>
                   )}
-                  {isStaleLead(selectedLead) && (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-[#ef4444]/10 text-[#ef4444]">
-                      <Clock className="w-3 h-3" />
-                      Seguimiento vencido
-                    </span>
-                  )}
+                  {(() => {
+                    const hasRealOverdue = leadEvents.some(
+                      (ev) => ev.event_type === 'follow_up' && ev.status === 'scheduled' && new Date(ev.starts_at) < new Date()
+                    );
+                    const showStaleBadge = !hasRealOverdue && isStaleLead(selectedLead);
+                    return (hasRealOverdue || showStaleBadge) ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-[#ef4444]/10 text-[#ef4444]">
+                        <Clock className="w-3 h-3" />
+                        {t('crm.overdueFollowUp')}
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
 
                 {(selectedLead.auto_wa_sent_at || selectedLead.meta_capi_lead_sent_at || selectedLead.google_conversion_uploaded_at) && (
@@ -603,6 +759,79 @@ export default function CrmLeadsPage() {
                   </div>
                 </div>
 
+                {/* Journey stepper */}
+                {(() => {
+                  const journey = buildJourney(selectedLead, statusHistory);
+                  const activeIdx = JOURNEY_STAGES.indexOf(selectedLead.status as typeof JOURNEY_STAGES[number]);
+                  return (
+                    <div>
+                      <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('journey.title')}</div>
+                      <div className="flex items-center gap-0.5 overflow-x-auto pb-1">
+                        {journey.map((s, i) => {
+                          const reached = s.reachedAt !== null;
+                          const isCurrent = selectedLead.status === s.stage;
+                          const color = reached
+                            ? isCurrent ? '#D4A843' : '#22c55e'
+                            : '#333344';
+                          return (
+                            <div key={s.stage} className="flex items-center gap-0.5 shrink-0">
+                              {i > 0 && (
+                                <div
+                                  className="w-4 h-px shrink-0"
+                                  style={{ backgroundColor: reached ? '#22c55e' : '#333344' }}
+                                />
+                              )}
+                              <div className="flex flex-col items-center gap-0.5">
+                                <div
+                                  className={cn(
+                                    'w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2',
+                                    isCurrent ? 'border-[#D4A843] text-[#D4A843] bg-[#D4A843]/10' :
+                                    reached ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10' :
+                                    'border-[#333344] text-[#333344]'
+                                  )}
+                                >
+                                  {reached ? (isCurrent ? '●' : '✓') : i + 1}
+                                </div>
+                                <span className="text-[8px] text-center leading-tight max-w-[40px]" style={{ color }}>
+                                  {STATUS_CONFIG[s.stage]?.label ?? s.stage}
+                                </span>
+                                {s.daysInStage !== null && (
+                                  <span className="text-[8px] text-[#555570]">{s.daysInStage}d</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {/* Won / Lost terminal */}
+                        {(selectedLead.status === 'won' || selectedLead.status === 'lost') && (
+                          <>
+                            <div className="w-4 h-px shrink-0 bg-[#22c55e]" />
+                            <div className="flex flex-col items-center gap-0.5 shrink-0">
+                              <div className={cn(
+                                'w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2',
+                                selectedLead.status === 'won'
+                                  ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10'
+                                  : 'border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10'
+                              )}>
+                                {selectedLead.status === 'won' ? '★' : '✗'}
+                              </div>
+                              <span className={cn('text-[8px]', selectedLead.status === 'won' ? 'text-[#22c55e]' : 'text-[#ef4444]')}>
+                                {STATUS_CONFIG[selectedLead.status]?.label}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      {activeIdx >= 0 && (
+                        <p className="text-[10px] text-[#555570] mt-1">
+                          {t('journey.currentStage')}: {STATUS_CONFIG[selectedLead.status]?.label ?? selectedLead.status}
+                          {journey[activeIdx]?.daysInStage !== null && ` · ${journey[activeIdx]!.daysInStage} ${t('journey.daysInStage', { days: '' }).replace(' ', '').trim()}`}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 {/* Message */}
                 {selectedLead.message && (
                   <div>
@@ -610,6 +839,101 @@ export default function CrmLeadsPage() {
                     <p className="text-sm text-[#c0c0d0] bg-white/[0.02] rounded-lg p-3">{selectedLead.message}</p>
                   </div>
                 )}
+
+                {/* Events — schedule buttons */}
+                <div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Agenda</div>
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      onClick={() => {
+                        setShowEventModal('meeting');
+                        setEventForm({ title: '', startsAt: '', notes: '' });
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3b82f6]/10 text-[#3b82f6] text-xs font-medium hover:bg-[#3b82f6]/20 transition-colors border border-[#3b82f6]/20"
+                    >
+                      <CalendarDays className="w-3.5 h-3.5" />
+                      {t('crm.scheduleAppointment')}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowEventModal('follow_up');
+                        setEventForm({ title: '', startsAt: '', notes: '' });
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#f59e0b]/10 text-[#f59e0b] text-xs font-medium hover:bg-[#f59e0b]/20 transition-colors border border-[#f59e0b]/20"
+                    >
+                      <Bell className="w-3.5 h-3.5" />
+                      {t('crm.scheduleFollowUp')}
+                    </button>
+                  </div>
+
+                  {/* Upcoming events list */}
+                  {leadEvents.length > 0 && (
+                    <div className="space-y-2 mb-3">
+                      {leadEvents
+                        .filter((ev) => ev.status === 'scheduled')
+                        .map((ev) => {
+                          const isOverdue = ev.event_type === 'follow_up' && new Date(ev.starts_at) < new Date();
+                          return (
+                            <div key={ev.id} className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06]">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span
+                                      className={cn(
+                                        'text-[10px] font-semibold px-1.5 py-0.5 rounded',
+                                        ev.event_type === 'meeting'
+                                          ? 'bg-[#3b82f6]/10 text-[#3b82f6]'
+                                          : 'bg-[#f59e0b]/10 text-[#f59e0b]'
+                                      )}
+                                    >
+                                      {ev.event_type === 'meeting' ? t('calendar.eventTypeMeeting') : t('calendar.eventTypeFollowUp')}
+                                    </span>
+                                    {isOverdue && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] text-[#ef4444] font-medium">
+                                        <Clock className="w-3 h-3" />
+                                        {t('crm.overdueFollowUp')}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-[#c0c0d0] mt-1 font-medium truncate">{ev.title}</p>
+                                  <p className="text-[10px] text-[#555570] mt-0.5">
+                                    {new Date(ev.starts_at).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                                  </p>
+                                  {ev.notes && <p className="text-[10px] text-[#8888a0] mt-0.5 italic">{ev.notes}</p>}
+                                </div>
+                                <div className="flex gap-1 shrink-0">
+                                  <button
+                                    onClick={() => handleEventStatusChange(ev.id, 'done')}
+                                    title={t('calendar.markDone')}
+                                    className="p-1 rounded text-[#22c55e] hover:bg-[#22c55e]/10 transition-colors"
+                                  >
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleEventStatusChange(ev.id, 'cancelled')}
+                                    title={t('calendar.cancelEvent')}
+                                    className="p-1 rounded text-[#ef4444] hover:bg-[#ef4444]/10 transition-colors"
+                                  >
+                                    <XCircle className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteEvent(ev.id)}
+                                    title={t('calendar.deleteEvent')}
+                                    className="p-1 rounded text-[#555570] hover:text-[#ef4444] hover:bg-[#ef4444]/10 transition-colors"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                  {leadEvents.filter((ev) => ev.status === 'scheduled').length === 0 && (
+                    <p className="text-xs text-[#555570] mb-3">{t('crm.noEvents')}</p>
+                  )}
+                </div>
 
                 {/* Notes */}
                 <div>
@@ -644,11 +968,110 @@ export default function CrmLeadsPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Unified timeline */}
+                {timeline.length > 0 && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('journey.timeline')}</div>
+                    <div className="relative pl-4 space-y-3">
+                      <div className="absolute left-1.5 top-0 bottom-0 w-px bg-white/[0.06]" />
+                      {timeline.map((item) => (
+                        <div key={item.id} className="relative">
+                          <div className={cn(
+                            'absolute -left-[11px] w-2 h-2 rounded-full border mt-0.5',
+                            item.kind === 'created' ? 'bg-[#00ffcc] border-[#00ffcc]' :
+                            item.kind === 'status_change' ? 'bg-[#8b5cf6] border-[#8b5cf6]' :
+                            'bg-[#3b82f6] border-[#3b82f6]'
+                          )} />
+                          <p className="text-xs text-[#c0c0d0] leading-tight">{item.label}</p>
+                          {item.meta && <p className="text-[10px] text-[#555570] mt-0.5 italic">{item.meta}</p>}
+                          <p className="text-[10px] text-[#333355] mt-0.5">
+                            {new Date(item.timestamp).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Create Event Modal */}
+      <AnimatePresence>
+        {showEventModal && selectedLead && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowEventModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md mx-4 rounded-2xl bg-[#12121a] border border-white/[0.08] p-6"
+            >
+              <h3 className="text-lg font-semibold text-white mb-1">
+                {showEventModal === 'meeting' ? t('crm.scheduleAppointment') : t('crm.scheduleFollowUp')}
+              </h3>
+              <p className="text-xs text-[#8888a0] mb-4">{selectedLead.name}</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('common.name')}</label>
+                  <input
+                    value={eventForm.title}
+                    onChange={(e) => setEventForm((p) => ({ ...p, title: e.target.value }))}
+                    placeholder={
+                      showEventModal === 'meeting'
+                        ? `Cita — ${selectedLead.name}`
+                        : `Seguimiento — ${selectedLead.name}`
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('calendar.dateTime')}</label>
+                  <input
+                    type="datetime-local"
+                    value={eventForm.startsAt}
+                    onChange={(e) => setEventForm((p) => ({ ...p, startsAt: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm outline-none focus:border-[#D4A843]/30"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('calendar.optionalNotes')}</label>
+                  <textarea
+                    value={eventForm.notes}
+                    onChange={(e) => setEventForm((p) => ({ ...p, notes: e.target.value }))}
+                    rows={2}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 resize-none"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 mt-5">
+                <button
+                  onClick={() => setShowEventModal(null)}
+                  className="flex-1 py-3 rounded-xl border border-white/[0.06] text-[#8888a0] text-sm hover:bg-white/[0.04] transition-colors"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleCreateEvent}
+                  disabled={!eventForm.startsAt}
+                  className="flex-1 py-3 rounded-xl bg-[#D4A843] text-[#0a0a0f] text-sm font-semibold hover:bg-[#c49835] disabled:opacity-30 transition-colors"
+                >
+                  {t('common.save')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Add Lead Modal */}
       <AnimatePresence>

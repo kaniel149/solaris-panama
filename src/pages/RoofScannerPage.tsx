@@ -344,6 +344,7 @@ export default function RoofScannerPage() {
     getActiveBounds,
     zones,
     selectedZone: areaSelectedZone,
+    activeZoneName,
   } = useAreaSelection();
 
   const {
@@ -358,7 +359,8 @@ export default function RoofScannerPage() {
   const { requests: scanRequests, isQueuing, queueScan } = useScanRequests();
 
   const selectedZoneNameRef = useRef<string | undefined>(undefined);
-  selectedZoneNameRef.current = areaSelectedZone?.name;
+  // Use activeZoneName so custom-drawn areas get "Área personalizada {date}" instead of null
+  selectedZoneNameRef.current = activeZoneName ?? undefined;
 
   // Local state
   const [mapCenter, setMapCenter] = useState<[number, number]>([-79.52, 9.0]);
