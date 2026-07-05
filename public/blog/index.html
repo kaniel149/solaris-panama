@@ -51,6 +51,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="/img/hero-paneles-solares.webp" fetchpriority="high">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -125,7 +126,7 @@ h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
   content: '';
   position: absolute;
   inset: 0;
-  background: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=80') center/cover no-repeat;
+  background: url('/img/hero-paneles-solares.webp') center/cover no-repeat;
   opacity: 0.12;
 }
 .hero::after {
@@ -285,7 +286,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
 <nav class="nav" id="nav">
   <div class="container">
     <a href="https://solaris-panama.com" class="nav-logo">
-      <img src="/solaris-logo-dark.png" alt="Solaris Panamá" onerror="this.style.display='none'">
+      <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="eager" decoding="async" onerror="this.style.display='none'">
       Solaris Panamá
     </a>
     <ul class="nav-links">
@@ -611,7 +612,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="https://solaris-panama.com" class="nav-logo">
-          <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="26" style="filter:brightness(0.6);opacity:0.8;" onerror="this.style.display='none'">
+          <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="lazy" decoding="async" style="filter:brightness(0.6);opacity:0.8;" onerror="this.style.display='none'">
           Solaris Panamá
         </a>
         <p>Instalación profesional de paneles solares en la Península de Azuero. Ahorra hasta 95% en electricidad con energía limpia y sostenible.</p>
