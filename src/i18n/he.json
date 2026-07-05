@@ -17,7 +17,8 @@
     "groupCrm": "CRM",
     "groupMapsTools": "מפות וכלים",
     "settings": "הגדרות",
-    "logout": "התנתק"
+    "logout": "התנתק",
+    "tasks": "משימות"
   },
   "common": {
     "search": "חיפוש...",
@@ -223,5 +224,36 @@
     "noLeads": "אין לידים עדיין",
     "noLeadsDesc": "השתמש בסורק הגגות כדי לגלות מבנים ולשמור אותם כלידים.",
     "goToScanner": "עבור לסורק"
+  },
+  "tasks": {
+    "title": "משימות",
+    "subtitle": "ארגן ועקוב אחר משימות",
+    "newTask": "משימה חדשה",
+    "todo": "ממתין",
+    "in_progress": "בביצוע",
+    "done": "הושלם",
+    "low": "נמוכה",
+    "medium": "בינונית",
+    "high": "גבוהה",
+    "priority": "עדיפות",
+    "dueDate": "תאריך יעד",
+    "allPriorities": "כל העדיפויות",
+    "withDueDate": "עם תאריך יעד בלבד",
+    "overdue": "באיחור",
+    "linkedLead": "ליד מקושר",
+    "noTasks": "אין משימות",
+    "overdueFollowUps": "מעקבים באיחור",
+    "noOverdueFollowUps": "אין מעקבים באיחור",
+    "goToLead": "צפה בליד"
+  },
+  "journey": {
+    "title": "מסע לקוח",
+    "timeline": "היסטוריה",
+    "noHistory": "אין היסטוריה",
+    "daysInStage": "{{days}} ימים",
+    "reached": "הושג",
+    "currentStage": "שלב נוכחי",
+    "funnel": "משפך",
+    "avgDays": "~{{days}}י ממוצע"
   }
 }

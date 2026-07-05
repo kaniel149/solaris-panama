@@ -17,7 +17,8 @@
     "groupCrm": "CRM",
     "groupMapsTools": "Maps & Tools",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "tasks": "Tasks"
   },
   "common": {
     "search": "Search...",
@@ -399,6 +400,37 @@
     "allZones": "All Zones",
     "kanbanView": "Kanban View",
     "tableView": "Table View"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Organize and track your tasks",
+    "newTask": "New Task",
+    "todo": "To Do",
+    "in_progress": "In Progress",
+    "done": "Done",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "allPriorities": "All priorities",
+    "withDueDate": "With due date only",
+    "overdue": "Overdue",
+    "linkedLead": "Linked lead",
+    "noTasks": "No tasks",
+    "overdueFollowUps": "Overdue follow-ups",
+    "noOverdueFollowUps": "No overdue follow-ups",
+    "goToLead": "View lead"
+  },
+  "journey": {
+    "title": "Customer journey",
+    "timeline": "History",
+    "noHistory": "No history",
+    "daysInStage": "{{days}} days",
+    "reached": "Reached",
+    "currentStage": "Current stage",
+    "funnel": "Funnel",
+    "avgDays": "~{{days}}d avg."
   },
   "notFound": {
     "title": "Page Not Found",

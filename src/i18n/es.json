@@ -17,7 +17,8 @@
     "groupCrm": "CRM",
     "groupMapsTools": "Mapas y Herramientas",
     "settings": "Configuracion",
-    "logout": "Cerrar Sesion"
+    "logout": "Cerrar Sesion",
+    "tasks": "Tareas"
   },
   "common": {
     "search": "Buscar...",
@@ -399,6 +400,37 @@
     "allZones": "Todas las Zonas",
     "kanbanView": "Vista Kanban",
     "tableView": "Vista de Tabla"
+  },
+  "tasks": {
+    "title": "Tareas",
+    "subtitle": "Organiza y da seguimiento a tus tareas",
+    "newTask": "Nueva Tarea",
+    "todo": "Pendiente",
+    "in_progress": "En Curso",
+    "done": "Completado",
+    "low": "Baja",
+    "medium": "Media",
+    "high": "Alta",
+    "priority": "Prioridad",
+    "dueDate": "Vencimiento",
+    "allPriorities": "Todas las prioridades",
+    "withDueDate": "Solo con vencimiento",
+    "overdue": "Vencida",
+    "linkedLead": "Lead vinculado",
+    "noTasks": "Sin tareas",
+    "overdueFollowUps": "Seguimientos vencidos",
+    "noOverdueFollowUps": "Sin seguimientos vencidos",
+    "goToLead": "Ver lead"
+  },
+  "journey": {
+    "title": "Mapa del cliente",
+    "timeline": "Historial",
+    "noHistory": "Sin historial",
+    "daysInStage": "{{days}} días",
+    "reached": "Alcanzado",
+    "currentStage": "Etapa actual",
+    "funnel": "Embudo",
+    "avgDays": "~{{days}}d prom."
   },
   "notFound": {
     "title": "Pagina No Encontrada",

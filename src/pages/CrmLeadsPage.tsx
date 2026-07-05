@@ -17,6 +17,8 @@ import {
   Bell,
   CheckCircle2,
   XCircle,
+  TrendingUp,
+  ChevronRight,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -39,6 +41,16 @@ import {
   type LeadEvent,
   type EventType,
 } from '@/services/leadEventsService';
+import {
+  getStatusHistory,
+  buildJourney,
+  buildTimeline,
+  computeFunnel,
+  JOURNEY_STAGES,
+  type StatusHistoryRow,
+  type TimelineItem,
+  type FunnelStageStats,
+} from '@/services/journeyService';
 
 const cn = (...c: (string | boolean | undefined | null)[]) => c.filter(Boolean).join(' ');
 
@@ -118,6 +130,11 @@ export default function CrmLeadsPage() {
   const [showEventModal, setShowEventModal] = useState<EventType | null>(null);
   const [eventForm, setEventForm] = useState({ title: '', startsAt: '', notes: '' });
 
+  // Customer journey
+  const [statusHistory, setStatusHistory] = useState<StatusHistoryRow[]>([]);
+  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+  const [funnelStats, setFunnelStats] = useState<FunnelStageStats[]>([]);
+
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
@@ -141,6 +158,20 @@ export default function CrmLeadsPage() {
       }
       setLeads(filtered);
       setStats(s);
+
+      // Compute funnel (lazy — only fetch histories for funnel stage leads, client-side)
+      const funnelLeads = res.data.filter((l) => JOURNEY_STAGES.includes(l.status as typeof JOURNEY_STAGES[number]));
+      if (funnelLeads.length > 0) {
+        try {
+          const histEntries = await Promise.all(
+            funnelLeads.map((l) => getStatusHistory(l.id).then((h) => [l.id, h] as [string, StatusHistoryRow[]]))
+          );
+          const histories: Record<string, StatusHistoryRow[]> = Object.fromEntries(histEntries);
+          setFunnelStats(computeFunnel(funnelLeads as CrmLead[], histories));
+        } catch {
+          // funnel is best-effort
+        }
+      }
     } catch (err) {
       console.error('Failed to fetch leads:', err);
     }
@@ -163,16 +194,23 @@ export default function CrmLeadsPage() {
   const handleSelectLead = async (lead: CrmLead) => {
     setSelectedLead(lead);
     setLeadEvents([]);
+    setStatusHistory([]);
+    setTimeline([]);
     try {
-      const [n, ev] = await Promise.all([
+      const [n, ev, hist] = await Promise.all([
         getLeadNotes(lead.id),
         listEventsForLead(lead.id),
+        getStatusHistory(lead.id),
       ]);
       setNotes(n);
       setLeadEvents(ev);
+      setStatusHistory(hist);
+      setTimeline(buildTimeline(lead, hist, ev));
     } catch {
       setNotes([]);
       setLeadEvents([]);
+      setStatusHistory([]);
+      setTimeline([]);
     }
   };
 
@@ -310,6 +348,30 @@ export default function CrmLeadsPage() {
           </div>
         ))}
       </div>
+
+      {/* Funnel card */}
+      {funnelStats.length > 0 && (
+        <div className="flex items-center gap-1 mb-4 px-4 py-3 rounded-xl bg-[#12121a]/70 border border-white/[0.06] overflow-x-auto">
+          <TrendingUp className="w-4 h-4 text-[#D4A843] shrink-0 mr-1" />
+          <span className="text-xs font-medium text-[#8888a0] mr-3 shrink-0">{t('journey.funnel')}</span>
+          {funnelStats.map((s, i) => (
+            <div key={s.stage} className="flex items-center gap-1 shrink-0">
+              {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#333344]" />}
+              <div className="flex flex-col items-center px-2">
+                <span className="text-xs font-bold text-[#f0f0f5]">{s.count}</span>
+                <span className="text-[10px] text-[#555570]">
+                  {STATUS_CONFIG[s.stage]?.label ?? s.stage}
+                </span>
+                {s.avgDays !== null && (
+                  <span className="text-[9px] text-[#333355]">
+                    ~{s.avgDays}d
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -699,6 +761,79 @@ export default function CrmLeadsPage() {
                   </div>
                 </div>
 
+                {/* Journey stepper */}
+                {(() => {
+                  const journey = buildJourney(selectedLead, statusHistory);
+                  const activeIdx = JOURNEY_STAGES.indexOf(selectedLead.status as typeof JOURNEY_STAGES[number]);
+                  return (
+                    <div>
+                      <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('journey.title')}</div>
+                      <div className="flex items-center gap-0.5 overflow-x-auto pb-1">
+                        {journey.map((s, i) => {
+                          const reached = s.reachedAt !== null;
+                          const isCurrent = selectedLead.status === s.stage;
+                          const color = reached
+                            ? isCurrent ? '#D4A843' : '#22c55e'
+                            : '#333344';
+                          return (
+                            <div key={s.stage} className="flex items-center gap-0.5 shrink-0">
+                              {i > 0 && (
+                                <div
+                                  className="w-4 h-px shrink-0"
+                                  style={{ backgroundColor: reached ? '#22c55e' : '#333344' }}
+                                />
+                              )}
+                              <div className="flex flex-col items-center gap-0.5">
+                                <div
+                                  className={cn(
+                                    'w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2',
+                                    isCurrent ? 'border-[#D4A843] text-[#D4A843] bg-[#D4A843]/10' :
+                                    reached ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10' :
+                                    'border-[#333344] text-[#333344]'
+                                  )}
+                                >
+                                  {reached ? (isCurrent ? '●' : '✓') : i + 1}
+                                </div>
+                                <span className="text-[8px] text-center leading-tight max-w-[40px]" style={{ color }}>
+                                  {STATUS_CONFIG[s.stage]?.label ?? s.stage}
+                                </span>
+                                {s.daysInStage !== null && (
+                                  <span className="text-[8px] text-[#555570]">{s.daysInStage}d</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {/* Won / Lost terminal */}
+                        {(selectedLead.status === 'won' || selectedLead.status === 'lost') && (
+                          <>
+                            <div className="w-4 h-px shrink-0 bg-[#22c55e]" />
+                            <div className="flex flex-col items-center gap-0.5 shrink-0">
+                              <div className={cn(
+                                'w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2',
+                                selectedLead.status === 'won'
+                                  ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10'
+                                  : 'border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10'
+                              )}>
+                                {selectedLead.status === 'won' ? '★' : '✗'}
+                              </div>
+                              <span className={cn('text-[8px]', selectedLead.status === 'won' ? 'text-[#22c55e]' : 'text-[#ef4444]')}>
+                                {STATUS_CONFIG[selectedLead.status]?.label}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      {activeIdx >= 0 && (
+                        <p className="text-[10px] text-[#555570] mt-1">
+                          {t('journey.currentStage')}: {STATUS_CONFIG[selectedLead.status]?.label ?? selectedLead.status}
+                          {journey[activeIdx]?.daysInStage !== null && ` · ${journey[activeIdx]!.daysInStage} ${t('journey.daysInStage', { days: '' }).replace(' ', '').trim()}`}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 {/* Message */}
                 {selectedLead.message && (
                   <div>
@@ -835,6 +970,31 @@ export default function CrmLeadsPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Unified timeline */}
+                {timeline.length > 0 && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('journey.timeline')}</div>
+                    <div className="relative pl-4 space-y-3">
+                      <div className="absolute left-1.5 top-0 bottom-0 w-px bg-white/[0.06]" />
+                      {timeline.map((item) => (
+                        <div key={item.id} className="relative">
+                          <div className={cn(
+                            'absolute -left-[11px] w-2 h-2 rounded-full border mt-0.5',
+                            item.kind === 'created' ? 'bg-[#00ffcc] border-[#00ffcc]' :
+                            item.kind === 'status_change' ? 'bg-[#8b5cf6] border-[#8b5cf6]' :
+                            'bg-[#3b82f6] border-[#3b82f6]'
+                          )} />
+                          <p className="text-xs text-[#c0c0d0] leading-tight">{item.label}</p>
+                          {item.meta && <p className="text-[10px] text-[#555570] mt-0.5 italic">{item.meta}</p>}
+                          <p className="text-[10px] text-[#333355] mt-0.5">
+                            {new Date(item.timestamp).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

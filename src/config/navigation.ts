@@ -13,6 +13,7 @@ import {
   MessageCircle,
   Map,
   MapPin,
+  CheckSquare,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -38,6 +39,7 @@ export const crmNavItems: NavItem[] = [
   { key: 'proposals', labelKey: 'nav.proposals', icon: FileText, path: '/proposals' },
   { key: 'projects', labelKey: 'nav.projects', icon: FolderKanban, path: '/projects' },
   { key: 'calendar', labelKey: 'nav.calendar', icon: Calendar, path: '/calendar' },
+  { key: 'tasks', labelKey: 'nav.tasks', icon: CheckSquare, path: '/tasks' },
   { key: 'monitoring', labelKey: 'nav.monitoring', icon: Activity, path: '/monitoring' },
   // Lead Pipeline (scanner-based, kanban view) — distinct from CRM Leads above
   { key: 'leads', labelKey: 'nav.leads', icon: Target, path: '/leads' },
