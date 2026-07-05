@@ -223,13 +223,14 @@ El CRM es su memoria. Si no está en el CRM, no existe.
 2. **El estado del lead siempre está actualizado.** Use solo los estados del sistema:
    - `Nuevo` — llegó el formulario, aún no contactado
    - `Contactado` — ya recibió el primer mensaje
-   - `En descubrimiento` — tuvo llamada o conversación de calificación
-   - `Visita agendada` — fecha de visita confirmada
-   - `Propuesta enviada` — propuesta en manos del prospecto
-   - `Negociación` — está revisando, pidiendo ajustes
-   - `Cerrado — Ganado` — contrato firmado
-   - `Cerrado — Perdido` — descartado
-   - `Nurture` — interés bajo, seguimiento mensual
+   - `Calificado` — pasó el descubrimiento: factura y techo confirmados
+   - `Frío` / `Tibio` / `Caliente` — nivel de interés del prospecto
+   - `Propuesta` — propuesta en manos del prospecto
+   - `Ganado` — contrato firmado (registre siempre el valor del trato)
+   - `Perdido` — descartado (siempre con el motivo en las notas)
+   - `Proveedor` / `Socio` / `No es Lead` — contactos que no son clientes (ocultos por defecto)
+
+   > La visita agendada y las fechas de negociación se manejan como **próxima acción con fecha**, no como estado. Vea el **Módulo 11 — El CRM de Solaris** para el paso a paso en pantalla.
 
 3. **Siempre hay un "próximo paso" con fecha.** Nunca salga de una conversación sin saber cuándo va a contactar de nuevo. Si el prospecto dice "llámeme en dos semanas" — agéndelo en el CRM para dentro de 14 días.
 
@@ -331,10 +332,10 @@ Responda sin consultar el material. Las respuestas están al final.
    - d) Porque es solo una formalidad administrativa
 
 **7.** ¿Cuál de estos estados NO existe en el CRM de Solaris?
-   - a) Propuesta enviada
-   - b) En descubrimiento
-   - c) Pensándolo bien
-   - d) Nurture
+   - a) Contactado
+   - b) Tibio
+   - c) Visita agendada
+   - d) Calificado
 
 **8.** ¿Cada cuánto tiempo se envía el mensaje de reactivación a un trato estancado?
    - a) Cada semana
@@ -366,7 +367,7 @@ Responda sin consultar el material. Las respuestas están al final.
 | 4 | **b** | Despedida cálida + referido — en Azuero la reputación es todo |
 | 5 | **c** | Post-cierre, post-instalación, y al perder amablemente |
 | 6 | **b** | Quitar presión desbloquea al prospecto — muchos responden al "breakup" |
-| 7 | **c** | "Pensándolo bien" no es un estado válido — use "Nurture" o "Negociación" |
+| 7 | **c** | "Visita agendada" no es un estado — la visita se agenda como próxima acción con fecha |
 | 8 | **c** | Una vez al mes — más frecuente es hostigamiento |
 | 9 | **b** | Pida el número y haga el primer contacto usted — baja la fricción para el cliente |
 | 10 | **c** | Siempre actualizar estado y fecha — el CRM sin próxima acción es un trato muerto |
