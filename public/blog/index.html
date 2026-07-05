@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog — Solaris Panamá | Guías de Energía Solar en Panamá</title>
-<meta name="description" content="Guías completas sobre energía solar en Panamá: costos, Ley 417, financiamiento, mantenimiento, ROI y más. Todo lo que necesitas saber antes de instalar paneles solares.">
+<meta name="description" content="Guías de energía solar en Panamá: costos, Ley 417, financiamiento, net metering, mantenimiento y ROI. Todo lo que necesitas antes de instalar paneles.">
 <meta name="keywords" content="energía solar panamá, paneles solares panamá, ley 417, net metering panamá, financiamiento solar, mantenimiento paneles solares">
 <link rel="canonical" href="https://solaris-panama.com/blog/">
 <meta property="og:title" content="Blog — Solaris Panamá | Guías de Energía Solar">
@@ -51,6 +51,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="/img/hero-paneles-solares.webp" fetchpriority="high">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -125,7 +126,7 @@ h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
   content: '';
   position: absolute;
   inset: 0;
-  background: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=80') center/cover no-repeat;
+  background: url('/img/hero-paneles-solares.webp') center/cover no-repeat;
   opacity: 0.12;
 }
 .hero::after {
@@ -269,6 +270,15 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
 .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 </style>
+<!-- Google tag (GA4 + Ads) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HSGBK44MXZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HSGBK44MXZ');
+  gtag('config', 'AW-18049688013');
+</script>
 </head>
 <body>
 
@@ -276,7 +286,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
 <nav class="nav" id="nav">
   <div class="container">
     <a href="https://solaris-panama.com" class="nav-logo">
-      <img src="/solaris-logo-dark.png" alt="Solaris Panamá" onerror="this.style.display='none'">
+      <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="eager" decoding="async" onerror="this.style.display='none'">
       Solaris Panamá
     </a>
     <ul class="nav-links">
@@ -602,7 +612,7 @@ footer { background: var(--gray-900); padding: 3rem 0 1.5rem; }
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="https://solaris-panama.com" class="nav-logo">
-          <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="26" style="filter:brightness(0.6);opacity:0.8;" onerror="this.style.display='none'">
+          <img src="/solaris-logo-dark.png" alt="Solaris Panamá" width="624" height="219" loading="lazy" decoding="async" style="filter:brightness(0.6);opacity:0.8;" onerror="this.style.display='none'">
           Solaris Panamá
         </a>
         <p>Instalación profesional de paneles solares en la Península de Azuero. Ahorra hasta 95% en electricidad con energía limpia y sostenible.</p>
