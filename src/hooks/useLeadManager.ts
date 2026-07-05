@@ -28,6 +28,7 @@ export function useLeadManager() {
   const [enrichProgress, setEnrichProgress] = useState<{ completed: number; total: number }>({ completed: 0, total: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
+  const [zoneFilter, setZoneFilter] = useState<string>('');
   const [sortBy, setSortBy] = useState<'score' | 'date' | 'area' | 'name'>('score');
 
   // Ref to access current leads in stable callbacks without adding `leads` as dependency
@@ -329,6 +330,13 @@ export function useLeadManager() {
       result = result.filter((l) => l.status === statusFilter);
     }
 
+    // Filter by zone
+    if (zoneFilter === '__no_zone__') {
+      result = result.filter((l) => !l.zone);
+    } else if (zoneFilter) {
+      result = result.filter((l) => l.zone === zoneFilter);
+    }
+
     // Filter by search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -365,7 +373,7 @@ export function useLeadManager() {
     }
 
     return result;
-  }, [leads, statusFilter, searchQuery, sortBy]);
+  }, [leads, statusFilter, zoneFilter, searchQuery, sortBy]);
 
   const stats = useMemo((): LeadStats => {
     const byStatus: Record<LeadStatus, number> = {
@@ -405,6 +413,7 @@ export function useLeadManager() {
     enrichProgress,
     searchQuery,
     statusFilter,
+    zoneFilter,
     sortBy,
     stats,
 
@@ -412,6 +421,7 @@ export function useLeadManager() {
     setSelectedLeadId,
     setSearchQuery,
     setStatusFilter,
+    setZoneFilter,
     setSortBy,
 
     // Actions

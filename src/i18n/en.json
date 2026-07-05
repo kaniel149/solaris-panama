@@ -162,7 +162,39 @@
     "siteSurvey": "Site Survey",
     "meeting": "Meeting",
     "installation": "Installation",
-    "followUp": "Follow Up"
+    "followUp": "Follow Up",
+    "upcomingEvents": "Upcoming Events",
+    "noUpcomingEvents": "No upcoming events",
+    "eventDetails": "Event Details",
+    "leadSelector": "Select Lead",
+    "selectLead": "Select a lead...",
+    "noLead": "No linked lead",
+    "eventTypeMeeting": "Meeting",
+    "eventTypeFollowUp": "Follow-up",
+    "eventTypeOther": "Other",
+    "statusScheduled": "Scheduled",
+    "statusDone": "Done",
+    "statusCancelled": "Cancelled",
+    "markDone": "Mark done",
+    "cancelEvent": "Cancel event",
+    "deleteEvent": "Delete",
+    "dateTime": "Date & time",
+    "optionalNotes": "Notes (optional)"
+  },
+  "crm": {
+    "scheduleAppointment": "Schedule appointment",
+    "scheduleFollowUp": "Schedule follow-up",
+    "upcomingEvents": "Upcoming appointments & follow-ups",
+    "noEvents": "No events scheduled",
+    "overdueFollowUp": "Follow-up overdue",
+    "eventScheduled": "Event scheduled",
+    "zone": "Zone",
+    "allZones": "All zones"
+  },
+  "scanner": {
+    "zone": "Zone",
+    "allZones": "All zones",
+    "noZone": "No zone"
   },
   "monitoring": {
     "title": "Monitoring",

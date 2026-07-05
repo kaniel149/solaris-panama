@@ -1,20 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
-  MapPin,
   Clock,
-  Wrench,
   Plus,
+  X,
+  CheckCircle2,
+  XCircle,
+  User,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import type { InstallationStatus } from '@/types/installation';
+import {
+  listEvents,
+  createEvent,
+  updateEventStatus,
+  deleteEvent,
+  type LeadEvent,
+  type EventType,
+} from '@/services/leadEventsService';
+import { getLeads, type CrmLead } from '@/services/leadService';
 
 const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filter(Boolean).join(' ');
 
@@ -23,64 +33,46 @@ const fadeUp = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 };
 
-interface CalendarEvent {
-  id: string;
-  title: string;
-  date: string;
-  endDate?: string;
-  status: InstallationStatus;
-  location: string;
-  crewLead: string;
-  systemSize: string;
-}
-
-const statusColors: Record<InstallationStatus, { bg: string; text: string; badge: 'info' | 'purple' | 'success' | 'error' }> = {
-  planned: { bg: 'bg-[#0ea5e9]/10', text: 'text-[#0ea5e9]', badge: 'info' },
-  in_progress: { bg: 'bg-[#8b5cf6]/10', text: 'text-[#8b5cf6]', badge: 'purple' },
-  completed: { bg: 'bg-[#22c55e]/10', text: 'text-[#22c55e]', badge: 'success' },
-  delayed: { bg: 'bg-[#ef4444]/10', text: 'text-[#ef4444]', badge: 'error' },
+// Color mapping per event_type
+const EVENT_COLORS = {
+  meeting: { bg: 'bg-[#3b82f6]/10', text: 'text-[#3b82f6]', dot: '#3b82f6' },
+  follow_up: { bg: 'bg-[#f59e0b]/10', text: 'text-[#f59e0b]', dot: '#f59e0b' },
+  other: { bg: 'bg-[#8b5cf6]/10', text: 'text-[#8b5cf6]', dot: '#8b5cf6' },
 };
 
-const statusLabels: Record<InstallationStatus, string> = {
-  planned: 'Planned',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-  delayed: 'Delayed',
-};
-
-// Mock events
-const mockEvents: CalendarEvent[] = [
-  {
-    id: 'e1', title: 'Supermarket El Rey #4', date: '2026-02-10', endDate: '2026-02-14',
-    status: 'in_progress', location: 'David, Chiriqui', crewLead: 'Miguel Santos', systemSize: '120 kWp',
-  },
-  {
-    id: 'e2', title: 'Office Tower PH', date: '2026-02-17', endDate: '2026-02-21',
-    status: 'planned', location: 'Punta Pacifica, PTY', crewLead: 'Carlos Reyes', systemSize: '100 kWp',
-  },
-  {
-    id: 'e3', title: 'Factory Colon FZ', date: '2026-02-24', endDate: '2026-03-07',
-    status: 'planned', location: 'Colon Free Zone', crewLead: 'Miguel Santos', systemSize: '250 kWp',
-  },
-  {
-    id: 'e4', title: 'Warehouse PTY-12', date: '2026-03-03', endDate: '2026-03-14',
-    status: 'planned', location: 'Tocumen, PTY', crewLead: 'Carlos Reyes', systemSize: '350 kWp',
-  },
-  {
-    id: 'e5', title: 'Clinic San Fernando', date: '2026-01-20', endDate: '2026-01-28',
-    status: 'completed', location: 'El Cangrejo, PTY', crewLead: 'Miguel Santos', systemSize: '75 kWp',
-  },
-  {
-    id: 'e6', title: 'Hotel Marriott', date: '2026-02-12', endDate: '2026-02-13',
-    status: 'delayed', location: 'Costa del Este, PTY', crewLead: 'TBD', systemSize: '150 kWp',
-  },
-];
-
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
 export default function CalendarPage() {
   const { t } = useTranslation();
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 1)); // Feb 2026
+  const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+
+  // Events state
+  const [events, setEvents] = useState<LeadEvent[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+
+  // Lead name cache for display (id → name)
+  const [leadNames, setLeadNames] = useState<Record<string, string>>({});
+
+  // Selected event (side panel)
+  const [selectedEvent, setSelectedEvent] = useState<LeadEvent | null>(null);
+
+  // Create event modal
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    event_type: 'meeting' as EventType,
+    title: '',
+    startsAt: '',
+    notes: '',
+    lead_id: '',
+  });
+
+  // Leads for selector
+  const [allLeads, setAllLeads] = useState<CrmLead[]>([]);
+  const [leadSearch, setLeadSearch] = useState('');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -88,7 +80,7 @@ export default function CalendarPage() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-  const monthName = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = currentDate.toLocaleDateString('es-PA', { month: 'long', year: 'numeric' });
 
   const calendarDays = useMemo(() => {
     const days: (number | null)[] = [];
@@ -98,13 +90,42 @@ export default function CalendarPage() {
     return days;
   }, [firstDayOfWeek, daysInMonth]);
 
+  const loadEvents = useCallback(async () => {
+    setLoadingEvents(true);
+    try {
+      const rangeStart = new Date(year, month, 1).toISOString();
+      const rangeEnd = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+      const data = await listEvents(rangeStart, rangeEnd);
+      setEvents(data);
+
+      // Build lead name cache for any lead_ids in fetched events
+      const unknownIds = [...new Set(
+        data.map((e) => e.lead_id).filter((id): id is string => !!id && !leadNames[id])
+      )];
+      if (unknownIds.length > 0) {
+        const { data: leads } = await getLeads({ limit: 200 });
+        const nameMap: Record<string, string> = {};
+        for (const l of leads) nameMap[l.id] = l.name;
+        setLeadNames((prev) => ({ ...prev, ...nameMap }));
+      }
+    } catch (err) {
+      console.error('Failed to load calendar events:', err);
+    }
+    setLoadingEvents(false);
+  }, [year, month]); // leadNames intentionally excluded to avoid loop
+
+  useEffect(() => { loadEvents(); }, [loadEvents]);
+
+  // Load leads for selector (once)
+  useEffect(() => {
+    getLeads({ limit: 200 })
+      .then(({ data }) => setAllLeads(data))
+      .catch(() => {});
+  }, []);
+
   const getEventsForDay = (day: number) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return mockEvents.filter((ev) => {
-      const start = ev.date;
-      const end = ev.endDate || ev.date;
-      return dateStr >= start && dateStr <= end;
-    });
+    return events.filter((ev) => ev.starts_at.startsWith(dateStr));
   };
 
   const isToday = (day: number) => {
@@ -116,9 +137,47 @@ export default function CalendarPage() {
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
   const goToday = () => setCurrentDate(new Date());
 
-  const upcomingEvents = mockEvents
-    .filter((ev) => ev.status !== 'completed')
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const upcomingEvents = useMemo(
+    () =>
+      events
+        .filter((ev) => ev.status === 'scheduled')
+        .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
+        .slice(0, 8),
+    [events]
+  );
+
+  const handleCreateEvent = async () => {
+    if (!createForm.startsAt) return;
+    await createEvent({
+      event_type: createForm.event_type,
+      title: createForm.title.trim() || `${t(`calendar.eventType${createForm.event_type === 'meeting' ? 'Meeting' : createForm.event_type === 'follow_up' ? 'FollowUp' : 'Other'}`)}`,
+      notes: createForm.notes.trim() || null,
+      starts_at: new Date(createForm.startsAt).toISOString(),
+      lead_id: createForm.lead_id || null,
+    });
+    setShowCreateModal(false);
+    setCreateForm({ event_type: 'meeting', title: '', startsAt: '', notes: '', lead_id: '' });
+    setLeadSearch('');
+    loadEvents();
+  };
+
+  const handleEventStatusChange = async (ev: LeadEvent, status: 'done' | 'cancelled') => {
+    await updateEventStatus(ev.id, status);
+    setSelectedEvent(null);
+    loadEvents();
+  };
+
+  const handleDeleteEvent = async (ev: LeadEvent) => {
+    await deleteEvent(ev.id);
+    setSelectedEvent(null);
+    loadEvents();
+  };
+
+  const filteredLeads = useMemo(() => {
+    if (!leadSearch.trim()) return allLeads.slice(0, 20);
+    const q = leadSearch.toLowerCase();
+    return allLeads.filter((l) => l.name.toLowerCase().includes(q) || l.phone?.includes(q)).slice(0, 20);
+  }, [allLeads, leadSearch]);
 
   return (
     <motion.div
@@ -133,7 +192,15 @@ export default function CalendarPage() {
           description={t('calendar.subtitle')}
           gradient
           actions={
-            <Button variant="primary" icon={<Plus className="w-4 h-4" />}>
+            <Button
+              variant="primary"
+              icon={<Plus className="w-4 h-4" />}
+              onClick={() => {
+                setShowCreateModal(true);
+                setCreateForm({ event_type: 'meeting', title: '', startsAt: '', notes: '', lead_id: '' });
+                setLeadSearch('');
+              }}
+            >
               {t('calendar.newEvent')}
             </Button>
           }
@@ -141,13 +208,13 @@ export default function CalendarPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Calendar Grid - 3 columns */}
+        {/* Calendar Grid — 3 columns */}
         <motion.div variants={fadeUp} className="lg:col-span-3">
           <GlassCard padding="none">
             {/* Month Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
               <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-[#f0f0f5]">{monthName}</h2>
+                <h2 className="text-lg font-semibold text-[#f0f0f5] capitalize">{monthName}</h2>
                 <button
                   onClick={goToday}
                   className="text-xs text-[#00ffcc] hover:text-[#00ffcc]/80 transition-colors px-2 py-0.5 rounded border border-[#00ffcc]/20"
@@ -156,10 +223,16 @@ export default function CalendarPage() {
                 </button>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={prevMonth} className="p-1.5 rounded-lg text-[#555566] hover:text-[#f0f0f5] hover:bg-white/[0.04] transition-colors">
+                <button
+                  onClick={prevMonth}
+                  className="p-1.5 rounded-lg text-[#555566] hover:text-[#f0f0f5] hover:bg-white/[0.04] transition-colors"
+                >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button onClick={nextMonth} className="p-1.5 rounded-lg text-[#555566] hover:text-[#f0f0f5] hover:bg-white/[0.04] transition-colors">
+                <button
+                  onClick={nextMonth}
+                  className="p-1.5 rounded-lg text-[#555566] hover:text-[#f0f0f5] hover:bg-white/[0.04] transition-colors"
+                >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -175,109 +248,336 @@ export default function CalendarPage() {
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7">
-              {calendarDays.map((day, i) => {
-                const events = day ? getEventsForDay(day) : [];
-                const today = day ? isToday(day) : false;
-                return (
-                  <div
-                    key={i}
-                    className={cn(
-                      'min-h-[100px] border-b border-r border-white/[0.03] p-1.5',
-                      !day && 'bg-white/[0.01]',
-                      today && 'bg-[#00ffcc]/[0.03]'
-                    )}
-                  >
-                    {day && (
-                      <>
-                        <div
-                          className={cn(
-                            'text-xs mb-1 w-6 h-6 flex items-center justify-center rounded-full',
-                            today ? 'bg-[#00ffcc] text-[#0a0a0f] font-bold' : 'text-[#8888a0]'
-                          )}
-                        >
-                          {day}
-                        </div>
-                        <div className="flex flex-col gap-0.5">
-                          {events.slice(0, 2).map((ev) => (
-                            <div
-                              key={ev.id}
-                              className={cn(
-                                'text-[10px] font-medium px-1.5 py-0.5 rounded truncate',
-                                statusColors[ev.status].bg,
-                                statusColors[ev.status].text
-                              )}
-                              title={ev.title}
-                            >
-                              {ev.title}
-                            </div>
-                          ))}
-                          {events.length > 2 && (
-                            <div className="text-[10px] text-[#555566] px-1.5">+{events.length - 2} more</div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            {loadingEvents ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="w-6 h-6 border-2 border-[#00ffcc]/20 border-t-[#00ffcc] rounded-full animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-7">
+                {calendarDays.map((day, i) => {
+                  const dayEvents = day ? getEventsForDay(day) : [];
+                  const today = day ? isToday(day) : false;
+                  return (
+                    <div
+                      key={i}
+                      className={cn(
+                        'min-h-[100px] border-b border-r border-white/[0.03] p-1.5',
+                        !day && 'bg-white/[0.01]',
+                        today && 'bg-[#00ffcc]/[0.03]'
+                      )}
+                    >
+                      {day && (
+                        <>
+                          <div
+                            className={cn(
+                              'text-xs mb-1 w-6 h-6 flex items-center justify-center rounded-full',
+                              today ? 'bg-[#00ffcc] text-[#0a0a0f] font-bold' : 'text-[#8888a0]'
+                            )}
+                          >
+                            {day}
+                          </div>
+                          <div className="flex flex-col gap-0.5">
+                            {dayEvents.slice(0, 3).map((ev) => {
+                              const colors = EVENT_COLORS[ev.event_type] || EVENT_COLORS.other;
+                              const isOverdue = ev.status === 'scheduled' && new Date(ev.starts_at) < new Date();
+                              return (
+                                <button
+                                  key={ev.id}
+                                  onClick={() => setSelectedEvent(ev)}
+                                  className={cn(
+                                    'text-[10px] font-medium px-1.5 py-0.5 rounded truncate text-left w-full',
+                                    isOverdue ? 'bg-[#ef4444]/10 text-[#ef4444]' : `${colors.bg} ${colors.text}`,
+                                    ev.status === 'done' && 'opacity-40 line-through'
+                                  )}
+                                  title={ev.title}
+                                >
+                                  {ev.title}
+                                </button>
+                              );
+                            })}
+                            {dayEvents.length > 3 && (
+                              <div className="text-[10px] text-[#555566] px-1.5">+{dayEvents.length - 3}</div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Legend */}
-            <div className="flex items-center gap-4 px-5 py-3 border-t border-white/[0.06]">
-              {(Object.keys(statusColors) as InstallationStatus[]).map((status) => (
-                <div key={status} className="flex items-center gap-1.5">
-                  <span className={cn('w-2 h-2 rounded-full', statusColors[status].bg.replace('/10', ''))} style={{ backgroundColor: statusColors[status].text.replace('text-[', '').replace(']', '') }} />
-                  <span className="text-xs text-[#555566]">{statusLabels[status]}</span>
+            <div className="flex items-center gap-5 px-5 py-3 border-t border-white/[0.06] flex-wrap">
+              {(Object.entries(EVENT_COLORS) as [EventType, typeof EVENT_COLORS.meeting][]).map(([type, colors]) => (
+                <div key={type} className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.dot }} />
+                  <span className="text-xs text-[#555566]">
+                    {type === 'meeting' ? t('calendar.eventTypeMeeting') : type === 'follow_up' ? t('calendar.eventTypeFollowUp') : t('calendar.eventTypeOther')}
+                  </span>
                 </div>
               ))}
             </div>
           </GlassCard>
         </motion.div>
 
-        {/* Side Panel - 1 column */}
+        {/* Side Panel — 1 column */}
         <motion.div variants={fadeUp} className="flex flex-col gap-4">
           <GlassCard
             header={
               <div className="flex items-center gap-2">
                 <CalendarIcon className="w-4 h-4 text-[#00ffcc]" />
-                <h3 className="text-sm font-semibold text-[#f0f0f5]">Upcoming Installations</h3>
+                <h3 className="text-sm font-semibold text-[#f0f0f5]">{t('calendar.upcomingEvents')}</h3>
               </div>
             }
           >
             <div className="flex flex-col gap-3">
-              {upcomingEvents.map((ev) => (
-                <div
-                  key={ev.id}
-                  className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-[#00ffcc]/10 transition-all"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[#f0f0f5]">{ev.title}</span>
-                    <Badge variant={statusColors[ev.status].badge} size="sm">
-                      {statusLabels[ev.status]}
-                    </Badge>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1.5 text-xs text-[#8888a0]">
-                      <Wrench className="w-3 h-3 text-[#555566]" />
-                      {ev.systemSize}
+              {upcomingEvents.length === 0 && (
+                <p className="text-xs text-[#555570]">{t('calendar.noUpcomingEvents')}</p>
+              )}
+              {upcomingEvents.map((ev) => {
+                const colors = EVENT_COLORS[ev.event_type] || EVENT_COLORS.other;
+                const leadName = ev.lead_id ? leadNames[ev.lead_id] : null;
+                const isOverdue = new Date(ev.starts_at) < new Date();
+                return (
+                  <button
+                    key={ev.id}
+                    onClick={() => setSelectedEvent(ev)}
+                    className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-[#00ffcc]/10 transition-all text-left w-full"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span
+                        className={cn(
+                          'text-[10px] font-semibold px-1.5 py-0.5 rounded',
+                          isOverdue ? 'bg-[#ef4444]/10 text-[#ef4444]' : `${colors.bg} ${colors.text}`
+                        )}
+                      >
+                        {ev.event_type === 'meeting' ? t('calendar.eventTypeMeeting') : ev.event_type === 'follow_up' ? t('calendar.eventTypeFollowUp') : t('calendar.eventTypeOther')}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-[#8888a0]">
-                      <MapPin className="w-3 h-3 text-[#555566]" />
-                      {ev.location}
+                    <p className="text-sm font-medium text-[#f0f0f5] truncate">{ev.title}</p>
+                    {leadName && (
+                      <div className="flex items-center gap-1 text-xs text-[#8888a0] mt-0.5">
+                        <User className="w-3 h-3" />
+                        {leadName}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1 text-xs text-[#555570] mt-0.5">
+                      <Clock className="w-3 h-3" />
+                      {new Date(ev.starts_at).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-[#8888a0]">
-                      <Clock className="w-3 h-3 text-[#555566]" />
-                      {new Date(ev.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      {ev.endDate && ` - ${new Date(ev.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </GlassCard>
         </motion.div>
       </div>
+
+      {/* Event detail sheet */}
+      {selectedEvent && (
+        <div
+          className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full sm:max-w-md mx-4 rounded-2xl bg-[#12121a] border border-white/[0.08] p-6 mb-4 sm:mb-0"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className={cn(
+                      'text-[10px] font-semibold px-1.5 py-0.5 rounded',
+                      `${(EVENT_COLORS[selectedEvent.event_type] || EVENT_COLORS.other).bg} ${(EVENT_COLORS[selectedEvent.event_type] || EVENT_COLORS.other).text}`
+                    )}
+                  >
+                    {selectedEvent.event_type === 'meeting' ? t('calendar.eventTypeMeeting') : selectedEvent.event_type === 'follow_up' ? t('calendar.eventTypeFollowUp') : t('calendar.eventTypeOther')}
+                  </span>
+                  <span className={cn(
+                    'text-[10px] px-1.5 py-0.5 rounded',
+                    selectedEvent.status === 'done' ? 'bg-[#22c55e]/10 text-[#22c55e]' :
+                    selectedEvent.status === 'cancelled' ? 'bg-[#ef4444]/10 text-[#ef4444]' :
+                    'bg-white/[0.04] text-[#8888a0]'
+                  )}>
+                    {selectedEvent.status === 'done' ? t('calendar.statusDone') : selectedEvent.status === 'cancelled' ? t('calendar.statusCancelled') : t('calendar.statusScheduled')}
+                  </span>
+                </div>
+                <h3 className="text-base font-semibold text-white">{selectedEvent.title}</h3>
+              </div>
+              <button onClick={() => setSelectedEvent(null)} className="p-1 text-[#555570] hover:text-white transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center gap-2 text-sm text-[#8888a0]">
+                <Clock className="w-4 h-4 shrink-0" />
+                {new Date(selectedEvent.starts_at).toLocaleString('es-PA', { dateStyle: 'medium', timeStyle: 'short' })}
+              </div>
+              {selectedEvent.lead_id && leadNames[selectedEvent.lead_id] && (
+                <div className="flex items-center gap-2 text-sm text-[#8888a0]">
+                  <User className="w-4 h-4 shrink-0" />
+                  <button
+                    className="text-[#D4A843] hover:underline"
+                    onClick={() => {
+                      setSelectedEvent(null);
+                      navigate('/crm-leads');
+                    }}
+                  >
+                    {leadNames[selectedEvent.lead_id!]}
+                  </button>
+                </div>
+              )}
+              {selectedEvent.notes && (
+                <p className="text-sm text-[#c0c0d0] bg-white/[0.02] rounded-lg p-3">{selectedEvent.notes}</p>
+              )}
+            </div>
+
+            {selectedEvent.status === 'scheduled' && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEventStatusChange(selectedEvent, 'done')}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#22c55e]/10 text-[#22c55e] text-sm font-medium hover:bg-[#22c55e]/20 transition-colors"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  {t('calendar.markDone')}
+                </button>
+                <button
+                  onClick={() => handleEventStatusChange(selectedEvent, 'cancelled')}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#ef4444]/10 text-[#ef4444] text-sm font-medium hover:bg-[#ef4444]/20 transition-colors"
+                >
+                  <XCircle className="w-4 h-4" />
+                  {t('calendar.cancelEvent')}
+                </button>
+              </div>
+            )}
+            <button
+              onClick={() => handleDeleteEvent(selectedEvent)}
+              className="w-full mt-2 py-2 text-xs text-[#555570] hover:text-[#ef4444] transition-colors"
+            >
+              {t('calendar.deleteEvent')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Create Event Modal */}
+      {showCreateModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md mx-4 rounded-2xl bg-[#12121a] border border-white/[0.08] p-6"
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">{t('calendar.newEvent')}</h3>
+            <div className="space-y-3">
+              {/* Event type */}
+              <div className="flex gap-2">
+                {(['meeting', 'follow_up', 'other'] as EventType[]).map((type) => {
+                  const colors = EVENT_COLORS[type];
+                  const label = type === 'meeting' ? t('calendar.eventTypeMeeting') : type === 'follow_up' ? t('calendar.eventTypeFollowUp') : t('calendar.eventTypeOther');
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => setCreateForm((p) => ({ ...p, event_type: type }))}
+                      className={cn(
+                        'flex-1 py-2 rounded-lg text-xs font-semibold transition-colors border',
+                        createForm.event_type === type
+                          ? `${colors.bg} ${colors.text} border-current/30`
+                          : 'bg-white/[0.04] text-[#8888a0] border-white/[0.06]'
+                      )}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Title */}
+              <input
+                value={createForm.title}
+                onChange={(e) => setCreateForm((p) => ({ ...p, title: e.target.value }))}
+                placeholder={t('common.name')}
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
+              />
+
+              {/* Date & time */}
+              <div>
+                <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('calendar.dateTime')}</label>
+                <input
+                  type="datetime-local"
+                  value={createForm.startsAt}
+                  onChange={(e) => setCreateForm((p) => ({ ...p, startsAt: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm outline-none focus:border-[#D4A843]/30"
+                />
+              </div>
+
+              {/* Lead selector */}
+              <div>
+                <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('calendar.leadSelector')}</label>
+                <input
+                  value={leadSearch}
+                  onChange={(e) => setLeadSearch(e.target.value)}
+                  placeholder={t('calendar.selectLead')}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 mb-1"
+                />
+                {leadSearch.trim() && (
+                  <div className="max-h-32 overflow-y-auto rounded-xl bg-[#0d0d14] border border-white/[0.06]">
+                    <button
+                      onClick={() => { setCreateForm((p) => ({ ...p, lead_id: '' })); setLeadSearch(''); }}
+                      className="w-full px-4 py-2 text-left text-xs text-[#555570] hover:bg-white/[0.04] transition-colors"
+                    >
+                      {t('calendar.noLead')}
+                    </button>
+                    {filteredLeads.map((l) => (
+                      <button
+                        key={l.id}
+                        onClick={() => { setCreateForm((p) => ({ ...p, lead_id: l.id })); setLeadSearch(l.name); }}
+                        className={cn(
+                          'w-full px-4 py-2 text-left text-sm text-[#c0c0d0] hover:bg-white/[0.04] transition-colors',
+                          createForm.lead_id === l.id && 'text-[#D4A843]'
+                        )}
+                      >
+                        {l.name} {l.phone && <span className="text-[#555570] text-xs ml-1">{l.phone}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="text-[10px] text-[#555570] uppercase tracking-wider block mb-1">{t('calendar.optionalNotes')}</label>
+                <textarea
+                  value={createForm.notes}
+                  onChange={(e) => setCreateForm((p) => ({ ...p, notes: e.target.value }))}
+                  rows={2}
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 resize-none"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-5">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 py-3 rounded-xl border border-white/[0.06] text-[#8888a0] text-sm hover:bg-white/[0.04] transition-colors"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={handleCreateEvent}
+                disabled={!createForm.startsAt}
+                className="flex-1 py-3 rounded-xl bg-[#D4A843] text-[#0a0a0f] text-sm font-semibold hover:bg-[#c49835] disabled:opacity-30 transition-colors"
+              >
+                {t('common.save')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

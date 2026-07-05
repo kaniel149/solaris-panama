@@ -162,7 +162,39 @@
     "siteSurvey": "Visita de Sitio",
     "meeting": "Reunion",
     "installation": "Instalacion",
-    "followUp": "Seguimiento"
+    "followUp": "Seguimiento",
+    "upcomingEvents": "Proximos Eventos",
+    "noUpcomingEvents": "Sin eventos proximos",
+    "eventDetails": "Detalles del Evento",
+    "leadSelector": "Seleccionar Lead",
+    "selectLead": "Seleccionar un lead...",
+    "noLead": "Sin lead asociado",
+    "eventTypeMeeting": "Cita",
+    "eventTypeFollowUp": "Seguimiento",
+    "eventTypeOther": "Otro",
+    "statusScheduled": "Programado",
+    "statusDone": "Completado",
+    "statusCancelled": "Cancelado",
+    "markDone": "Marcar completado",
+    "cancelEvent": "Cancelar evento",
+    "deleteEvent": "Eliminar",
+    "dateTime": "Fecha y hora",
+    "optionalNotes": "Notas (opcional)"
+  },
+  "crm": {
+    "scheduleAppointment": "Agendar cita",
+    "scheduleFollowUp": "Programar seguimiento",
+    "upcomingEvents": "Proximas citas y seguimientos",
+    "noEvents": "Sin eventos programados",
+    "overdueFollowUp": "Seguimiento vencido",
+    "eventScheduled": "Evento programado",
+    "zone": "Zona",
+    "allZones": "Todas las zonas"
+  },
+  "scanner": {
+    "zone": "Zona",
+    "allZones": "Todas las zonas",
+    "noZone": "Sin zona"
   },
   "monitoring": {
     "title": "Monitoreo",
