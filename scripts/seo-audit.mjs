@@ -13,6 +13,9 @@ const files = [];
   }
 })(ROOT);
 
+// Only files with a language counterpart (ES↔EN) must carry hreflang tags.
+const PAIRED = new Set(['public/index.html','public/towns/solar-pedasi.html','public/towns/solar-playa-venao.html','public/en/index.html','public/en/solar-pedasi.html','public/en/solar-playa-venao.html','public/en/solar-panels-azuero.html']);
+
 const checks = {
   title: h => /<title>[^<]{10,65}<\/title>/i.test(h),
   metaDesc: h => /<meta name="description" content="[^"]{50,165}"/i.test(h),
@@ -21,14 +24,14 @@ const checks = {
   ogImage: h => /property="og:image"/i.test(h),
   jsonLd: h => /application\/ld\+json/i.test(h),
   ga4: h => /G-HSGBK44MXZ/.test(h),
-  hreflang: h => /hreflang=/.test(h),
+  hreflang: (h, f) => !PAIRED.has(f) || /hreflang=/.test(h),
   lazyImg: h => !/<img(?![^>]*loading=)[^>]*src="(?!data:)/i.test(h) || !/<img/i.test(h),
   h1: h => (h.match(/<h1[\s>]/gi) || []).length === 1,
 };
 let fails = 0;
 for (const f of files.sort()) {
   const html = readFileSync(f, 'utf8');
-  const bad = Object.entries(checks).filter(([, fn]) => !fn(html)).map(([k]) => k);
+  const bad = Object.entries(checks).filter(([, fn]) => !fn(html, f)).map(([k]) => k);
   if (bad.length) { fails++; console.log(`✗ ${f}: ${bad.join(', ')}`); }
 }
 console.log(`\n${files.length} pages scanned, ${fails} with issues`);
