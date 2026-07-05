@@ -27,6 +27,7 @@ Esa conversación requiere confianza, conocimiento del producto, y respeto por l
 | 08 | **El Cierre** | Técnicas de cierre para la cultura panameña, compromiso en cascada, cómo pedir la firma | El momento decisivo |
 | 09 | **Seguimiento y CRM** | Secuencia post-visita, reactivar tratos estancados, manejar tratos perdidos, pedir referidos, higiene del CRM | Rutina diaria |
 | 10 | **Simulaciones y Certificación** | 8 role-plays que cubren todo el recorrido de ventas, rúbricas de evaluación, criterios para certificarse | Evaluación final |
+| 11 | **El CRM de Solaris (Paso a Paso)** | Tour completo del CRM real: pantallas, estados exactos, flujo diario de leads, notas, filtros, insignias de atribución, y ejercicio práctico con 3 leads | Herramienta diaria |
 
 ---
 
@@ -56,9 +57,9 @@ Esa conversación requiere confianza, conocimiento del producto, y respeto por l
 | 8 | Leer Módulo 04 (Lead Frío) y Módulo 05 (Descubrimiento). |
 | 9 | Shadowing 2: Observar al gerente en una llamada de descubrimiento o visita. Después, hacer un role-play del Escenario 1 del Módulo 10 con el gerente como evaluador. |
 | 10 | Primera llamada real supervisada: el vendedor habla, el gerente escucha en modo silencioso. Retroalimentación de 15 minutos después. |
-| 11 | Segunda llamada real supervisada. Completar quiz del Módulo 05. |
+| 11 | Segunda llamada real supervisada. Completar quiz del Módulo 05. Leer **Módulo 11** (El CRM de Solaris) y hacer el ejercicio práctico de los 3 leads con el gerente como observador. |
 | 12 | Leer Módulo 08 (Cierre). Practicar el cierre en cascada con un compañero. |
-| 13-14 | Completar quizzes de módulos 04, 07, 08. |
+| 13-14 | Completar quizzes de módulos 04, 07, 08, 11. |
 
 ---
 
