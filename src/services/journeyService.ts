@@ -45,6 +45,28 @@ export async function getStatusHistory(leadId: string): Promise<StatusHistoryRow
 }
 
 /**
+ * Bulk-fetch status history for many leads in chunked `.in()` queries
+ * (avoids N+1: one request per ~200 leads instead of one per lead).
+ */
+export async function getStatusHistoryBulk(leadIds: string[]): Promise<Record<string, StatusHistoryRow[]>> {
+  const result: Record<string, StatusHistoryRow[]> = {};
+  const CHUNK = 200;
+  for (let i = 0; i < leadIds.length; i += CHUNK) {
+    const chunk = leadIds.slice(i, i + CHUNK);
+    const { data, error } = await supabase
+      .from('lead_status_history')
+      .select('*')
+      .in('lead_id', chunk)
+      .order('changed_at', { ascending: true });
+    if (error) throw error;
+    for (const row of (data as StatusHistoryRow[]) ?? []) {
+      (result[row.lead_id] ??= []).push(row);
+    }
+  }
+  return result;
+}
+
+/**
  * Build a journey for a lead. For leads created before the trigger existed
  * (history table is empty or missing the initial row), synthesise a baseline
  * entry from lead.created_at + lead.status so the stepper always has data.

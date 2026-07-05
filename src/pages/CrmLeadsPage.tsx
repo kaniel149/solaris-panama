@@ -43,6 +43,7 @@ import {
 } from '@/services/leadEventsService';
 import {
   getStatusHistory,
+  getStatusHistoryBulk,
   buildJourney,
   buildTimeline,
   computeFunnel,
@@ -163,10 +164,7 @@ export default function CrmLeadsPage() {
       const funnelLeads = res.data.filter((l) => JOURNEY_STAGES.includes(l.status as typeof JOURNEY_STAGES[number]));
       if (funnelLeads.length > 0) {
         try {
-          const histEntries = await Promise.all(
-            funnelLeads.map((l) => getStatusHistory(l.id).then((h) => [l.id, h] as [string, StatusHistoryRow[]]))
-          );
-          const histories: Record<string, StatusHistoryRow[]> = Object.fromEntries(histEntries);
+          const histories = await getStatusHistoryBulk(funnelLeads.map((l) => l.id));
           setFunnelStats(computeFunnel(funnelLeads as CrmLead[], histories));
         } catch {
           // funnel is best-effort
