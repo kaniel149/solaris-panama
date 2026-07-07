@@ -1,0 +1,332 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>מודול 11: ה-CRM של Solaris (צעד אחרי צעד) | Solaris Academy</title><meta name="robots" content="noindex,follow"><link rel="stylesheet" href="/academy/styles.css"></head><body><div class="layout"><aside class="side"><div class="brand">Solaris Academy</div><div class="sub">Academia de Ventas</div><div class="lang"><a href="/academy/es/11-crm-solaris.html">Español</a><a href="/academy/en/11-crm-solaris.html">English</a><a class="active" href="/academy/he/README.html">עברית</a></div><nav class="nav"><a  href="/academy/he/00-guia-del-gerente.html">מדריך הגרנט — אקדמיית מכירות סולאריס פנמה</a><a  href="/academy/he/01-fundamentos.html">מודול 1: יסודות סולאריים</a><a  href="/academy/he/02-producto-y-oferta.html">מודול 2: המוצר וההצעה</a><a  href="/academy/he/03-lead-caliente.html">מודול 3: ליד חם — הראשון שמתקשר מנצח</a><a  href="/academy/he/04-lead-frio.html">מודול 4: ליד קר B2B — פתיחת דלתות מאפס</a><a  href="/academy/he/05-descubrimiento.html">מודול 5: גילוי — השיחה שקובעת אם יש עסקה</a><a  href="/academy/he/06-la-visita.html">מודול 6: הביקור — מהבדיקה ל-ROI מותאם אישית</a><a  href="/academy/he/07-objeciones.html">מודול 7: התנגדויות — תשובה לכל ספק, עם אמפתיה קודם</a><a  href="/academy/he/08-cierre.html">מודול 8: הסגירה — מ&quot;מעניין אותי&quot; ל&quot;בוא נחתום&quot;</a><a  href="/academy/he/09-seguimiento-crm.html">מודול 9: מעקב ו-CRM</a><a  href="/academy/he/10-certificacion.html">מודול 10: סימולציות וסמכה</a><a class=active href="/academy/he/11-crm-solaris.html">מודול 11: ה-CRM של Solaris (צעד אחרי צעד)</a><a  href="/academy/he/README.html">אקדמיית המכירות של Solaris Panama</a></nav></aside><main class="main"><div class="top"><a href="/academy/">Academy home</a> / עברית</div><article class="content"><h1>מודול 11: ה-CRM של Solaris (צעד אחרי צעד)</h1>
+<blockquote>הגרסה העברית נועדה לביקורת תוכן של המנהל. התסריטים המקוריים לשימוש בשטח נמצאים ב-<code>es/</code>.</blockquote>
+<blockquote><strong>אקדמיית המכירות של Solaris Panama</strong> | רמה: מוכר חדש</blockquote>
+<blockquote>זמן משוער: 1.5 שעות לימוד + תרגול מודרך במערכת</blockquote>
+<hr>
+<h2>🎯 יעדי המודול</h2>
+<p>בסיום מודול זה תוכל:</p>
+<ol>
+<li>להיכנס ל-CRM של Solaris ולזהות כל חלק במסך.</li>
+<li>למצוא ליד, לקרוא את פרטי הקשר שלו ולדעת מאיפה הגיע.</li>
+<li>לעדכן את מצב הליד נכון עם כל התקדמות בתהליך.</li>
+<li>לרשום הערה שימושית אחרי כל קשר (שיחה, וואטסאפ, ביקור).</li>
+<li>לסמן עסקה כנזכנה עם ערך המכירה בדולרים.</li>
+<li>להשתמש בפילטרים ובחיפוש כדי למצוא כל ליד תוך שניות.</li>
+<li>לקרוא את תגיות הייחוס ללא נגיעה ושינוי בהן.</li>
+</ol>
+<hr>
+<h2>גישה ל-CRM</h2>
+<p><strong>כתובת URL של ה-CRM:</strong> [VERIFICAR CON GERENTE — לאשר את כתובת הייצור]</p>
+<p><strong>פרטי גישה:</strong> [VERIFICAR CON GERENTE — תהליך יצירת משתמש למוכרים חדשים]</p>
+<p>ברגע שנכנסת, תראה סרגל צד שמאלי עם שתי קבוצות של אפשרויות. הראשונה נקראת <strong>CRM</strong> וכוללת את הסעיפים שתשתמש בהם כל יום.</p>
+<hr>
+<h2>סיור במסכים</h2>
+<h3>1. סרגל הצד (ניווט ראשי)</h3>
+<p>לסרגל הצד יש שתי קבוצות:</p>
+<p><strong>קבוצת CRM:</strong> Dashboard · <strong>Leads</strong> (המסך הראשי שלך) · Clients · Proposals · Projects · Calendar · Monitoring · Lead Pipeline (kanban גגות מהסורק — המנהל יציין מתי להשתמש בו).</p>
+<p><strong>קבוצת Maps &amp; Tools:</strong> Scanner · Calculator · Proposal Generator.</p>
+<p>לעבודה היומיומית של מכירות, המסך הראשי שלך הוא <strong>Leads</strong>.</p>
+<hr>
+<h3>2. מסך Leads — מבט כללי</h3>
+<p>כשפותחים <strong>Leads</strong>, הדבר הראשון שרואים הוא שתי שורות של כרטיסיות עם מספרים.</p>
+<p><strong>שורה 1 — מצב ה-pipeline:</strong></p>
+<div class="table-wrap"><table><thead><tr><th>כרטיסיה</th><th>מה מודדת</th></tr></thead><tbody>
+<tr><td>Total</td><td>כל הלידים במערכת</td></tr>
+<tr><td>Nuevos</td><td>לידים שהגיעו אבל עדיין לא פנית אליהם</td></tr>
+<tr><td>Contactados</td><td>לידים שכבר קיבלו לפחות הודעה אחת ממך</td></tr>
+<tr><td>Calificados</td><td>לידים שדיברת איתם ואישרת שהם עומדים בקריטריונים</td></tr>
+<tr><td>Ganados</td><td>חוזים חתומים</td></tr>
+<tr><td>Vencidos</td><td>לידים שנמצאים זמן רב מדי ללא קשר — דורשים פעולה היום</td></tr>
+</tbody></table></div>
+<p><strong>שורה 2 — מקור הלידים:</strong> Google Ads LP (עמוד עם gclid) · Google Lead Form (טופס ב-Google) · Meta Lead Ads (טופס ב-Facebook/Instagram) · WhatsApp (bridge או יבוא ידני). המספרים האלה לקריאה בלבד — אל תשנה אותם.</p>
+<hr>
+<h3>3. סרגל כלים</h3>
+<p>מתחת לכרטיסיות הסטטיסטיקה תמצא ארבעה פקדים:</p>
+<ol>
+<li><strong>שדה חיפוש</strong> — כתוב שם או טלפון של מועמד למציאה מיידית.</li>
+<li><strong>פילטר מצב</strong> — תפריט נפתח עם כל המצבים האפשריים. השתמש ב&quot;כל המצבים&quot; לצפייה ב-pipeline המלא, או בחר אחד כדי להתמקד.</li>
+<li><strong>פילטר מקור</strong> — מסנן לפי מקור הליד (Google, Meta, WhatsApp, וכו&#x27;).</li>
+<li><strong>כפתור &quot;הסתר ספקים&quot;</strong> — כברירת מחדל, ה-CRM מסתיר קשרים המסומנים כספקים, שותפים או &quot;לא ליד&quot;. אם צריך לראות אותם, הפעל כפתור זה.</li>
+</ol>
+<hr>
+<h3>4. טבלת הלידים</h3>
+<p>הטבלה מציגה את הלידים שלך מסודרים מהחדש לישן. כל שורה יש חמישה עמודות:</p>
+<ul>
+<li><strong>שם</strong> — שם המועמד. אם הליד יש יותר מכמה ימים ללא קשר, תראה תווית אדומה &quot;דורש מעקב&quot; מתחת לשם.</li>
+<li><strong>טלפון</strong> — מספר הקשר. לצדו יש סמל ירוק של וואטסאפ; לחיצה פותחת וואטסאפ עם הודעה מוכנה בספרדית, מוכנה לשליחה.</li>
+<li><strong>מקור</strong> — מאיפה הגיע הליד (Google, Meta, WhatsApp, ידני, וכו&#x27;). יכול להציג תגיות נוספות כמו <code>gclid</code> או <code>platform id</code> — אלו תגיות ייחוס (נסביר בהמשך).</li>
+<li><strong>מצב</strong> — תפריט צבעוני המציג את המצב הנוכחי. ניתן לשנות אותו ישירות מכאן בלחיצה.</li>
+<li><strong>תאריך</strong> — התאריך שבו הליד נכנס למערכת.</li>
+</ul>
+<p>לצפייה בפרטים המלאים של ליד, לחץ על השורה שלו.</p>
+<hr>
+<h3>5. לוח הפרטים של הליד</h3>
+<p>בלחיצה על ליד, נפתח לוח צדדי מימין עם כל המידע:</p>
+<p><strong>קשר:</strong></p>
+<ul>
+<li>שם וטלפון עם כפתורי וואטסאפ ושיחה.</li>
+<li>אימייל (אם הטופס לכד אותו).</li>
+<li>חשבון חודשי בדולרים (אם המועמד ציין בטופס — <code>$XX/mes</code>).</li>
+</ul>
+<p><strong>מקור ומצב:</strong></p>
+<ul>
+<li>תגית עם מקור הליד.</li>
+<li>שם הקמפיין (אם הליד מגיע מקמפיין מודעות שהוגדר).</li>
+<li>תווית &quot;מעקב פג&quot; באדום אם הליד לא פעיל יותר מדי זמן.</li>
+</ul>
+<p><strong>אוטומציה</strong> (לקריאה בלבד): WA auto (וואטסאפ שנשלח אוטומטית עם הגעתו), Meta CAPI נשלח, Google offline נשלח. אל תיגע בשדות האלה.</p>
+<p><strong>ייחוס</strong> (לקריאה בלבד — מוסבר בסעיף הבא).</p>
+<p><strong>ערך המכירה</strong> (רק אם מצב = <code>won</code>): שדה מספרי בדולרים. אם לליד יש <code>gclid</code>, בשמירה הדיווח נשלח אוטומטית ל-Google Ads כהמרה אופליין.</p>
+<p><strong>מצב:</strong> כפתורים צבעוניים לשינוי בלחיצה.</p>
+<p><strong>הודעה:</strong> הטקסט שהמועמד השאיר בטופס (אם מילא).</p>
+<p><strong>הערות:</strong> היסטוריית הצוות עם מחבר ותאריך. שדה להוספת הערה חדשה (Enter או כפתור שליחה).</p>
+<hr>
+<h2>מצבי הליד — מה הם ומתי להשתמש</h2>
+<p>ל-CRM יש את המצבים הבאים. השתמש במצב הנכון בכל עת — מצבים שגויים פוגעים בדוחות ומבלבלים את הצוות.</p>
+<div class="table-wrap"><table><thead><tr><th>מצב</th><th>קוד</th><th>מתי להשתמש</th></tr></thead><tbody>
+<tr><td><strong>חדש</strong></td><td><code>new</code></td><td>הליד הגיע עכשיו. עדיין לא פנית אליו.</td></tr>
+<tr><td><strong>פנו אליו</strong></td><td><code>contacted</code></td><td>שלחת את ההודעה הראשונה או התקשרת. ממתין לתגובה.</td></tr>
+<tr><td><strong>כשיר</strong></td><td><code>qualified</code></td><td>ניהלת שיחה אמיתית, אישרת שיש גג בבעלות, חשבון רלוונטי ועניין אמיתי.</td></tr>
+<tr><td><strong>הצעה</strong></td><td><code>proposal_sent</code></td><td>שלחת או הצגת את ההצעה הפורמלית.</td></tr>
+<tr><td><strong>קר</strong></td><td><code>cold</code></td><td>ענה אבל הראה מעט עניין. מעקב חודשי.</td></tr>
+<tr><td><strong>פושר</strong></td><td><code>warm</code></td><td>מראה עניין מתון. עונה מדי פעם.</td></tr>
+<tr><td><strong>חם</strong></td><td><code>hot</code></td><td>מוכן לסגירה. סבירות גבוהה בימים הקרובים.</td></tr>
+<tr><td><strong>נזכנה</strong></td><td><code>won</code></td><td>חוזה חתום. הכנס את ערך המכירה בדולרים.</td></tr>
+<tr><td><strong>נפסד</strong></td><td><code>lost</code></td><td>החליט לא להתקדם. סגור בנחינות (ראה מודול 09).</td></tr>
+</tbody></table></div>
+<p>המצבים <strong>Proveedor</strong>, <strong>Socio</strong> ו-<strong>No es Lead</strong> משמשים רק את המנהל לקשרים שאינם מועמדי מכירה.</p>
+<blockquote><strong>חשוב:</strong> מודולים קודמים של האקדמיה מזכירים מצבים כמו &quot;בגילוי&quot;, &quot;ביקור מתואם&quot;, &quot;משא ומתן&quot; ו-&quot;Nurture&quot;. אלו מושגים של תהליך מכירה — ל-CRM האמיתי אין שמות כאלה בדיוק. השתמש ב-<strong>Calificado</strong> במהלך הגילוי, ב-<strong>Propuesta</strong> כשההצעה נשלחה, ב-<strong>Tibio</strong> או <strong>Frío</strong> ל-nurture. [VERIFICAR CON GERENTE אם נוספו מצבים מותאמים מאז העדכון האחרון].</blockquote>
+<hr>
+<h2>זרימה יומית: שימוש ב-CRM צעד אחרי צעד</h2>
+<h3>שלב 1 — בבוקר בהגעה: בדיקת לידים חדשים ופגי תוקף</h3>
+<ol>
+<li>פתח <strong>Leads</strong>.</li>
+<li>הסתכל על כרטיסיית <strong>Nuevos</strong> — האם יש לידים שהגיעו בלילה?</li>
+<li>הסתכל על כרטיסיית <strong>Vencidos</strong> — האם יש לידים המציגים &quot;דורש מעקב&quot;?</li>
+<li>סדר את היום שלך החל מהפגי תוקף, אחר כך החדשים.</li>
+</ol>
+<h3>שלב 2 — כשמגיע ליד חדש</h3>
+<ol>
+<li>לחץ על הליד לפתיחת לוח הפרטים.</li>
+<li>קרא שם, טלפון, מקור וההודעה שהשאיר (אם יש).</li>
+<li>לחץ על סמל הוואטסאפ לפתיחת הצ&#x27;אט עם ההודעה המוכנה.</li>
+<li>התאם את ההודעה לפני שליחתה (הוסף שם, ציין נכס או אזור אם ידוע).</li>
+<li><strong>חזור ל-CRM</strong> ושנה את המצב מ-<strong>Nuevo</strong> ל-<strong>Contactado</strong>.</li>
+<li>הוסף הערה קצרה: &quot;וואטסאפ נשלח [תאריך]. ממתין לתגובה.&quot;</li>
+</ol>
+<h3>שלב 3 — כשהמועמד עונה ויש שיחה אמיתית</h3>
+<ol>
+<li>לחץ על הליד.</li>
+<li>הקשב או קרא מה שהוא אומר. העריך אם כשיר (האם יש גג בבעלות? חשבון גבוה? עניין אמיתי?).</li>
+<li>אם כשיר: שנה את המצב ל-<strong>Calificado</strong>.</li>
+<li>הוסף הערה תיאורית: &quot;שיחה 10 דקות. בית בבעלות, פח ~60 מ&quot;ר. חשבון $180/חודש. רוצה ביקור. מציע יום שלישי 15/7 ב-10:00.&quot;</li>
+<li>אם עדיין לא כשיר: השאר ב-<strong>Contactado</strong> ותכנן את הנגיעה הבאה.</li>
+</ol>
+<h3>שלב 4 — כשאתה שולח הצעה</h3>
+<ol>
+<li>שנה את המצב ל-<strong>Propuesta</strong>.</li>
+<li>הוסף הערה: &quot;הצעה נשלחה בוואטסאפ ב-[תאריך]. מערכת 5 kWp, השקעה $7,200, payback 5.2 שנים.&quot;</li>
+</ol>
+<h3>שלב 5 — אחרי כל קשר ללא תגובה</h3>
+<p>אם הליד לא עונה, אל תשנה את המצב עדיין. הוסף הערה עם התאריך והניסיון: &quot;T+48 שעות וואטסאפ נשלח. ללא תגובה.&quot; עקוב אחרי הרצף ממודול 09 (T+0, T+48, T+5 ימים, T+10 ימים).</p>
+<h3>שלב 6 — כשסוגרים עסקה כנזכנה</h3>
+<ol>
+<li>שנה את המצב ל-<strong>Ganado</strong>.</li>
+<li>בשדה &quot;ערך המכירה&quot;, הכנס את סכום החוזה בדולרים (מספר בלבד, ללא סמל).</li>
+<li>לחץ מחוץ לשדה לשמירה.</li>
+<li>הוסף הערה: &quot;חוזה חתום ב-[תאריך]. מערכת X kWp. התקנה משוערת [חודש].&quot;</li>
+</ol>
+<h3>שלב 7 — כשהעסקה נפסדת</h3>
+<ol>
+<li>שנה את המצב ל-<strong>Perdido</strong>.</li>
+<li>הוסף הערה עם הסיבה (בקצרה): &quot;החליט לא להתקדם. הבעל לא מסכים. דלת פתוחה.&quot;</li>
+<li>סגור עם התסריט ממודול 09. אל תמחק את הליד — יכול להיות מופעל מחדש בעתיד.</li>
+</ol>
+<h3>שלב 8 — בסגירת היום</h3>
+<p>בדוק שכל הלידים שפנית אליהם יש הערה חדשה · אין ליד ב-&quot;Nuevo&quot; מיותר מ-24 שעות · אין &quot;Contactado&quot; מיותר מ-10 ימים ללא הערה.</p>
+<hr>
+<h2>פילטרים וחיפוש: למצוא כל ליד</h2>
+<p><strong>חיפוש:</strong> כתוב שם או טלפון — המערכת מסננת בזמן אמת.</p>
+<p><strong>פילטר מצב:</strong> תפריט &quot;כל המצבים&quot; — בחר אחד להתמקדות בשלב ספציפי ב-pipeline.</p>
+<p><strong>פילטר מקור:</strong> תפריט &quot;כל המקורות&quot; — שימושי אחרי קמפיין Meta או Google לצפייה רק בלידים מהם.</p>
+<p><strong>רענון רשימה:</strong> סמל רענון ליד כפתור &quot;הוסף&quot; — השתמש בו אם חושד שהגיעו לידים חדשים בזמן שה-CRM היה פתוח.</p>
+<hr>
+<h2>תגיות הייחוס — מה הן ולמה לא נוגעים בהן</h2>
+<p>כשמועמד מגיע ממודעת Google או Meta, ה-CRM שומר אוטומטית את המקור המדויק. המידע הזה מופיע כתגיות בעמודת &quot;מקור&quot; ובסעיף &quot;ייחוס&quot; בלוח הפרטים:</p>
+<div class="table-wrap"><table><thead><tr><th>תגית</th><th>מה מצביעה</th></tr></thead><tbody>
+<tr><td><code>gclid</code></td><td>הליד לחץ על מודעת Google. ה-gclid הוא המזהה של אותה לחיצה.</td></tr>
+<tr><td><code>fbclid</code></td><td>הליד לחץ על מודעת Facebook או Instagram.</td></tr>
+<tr><td><code>platform id</code></td><td>ה-ID הפנימי שMeta הקצה לליד זה במערכת ה-Lead Ads שלה.</td></tr>
+<tr><td><code>utm_source / utm_medium</code></td><td>פרמטרי קמפיין המזהים את הערוץ וסוג התנועה.</td></tr>
+<tr><td><code>utm_campaign</code></td><td>שם קמפיין המודעות שייצר ליד זה.</td></tr>
+</tbody></table></div>
+<p><strong>כלל מוחלט:</strong> לעולם לא לשנות שדות אלה. אלה נתונים טכניים שהמערכת משתמשת בהם לדיווח המרות ל-Google ו-Meta ולאופטימיזציה אוטומטית של המודעות. שינוי או מחיקה שלהם שוברת את דוחות הפרסום.</p>
+<p>אם אתה רואה ליד ללא אף תגית ייחוס, זה תקין — אומר שהגיע דרך וואטסאפ ישיר, הפניה, או שנוסף ידנית.</p>
+<hr>
+<h2>הוספת ליד ידנית</h2>
+<p>אם מועמד פונה ישירות ואינו ב-CRM: לחץ על <strong>Agregar</strong> (זהב, למעלה מימין) → מלא שם, טלפון (פורמט <code>50765831822</code>) ומקור (<code>Referral</code> להפניות, <code>Cold call</code> בשיחה קרה, <code>Manual</code> אם לא מתאים) → <strong>Guardar</strong> → הוסף הערה ראשונית עם הקשר הקשר הראשון.</p>
+<hr>
+<h2>⚠️ טעויות נפוצות</h2>
+<div class="table-wrap"><table><thead><tr><th>טעות</th><th>למה זה בעיה</th><th>מה לעשות במקום</th></tr></thead><tbody>
+<tr><td>להשאיר ליד ב-&quot;Nuevo&quot; יותר מ-24 שעות</td><td>אותו מועמד כבר פנה למתחרה או איבד עניין</td><td>פנה אליו תוך 2 שעות מהגעתו ל-CRM</td></tr>
+<tr><td>לשנות מצב ללא הוספת הערה</td><td>המנהל או עמית לא יכול לדעת מה קרה</td><td>תמיד הוסף הערה + מצב בו זמנית</td></tr>
+<tr><td>לכתוב הערות גנריות: &quot;התקשרתי&quot;</td><td>לא שימושי למעקב או להעברת הליד</td><td>כתוב: ערוץ, משך, מה אמר המועמד, צעד הבא</td></tr>
+<tr><td>לסמן &quot;Ganado&quot; ללא הכנסת ערך בדולרים</td><td>המערכת לא יכולה לדווח על ההמרה ל-Google Ads; נאבדים נתוני רווחיות</td><td>תמיד מלא את שדה הערך כשמסמנים נזכנה</td></tr>
+<tr><td>לשנות תגיות הייחוס</td><td>שובר את הדוחות האוטומטיים של פרסום</td><td>לעולם אל תיגע בשדות אלה — הם לקריאה בלבד</td></tr>
+<tr><td>לבחור מקור שגוי בהוספת ליד ידנית</td><td>מזהם את דוחות מקור הלידים</td><td>בחר &quot;Manual&quot; אם לא בטוח — המנהל יכול לתקן</td></tr>
+<tr><td>לסנן לפי מצב ולשכוח להסיר את הפילטר</td><td>חושב שראה את כל הלידים בזמן שראה רק חלק</td><td>ודא שהפילטר אומר &quot;כל המצבים&quot; בתחילת כל יום</td></tr>
+<tr><td>לשלוח את ההודעה האוטומטית ללא התאמה אישית</td><td>ההודעה מגיעה עם &quot;חבר&quot; במקום השם האמיתי</td><td>תמיד בדוק את ההודעה לפני שליחתה</td></tr>
+</tbody></table></div>
+<hr>
+<h2>🎭 תרגיל מעשי: שלושה לידים ב-CRM</h2>
+<p>תרגיל זה מדמה משמרת אמיתית. עבוד עם המנהל או עמית כצופה.</p>
+<p><strong>הקשר:</strong> יום שלישי, 8:30 בבוקר. אתה פותח את ה-CRM ומוצא שלושה לידים:</p>
+<hr>
+<p><strong>ליד א&#x27; — חורחה ריוס</strong></p>
+<p>הגיע הבוקר. מקור: Meta Lead Ads. טלפון: 6XXX-XXXX. הודעה: &quot;רוצה מידע על פאנלים לבית שלי בצ&#x27;יטרה.&quot;</p>
+<p>משימה:</p>
+<ol>
+<li>פתח את לוח הפרטים. קרא את המקור ואת תגיות הייחוס.</li>
+<li>לחץ על וואטסאפ, התאם אישית את ההודעה עם שמו ואזורו, ודמה את השליחה.</li>
+<li>שנה את המצב ל-<strong>Contactado</strong>.</li>
+<li>הוסף הערה: &quot;וואטסאפ נשלח 08:35. מועמד בצ&#x27;יטרה, ביתי. ממתין לתגובה.&quot;</li>
+</ol>
+<hr>
+<p><strong>ליד ב&#x27; — Hotel Playa Verde</strong></p>
+<p>הגיע לפני 6 ימים. מצב: Calificado. הערה אחרונה מלפני 5 ימים: &quot;שיחה 20 דקות. מנהל אישר גג שטוח 400 מ&quot;ר, חשבון $1,800/חודש. הצעה ממתינה.&quot;</p>
+<p>משימה:</p>
+<ol>
+<li>אשר שהליד מציג &quot;דורש מעקב&quot; (עברו יותר מX ימים ללא הערה).</li>
+<li>דמה שליחת הודעת T+5 ימים ממודול 09 בוואטסאפ.</li>
+<li>עדכן הערה: &quot;T+5 ימים וואטסאפ נשלח. ללא תגובה עדיין. מעקב מתוכנן ליום חמישי.&quot;</li>
+<li>העריך אם לשנות ל-<strong>Frío</strong> או להשאיר ב-<strong>Calificado</strong> — דיסקוטו עם הצופה.</li>
+</ol>
+<hr>
+<p><strong>ליד ג&#x27; — מריה אנטוניה קסטיו</strong></p>
+<p>הגיע לפני 3 שבועות. מצב: Propuesta. הערות קודמות מציגות: T+0, T+48, T+5 ימים, T+10 ימים — נשלחו. ללא תגובה.</p>
+<p>משימה:</p>
+<ol>
+<li>שנה את המצב ל-<strong>Perdido</strong>.</li>
+<li>הוסף הערה: &quot;ללא תגובה אחרי 4 קשרים ב-3 שבועות. מסומן כנפסד ב-[תאריך]. דלת פתוחה.&quot;</li>
+<li>דיסקוטו עם הצופה: אם בעוד 30 יום האדם הזה כותב מחדש, מה אתה עושה קודם לפני שתענה?</li>
+</ol>
+<hr>
+<p><strong>קריטריוני הערכה:</strong></p>
+<ul>
+<li>המצב שונה נכון בכל מקרה.</li>
+<li>ההערות תיאוריות (לא גנריות).</li>
+<li>הסטודנט לא שינה תגיות הייחוס.</li>
+<li>הוואטסאפ הותאם אישית לפני השליחה הדמויה.</li>
+</ul>
+<hr>
+<h2>✅ צ&#x27;קליסט יומי CRM</h2>
+<p>בתחילת היום:</p>
+<ul>
+<li>[ ] בדקתי לידים &quot;חדשים&quot; — אין כאלה עם יותר מ-24 שעות ללא קשר.</li>
+<li>[ ] בדקתי לידים &quot;פגי תוקף&quot; — כולם יש פעולה מתוכנת להיום.</li>
+<li>[ ] הפילטר אומר &quot;כל המצבים&quot; (לא נשארתי עם פילטר מיום קודם).</li>
+</ul>
+<p>במהלך היום:</p>
+<ul>
+<li>[ ] בכל פעם שפניתי למועמד, הוספתי הערה ל-CRM לפני שעוברים לבא.</li>
+<li>[ ] לכל שינוי מצב יש הערה שמסבירה אותו.</li>
+</ul>
+<p>בסגירת היום:</p>
+<ul>
+<li>[ ] אין ליד ב-&quot;Nuevo&quot; מיותר מ-24 שעות.</li>
+<li>[ ] כל הלידים שפניתי אליהם היום יש להם הערה חדשה.</li>
+<li>[ ] עסקות נזכנות יש ערך מכירה מוכנס.</li>
+<li>[ ] עסקות שנפסדו יש הערה עם הסיבה.</li>
+</ul>
+<hr>
+<h2>📝 Quiz — מודול 11</h2>
+<p>ענה ללא עיון בחומר.</p>
+<p><strong>1.</strong> מהו הסעיף ב-CRM שמוכר צריך לשמור פתוח לאורך כל יום העבודה?</p>
+<ul>
+<li>a) Dashboard</li>
+<li>b) Leads</li>
+<li>c) Calendar</li>
+<li>d) Monitoring</li>
+</ul>
+<p><strong>2.</strong> ליד הגיע ב-9:00 בבוקר. כמה זמן מקסימום יכול לעבור לפני שאתה פונה אליו?</p>
+<ul>
+<li>a) 24 שעות</li>
+<li>b) 48 שעות</li>
+<li>c) בהקדם האפשרי — אידיאלית תוך 2 שעות הראשונות</li>
+<li>d) למחרת בבוקר</li>
+</ul>
+<p><strong>3.</strong> זה עתה ניהלת שיחה של 15 דקות עם מועמד. אישרת שיש לו בית בבעלות, גג פח של 80 מ&quot;ר וחשבון של $160 לחודש. לאיזה מצב משנים את הליד?</p>
+<ul>
+<li>a) <code>contacted</code></li>
+<li>b) <code>qualified</code></li>
+<li>c) <code>proposal_sent</code></li>
+<li>d) <code>warm</code></li>
+</ul>
+<p><strong>4.</strong> מה חייבים לעשות תמיד בו זמנית עם שינוי מצב הליד?</p>
+<ul>
+<li>a) לשלוח אימייל למנהל</li>
+<li>b) להוסיף הערה תיאורית</li>
+<li>c) להתקשר למועמד</li>
+<li>d) לעדכן את פילטר המקור</li>
+</ul>
+<p><strong>5.</strong> מועמד חתם על חוזה ב-$8,500. מה הצעד הנכון ב-CRM?</p>
+<ul>
+<li>a) לשנות מצב ל-Ganado ולהשאיר שדה הערך ריק</li>
+<li>b) לשנות מצב ל-Ganado ולהכניס 8500 בשדה &quot;ערך המכירה&quot;</li>
+<li>c) לשנות מצב ל-Caliente</li>
+<li>d) להודיע למנהל ולחכות שהוא ירשום</li>
+</ul>
+<p><strong>6.</strong> מה מצביעה תגית <code>gclid</code> בעמודת &quot;מקור&quot; של ליד?</p>
+<ul>
+<li>a) הליד הגיע בוואטסאפ</li>
+<li>b) הליד לחץ על מודעת Google</li>
+<li>c) הליד נוסף ידנית</li>
+<li>d) הליד הופנה על ידי לקוח</li>
+</ul>
+<p><strong>7.</strong> האם ניתן לשנות שדות הייחוס (gclid, fbclid, utm_campaign)?</p>
+<ul>
+<li>a) כן, אם הנתון שגוי</li>
+<li>b) כן, אבל רק עם אישור המנהל</li>
+<li>c) לא — הם לקריאה בלבד ואסור לגעת בהם לעולם</li>
+<li>d) כן, כשסוגרים את העסקה כנזכנה</li>
+</ul>
+<p><strong>8.</strong> לליד יש 7 ימים במצב &quot;Contactado&quot; ללא הערות אחרונות. מה מצביעה התווית האדומה בשמו?</p>
+<ul>
+<li>a) שהליד נמחק</li>
+<li>b) שהליד הגיע ממודעות Meta</li>
+<li>c) שדורש מעקב — עובר זמן רב מדי ללא קשר</li>
+<li>d) שהמנהל בוחן אותו</li>
+</ul>
+<p><strong>9.</strong> איזה מקור בוחרים בהוספה ידנית של ליד שהגיע מהפניה של לקוח?</p>
+<ul>
+<li>a) Manual</li>
+<li>b) WhatsApp</li>
+<li>c) Referral</li>
+<li>d) Cold call</li>
+</ul>
+<p><strong>10.</strong> בסוף היום, איזה מצב הוא בלתי מקובל?</p>
+<ul>
+<li>a) יש 2 לידים במצב &quot;Propuesta&quot; מלפני 3 ימים</li>
+<li>b) יש ליד נזכנה של היום עם ערך מוכנס</li>
+<li>c) יש ליד במצב &quot;Nuevo&quot; שהגיע אתמול ב-8:00 ואף אחד לא פנה אליו</li>
+<li>d) יש 5 לידים במצב &quot;Perdido&quot; עם הערות סגירה</li>
+</ul>
+<hr>
+<h3>תשובות Quiz</h3>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>תשובה</th><th>הסבר קצר</th></tr></thead><tbody>
+<tr><td>1</td><td><strong>b</strong></td><td>Leads הוא המסך המרכזי לעבודה היומיומית של מכירות</td></tr>
+<tr><td>2</td><td><strong>c</strong></td><td>תוך 2 שעות — בזמן שהמועמד עדיין עם עניין פעיל (ראה מודול 09, T+0)</td></tr>
+<tr><td>3</td><td><strong>b</strong></td><td><code>qualified</code> — אישר גג, חשבון ועניין אמיתי</td></tr>
+<tr><td>4</td><td><strong>b</strong></td><td>ללא הערה, שינוי המצב לא אומר לך ולצוות כלום בעתיד</td></tr>
+<tr><td>5</td><td><strong>b</strong></td><td>הערך בדולרים חובה — מפעיל את דיווח ההמרה ל-Google Ads</td></tr>
+<tr><td>6</td><td><strong>b</strong></td><td>gclid = Google Click Identifier — מזהה לחיצה על מודעת Google</td></tr>
+<tr><td>7</td><td><strong>c</strong></td><td>לעולם לא — שינוי שוברת את הדוחות האוטומטיים של פרסום</td></tr>
+<tr><td>8</td><td><strong>c</strong></td><td>התווית האדומה &quot;דורש מעקב&quot; מצביעה על חוסר פעילות מוגזם</td></tr>
+<tr><td>9</td><td><strong>c</strong></td><td>Referral — להפניות שמגיעות מלקוחות קיימים</td></tr>
+<tr><td>10</td><td><strong>c</strong></td><td>ליד חדש מיותר מ-24 שעות ללא קשר הוא הזדמנות שאבדה</td></tr>
+</tbody></table></div>
+<hr>
+<blockquote>מודול קודם: <strong>10 — סימולציות וסמכה</strong></blockquote>
+<blockquote>זהו המודול הסופי של האקדמיה v1.0.</blockquote>
+<blockquote></blockquote>
+<blockquote>[VERIFICAR CON GERENTE]: כתובת URL לגישה ל-CRM · תהליך יצירת משתמש למוכרים חדשים · אם נוספו מצבים מותאמים אחרי ינואר 2026 · סכום הזיכוי המדויק עבור הפניה שהוזכר במודול 09</blockquote><div class="nextprev"><a href="/academy/he/10-certificacion.html">← Previous</a><a href="/academy/he/README.html">Next →</a></div></article></main></div></body></html>
