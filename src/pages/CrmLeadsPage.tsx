@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -19,8 +19,12 @@ import {
   XCircle,
   TrendingUp,
   ChevronRight,
+  UserCheck,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTeam } from '@/hooks/useTeam';
+import { LEAD_STATUS_CONFIG } from '@/types/lead';
 import {
   getLeads,
   updateLead,
@@ -55,19 +59,33 @@ import {
 
 const cn = (...c: (string | boolean | undefined | null)[]) => c.filter(Boolean).join(' ');
 
+// Two-letter initials from a full name (falls back to an email local-part).
+const initialsOf = (label: string) =>
+  (label || '?')
+    .split(/[\s@._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join('') || '?';
+
+// Sentinel used by the "Asignado" dropdown to filter for leads with no owner.
+const UNASSIGNED = '__unassigned__';
+
+// Labels + colors for the shared pipeline statuses derive from LEAD_STATUS_CONFIG
+// (src/types/lead.ts) — the single source of truth — mapped into the CRM's
+// { label, color, bg } shape using the Spanish (labelEs) labels. CRM-only statuses
+// that are not part of the shared LeadStatus type are appended afterwards.
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  new: { label: 'Nuevo', color: '#00ffcc', bg: 'rgba(0,255,204,0.1)' },
-  contacted: { label: 'Contactado', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
-  qualified: { label: 'Calificado', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-  proposal_sent: { label: 'Propuesta', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+  ...Object.fromEntries(
+    Object.entries(LEAD_STATUS_CONFIG).map(([k, v]) => [
+      k,
+      { label: v.labelEs, color: v.color, bg: v.bgColor },
+    ])
+  ),
+  // CRM-only statuses (temperature buckets + junk) — not sales-pipeline stages.
   cold: { label: 'Frío', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
   warm: { label: 'Tibio', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
   hot: { label: 'Caliente', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-  won: { label: 'Ganado', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
-  lost: { label: 'Perdido', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-  // Non-customer statuses (hidden by default)
-  vendor: { label: 'Proveedor', color: '#a855f7', bg: 'rgba(168,85,247,0.1)' },
-  partner: { label: 'Socio', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
   not_a_lead: { label: 'No es Lead', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
 };
 
@@ -91,7 +109,9 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
   capi_verify: { label: 'CAPI Verify', icon: <Facebook className="w-3 h-3" />, color: '#64748b' },
 };
 
-const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'cold', 'warm', 'hot', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
+// Selectable statuses — legacy cold/warm/hot were unified into the canonical
+// funnel (migration 061); they stay in STATUS_CONFIG only for history rendering.
+const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
 const PANAMA_PROVINCES = [
   'Panamá', 'Panamá Oeste', 'Colón', 'Coclé', 'Chiriquí',
@@ -100,12 +120,23 @@ const PANAMA_PROVINCES = [
 
 export default function CrmLeadsPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { members } = useTeam();
+  const myEmail = user?.email ?? '';
+  const memberByEmail = useMemo(() => {
+    const map: Record<string, (typeof members)[number]> = {};
+    for (const m of members) map[m.email] = m;
+    return map;
+  }, [members]);
+
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [zoneFilter, setZoneFilter] = useState('');
+  const [assignedFilter, setAssignedFilter] = useState(''); // '' = Todos · UNASSIGNED · member email
+  const [myLeadsOnly, setMyLeadsOnly] = useState(false);
   const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
   const [stats, setStats] = useState({
     total: 0,
@@ -157,6 +188,14 @@ export default function CrmLeadsPage() {
           l.location?.toLowerCase().includes(zoneFilter.toLowerCase())
         );
       }
+      // Assignment filter: "Mis Leads" wins over the dropdown when active.
+      if (myLeadsOnly) {
+        filtered = filtered.filter((l) => l.assigned_to === myEmail);
+      } else if (assignedFilter === UNASSIGNED) {
+        filtered = filtered.filter((l) => !l.assigned_to);
+      } else if (assignedFilter) {
+        filtered = filtered.filter((l) => l.assigned_to === assignedFilter);
+      }
       setLeads(filtered);
       setStats(s);
 
@@ -174,7 +213,7 @@ export default function CrmLeadsPage() {
       console.error('Failed to fetch leads:', err);
     }
     setLoading(false);
-  }, [search, statusFilter, sourceFilter, zoneFilter, showNonCustomers]);
+  }, [search, statusFilter, sourceFilter, zoneFilter, assignedFilter, myLeadsOnly, myEmail, showNonCustomers]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -187,6 +226,19 @@ export default function CrmLeadsPage() {
     await updateLead(lead.id, updates);
     fetchLeads();
     if (selectedLead?.id === lead.id) setSelectedLead({ ...selectedLead, ...updates });
+  };
+
+  const handleAssignChange = async (lead: CrmLead, email: string) => {
+    const value = email || null;
+    // Optimistic — update the row + open panel without refetching.
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, assigned_to: value } : l)));
+    if (selectedLead?.id === lead.id) setSelectedLead({ ...selectedLead, assigned_to: value });
+    try {
+      await updateLead(lead.id, { assigned_to: value });
+    } catch (err) {
+      console.error('Failed to assign lead:', err);
+      fetchLeads(); // revert to server truth on failure
+    }
   };
 
   const handleSelectLead = async (lead: CrmLead) => {
@@ -412,6 +464,33 @@ export default function CrmLeadsPage() {
             <option key={z} value={z}>{z}</option>
           ))}
         </select>
+        <select
+          value={assignedFilter}
+          onChange={(e) => setAssignedFilter(e.target.value)}
+          disabled={myLeadsOnly}
+          title="Filtrar por asignación"
+          className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none disabled:opacity-40"
+        >
+          <option value="">Todos (asignación)</option>
+          <option value={UNASSIGNED}>Sin asignar</option>
+          {members.map((m) => (
+            <option key={m.id} value={m.email}>{m.full_name}</option>
+          ))}
+        </select>
+        <button
+          onClick={() => setMyLeadsOnly((v) => !v)}
+          disabled={!myEmail}
+          title="Mostrar solo los leads asignados a mí"
+          className={cn(
+            'flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm whitespace-nowrap transition-colors disabled:opacity-40',
+            myLeadsOnly
+              ? 'bg-[#D4A843]/10 border-[#D4A843]/40 text-[#D4A843]'
+              : 'bg-[#12121a] border-white/[0.06] text-[#8888a0] hover:text-white'
+          )}
+        >
+          <UserCheck className="w-3.5 h-3.5" />
+          Mis Leads
+        </button>
         <button
           onClick={() => setShowNonCustomers((v) => !v)}
           title="Mostrar/ocultar proveedores, socios y no-leads"
@@ -453,6 +532,9 @@ export default function CrmLeadsPage() {
                   const src = SOURCE_CONFIG[lead.source] || SOURCE_CONFIG.manual;
                   const st = STATUS_CONFIG[lead.status] || STATUS_CONFIG.new;
                   const stale = isStaleLead(lead);
+                  const assigneeLabel = lead.assigned_to
+                    ? (memberByEmail[lead.assigned_to]?.full_name ?? lead.assigned_to)
+                    : null;
                   return (
                     <tr
                       key={lead.id}
@@ -463,7 +545,17 @@ export default function CrmLeadsPage() {
                       )}
                     >
                       <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-white">{lead.name}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium text-white">{lead.name}</div>
+                          {assigneeLabel && (
+                            <span
+                              title={`Asignado a ${assigneeLabel}`}
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#D4A843]/15 text-[#D4A843] text-[9px] font-bold shrink-0"
+                            >
+                              {initialsOf(assigneeLabel)}
+                            </span>
+                          )}
+                        </div>
                         {lead.monthly_bill && (
                           <div className="text-[11px] text-[#555570]">${lead.monthly_bill}/mes</div>
                         )}
@@ -756,6 +848,35 @@ export default function CrmLeadsPage() {
                         </button>
                       );
                     })}
+                  </div>
+                </div>
+
+                {/* Assignment */}
+                <div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Asignado a</div>
+                  <div className="flex items-center gap-2">
+                    {selectedLead.assigned_to && (
+                      <span
+                        title={memberByEmail[selectedLead.assigned_to]?.full_name ?? selectedLead.assigned_to}
+                        className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#D4A843]/15 text-[#D4A843] text-[10px] font-bold shrink-0"
+                      >
+                        {initialsOf(memberByEmail[selectedLead.assigned_to]?.full_name ?? selectedLead.assigned_to)}
+                      </span>
+                    )}
+                    <select
+                      value={selectedLead.assigned_to ?? ''}
+                      onChange={(e) => handleAssignChange(selectedLead, e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-sm outline-none focus:border-[#D4A843]/30"
+                    >
+                      <option value="">Sin asignar</option>
+                      {members.map((m) => (
+                        <option key={m.id} value={m.email}>{m.full_name}</option>
+                      ))}
+                      {/* Preserve an assignee that is no longer an active team member */}
+                      {selectedLead.assigned_to && !memberByEmail[selectedLead.assigned_to] && (
+                        <option value={selectedLead.assigned_to}>{selectedLead.assigned_to}</option>
+                      )}
+                    </select>
                   </div>
                 </div>
 

@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
+import { notifyTeamNewLead } from '../lib/team-notify.js';
 
 // CRITICAL: disable Vercel's bodyParser so we can read raw bytes for HMAC verification.
 // Re-stringifying req.body changes byte order/whitespace and breaks signature.
@@ -93,26 +94,6 @@ function buildFollowupMessage(fullName: string): string {
     'Si prefieres una llamada rápida de 10 min, dime cuándo te queda bien 📞',
     '',
     '¡Saludos!',
-  ].join('\n');
-}
-
-function buildNewLeadAlert(params: {
-  source: string;
-  name: string;
-  phone: string;
-  preview: string;
-}): string {
-  return [
-    '🔔 *NUEVO LEAD — Solaris Panama*',
-    '',
-    `📥 Fuente:  ${params.source}`,
-    `👤 Nombre:  ${params.name}`,
-    `📱 Teléfono: ${params.phone}`,
-    '',
-    `💬 Info:`,
-    `"${params.preview}"`,
-    '',
-    `🌐 CRM: https://solaris-panama.com/crm-leads`,
   ].join('\n');
 }
 
@@ -432,18 +413,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 idempotency_key: `followup:${data.id}`,
               });
 
-              // 🔔 Alert Kaniel
-              await supabase.from('whatsapp_outbound_queue').insert({
-                phone: '972502213948',
-                message: buildNewLeadAlert({
-                  source: 'Meta Ads',
-                  name: name.trim(),
-                  phone: `+${cleanPhone}`,
-                  preview: `${installType || '?'} · ${location || '?'} · bill ${billRange || '?'}`,
-                }),
-                automation_type: 'manual',
-                scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
-                idempotency_key: `new_lead_alert:meta:${data.id}`,
+              // 🔔 Alert the whole active sales team
+              await notifyTeamNewLead(supabase, {
+                leadId: data.id,
+                source: 'Meta Ads',
+                name: name.trim(),
+                phone: cleanPhone,
+                preview: `${installType || '?'} · ${location || '?'} · bill ${billRange || '?'}`,
+                extra: { sourceTag: 'meta' },
               });
             }
           }

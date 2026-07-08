@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
+import { notifyTeamNewLead } from '../lib/team-notify.js';
 
 /**
  * Google Ads Lead Form Webhook
@@ -72,27 +73,6 @@ function buildGoogleLeadAckMessage(name: string): string {
     '',
     'Si prefieres una llamada rapida, dime que hora te queda bien.',
   ].join('\n');
-}
-
-function buildNewLeadAlert(params: {
-  name: string;
-  phone: string;
-  location: string | null;
-  monthlyBill: number | null;
-  gclid: string | null;
-}): string {
-  return [
-    'NUEVO LEAD - Solaris Panama',
-    '',
-    'Fuente: Google Ads Lead Form',
-    `Nombre: ${params.name}`,
-    `Telefono: +${params.phone}`,
-    `Zona: ${params.location || '?'}`,
-    `Factura: ${params.monthlyBill ? '$' + params.monthlyBill : '?'}`,
-    params.gclid ? `GCLID: ${params.gclid.slice(0, 40)}...` : '',
-    '',
-    'CRM: https://solaris-panama.com/crm-leads',
-  ].filter(Boolean).join('\n');
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -252,18 +232,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      await supabase.from('whatsapp_outbound_queue').insert({
-        phone: '972502213948',
-        message: buildNewLeadAlert({
-          name: name.trim(),
-          phone: cleanPhone,
-          location,
-          monthlyBill,
-          gclid: payload.gclid,
-        }),
-        automation_type: 'manual',
-        scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
-        idempotency_key: `new_lead_alert:google:${data?.id || leadId || crypto.randomUUID()}`,
+      await notifyTeamNewLead(supabase, {
+        leadId: data?.id || leadId || crypto.randomUUID(),
+        source: 'Google Ads Lead Form',
+        name: name.trim(),
+        phone: cleanPhone,
+        preview: `Zona: ${location || '?'} · Factura: ${monthlyBill ? '$' + monthlyBill : '?'}`,
+        extra: { sourceTag: 'google', gclid: payload.gclid },
       });
     } catch (alertErr) {
       console.warn('[google-leads] alert enqueue failed:', alertErr);

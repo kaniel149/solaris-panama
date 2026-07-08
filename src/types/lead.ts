@@ -1,7 +1,7 @@
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { CadastreInfo, BusinessLicense, CorporateInfo, EnrichmentSourceSummary, NearbyBusinessResult } from '@/types/enrichment';
 
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost' | 'vendor' | 'partner';
 
 export interface ProposalSummary {
   id: string;
@@ -108,6 +108,10 @@ export const LEAD_STATUS_CONFIG: Record<LeadStatus, { label: string; labelEs: st
   proposal_sent: { label: 'Proposal Sent', labelEs: 'Propuesta Enviada', color: '#00ffcc', bgColor: 'rgba(0,255,204,0.1)' },
   won: { label: 'Won', labelEs: 'Ganado', color: '#22c55e', bgColor: 'rgba(34,197,94,0.1)' },
   lost: { label: 'Lost', labelEs: 'Perdido', color: '#ef4444', bgColor: 'rgba(239,68,68,0.1)' },
+  // Non-funnel statuses — rendered as badges but excluded from the sales pipeline / Kanban.
+  vendor: { label: 'Vendor', labelEs: 'Proveedor', color: '#64748b', bgColor: 'rgba(100,116,139,0.1)' },
+  partner: { label: 'Partner', labelEs: 'Socio', color: '#f472b6', bgColor: 'rgba(244,114,182,0.1)' },
 };
 
+// Kanban / funnel deliberately excludes vendor + partner — they are not sales-pipeline stages.
 export const LEAD_KANBAN_COLUMNS: LeadStatus[] = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost'];
