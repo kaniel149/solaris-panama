@@ -120,6 +120,9 @@ export default function LeadsPage() {
       proposal_sent: [],
       won: [],
       lost: [],
+      // vendor + partner are not Kanban columns, but must exist so grouping never crashes.
+      vendor: [],
+      partner: [],
     };
     for (const lead of leads) {
       groups[lead.status].push(lead);

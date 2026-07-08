@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 import { sendMetaCapiEventLogged } from '../lib/meta-capi.js';
 import { inferAttribution } from '../lib/attribution.js';
+import { notifyTeamNewLead } from '../lib/team-notify.js';
 
 function getSupabaseServerClient() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -237,30 +238,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error('[intake] CAPI fire failed:', err);
     }
 
-    // 🔔 Alert Kaniel about new website/LP lead
-    try {
-      const preview = message?.trim() || `${source || 'web'} · ${location || '?'}`;
-      await supabase.from('whatsapp_outbound_queue').insert({
-        phone: '972502213948',
-        message: [
-          '🔔 *NUEVO LEAD — Solaris Panama*',
-          '',
-          `📥 Fuente:  ${source === 'lp_azuero' ? 'Landing Azuero (Google Ads)' : 'Website'}`,
-          `👤 Nombre:  ${String(name).trim()}`,
-          `📱 Teléfono: +${cleanPhone}`,
-          '',
-          `💬 Info:`,
-          `"${preview.substring(0, 250)}"`,
-          '',
-          `${gclid ? '🎯 GCLID: ' + String(gclid).substring(0, 40) + '...\n' : ''}🌐 CRM: https://solaris-panama.com/crm-leads`,
-        ].join('\n'),
-        automation_type: 'manual',
-        scheduled_for: new Date(Date.now() + 5 * 1000).toISOString(),
-        idempotency_key: `new_lead_alert:intake:${data.id}`,
-      });
-    } catch (alertErr) {
-      console.warn('[intake] alert enqueue failed:', alertErr);
-    }
+    // 🔔 Alert the whole active sales team about the new website/LP lead
+    await notifyTeamNewLead(supabase, {
+      leadId: data.id,
+      source: source === 'lp_azuero' ? 'Landing Azuero (Google Ads)' : 'Website',
+      name: String(name).trim(),
+      phone: cleanPhone,
+      preview: message?.trim() || `${source || 'web'} · ${location || '?'}`,
+      extra: { sourceTag: 'intake', gclid: gclid || null },
+    });
 
     return res.status(201).json({ ok: true, id: data.id, event_id: eventId });
   } catch (err) {
