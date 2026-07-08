@@ -9,6 +9,8 @@
     { "source": "/clients/:path*", "destination": "/app.html" },
     { "source": "/proposals/:path*", "destination": "/app.html" },
     { "source": "/calendar", "destination": "/app.html" },
+    { "source": "/tasks", "destination": "/app.html" },
+    { "source": "/solar-map", "destination": "/app.html" },
     { "source": "/monitoring", "destination": "/app.html" },
     { "source": "/leads/:path*", "destination": "/app.html" },
     { "source": "/settings", "destination": "/app.html" },
