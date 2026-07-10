@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { formatLoginAlert, formatSummary, type ActivityReport } from '../email-notify';
 
 const emptyReport: ActivityReport = { leadsUpdated: [], statusChanges: [], events: [], tasks: [] };
@@ -31,5 +31,39 @@ describe('formatSummary', () => {
     expect(text).toContain('cold → warm');
     expect(text).toContain('Visita técnica');
     expect(text).toContain('Enviar propuesta');
+  });
+});
+
+describe('sendEmail', () => {
+  it('missing RESEND_API_KEY → {ok:false, resend_env_missing}', async () => {
+    const prev = process.env.RESEND_API_KEY;
+    delete process.env.RESEND_API_KEY;
+    const { sendEmail } = await import('../email-notify');
+    const r = await sendEmail({ subject: 's', text: 't' });
+    expect(r).toEqual({ ok: false, error: 'resend_env_missing' });
+    if (prev !== undefined) process.env.RESEND_API_KEY = prev;
+  });
+
+  it('non-2xx response → ok:false with status + body excerpt', async () => {
+    process.env.RESEND_API_KEY = 'test-key';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 403, text: async () => 'domain not verified' }));
+    const { sendEmail } = await import('../email-notify');
+    const r = await sendEmail({ subject: 's', text: 't' });
+    expect(r.ok).toBe(false);
+    expect(r.error).toContain('resend_403');
+    expect(r.error).toContain('domain not verified');
+    vi.unstubAllGlobals();
+    delete process.env.RESEND_API_KEY;
+  });
+
+  it('fetch throws (network) → resolves {ok:false, network_error}, never rejects', async () => {
+    process.env.RESEND_API_KEY = 'test-key';
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('fetch failed')));
+    const { sendEmail } = await import('../email-notify');
+    const r = await sendEmail({ subject: 's', text: 't' });
+    expect(r.ok).toBe(false);
+    expect(r.error).toContain('network_error');
+    vi.unstubAllGlobals();
+    delete process.env.RESEND_API_KEY;
   });
 });

@@ -65,11 +65,19 @@ export async function sendEmail(msg: { subject: string; text: string }): Promise
   const key = process.env.RESEND_API_KEY;
   if (!key) return { ok: false, error: 'resend_env_missing' };
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: FROM, to: ALERT_TO, subject: msg.subject, text: msg.text }),
-  });
-  if (!res.ok) return { ok: false, error: `resend_${res.status}` };
-  return { ok: true };
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: FROM, to: ALERT_TO, subject: msg.subject, text: msg.text }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      return { ok: false, error: `resend_${res.status}${body ? `: ${body.slice(0, 200)}` : ''}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: `network_error: ${String(err).slice(0, 200)}` };
+  }
 }
