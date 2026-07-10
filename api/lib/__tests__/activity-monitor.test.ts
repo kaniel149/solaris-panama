@@ -66,4 +66,27 @@ describe('decide', () => {
     expect(actions).toEqual(['send_final_summary', 'send_login_alert']);
     expect(next.sessionStartedAt).toBe(min(61));
   });
+
+  it('cron gap: stale activity + long-dead session → final summary only, no reopen, no interim', () => {
+    const state: MonitorState = { lastSeenSignInAt: T0, sessionStartedAt: T0, sessionLastActivityAt: T0, lastSummarySentAt: null };
+    const { actions, next } = decide(state, { lastSignInAt: T0, latestActivityAt: min(15), now: min(180) });
+    expect(actions).toEqual(['send_final_summary']);
+    expect(next.sessionStartedAt).toBeNull();
+  });
+
+  it('login-reopened session does not immediately re-close (idle clock seeded at now)', () => {
+    const state: MonitorState = { lastSeenSignInAt: T0, sessionStartedAt: T0, sessionLastActivityAt: min(10), lastSummarySentAt: null };
+    const r1 = decide(state, { lastSignInAt: min(60), latestActivityAt: min(10), now: min(61) });
+    expect(r1.actions).toEqual(['send_final_summary', 'send_login_alert']);
+    expect(r1.next.sessionLastActivityAt).toBe(min(61));
+    const r2 = decide(r1.next, { lastSignInAt: min(60), latestActivityAt: min(10), now: min(71) });
+    expect(r2.actions).toEqual([]);
+  });
+
+  it('stale sign-in after cron gap → recorded silently, no alert, no session', () => {
+    const { actions, next } = decide(empty, { lastSignInAt: T0, latestActivityAt: null, now: min(180) });
+    expect(actions).toEqual([]);
+    expect(next.lastSeenSignInAt).toBe(T0);
+    expect(next.sessionStartedAt).toBeNull();
+  });
 });

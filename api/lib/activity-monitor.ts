@@ -2,6 +2,8 @@
  * Pure session logic for per-user activity monitoring.
  * State machine: closed → (sign-in OR new activity) → open → (30min idle) → closed.
  * Interim summary every 2h during a continuous session.
+ * The idle clock of a login-opened session starts at `now`; stale (>30min old)
+ * logins/activity discovered after cron gaps never open sessions or fire interim summaries.
  */
 
 export const IDLE_MINUTES = 30;
@@ -22,7 +24,14 @@ export interface MonitorInput {
 
 export type MonitorAction = 'send_login_alert' | 'send_final_summary' | 'send_interim_summary';
 
-const ts = (iso: string | null): number => (iso ? Date.parse(iso) : 0);
+const ts = (iso: string | null): number => {
+  if (!iso) return 0;
+  const n = Date.parse(iso);
+  return Number.isFinite(n) ? n : 0;
+};
+
+const IDLE_MS = IDLE_MINUTES * 60_000;
+const INTERIM_MS = INTERIM_HOURS * 3_600_000;
 
 export function decide(state: MonitorState, input: MonitorInput): { actions: MonitorAction[]; next: MonitorState } {
   const actions: MonitorAction[] = [];
@@ -30,12 +39,15 @@ export function decide(state: MonitorState, input: MonitorInput): { actions: Mon
   const now = ts(input.now);
 
   const newLogin = !!input.lastSignInAt && ts(input.lastSignInAt) > ts(state.lastSeenSignInAt);
-  const newActivity = !!input.latestActivityAt && ts(input.latestActivityAt) > ts(state.sessionLastActivityAt);
+  const loginFresh = newLogin && now - ts(input.lastSignInAt) < IDLE_MS;
+  const activityIsNewer = !!input.latestActivityAt && ts(input.latestActivityAt) > ts(state.sessionLastActivityAt);
+  const activityIsFresh = !!input.latestActivityAt && now - ts(input.latestActivityAt) < IDLE_MS;
 
-  // 1. close an idle session first (also when a new login supersedes it)
-  if (next.sessionStartedAt && !newActivity) {
+  // 1. advance the activity clock of an open session, then close it if idle
+  if (next.sessionStartedAt) {
+    if (activityIsNewer) next.sessionLastActivityAt = input.latestActivityAt;
     const idleMs = now - ts(next.sessionLastActivityAt ?? next.sessionStartedAt);
-    if (idleMs >= IDLE_MINUTES * 60_000) {
+    if (idleMs >= IDLE_MS) {
       actions.push('send_final_summary');
       next.sessionStartedAt = null;
       next.sessionLastActivityAt = null;
@@ -43,28 +55,26 @@ export function decide(state: MonitorState, input: MonitorInput): { actions: Mon
     }
   }
 
-  // 2. open a session on new sign-in or new activity
-  if (newLogin || (newActivity && !next.sessionStartedAt)) {
+  // 2. open a session on a fresh sign-in or fresh new activity
+  if (loginFresh || (activityIsNewer && activityIsFresh && !next.sessionStartedAt)) {
     actions.push('send_login_alert');
     if (input.lastSignInAt) next.lastSeenSignInAt = input.lastSignInAt;
     if (!next.sessionStartedAt) {
       next.sessionStartedAt = input.now;
-      next.sessionLastActivityAt = input.latestActivityAt ?? input.now;
+      next.sessionLastActivityAt = activityIsNewer && activityIsFresh ? input.latestActivityAt : input.now;
       next.lastSummarySentAt = null;
     }
+  } else if (newLogin) {
+    // stale sign-in discovered after a cron gap — record it silently, no alert
+    next.lastSeenSignInAt = input.lastSignInAt;
   }
 
-  // 3. advance activity clock
-  if (newActivity && next.sessionStartedAt) {
-    next.sessionLastActivityAt = input.latestActivityAt;
-  }
-
-  // 4. interim summary for long continuous sessions
+  // 3. interim summary for long continuous sessions
   if (
     next.sessionStartedAt &&
     !actions.length &&
-    now - ts(next.sessionStartedAt) >= INTERIM_HOURS * 3_600_000 &&
-    now - ts(next.lastSummarySentAt ?? next.sessionStartedAt) >= INTERIM_HOURS * 3_600_000
+    now - ts(next.sessionStartedAt) >= INTERIM_MS &&
+    now - ts(next.lastSummarySentAt ?? next.sessionStartedAt) >= INTERIM_MS
   ) {
     actions.push('send_interim_summary');
     next.lastSummarySentAt = input.now;
