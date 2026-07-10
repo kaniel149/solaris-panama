@@ -13,8 +13,8 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { decide, type MonitorState } from '../lib/activity-monitor';
-import { formatLoginAlert, formatSummary, sendEmail, type ActivityReport } from '../lib/email-notify';
+import { decide, type MonitorState } from '../lib/activity-monitor.js';
+import { formatLoginAlert, formatSummary, sendEmail, type ActivityReport } from '../lib/email-notify.js';
 
 const MONITORED_EMAIL = 'tesler.roi@gmail.com';
 const MONITORED_NAME = 'רואי';
