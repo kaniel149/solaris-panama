@@ -5,7 +5,9 @@
  */
 
 export const ALERT_TO = 'k@kanielt.com';
-const FROM = 'Solaris CRM <alerts@solaris-panama.com>';
+// Default sender uses the Solaris domain; until it is verified in Resend,
+// override via ALERT_EMAIL_FROM (a Resend-verified domain address).
+const FROM = process.env.ALERT_EMAIL_FROM || 'Solaris CRM <alerts@solaris-panama.com>';
 const TZ = 'America/Panama';
 
 export interface ActivityReport {
