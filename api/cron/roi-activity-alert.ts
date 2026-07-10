@@ -12,26 +12,31 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { decide, type MonitorState } from '../lib/activity-monitor';
 import { formatLoginAlert, formatSummary, sendEmail, type ActivityReport } from '../lib/email-notify';
 
 const MONITORED_EMAIL = 'tesler.roi@gmail.com';
 const MONITORED_NAME = 'רואי';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+let _supabase: SupabaseClient | null = null;
+function getSupabase(): SupabaseClient | null {
+  if (_supabase) return _supabase;
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+  if (!url || !key) return null;
+  _supabase = createClient(url, key);
+  return _supabase;
+}
 
-async function findUser(): Promise<{ id: string; lastSignInAt: string | null } | null> {
+async function findUser(supabase: SupabaseClient): Promise<{ id: string; lastSignInAt: string | null } | null> {
   const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
   if (error) return null;
   const u = data.users.find((x) => x.email?.toLowerCase() === MONITORED_EMAIL);
   return u ? { id: u.id, lastSignInAt: u.last_sign_in_at ?? null } : null;
 }
 
-async function fetchReport(uid: string, sinceIso: string): Promise<{ report: ActivityReport; latestActivityAt: string | null }> {
+async function fetchReport(supabase: SupabaseClient, uid: string, sinceIso: string): Promise<{ report: ActivityReport; latestActivityAt: string | null }> {
   const [leads, statuses, events, tasks] = await Promise.all([
     supabase.from('leads').select('id, name, status, updated_at')
       .eq('updated_by', uid).gte('updated_at', sinceIso).order('updated_at', { ascending: false }).limit(50),
@@ -74,7 +79,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'resend_env_missing' });
   }
 
-  const user = await findUser();
+  const supabase = getSupabase();
+  if (!supabase) {
+    console.error('[roi-alert] Supabase env missing');
+    return res.status(500).json({ error: 'supabase_env_missing' });
+  }
+
+  const user = await findUser(supabase);
   if (!user) return res.status(500).json({ error: 'monitored_user_not_found' });
 
   const nowIso = new Date().toISOString();
@@ -95,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     state.lastSummarySentAt ??
     new Date(Date.now() - 24 * 3_600_000).toISOString();
 
-  const { report, latestActivityAt } = await fetchReport(user.id, sinceIso);
+  const { report, latestActivityAt } = await fetchReport(supabase, user.id, sinceIso);
   const { actions, next } = decide(state, {
     lastSignInAt: user.lastSignInAt,
     latestActivityAt,

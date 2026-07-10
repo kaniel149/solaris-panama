@@ -60,7 +60,12 @@ export function decide(state: MonitorState, input: MonitorInput): { actions: Mon
     actions.push('send_login_alert');
     if (input.lastSignInAt) next.lastSeenSignInAt = input.lastSignInAt;
     if (!next.sessionStartedAt) {
-      next.sessionStartedAt = input.now;
+      // stamp session start at the earliest triggering event so summaries
+      // cover activity that happened before the cron tick noticed the session
+      const triggers: number[] = [];
+      if (loginFresh && input.lastSignInAt) triggers.push(ts(input.lastSignInAt));
+      if (activityIsNewer && activityIsFresh && input.latestActivityAt) triggers.push(ts(input.latestActivityAt));
+      next.sessionStartedAt = triggers.length ? new Date(Math.min(...triggers)).toISOString() : input.now;
       next.sessionLastActivityAt = activityIsNewer && activityIsFresh ? input.latestActivityAt : input.now;
       next.lastSummarySentAt = null;
     }

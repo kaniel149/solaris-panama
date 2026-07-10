@@ -16,7 +16,7 @@ describe('decide', () => {
     const { actions, next } = decide(empty, { lastSignInAt: T0, latestActivityAt: null, now: min(1) });
     expect(actions).toEqual(['send_login_alert']);
     expect(next.lastSeenSignInAt).toBe(T0);
-    expect(next.sessionStartedAt).toBe(min(1));
+    expect(next.sessionStartedAt).toBe(T0);
     expect(next.sessionLastActivityAt).toBe(min(1)); // idle timer starts at login
   });
 
@@ -24,7 +24,7 @@ describe('decide', () => {
     const state = { ...empty, lastSeenSignInAt: T0 };
     const { actions, next } = decide(state, { lastSignInAt: T0, latestActivityAt: min(5), now: min(6) });
     expect(actions).toEqual(['send_login_alert']);
-    expect(next.sessionStartedAt).toBe(min(6));
+    expect(next.sessionStartedAt).toBe(min(5));
     expect(next.sessionLastActivityAt).toBe(min(5));
   });
 
@@ -64,7 +64,7 @@ describe('decide', () => {
     const state: MonitorState = { lastSeenSignInAt: T0, sessionStartedAt: T0, sessionLastActivityAt: min(10), lastSummarySentAt: null };
     const { actions, next } = decide(state, { lastSignInAt: min(60), latestActivityAt: min(10), now: min(61) });
     expect(actions).toEqual(['send_final_summary', 'send_login_alert']);
-    expect(next.sessionStartedAt).toBe(min(61));
+    expect(next.sessionStartedAt).toBe(min(60));
   });
 
   it('cron gap: stale activity + long-dead session → final summary only, no reopen, no interim', () => {
@@ -88,5 +88,11 @@ describe('decide', () => {
     expect(actions).toEqual([]);
     expect(next.lastSeenSignInAt).toBe(T0);
     expect(next.sessionStartedAt).toBeNull();
+  });
+
+  it('session start stamped at trigger time so summaries cover pre-open activity', () => {
+    // login at T0+2min, cron only notices at T0+9min — session must start at the login time
+    const { next } = decide(empty, { lastSignInAt: min(2), latestActivityAt: min(5), now: min(9) });
+    expect(next.sessionStartedAt).toBe(min(2)); // earliest trigger (login before activity)
   });
 });
