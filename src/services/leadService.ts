@@ -208,6 +208,37 @@ export async function getLeadStats(): Promise<{
   };
 }
 
+// ─── Zones ───────────────────────────────────────────────────────
+
+// Azuero peninsula = the Herrera + Los Santos provinces and their key districts.
+// Selecting "Azuero" in the CRM zone filter should match any of these.
+export const AZUERO_ZONES = ['Azuero', 'Herrera', 'Los Santos', 'Las Tablas', 'Chitré', 'Pedasí'];
+
+/** True if a lead's zone/location places it in the Azuero peninsula. */
+export function isInAzueroRegion(zone?: string | null, location?: string | null): boolean {
+  const needles = AZUERO_ZONES.map((z) => z.toLowerCase());
+  if (zone && needles.includes(zone.toLowerCase())) return true;
+  const loc = location?.toLowerCase();
+  if (loc && needles.some((n) => loc.includes(n))) return true;
+  return false;
+}
+
+/**
+ * Distinct, non-null `zone` values actually present in the leads table.
+ * The CRM merges these with the static province list so the zone filter is
+ * not limited to whatever happens to be in the first page of loaded leads.
+ */
+export async function getDistinctZones(): Promise<string[]> {
+  const { data, error } = await supabase.from('leads').select('zone').not('zone', 'is', null);
+  if (error) throw error;
+  const set = new Set<string>();
+  for (const row of (data as { zone: string | null }[]) ?? []) {
+    const z = row.zone?.trim();
+    if (z) set.add(z);
+  }
+  return Array.from(set).sort();
+}
+
 export function isStaleLead(lead: Pick<CrmLead, 'status' | 'created_at' | 'updated_at'>): boolean {
   const now = Date.now();
   const ageHours = (now - new Date(lead.created_at).getTime()) / 36e5;

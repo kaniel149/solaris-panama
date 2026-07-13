@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toast';
 import { useTeam } from '@/hooks/useTeam';
 import { LEAD_STATUS_CONFIG } from '@/types/lead';
 import {
@@ -32,8 +34,11 @@ import {
   addLeadNote,
   getLeadNotes,
   getLeadStats,
+  getDistinctZones,
+  isInAzueroRegion,
   isStaleLead,
   markLeadWon,
+  enqueueWhatsAppMessage,
   type CrmLead,
   type LeadNote,
 } from '@/services/leadService';
@@ -42,6 +47,7 @@ import {
   createEvent,
   updateEventStatus,
   deleteEvent,
+  getUpcomingFollowUps,
   type LeadEvent,
   type EventType,
 } from '@/services/leadEventsService';
@@ -113,16 +119,33 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
 // funnel (migration 061); they stay in STATUS_CONFIG only for history rendering.
 const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
+// Virtual filters — computed client-side, not real DB statuses. They must never
+// appear in the row/detail status pickers (those change the real lead.status).
+const VIRTUAL_STATUSES = [
+  { value: 'vencidos', label: 'Vencidos' },
+  { value: 'seguimiento', label: 'En seguimiento' },
+];
+const VIRTUAL_STATUS_VALUES = VIRTUAL_STATUSES.map((v) => v.value);
+
 const PANAMA_PROVINCES = [
   'Panamá', 'Panamá Oeste', 'Colón', 'Coclé', 'Chiriquí',
   'Herrera', 'Los Santos', 'Veraguas', 'Bocas del Toro', 'Darién',
 ];
 
+// Regional / district zone labels layered on top of the provinces so sales can
+// filter by how they actually talk about the territory (Azuero peninsula, etc).
+const EXTRA_ZONES = ['Azuero', 'Las Tablas', 'Chitré', 'Pedasí'];
+
 export default function CrmLeadsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { toast } = useToast();
   const { members } = useTeam();
+  const [searchParams] = useSearchParams();
   const myEmail = user?.email ?? '';
+  // Note author = the signed-in user (falls back to email, then a generic label).
+  const authorName =
+    (user?.user_metadata?.full_name as string | undefined) || user?.email || 'Admin';
   const memberByEmail = useMemo(() => {
     const map: Record<string, (typeof members)[number]> = {};
     for (const m of members) map[m.email] = m;
@@ -132,12 +155,36 @@ export default function CrmLeadsPage() {
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(''); // used in fetch deps; input stays instant
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [zoneFilter, setZoneFilter] = useState('');
   const [assignedFilter, setAssignedFilter] = useState(''); // '' = Todos · UNASSIGNED · member email
   const [myLeadsOnly, setMyLeadsOnly] = useState(false);
   const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
+  const [dbZones, setDbZones] = useState<string[]>([]); // distinct zones from the whole table
+  const [followUpMap, setFollowUpMap] = useState<Record<string, string>>({}); // lead_id → next follow-up date
+
+  // Latest-request-wins guard: only the newest fetchLeads() may commit results.
+  const fetchIdRef = useRef(0);
+
+  // Initialise the status filter from ?status=… (e.g. drilled in from the dashboard).
+  useEffect(() => {
+    const qsStatus = searchParams.get('status');
+    if (qsStatus) setStatusFilter(qsStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Debounce the search box so we refetch ~300ms after typing stops.
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(id);
+  }, [search]);
+
+  // Distinct zones from the full table (not just the loaded page).
+  useEffect(() => {
+    getDistinctZones().then(setDbZones).catch(() => {});
+  }, []);
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
@@ -154,6 +201,9 @@ export default function CrmLeadsPage() {
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
   const [notes, setNotes] = useState<LeadNote[]>([]);
   const [newNote, setNewNote] = useState('');
+  const [noteError, setNoteError] = useState<string | null>(null);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   const [addingLead, setAddingLead] = useState(false);
   const [newLeadForm, setNewLeadForm] = useState({ name: '', phone: '', source: 'manual' });
 
@@ -168,11 +218,19 @@ export default function CrmLeadsPage() {
   const [funnelStats, setFunnelStats] = useState<FunnelStageStats[]>([]);
 
   const fetchLeads = useCallback(async () => {
+    const reqId = ++fetchIdRef.current;
     setLoading(true);
+    // Virtual statuses (vencidos / seguimiento) are computed client-side — never
+    // sent as a real status constraint to the query.
+    const isVirtual = VIRTUAL_STATUS_VALUES.includes(statusFilter);
+    const queryStatus = isVirtual ? undefined : statusFilter || undefined;
     try {
-      const [res, s] = await Promise.all([
-        getLeads({ search: search || undefined, status: statusFilter || undefined, source: sourceFilter || undefined }),
+      const [res, s, upcoming] = await Promise.all([
+        // limit 500: the CRM has no pagination UI, so load enough to make the
+        // client-side zone / vencidos / seguimiento filters meaningful.
+        getLeads({ search: debouncedSearch || undefined, status: queryStatus, source: sourceFilter || undefined, limit: 500 }),
         getLeadStats(),
+        getUpcomingFollowUps(),
       ]);
       // Default: hide vendors / partners / not_a_lead from main pipeline view
       // (still searchable via the status dropdown explicitly)
@@ -181,8 +239,17 @@ export default function CrmLeadsPage() {
         if (!showNonCustomers && !statusFilter && NON_CUSTOMER_STATUSES.includes(l.status || '')) return false;
         return true;
       });
-      // Zone filter: match zone column or location text
-      if (zoneFilter) {
+      // Virtual status filters
+      if (statusFilter === 'vencidos') {
+        filtered = filtered.filter((l) => isStaleLead(l));
+      } else if (statusFilter === 'seguimiento') {
+        filtered = filtered.filter((l) => !!upcoming[l.id]);
+      }
+      // Zone filter: "Azuero" expands to the whole peninsula (Herrera + Los Santos
+      // provinces and their districts); everything else is an exact zone / location match.
+      if (zoneFilter === 'Azuero') {
+        filtered = filtered.filter((l) => isInAzueroRegion(l.zone, l.location));
+      } else if (zoneFilter) {
         filtered = filtered.filter((l) =>
           l.zone === zoneFilter ||
           l.location?.toLowerCase().includes(zoneFilter.toLowerCase())
@@ -196,14 +263,20 @@ export default function CrmLeadsPage() {
       } else if (assignedFilter) {
         filtered = filtered.filter((l) => l.assigned_to === assignedFilter);
       }
+
+      // Drop results from a superseded request so a slow stale response can't
+      // overwrite a fresher one.
+      if (fetchIdRef.current !== reqId) return;
       setLeads(filtered);
       setStats(s);
+      setFollowUpMap(upcoming);
 
       // Compute funnel (lazy — only fetch histories for funnel stage leads, client-side)
       const funnelLeads = res.data.filter((l) => JOURNEY_STAGES.includes(l.status as typeof JOURNEY_STAGES[number]));
       if (funnelLeads.length > 0) {
         try {
           const histories = await getStatusHistoryBulk(funnelLeads.map((l) => l.id));
+          if (fetchIdRef.current !== reqId) return;
           setFunnelStats(computeFunnel(funnelLeads as CrmLead[], histories));
         } catch {
           // funnel is best-effort
@@ -211,9 +284,11 @@ export default function CrmLeadsPage() {
       }
     } catch (err) {
       console.error('Failed to fetch leads:', err);
+    } finally {
+      // Only the newest request may clear the spinner.
+      if (fetchIdRef.current === reqId) setLoading(false);
     }
-    setLoading(false);
-  }, [search, statusFilter, sourceFilter, zoneFilter, assignedFilter, myLeadsOnly, myEmail, showNonCustomers]);
+  }, [debouncedSearch, statusFilter, sourceFilter, zoneFilter, assignedFilter, myLeadsOnly, myEmail, showNonCustomers]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -246,6 +321,8 @@ export default function CrmLeadsPage() {
     setLeadEvents([]);
     setStatusHistory([]);
     setTimeline([]);
+    setConfirmDiscard(false);
+    setNoteError(null);
     try {
       const [n, ev, hist] = await Promise.all([
         getLeadNotes(lead.id),
@@ -266,20 +343,35 @@ export default function CrmLeadsPage() {
 
   const handleCreateEvent = async () => {
     if (!selectedLead || !eventForm.startsAt || !showEventModal) return;
-    const defaultTitle = showEventModal === 'meeting'
-      ? `Cita — ${selectedLead.name}`
-      : `Seguimiento — ${selectedLead.name}`;
-    await createEvent({
-      lead_id: selectedLead.id,
-      event_type: showEventModal,
-      title: eventForm.title.trim() || defaultTitle,
-      notes: eventForm.notes.trim() || null,
-      starts_at: new Date(eventForm.startsAt).toISOString(),
-    });
+    const lead = selectedLead;
+    const eventType = showEventModal;
+    const defaultTitle = eventType === 'meeting'
+      ? `Cita — ${lead.name}`
+      : `Seguimiento — ${lead.name}`;
+    try {
+      await createEvent({
+        lead_id: lead.id,
+        event_type: eventType,
+        title: eventForm.title.trim() || defaultTitle,
+        notes: eventForm.notes.trim() || null,
+        starts_at: new Date(eventForm.startsAt).toISOString(),
+      });
+    } catch (err) {
+      console.error('Failed to create event:', err);
+      toast({ type: 'error', title: 'No se pudo crear el evento', description: 'Inténtalo de nuevo.' });
+      return;
+    }
     setShowEventModal(null);
     setEventForm({ title: '', startsAt: '', notes: '' });
-    const ev = await listEventsForLead(selectedLead.id);
+    const ev = await listEventsForLead(lead.id);
     setLeadEvents(ev);
+    // Scheduling a follow-up on a brand-new lead moves it into the pipeline
+    // (new → contacted) so it stops showing up as "Nuevo".
+    if (eventType === 'follow_up' && lead.status === 'new') {
+      await handleStatusChange(lead, 'contacted');
+    } else {
+      fetchLeads(); // refresh the Seguimiento badges/filter map
+    }
   };
 
   const handleEventStatusChange = async (eventId: string, status: 'done' | 'cancelled') => {
@@ -298,18 +390,63 @@ export default function CrmLeadsPage() {
     }
   };
 
-  // Distinct zone values from loaded leads + Panama provinces
-  const zoneOptions = Array.from(new Set([
-    ...leads.map((l) => l.zone).filter((z): z is string => !!z),
+  // Zone filter options: provinces ∪ distinct zones from the DB ∪ loaded-lead
+  // zones ∪ regional/district labels (Azuero peninsula, etc.), deduped + sorted.
+  const zoneOptions = useMemo(() => Array.from(new Set([
     ...PANAMA_PROVINCES,
-  ])).sort();
+    ...dbZones,
+    ...leads.map((l) => l.zone).filter((z): z is string => !!z),
+    ...EXTRA_ZONES,
+  ])).sort(), [dbZones, leads]);
 
   const handleAddNote = async () => {
     if (!newNote.trim() || !selectedLead) return;
-    await addLeadNote(selectedLead.id, newNote.trim(), 'Admin');
-    setNewNote('');
-    const n = await getLeadNotes(selectedLead.id);
-    setNotes(n);
+    const content = newNote.trim();
+    try {
+      await addLeadNote(selectedLead.id, content, authorName);
+      setNewNote('');
+      setNoteError(null);
+      if (noteRef.current) noteRef.current.style.height = 'auto';
+      const n = await getLeadNotes(selectedLead.id);
+      setNotes(n);
+    } catch (err) {
+      console.error('Failed to add note:', err);
+      setNoteError('No se pudo guardar la nota. Revisa tu conexión o permisos.');
+      toast({ type: 'error', title: 'Error al guardar la nota', description: 'Inténtalo de nuevo.' });
+    }
+  };
+
+  const handleDiscardLead = async () => {
+    if (!selectedLead) return;
+    const lead = selectedLead;
+    // 1) Status change is authoritative — do it first.
+    try {
+      await handleStatusChange(lead, 'not_a_lead');
+    } catch (err) {
+      console.error('Failed to discard lead:', err);
+      toast({ type: 'error', title: 'No se pudo actualizar el estado', description: 'Inténtalo de nuevo.' });
+      setConfirmDiscard(false);
+      return;
+    }
+    // 2) Polite WhatsApp is best-effort — a failure must not undo the status change.
+    if (lead.phone) {
+      const firstName = (lead.name || '').normalize('NFC').split(' ')[0] || 'amigo';
+      try {
+        await enqueueWhatsAppMessage({
+          leadId: lead.id,
+          phone: lead.phone,
+          message: `Hola ${firstName}, gracias por tu interés en Solaris Panamá. Según los datos de tu consulta, por el momento tu consumo no justifica una instalación solar rentable. ¡Con gusto te atenderemos si tu situación cambia!`,
+          automationType: 'manual',
+        });
+        toast({ type: 'success', title: 'Lead descartado', description: 'Mensaje de cortesía enviado por WhatsApp.' });
+      } catch (err) {
+        console.error('WhatsApp enqueue failed:', err);
+        toast({ type: 'warning', title: 'Lead descartado', description: 'El estado se actualizó, pero no se pudo encolar el WhatsApp.' });
+      }
+    } else {
+      toast({ type: 'success', title: 'Lead descartado' });
+    }
+    setConfirmDiscard(false);
   };
 
   const handleCreateLead = async () => {
@@ -365,21 +502,30 @@ export default function CrmLeadsPage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats — each card is a shortcut that applies the matching status filter. */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
         {[
-          { label: 'Total', value: stats.total, color: '#D4A843' },
-          { label: 'Nuevos', value: stats.new, color: '#00ffcc' },
-          { label: 'Contactados', value: stats.contacted, color: '#8b5cf6' },
-          { label: 'Calificados', value: stats.qualified, color: '#f59e0b' },
-          { label: 'Ganados', value: stats.won, color: '#22c55e' },
-          { label: 'Vencidos', value: stats.stale, color: '#ef4444' },
-        ].map((s) => (
-          <div key={s.label} className="px-4 py-3 rounded-xl bg-[#12121a] border border-white/[0.06]">
-            <div className="text-xs text-[#555570] mb-1">{s.label}</div>
-            <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
-          </div>
-        ))}
+          { label: 'Total', value: stats.total, color: '#D4A843', filter: '' },
+          { label: 'Nuevos', value: stats.new, color: '#00ffcc', filter: 'new' },
+          { label: 'Contactados', value: stats.contacted, color: '#8b5cf6', filter: 'contacted' },
+          { label: 'Calificados', value: stats.qualified, color: '#f59e0b', filter: 'qualified' },
+          { label: 'Ganados', value: stats.won, color: '#22c55e', filter: 'won' },
+          { label: 'Vencidos', value: stats.stale, color: '#ef4444', filter: 'vencidos' },
+        ].map((s) => {
+          const active = statusFilter === s.filter;
+          return (
+            <button
+              key={s.label}
+              onClick={() => setStatusFilter(s.filter)}
+              title={s.filter ? `Filtrar: ${s.label}` : 'Ver todos'}
+              className="text-left px-4 py-3 rounded-xl bg-[#12121a] border border-white/[0.06] cursor-pointer transition-colors hover:bg-white/[0.03] focus:outline-none"
+              style={active ? { boxShadow: `inset 0 0 0 1.5px ${s.color}` } : undefined}
+            >
+              <div className="text-xs text-[#555570] mb-1">{s.label}</div>
+              <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
+            </button>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -442,6 +588,10 @@ export default function CrmLeadsPage() {
           <option value="">Todos los estados</option>
           {STATUSES.map((s) => (
             <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
+          ))}
+          <option disabled>──────────</option>
+          {VIRTUAL_STATUSES.map((v) => (
+            <option key={v.value} value={v.value}>{v.label}</option>
           ))}
         </select>
         <select
@@ -563,6 +713,12 @@ export default function CrmLeadsPage() {
                           <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#ef4444]">
                             <Clock className="w-3 h-3" />
                             Requiere seguimiento
+                          </div>
+                        )}
+                        {followUpMap[lead.id] && (
+                          <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#3b82f6]">
+                            <CalendarDays className="w-3 h-3" />
+                            Seguimiento {new Date(followUpMap[lead.id]).toLocaleDateString('es-PA', { day: 'numeric', month: 'short' })}
                           </div>
                         )}
                       </td>
@@ -849,6 +1005,41 @@ export default function CrmLeadsPage() {
                       );
                     })}
                   </div>
+                  {/* Descartar — quick "not qualified" action + polite WhatsApp */}
+                  {selectedLead.status !== 'not_a_lead' && (
+                    <div className="mt-3">
+                      {!confirmDiscard ? (
+                        <button
+                          onClick={() => setConfirmDiscard(true)}
+                          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#ef4444]/5 border border-[#ef4444]/20 text-[#ef4444] text-xs font-medium hover:bg-[#ef4444]/10 transition-colors"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          Descartar (no calificado)
+                        </button>
+                      ) : (
+                        <div className="rounded-lg bg-[#ef4444]/5 border border-[#ef4444]/20 p-3">
+                          <p className="text-xs text-[#c0c0d0] mb-2.5">
+                            ¿Descartar este lead? Se marcará como <b className="text-[#ef4444]">No es Lead</b>
+                            {selectedLead.phone ? ' y se enviará un mensaje de cortesía por WhatsApp.' : '.'}
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setConfirmDiscard(false)}
+                              className="flex-1 py-1.5 rounded-md border border-white/[0.06] text-[#8888a0] text-xs hover:bg-white/[0.04] transition-colors"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={handleDiscardLead}
+                              className="flex-1 py-1.5 rounded-md bg-[#ef4444] text-white text-xs font-semibold hover:bg-[#dc2626] transition-colors"
+                            >
+                              Confirmar
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Assignment */}
@@ -1072,13 +1263,27 @@ export default function CrmLeadsPage() {
                       <p className="text-xs text-[#555570]">Sin notas</p>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <input
+                  <div className="flex gap-2 items-end">
+                    <textarea
+                      ref={noteRef}
                       value={newNote}
-                      onChange={(e) => setNewNote(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
-                      placeholder="Agregar nota..."
-                      className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
+                      onChange={(e) => {
+                        setNewNote(e.target.value);
+                        if (noteError) setNoteError(null);
+                        // auto-grow up to ~5 rows
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                      }}
+                      onKeyDown={(e) => {
+                        // Cmd/Ctrl+Enter submits; plain Enter inserts a newline.
+                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                          e.preventDefault();
+                          handleAddNote();
+                        }
+                      }}
+                      rows={2}
+                      placeholder="Agregar nota... (⌘/Ctrl+Enter para enviar)"
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 resize-none leading-snug"
                     />
                     <button
                       onClick={handleAddNote}
@@ -1088,6 +1293,9 @@ export default function CrmLeadsPage() {
                       <Send className="w-4 h-4" />
                     </button>
                   </div>
+                  {noteError && (
+                    <p className="text-[11px] text-[#ef4444] mt-1.5">{noteError}</p>
+                  )}
                 </div>
 
                 {/* Unified timeline */}

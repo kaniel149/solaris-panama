@@ -193,29 +193,49 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Stats Row */}
+      {/* Stats Row — each card drills into the CRM leads list, pre-filtered. */}
       <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatsCard
-          label="CRM Leads"
-          value={leadStats.total}
-          icon={<LayoutDashboard className="w-4 h-4" />}
-        />
-        <StatsCard
-          label="Open Leads"
-          value={Math.max(0, leadStats.total - leadStats.won - leadStats.lost)}
-          icon={<Zap className="w-4 h-4" />}
-        />
-        <StatsCard
-          label="Won Revenue"
-          value={leadStats.totalWonValue}
-          format="currency"
-          icon={<DollarSign className="w-4 h-4" />}
-        />
-        <StatsCard
-          label="Stale Follow-ups"
-          value={leadStats.stale}
-          icon={<Target className="w-4 h-4" />}
-        />
+        <button
+          onClick={() => navigate('/crm-leads')}
+          className="text-left cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc]/40 rounded-xl"
+        >
+          <StatsCard
+            label="CRM Leads"
+            value={leadStats.total}
+            icon={<LayoutDashboard className="w-4 h-4" />}
+          />
+        </button>
+        <button
+          onClick={() => navigate('/crm-leads')}
+          className="text-left cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc]/40 rounded-xl"
+        >
+          <StatsCard
+            label="Open Leads"
+            value={Math.max(0, leadStats.total - leadStats.won - leadStats.lost)}
+            icon={<Zap className="w-4 h-4" />}
+          />
+        </button>
+        <button
+          onClick={() => navigate('/crm-leads?status=won')}
+          className="text-left cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc]/40 rounded-xl"
+        >
+          <StatsCard
+            label="Won Revenue"
+            value={leadStats.totalWonValue}
+            format="currency"
+            icon={<DollarSign className="w-4 h-4" />}
+          />
+        </button>
+        <button
+          onClick={() => navigate('/crm-leads?status=vencidos')}
+          className="text-left cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc]/40 rounded-xl"
+        >
+          <StatsCard
+            label="Stale Follow-ups"
+            value={leadStats.stale}
+            icon={<Target className="w-4 h-4" />}
+          />
+        </button>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

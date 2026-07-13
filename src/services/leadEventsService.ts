@@ -90,6 +90,29 @@ export async function deleteEvent(id: string): Promise<void> {
 }
 
 /**
+ * Map of lead_id → earliest upcoming follow_up date (starts_at >= now, still scheduled).
+ * One query for the whole list — used for the "Seguimiento" badges + virtual filter
+ * on the leads page instead of loading events per row.
+ */
+export async function getUpcomingFollowUps(): Promise<Record<string, string>> {
+  const nowIso = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('lead_events')
+    .select('lead_id, starts_at')
+    .eq('event_type', 'follow_up')
+    .eq('status', 'scheduled')
+    .gte('starts_at', nowIso)
+    .order('starts_at', { ascending: true });
+  if (error) throw error;
+  const map: Record<string, string> = {};
+  for (const row of (data as { lead_id: string | null; starts_at: string }[]) ?? []) {
+    // ordered ascending → first occurrence is the earliest upcoming follow-up
+    if (row.lead_id && !map[row.lead_id]) map[row.lead_id] = row.starts_at;
+  }
+  return map;
+}
+
+/**
  * Returns follow_up events that are overdue:
  * starts_at is in the past and status is still 'scheduled'.
  */

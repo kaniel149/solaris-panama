@@ -26,7 +26,18 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const displayValue = controlledValue !== undefined ? controlledValue : internalValue;
+  // Always render what the user has typed so keystrokes are never swallowed by
+  // the 300ms debounce. Only the upward onChange is debounced.
+  const displayValue = internalValue;
+
+  // Keep internalValue in sync when the controlled value changes from the outside
+  // (e.g. the parent clears/sets the query), without clobbering in-flight typing.
+  useEffect(() => {
+    if (controlledValue !== undefined && controlledValue !== internalValue) {
+      setInternalValue(controlledValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controlledValue]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
