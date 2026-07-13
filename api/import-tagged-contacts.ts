@@ -25,10 +25,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Canonical funnel (migrations 061/063) — legacy cold/warm/hot are gone.
 const L_TO_STATUS: Record<number, string> = {
-  1: 'cold',
-  2: 'warm',
-  3: 'hot',
+  1: 'contacted',
+  2: 'qualified',
+  3: 'qualified',
   4: 'won',
 };
 
@@ -114,11 +115,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const { data: existing } = await supabase
         .from('leads')
-        .select('id')
+        .select('id, status')
         .eq('phone', row.phone)
         .maybeSingle();
 
       if (existing) {
+        // Non-destructive: keep any status the sales team already set (only promote from 'new')
+        if (existing.status !== 'new') delete (updates as { status?: string }).status;
         await supabase.from('leads').update(updates).eq('id', existing.id);
         results.push({ ...row, action: 'updated' });
       } else {
