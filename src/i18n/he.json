@@ -178,6 +178,7 @@
     "noLead": "ללא ליד מקושר",
     "eventTypeMeeting": "פגישה",
     "eventTypeFollowUp": "מעקב",
+    "eventTypeCall": "שיחה",
     "eventTypeOther": "אחר",
     "statusScheduled": "מתוכנן",
     "statusDone": "הושלם",

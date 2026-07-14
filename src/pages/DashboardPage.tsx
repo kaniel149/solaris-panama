@@ -131,9 +131,10 @@ export default function DashboardPage() {
     total: 0,
     new: 0,
     contacted: 0,
-    qualified: 0,
+    visit_scheduled: 0,
     proposal_sent: 0,
-    won: 0,
+    signed: 0,
+    paid: 0,
     lost: 0,
     stale: 0,
     totalWonValue: 0,
@@ -211,12 +212,12 @@ export default function DashboardPage() {
         >
           <StatsCard
             label="Open Leads"
-            value={Math.max(0, leadStats.total - leadStats.won - leadStats.lost)}
+            value={Math.max(0, leadStats.total - leadStats.signed - leadStats.paid - leadStats.lost)}
             icon={<Zap className="w-4 h-4" />}
           />
         </button>
         <button
-          onClick={() => navigate('/crm-leads?status=won')}
+          onClick={() => navigate('/crm-leads?status=signed')}
           className="text-left cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc]/40 rounded-xl"
         >
           <StatsCard

@@ -34,9 +34,10 @@ const fadeUp = {
 };
 
 // Color mapping per event_type
-const EVENT_COLORS = {
+const EVENT_COLORS: Record<EventType, { bg: string; text: string; dot: string }> = {
   meeting: { bg: 'bg-[#3b82f6]/10', text: 'text-[#3b82f6]', dot: '#3b82f6' },
   follow_up: { bg: 'bg-[#f59e0b]/10', text: 'text-[#f59e0b]', dot: '#f59e0b' },
+  call: { bg: 'bg-[#25d366]/10', text: 'text-[#25d366]', dot: '#25d366' },
   other: { bg: 'bg-[#8b5cf6]/10', text: 'text-[#8b5cf6]', dot: '#8b5cf6' },
 };
 
@@ -313,7 +314,7 @@ export default function CalendarPage() {
                 <div key={type} className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.dot }} />
                   <span className="text-xs text-[#555566]">
-                    {type === 'meeting' ? t('calendar.eventTypeMeeting') : type === 'follow_up' ? t('calendar.eventTypeFollowUp') : t('calendar.eventTypeOther')}
+                    {type === 'meeting' ? t('calendar.eventTypeMeeting') : type === 'follow_up' ? t('calendar.eventTypeFollowUp') : type === 'call' ? t('calendar.eventTypeCall') : t('calendar.eventTypeOther')}
                   </span>
                 </div>
               ))}

@@ -174,9 +174,10 @@ export async function getLeadStats(): Promise<{
   total: number;
   new: number;
   contacted: number;
-  qualified: number;
+  visit_scheduled: number;
   proposal_sent: number;
-  won: number;
+  signed: number;
+  paid: number;
   lost: number;
   stale: number;
   totalWonValue: number;
@@ -196,13 +197,15 @@ export async function getLeadStats(): Promise<{
     total: leads.length,
     new: leads.filter((l) => l.status === 'new').length,
     contacted: leads.filter((l) => l.status === 'contacted').length,
-    qualified: leads.filter((l) => l.status === 'qualified').length,
+    visit_scheduled: leads.filter((l) => l.status === 'visit_scheduled').length,
     proposal_sent: leads.filter((l) => l.status === 'proposal_sent').length,
-    won: leads.filter((l) => l.status === 'won').length,
+    signed: leads.filter((l) => l.status === 'signed').length,
+    paid: leads.filter((l) => l.status === 'paid').length,
     lost: leads.filter((l) => l.status === 'lost').length,
     stale: leads.filter((l) => isStaleLead(l as Pick<CrmLead, 'status' | 'created_at' | 'updated_at'>)).length,
+    // "Won" revenue = closed deals (signed contract or paid) with a deal_value.
     totalWonValue: leads
-      .filter((l) => l.status === 'won')
+      .filter((l) => l.status === 'signed' || l.status === 'paid')
       .reduce((sum, l) => sum + (Number(l.deal_value) || 0), 0),
     bySource,
   };
@@ -244,11 +247,49 @@ export function isStaleLead(lead: Pick<CrmLead, 'status' | 'created_at' | 'updat
   const ageHours = (now - new Date(lead.created_at).getTime()) / 36e5;
   const idleDays = (now - new Date(lead.updated_at).getTime()) / 864e5;
 
+  // Only the active funnel stages can go stale. signed / paid / lost / vendor /
+  // partner / not_a_lead are terminal or off-funnel and are never chased.
   if (lead.status === 'new') return ageHours > 48;
   if (lead.status === 'contacted') return idleDays > 5;
-  if (lead.status === 'qualified') return idleDays > 7;
+  if (lead.status === 'visit_scheduled') return idleDays > 7;
   if (lead.status === 'proposal_sent') return idleDays > 10;
   return false;
+}
+
+// ─── CRM list filters (pure, client-side) ───────────────────────
+
+// Entry-time buckets for the "Entró" filter in the CRM toolbar.
+export type EntryTimeRange = '' | 'day' | 'week' | 'old';
+
+/** True if a lead's created_at falls inside the selected entry-time bucket. */
+export function matchesEntryTime(createdAt: string, range: EntryTimeRange, now: number = Date.now()): boolean {
+  if (!range) return true; // "Todo el tiempo"
+  const t = new Date(createdAt).getTime();
+  if (Number.isNaN(t)) return false;
+  const ageMs = now - t;
+  if (range === 'day') return ageMs <= 24 * 60 * 60 * 1000; // last 24h
+  if (range === 'week') return ageMs <= 7 * 864e5; // last 7 days
+  if (range === 'old') return ageMs > 14 * 864e5; // older than 2 weeks
+  return true;
+}
+
+// Monthly-bill buckets — exact matches to the LP form's dropdown options
+// (50 / 150 / 250 / 300 / 500), plus a "sin dato" bucket for missing values.
+export type BillBucket = '' | '50' | '150' | '250-300' | '500+' | 'none';
+
+/** True if a lead's monthly_bill falls in the selected bill bucket. Parses with Number() (may be a string). */
+export function matchesBillBucket(monthlyBill: number | string | null | undefined, bucket: BillBucket): boolean {
+  if (!bucket) return true; // "Cualquier factura"
+  const hasValue = monthlyBill !== null && monthlyBill !== undefined && String(monthlyBill).trim() !== '';
+  if (bucket === 'none') return !hasValue;
+  if (!hasValue) return false;
+  const n = Number(monthlyBill);
+  if (Number.isNaN(n)) return false;
+  if (bucket === '50') return n === 50;
+  if (bucket === '150') return n === 150;
+  if (bucket === '250-300') return n >= 250 && n <= 300;
+  if (bucket === '500+') return n >= 500;
+  return true;
 }
 
 export async function enqueueWhatsAppMessage(params: {

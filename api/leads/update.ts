@@ -12,9 +12,10 @@ function getSupabaseServerClient() {
 const ALLOWED_STATUSES = new Set([
   'new',
   'contacted',
-  'qualified',
+  'visit_scheduled',
   'proposal_sent',
-  'won',
+  'signed',
+  'paid',
   'lost',
 ]);
 

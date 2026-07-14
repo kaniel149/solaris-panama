@@ -2,10 +2,10 @@
  * Stale Leads Alert — runs daily 09:00 Panama (14:00 UTC).
  *
  * Sends Henry/Kaniel a WhatsApp digest of leads that need attention:
- *   - status='new' AND created_at < NOW() - 48h            → "olvidados"
- *   - status='contacted' AND updated_at < NOW() - 5d       → "sin respuesta"
- *   - status='qualified' AND updated_at < NOW() - 7d       → "propuesta pendiente"
- *   - status='proposal_sent' AND updated_at < NOW() - 10d  → "propuesta sin cierre"
+ *   - status='new' AND created_at < NOW() - 48h                 → "olvidados"
+ *   - status='contacted' AND updated_at < NOW() - 5d            → "sin respuesta"
+ *   - status='visit_scheduled' AND updated_at < NOW() - 7d      → "visita sin propuesta"
+ *   - status='proposal_sent' AND updated_at < NOW() - 10d       → "propuesta sin cierre"
  *
  * Skip vendor/partner/not_a_lead. Cap at 10 per bucket.
  */
@@ -66,17 +66,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const select = 'id, name, phone, status, source, location, created_at, updated_at';
 
-    const [news, contacted, qualified, proposals] = await Promise.all([
+    const [news, contacted, visits, proposals] = await Promise.all([
       supabase.from('leads').select(select).eq('status', 'new').lt('created_at', hours(48)).limit(20),
       supabase.from('leads').select(select).eq('status', 'contacted').lt('updated_at', days(5)).limit(20),
-      supabase.from('leads').select(select).eq('status', 'qualified').lt('updated_at', days(7)).limit(20),
+      supabase.from('leads').select(select).eq('status', 'visit_scheduled').lt('updated_at', days(7)).limit(20),
       supabase.from('leads').select(select).eq('status', 'proposal_sent').lt('updated_at', days(10)).limit(20),
     ]);
 
     const buckets = [
       { emoji: '🆕', title: 'Nuevos sin contactar (>48h)', leads: news.data || [], field: 'created_at' as const },
       { emoji: '💬', title: 'Contactados sin respuesta (>5d)', leads: contacted.data || [], field: 'updated_at' as const },
-      { emoji: '📋', title: 'Calificados sin propuesta (>7d)', leads: qualified.data || [], field: 'updated_at' as const },
+      { emoji: '📋', title: 'Visitas sin propuesta (>7d)', leads: visits.data || [], field: 'updated_at' as const },
       { emoji: '📤', title: 'Propuesta sin cierre (>10d)', leads: proposals.data || [], field: 'updated_at' as const },
     ];
 
@@ -113,7 +113,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       breakdown: {
         new: news.data?.length || 0,
         contacted: contacted.data?.length || 0,
-        qualified: qualified.data?.length || 0,
+        visit_scheduled: visits.data?.length || 0,
         proposal_sent: proposals.data?.length || 0,
       },
     });

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Bell, Menu, LogOut, User, Settings } from 'lucide-react';
+import { Bell, Menu, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { navGroups, bottomNavItems } from '../../config/navigation';
 
@@ -62,15 +62,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         </button>
         <h1 className="text-lg font-semibold text-white/90">{pageTitle}</h1>
       </div>
-
-      {/* Center: search trigger */}
-      <button className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/30 hover:text-white/50 hover:border-white/[0.12] transition-all w-64">
-        <Search className="w-4 h-4" />
-        <span className="text-sm">Search...</span>
-        <kbd className="ml-auto text-[10px] bg-white/[0.06] border border-white/[0.1] rounded px-1.5 py-0.5">
-          {'\u2318'}K
-        </kbd>
-      </button>
 
       {/* Right: lang, notifications, user */}
       <div className="flex items-center gap-2">

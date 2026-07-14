@@ -18,9 +18,9 @@ import {
   Bell,
   CheckCircle2,
   XCircle,
-  TrendingUp,
-  ChevronRight,
+  MapPin,
   UserCheck,
+  PhoneCall,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,10 +37,13 @@ import {
   getDistinctZones,
   isInAzueroRegion,
   isStaleLead,
-  markLeadWon,
+  matchesEntryTime,
+  matchesBillBucket,
   enqueueWhatsAppMessage,
   type CrmLead,
   type LeadNote,
+  type EntryTimeRange,
+  type BillBucket,
 } from '@/services/leadService';
 import {
   listEventsForLead,
@@ -48,19 +51,18 @@ import {
   updateEventStatus,
   deleteEvent,
   getUpcomingFollowUps,
+  getCallCounts,
+  logCall,
   type LeadEvent,
   type EventType,
 } from '@/services/leadEventsService';
 import {
   getStatusHistory,
-  getStatusHistoryBulk,
   buildJourney,
   buildTimeline,
-  computeFunnel,
   JOURNEY_STAGES,
   type StatusHistoryRow,
   type TimelineItem,
-  type FunnelStageStats,
 } from '@/services/journeyService';
 
 const cn = (...c: (string | boolean | undefined | null)[]) => c.filter(Boolean).join(' ');
@@ -73,6 +75,9 @@ const initialsOf = (label: string) =>
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
     .join('') || '?';
+
+// Whole days elapsed since an ISO timestamp (never negative).
+const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 864e5));
 
 // Sentinel used by the "Asignado" dropdown to filter for leads with no owner.
 const UNASSIGNED = '__unassigned__';
@@ -88,11 +93,16 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
       { label: v.labelEs, color: v.color, bg: v.bgColor },
     ])
   ),
-  // CRM-only statuses (temperature buckets + junk) — not sales-pipeline stages.
+  // CRM-only "No es Lead" bucket — a real status the CRM can set, but not part
+  // of the shared LeadStatus funnel type.
+  not_a_lead: { label: 'No es Lead', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
+  // Legacy statuses (remapped in migrations 061/064) — kept ONLY so old
+  // lead_status_history / status rows still render a label. Never offered in selects.
+  qualified: { label: 'Calificado', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
+  won: { label: 'Ganado', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
   cold: { label: 'Frío', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
   warm: { label: 'Tibio', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
   hot: { label: 'Caliente', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-  not_a_lead: { label: 'No es Lead', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
 };
 
 // Statuses excluded from default pipeline view (vendors, partners, junk)
@@ -115,9 +125,9 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
   capi_verify: { label: 'CAPI Verify', icon: <Facebook className="w-3 h-3" />, color: '#64748b' },
 };
 
-// Selectable statuses — legacy cold/warm/hot were unified into the canonical
-// funnel (migration 061); they stay in STATUS_CONFIG only for history rendering.
-const STATUSES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost', 'vendor', 'partner', 'not_a_lead'];
+// Selectable statuses — the 6-stage funnel + off-funnel buckets. Legacy
+// qualified/won/cold/warm/hot live in STATUS_CONFIG only for history rendering.
+const STATUSES = ['new', 'contacted', 'visit_scheduled', 'proposal_sent', 'signed', 'paid', 'lost', 'vendor', 'partner', 'not_a_lead'];
 
 // Virtual filters — computed client-side, not real DB statuses. They must never
 // appear in the row/detail status pickers (those change the real lead.status).
@@ -159,11 +169,14 @@ export default function CrmLeadsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [zoneFilter, setZoneFilter] = useState('');
+  const [entryTimeFilter, setEntryTimeFilter] = useState<EntryTimeRange>(''); // Entró: día / semana / >2 semanas
+  const [billFilter, setBillFilter] = useState<BillBucket>(''); // factura eléctrica bucket
   const [assignedFilter, setAssignedFilter] = useState(''); // '' = Todos · UNASSIGNED · member email
   const [myLeadsOnly, setMyLeadsOnly] = useState(false);
   const [showNonCustomers, setShowNonCustomers] = useState(false); // hide vendors/partners/not_a_lead by default
   const [dbZones, setDbZones] = useState<string[]>([]); // distinct zones from the whole table
   const [followUpMap, setFollowUpMap] = useState<Record<string, string>>({}); // lead_id → next follow-up date
+  const [callCounts, setCallCounts] = useState<Record<string, number>>({}); // lead_id → # logged calls
 
   // Latest-request-wins guard: only the newest fetchLeads() may commit results.
   const fetchIdRef = useRef(0);
@@ -189,9 +202,10 @@ export default function CrmLeadsPage() {
     total: 0,
     new: 0,
     contacted: 0,
-    qualified: 0,
+    visit_scheduled: 0,
     proposal_sent: 0,
-    won: 0,
+    signed: 0,
+    paid: 0,
     lost: 0,
     stale: 0,
     bySource: {} as Record<string, number>,
@@ -215,7 +229,6 @@ export default function CrmLeadsPage() {
   // Customer journey
   const [statusHistory, setStatusHistory] = useState<StatusHistoryRow[]>([]);
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
-  const [funnelStats, setFunnelStats] = useState<FunnelStageStats[]>([]);
 
   const fetchLeads = useCallback(async () => {
     const reqId = ++fetchIdRef.current;
@@ -225,12 +238,13 @@ export default function CrmLeadsPage() {
     const isVirtual = VIRTUAL_STATUS_VALUES.includes(statusFilter);
     const queryStatus = isVirtual ? undefined : statusFilter || undefined;
     try {
-      const [res, s, upcoming] = await Promise.all([
+      const [res, s, upcoming, calls] = await Promise.all([
         // limit 500: the CRM has no pagination UI, so load enough to make the
         // client-side zone / vencidos / seguimiento filters meaningful.
         getLeads({ search: debouncedSearch || undefined, status: queryStatus, source: sourceFilter || undefined, limit: 500 }),
         getLeadStats(),
         getUpcomingFollowUps(),
+        getCallCounts(),
       ]);
       // Default: hide vendors / partners / not_a_lead from main pipeline view
       // (still searchable via the status dropdown explicitly)
@@ -255,6 +269,13 @@ export default function CrmLeadsPage() {
           l.location?.toLowerCase().includes(zoneFilter.toLowerCase())
         );
       }
+      // Entry-time + electric-bill filters (client-side, compose with the rest).
+      if (entryTimeFilter) {
+        filtered = filtered.filter((l) => matchesEntryTime(l.created_at, entryTimeFilter));
+      }
+      if (billFilter) {
+        filtered = filtered.filter((l) => matchesBillBucket(l.monthly_bill, billFilter));
+      }
       // Assignment filter: "Mis Leads" wins over the dropdown when active.
       if (myLeadsOnly) {
         filtered = filtered.filter((l) => l.assigned_to === myEmail);
@@ -270,31 +291,22 @@ export default function CrmLeadsPage() {
       setLeads(filtered);
       setStats(s);
       setFollowUpMap(upcoming);
-
-      // Compute funnel (lazy — only fetch histories for funnel stage leads, client-side)
-      const funnelLeads = res.data.filter((l) => JOURNEY_STAGES.includes(l.status as typeof JOURNEY_STAGES[number]));
-      if (funnelLeads.length > 0) {
-        try {
-          const histories = await getStatusHistoryBulk(funnelLeads.map((l) => l.id));
-          if (fetchIdRef.current !== reqId) return;
-          setFunnelStats(computeFunnel(funnelLeads as CrmLead[], histories));
-        } catch {
-          // funnel is best-effort
-        }
-      }
+      setCallCounts(calls);
     } catch (err) {
       console.error('Failed to fetch leads:', err);
     } finally {
       // Only the newest request may clear the spinner.
       if (fetchIdRef.current === reqId) setLoading(false);
     }
-  }, [debouncedSearch, statusFilter, sourceFilter, zoneFilter, assignedFilter, myLeadsOnly, myEmail, showNonCustomers]);
+  }, [debouncedSearch, statusFilter, sourceFilter, zoneFilter, entryTimeFilter, billFilter, assignedFilter, myLeadsOnly, myEmail, showNonCustomers]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
   const handleStatusChange = async (lead: CrmLead, newStatus: string) => {
     const updates: Partial<CrmLead> = { status: newStatus };
-    if (newStatus === 'won' && !lead.won_at) {
+    // Reaching a closing stage (signed contract or paid) stamps won_at — the
+    // "deal closed" timestamp used by the daily report + Google offline upload.
+    if ((newStatus === 'signed' || newStatus === 'paid') && !lead.won_at) {
       updates.won_at = new Date().toISOString();
       updates.deal_currency = lead.deal_currency || 'USD';
     }
@@ -374,6 +386,30 @@ export default function CrmLeadsPage() {
     }
   };
 
+  // "Registrar llamada" — log a completed call, refresh the panel + call counts,
+  // and auto-promote a brand-new lead into the pipeline (new → contacted).
+  const handleRegisterCall = async () => {
+    if (!selectedLead) return;
+    const lead = selectedLead;
+    try {
+      await logCall(lead.id);
+    } catch (err) {
+      console.error('Failed to log call:', err);
+      toast({ type: 'error', title: 'No se pudo registrar la llamada', description: 'Inténtalo de nuevo.' });
+      return;
+    }
+    setCallCounts((prev) => ({ ...prev, [lead.id]: (prev[lead.id] || 0) + 1 }));
+    const ev = await listEventsForLead(lead.id);
+    setLeadEvents(ev);
+    setTimeline(buildTimeline(lead, statusHistory, ev));
+    if (lead.status === 'new') {
+      await handleStatusChange(lead, 'contacted'); // writes lead_status_history + refetches
+    } else {
+      fetchLeads();
+    }
+    toast({ type: 'success', title: 'Llamada registrada' });
+  };
+
   const handleEventStatusChange = async (eventId: string, status: 'done' | 'cancelled') => {
     await updateEventStatus(eventId, status);
     if (selectedLead) {
@@ -409,6 +445,11 @@ export default function CrmLeadsPage() {
       if (noteRef.current) noteRef.current.style.height = 'auto';
       const n = await getLeadNotes(selectedLead.id);
       setNotes(n);
+      // Writing the first note on a brand-new lead means someone is working it —
+      // auto-promote into the pipeline (new → contacted), same path as follow-ups.
+      if (selectedLead.status === 'new') {
+        await handleStatusChange(selectedLead, 'contacted');
+      }
     } catch (err) {
       console.error('Failed to add note:', err);
       setNoteError('No se pudo guardar la nota. Revisa tu conexión o permisos.');
@@ -502,14 +543,18 @@ export default function CrmLeadsPage() {
         </div>
       </div>
 
-      {/* Stats — each card is a shortcut that applies the matching status filter. */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+      {/* Stats — each card is a shortcut that applies the matching status filter.
+          8 funnel cards: the grid steps 2→4→8 across so it never crushes on
+          laptop widths (same wrap-safe approach as the search-input fix). */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
         {[
           { label: 'Total', value: stats.total, color: '#D4A843', filter: '' },
-          { label: 'Nuevos', value: stats.new, color: '#00ffcc', filter: 'new' },
-          { label: 'Contactados', value: stats.contacted, color: '#8b5cf6', filter: 'contacted' },
-          { label: 'Calificados', value: stats.qualified, color: '#f59e0b', filter: 'qualified' },
-          { label: 'Ganados', value: stats.won, color: '#22c55e', filter: 'won' },
+          { label: 'Nuevos', value: stats.new, color: '#0ea5e9', filter: 'new' },
+          { label: 'Contactados', value: stats.contacted, color: '#f59e0b', filter: 'contacted' },
+          { label: 'Visitas', value: stats.visit_scheduled, color: '#06b6d4', filter: 'visit_scheduled' },
+          { label: 'Propuestas', value: stats.proposal_sent, color: '#00ffcc', filter: 'proposal_sent' },
+          { label: 'Firmados', value: stats.signed, color: '#eab308', filter: 'signed' },
+          { label: 'Pagados', value: stats.paid, color: '#22c55e', filter: 'paid' },
           { label: 'Vencidos', value: stats.stale, color: '#ef4444', filter: 'vencidos' },
         ].map((s) => {
           const active = statusFilter === s.filter;
@@ -527,47 +572,6 @@ export default function CrmLeadsPage() {
           );
         })}
       </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        {[
-          { label: 'Google Ads LP', value: stats.bySource.lp_azuero || 0, detail: 'landing con gclid', color: '#D4A843' },
-          { label: 'Google Lead Form', value: stats.bySource.google_ads || 0, detail: 'webhook directo', color: '#4285f4' },
-          { label: 'Meta Lead Ads', value: stats.bySource.meta_ads || 0, detail: 'leadgen form', color: '#1877f2' },
-          { label: 'WhatsApp', value: stats.bySource.whatsapp || 0, detail: 'bridge import/sync', color: '#25d366' },
-        ].map((s) => (
-          <div key={s.label} className="px-4 py-3 rounded-xl bg-[#12121a]/70 border border-white/[0.06]">
-            <div className="flex items-baseline justify-between gap-3">
-              <div className="text-xs font-medium text-[#c0c0d0]">{s.label}</div>
-              <div className="text-lg font-bold tabular-nums" style={{ color: s.color }}>{s.value}</div>
-            </div>
-            <div className="text-[10px] text-[#555570] mt-0.5">{s.detail}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Funnel card */}
-      {funnelStats.length > 0 && (
-        <div className="flex items-center gap-1 mb-4 px-4 py-3 rounded-xl bg-[#12121a]/70 border border-white/[0.06] overflow-x-auto">
-          <TrendingUp className="w-4 h-4 text-[#D4A843] shrink-0 mr-1" />
-          <span className="text-xs font-medium text-[#8888a0] mr-3 shrink-0">{t('journey.funnel')}</span>
-          {funnelStats.map((s, i) => (
-            <div key={s.stage} className="flex items-center gap-1 shrink-0">
-              {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#333344]" />}
-              <div className="flex flex-col items-center px-2">
-                <span className="text-xs font-bold text-[#f0f0f5]">{s.count}</span>
-                <span className="text-[10px] text-[#555570]">
-                  {STATUS_CONFIG[s.stage]?.label ?? s.stage}
-                </span>
-                {s.avgDays !== null && (
-                  <span className="text-[9px] text-[#333355]">
-                    ~{s.avgDays}d
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Toolbar */}
       {/* flex-wrap + min-w: with 6 filter controls in the row, the search input
@@ -615,6 +619,30 @@ export default function CrmLeadsPage() {
           {zoneOptions.map((z) => (
             <option key={z} value={z}>{z}</option>
           ))}
+        </select>
+        <select
+          value={entryTimeFilter}
+          onChange={(e) => setEntryTimeFilter(e.target.value as EntryTimeRange)}
+          title="Filtrar por fecha de entrada"
+          className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
+        >
+          <option value="">Todo el tiempo</option>
+          <option value="day">Último día</option>
+          <option value="week">Última semana</option>
+          <option value="old">Más de 2 semanas</option>
+        </select>
+        <select
+          value={billFilter}
+          onChange={(e) => setBillFilter(e.target.value as BillBucket)}
+          title="Filtrar por factura eléctrica"
+          className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
+        >
+          <option value="">Cualquier factura</option>
+          <option value="50">$50/mes</option>
+          <option value="150">$150/mes</option>
+          <option value="250-300">$250–300/mes</option>
+          <option value="500+">$500+/mes</option>
+          <option value="none">Sin dato</option>
         </select>
         <select
           value={assignedFilter}
@@ -723,6 +751,12 @@ export default function CrmLeadsPage() {
                             Seguimiento {new Date(followUpMap[lead.id]).toLocaleDateString('es-PA', { day: 'numeric', month: 'short' })}
                           </div>
                         )}
+                        {callCounts[lead.id] > 0 && (
+                          <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#8888a0]">
+                            <Phone className="w-3 h-3" />
+                            {callCounts[lead.id]}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -780,7 +814,8 @@ export default function CrmLeadsPage() {
                         </select>
                       </td>
                       <td className="px-4 py-3 text-xs text-[#555570]">
-                        {new Date(lead.created_at).toLocaleDateString('es-PA')}
+                        <div>{new Date(lead.created_at).toLocaleDateString('es-PA')}</div>
+                        <div className="text-[10px] text-[#444455]">hace {daysSince(lead.created_at)}d</div>
                       </td>
                     </tr>
                   );
@@ -808,7 +843,7 @@ export default function CrmLeadsPage() {
               </div>
 
               <div className="p-5 space-y-5 max-h-[calc(100vh-200px)] overflow-y-auto">
-                {/* Contact */}
+                {/* 1 · Contacto — the essentials a salesperson needs first */}
                 <div className="space-y-2">
                   {selectedLead.phone && (
                     <div className="flex items-center justify-between">
@@ -835,20 +870,24 @@ export default function CrmLeadsPage() {
                   {selectedLead.monthly_bill && (
                     <div className="text-sm text-[#D4A843]">Factura: ${selectedLead.monthly_bill}/mes</div>
                   )}
+                  {selectedLead.message && (
+                    <div className="pt-1">
+                      <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1">Mensaje</div>
+                      <p className="text-sm text-[#c0c0d0] bg-white/[0.02] rounded-lg p-3">{selectedLead.message}</p>
+                    </div>
+                  )}
                 </div>
 
-                {/* Source & Status */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  {(() => {
-                    const src = SOURCE_CONFIG[selectedLead.source] || SOURCE_CONFIG.manual;
-                    return (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium" style={{ backgroundColor: `${src.color}15`, color: src.color }}>
-                        {src.icon} {src.label}
-                      </span>
-                    );
-                  })()}
-                  {selectedLead.campaign && (
-                    <span className="text-xs text-[#555570]">· {selectedLead.campaign}</span>
+                {/* 2 · Entrada + zona + alerta de seguimiento */}
+                <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-xs">
+                  <span className="text-[#8888a0]">
+                    Entró: {new Date(selectedLead.created_at).toLocaleDateString('es-PA')} · hace {daysSince(selectedLead.created_at)} días
+                  </span>
+                  {selectedLead.zone && (
+                    <span className="inline-flex items-center gap-1 text-[#8888a0]">
+                      <MapPin className="w-3 h-3 text-[#555570]" />
+                      {selectedLead.zone}
+                    </span>
                   )}
                   {(() => {
                     const hasRealOverdue = leadEvents.some(
@@ -856,7 +895,7 @@ export default function CrmLeadsPage() {
                     );
                     const showStaleBadge = !hasRealOverdue && isStaleLead(selectedLead);
                     return (hasRealOverdue || showStaleBadge) ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-[#ef4444]/10 text-[#ef4444]">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#ef4444]/10 text-[#ef4444]">
                         <Clock className="w-3 h-3" />
                         {t('crm.overdueFollowUp')}
                       </span>
@@ -864,124 +903,7 @@ export default function CrmLeadsPage() {
                   })()}
                 </div>
 
-                {(selectedLead.auto_wa_sent_at || selectedLead.meta_capi_lead_sent_at || selectedLead.google_conversion_uploaded_at) && (
-                  <div>
-                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Automatización</div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedLead.auto_wa_sent_at && (
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#25d366]/10 text-[#25d366] border border-[#25d366]/20">
-                          WA auto: {new Date(selectedLead.auto_wa_sent_at).toLocaleDateString('es-PA')}
-                        </span>
-                      )}
-                      {selectedLead.meta_capi_lead_sent_at && (
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20">
-                          Meta CAPI enviado
-                        </span>
-                      )}
-                      {selectedLead.google_conversion_uploaded_at && (
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20">
-                          Google offline enviado
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Attribution badges — gclid / fbclid / platform lead / utm / ad_id */}
-                {(selectedLead.gclid || selectedLead.fbclid || selectedLead.platform_lead_id || selectedLead.ad_id || selectedLead.form_id || selectedLead.utm_source || selectedLead.utm_medium) && (
-                  <div>
-                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Atribución</div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedLead.gclid && (
-                        <span
-                          title={selectedLead.gclid}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20"
-                        >
-                          Google · gclid
-                        </span>
-                      )}
-                      {selectedLead.fbclid && (
-                        <span
-                          title={selectedLead.fbclid}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
-                        >
-                          Meta · fbclid
-                        </span>
-                      )}
-                      {selectedLead.platform_lead_id && (
-                        <span
-                          title={`Platform lead ID: ${selectedLead.platform_lead_id}`}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
-                        >
-                          platform: {String(selectedLead.platform_lead_id).slice(0, 12)}
-                        </span>
-                      )}
-                      {selectedLead.ad_id && (
-                        <span
-                          title={`Ad ID: ${selectedLead.ad_id}`}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
-                        >
-                          ad: {String(selectedLead.ad_id).slice(0, 12)}
-                        </span>
-                      )}
-                      {selectedLead.form_id && (
-                        <span
-                          title={`Form ID: ${selectedLead.form_id}`}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
-                        >
-                          form: {String(selectedLead.form_id).slice(0, 12)}
-                        </span>
-                      )}
-                      {selectedLead.utm_source && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
-                          {selectedLead.utm_source}
-                          {selectedLead.utm_medium ? ` / ${selectedLead.utm_medium}` : ''}
-                        </span>
-                      )}
-                      {selectedLead.utm_campaign && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
-                          {selectedLead.utm_campaign}
-                        </span>
-                      )}
-                      {selectedLead.utm_content && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#555570] border border-white/[0.06]">
-                          content: {selectedLead.utm_content}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Deal value (won leads) */}
-                {selectedLead.status === 'won' && (
-                  <div>
-                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1.5">Valor de la venta</div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-[#555570]">$</span>
-                      <input
-                        type="number"
-                        defaultValue={selectedLead.deal_value || ''}
-                        placeholder="0"
-                        onBlur={async (e) => {
-                          const val = parseFloat(e.target.value);
-                          if (!Number.isFinite(val)) return;
-                          const updated = await markLeadWon(selectedLead.id, val, 'USD');
-                          setSelectedLead(updated);
-                          fetchLeads();
-                        }}
-                        className="w-32 px-2 py-1 rounded-md bg-white/[0.04] border border-[#22c55e]/30 text-[#22c55e] text-sm font-semibold outline-none focus:border-[#22c55e]/60"
-                      />
-                      <span className="text-[10px] text-[#555570]">USD</span>
-                      {selectedLead.gclid && (
-                        <span className="text-[10px] text-[#4285f4]" title="Will upload to Google Ads as offline conversion">
-                          → Google
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Status pipeline */}
+                {/* 3 · Estado — the 6-stage funnel + off-funnel buckets + Descartar */}
                 <div>
                   <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Estado</div>
                   <div className="flex flex-wrap gap-1.5">
@@ -1044,7 +966,42 @@ export default function CrmLeadsPage() {
                   )}
                 </div>
 
-                {/* Assignment */}
+                {/* Deal value (closed leads — signed contract or paid) */}
+                {(selectedLead.status === 'signed' || selectedLead.status === 'paid') && (
+                  <div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1.5">Valor de la venta</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#555570]">$</span>
+                      <input
+                        type="number"
+                        defaultValue={selectedLead.deal_value || ''}
+                        placeholder="0"
+                        onBlur={async (e) => {
+                          const val = parseFloat(e.target.value);
+                          if (!Number.isFinite(val)) return;
+                          // Just record the amount — the lead is already signed/paid, so
+                          // we never touch status here (won_at was set on the transition).
+                          const updated = await updateLead(selectedLead.id, {
+                            deal_value: val,
+                            deal_currency: 'USD',
+                            won_at: selectedLead.won_at || new Date().toISOString(),
+                          });
+                          setSelectedLead(updated);
+                          fetchLeads();
+                        }}
+                        className="w-32 px-2 py-1 rounded-md bg-white/[0.04] border border-[#22c55e]/30 text-[#22c55e] text-sm font-semibold outline-none focus:border-[#22c55e]/60"
+                      />
+                      <span className="text-[10px] text-[#555570]">USD</span>
+                      {selectedLead.gclid && (
+                        <span className="text-[10px] text-[#4285f4]" title="Will upload to Google Ads as offline conversion">
+                          → Google
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 4 · Asignado a */}
                 <div>
                   <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Asignado a</div>
                   <div className="flex items-center gap-2">
@@ -1073,7 +1030,7 @@ export default function CrmLeadsPage() {
                   </div>
                 </div>
 
-                {/* Journey stepper */}
+                {/* 5 · Mapa del cliente — journey stepper + call count */}
                 {(() => {
                   const journey = buildJourney(selectedLead, statusHistory);
                   const activeIdx = JOURNEY_STAGES.indexOf(selectedLead.status as typeof JOURNEY_STAGES[number]);
@@ -1116,20 +1073,16 @@ export default function CrmLeadsPage() {
                             </div>
                           );
                         })}
-                        {/* Won / Lost terminal */}
-                        {(selectedLead.status === 'won' || selectedLead.status === 'lost') && (
+                        {/* Lost terminal — appended after the funnel when a lead is Perdido.
+                            (paid is now the 6th funnel step, so it needs no terminal marker.) */}
+                        {selectedLead.status === 'lost' && (
                           <>
-                            <div className="w-4 h-px shrink-0 bg-[#22c55e]" />
+                            <div className="w-4 h-px shrink-0 bg-[#ef4444]" />
                             <div className="flex flex-col items-center gap-0.5 shrink-0">
-                              <div className={cn(
-                                'w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2',
-                                selectedLead.status === 'won'
-                                  ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10'
-                                  : 'border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10'
-                              )}>
-                                {selectedLead.status === 'won' ? '★' : '✗'}
+                              <div className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border-2 border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10">
+                                ✗
                               </div>
-                              <span className={cn('text-[8px]', selectedLead.status === 'won' ? 'text-[#22c55e]' : 'text-[#ef4444]')}>
+                              <span className="text-[8px] text-[#ef4444]">
                                 {STATUS_CONFIG[selectedLead.status]?.label}
                               </span>
                             </div>
@@ -1142,22 +1095,27 @@ export default function CrmLeadsPage() {
                           {journey[activeIdx]?.daysInStage !== null && ` · ${journey[activeIdx]!.daysInStage} ${t('journey.daysInStage', { days: '' }).replace(' ', '').trim()}`}
                         </p>
                       )}
+                      <div className="flex items-center gap-3 mt-1.5 text-[10px]">
+                        <span className="inline-flex items-center gap-1 text-[#8888a0]">
+                          <Phone className="w-3 h-3" />
+                          {callCounts[selectedLead.id] || 0} llamadas
+                        </span>
+                      </div>
                     </div>
                   );
                 })()}
 
-                {/* Message */}
-                {selectedLead.message && (
-                  <div>
-                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1">Mensaje</div>
-                    <p className="text-sm text-[#c0c0d0] bg-white/[0.02] rounded-lg p-3">{selectedLead.message}</p>
-                  </div>
-                )}
-
-                {/* Events — schedule buttons */}
+                {/* 6 · Agenda — schedule buttons + events */}
                 <div>
                   <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Agenda</div>
-                  <div className="flex gap-2 mb-3">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <button
+                      onClick={handleRegisterCall}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25d366]/10 text-[#25d366] text-xs font-medium hover:bg-[#25d366]/20 transition-colors border border-[#25d366]/20"
+                    >
+                      <PhoneCall className="w-3.5 h-3.5" />
+                      Registrar llamada
+                    </button>
                     <button
                       onClick={() => {
                         setShowEventModal('meeting');
@@ -1249,7 +1207,7 @@ export default function CrmLeadsPage() {
                   )}
                 </div>
 
-                {/* Notes */}
+                {/* 7 · Notas */}
                 <div>
                   <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Notas</div>
                   <div className="space-y-2 mb-3">
@@ -1300,7 +1258,7 @@ export default function CrmLeadsPage() {
                   )}
                 </div>
 
-                {/* Unified timeline */}
+                {/* 8 · Historial — unified timeline */}
                 {timeline.length > 0 && (
                   <div>
                     <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('journey.timeline')}</div>
@@ -1324,6 +1282,111 @@ export default function CrmLeadsPage() {
                     </div>
                   </div>
                 )}
+
+                {/* 9 · Datos internos — marketing metadata (source, automations,
+                    attribution) sales users rarely need, parked at the bottom. */}
+                <div className="pt-3 border-t border-white/[0.06] opacity-70">
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Datos internos</div>
+                  <div className="space-y-2">
+                    {/* Fuente + campaña */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {(() => {
+                        const src = SOURCE_CONFIG[selectedLead.source] || SOURCE_CONFIG.manual;
+                        return (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium" style={{ backgroundColor: `${src.color}15`, color: src.color }}>
+                            {src.icon} {src.label}
+                          </span>
+                        );
+                      })()}
+                      {selectedLead.campaign && (
+                        <span className="text-xs text-[#555570]">· {selectedLead.campaign}</span>
+                      )}
+                    </div>
+
+                    {/* Automatización */}
+                    {(selectedLead.auto_wa_sent_at || selectedLead.meta_capi_lead_sent_at || selectedLead.google_conversion_uploaded_at) && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedLead.auto_wa_sent_at && (
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[#25d366]/10 text-[#25d366] border border-[#25d366]/20">
+                            WA auto: {new Date(selectedLead.auto_wa_sent_at).toLocaleDateString('es-PA')}
+                          </span>
+                        )}
+                        {selectedLead.meta_capi_lead_sent_at && (
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20">
+                            Meta CAPI enviado
+                          </span>
+                        )}
+                        {selectedLead.google_conversion_uploaded_at && (
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20">
+                            Google offline enviado
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Atribución — gclid / fbclid / platform lead / utm / ad_id */}
+                    {(selectedLead.gclid || selectedLead.fbclid || selectedLead.platform_lead_id || selectedLead.ad_id || selectedLead.form_id || selectedLead.utm_source || selectedLead.utm_medium) && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedLead.gclid && (
+                          <span
+                            title={selectedLead.gclid}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20"
+                          >
+                            Google · gclid
+                          </span>
+                        )}
+                        {selectedLead.fbclid && (
+                          <span
+                            title={selectedLead.fbclid}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                          >
+                            Meta · fbclid
+                          </span>
+                        )}
+                        {selectedLead.platform_lead_id && (
+                          <span
+                            title={`Platform lead ID: ${selectedLead.platform_lead_id}`}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                          >
+                            platform: {String(selectedLead.platform_lead_id).slice(0, 12)}
+                          </span>
+                        )}
+                        {selectedLead.ad_id && (
+                          <span
+                            title={`Ad ID: ${selectedLead.ad_id}`}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                          >
+                            ad: {String(selectedLead.ad_id).slice(0, 12)}
+                          </span>
+                        )}
+                        {selectedLead.form_id && (
+                          <span
+                            title={`Form ID: ${selectedLead.form_id}`}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20"
+                          >
+                            form: {String(selectedLead.form_id).slice(0, 12)}
+                          </span>
+                        )}
+                        {selectedLead.utm_source && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
+                            {selectedLead.utm_source}
+                            {selectedLead.utm_medium ? ` / ${selectedLead.utm_medium}` : ''}
+                          </span>
+                        )}
+                        {selectedLead.utm_campaign && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#8888a0] border border-white/[0.06]">
+                            {selectedLead.utm_campaign}
+                          </span>
+                        )}
+                        {selectedLead.utm_content && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] text-[#555570] border border-white/[0.06]">
+                            content: {selectedLead.utm_content}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}

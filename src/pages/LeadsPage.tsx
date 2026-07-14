@@ -116,9 +116,10 @@ export default function LeadsPage() {
     const groups: Record<LeadStatus, typeof leads> = {
       new: [],
       contacted: [],
-      qualified: [],
+      visit_scheduled: [],
       proposal_sent: [],
-      won: [],
+      signed: [],
+      paid: [],
       lost: [],
       // vendor + partner are not Kanban columns, but must exist so grouping never crashes.
       vendor: [],

@@ -2,7 +2,7 @@
  * Upload Offline Conversions to Google Ads — runs every 6h.
  *
  * Picks all leads where:
- *   - status = 'won'
+ *   - status IN ('signed', 'paid')   (a closed deal)
  *   - gclid IS NOT NULL
  *   - google_conversion_uploaded_at IS NULL
  *   - won_at IS NOT NULL
@@ -146,7 +146,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { data: leads, error } = await supabase
       .from('leads')
       .select('id, gclid, won_at, deal_value, deal_currency')
-      .eq('status', 'won')
+      .in('status', ['signed', 'paid'])
       .not('gclid', 'is', null)
       .not('won_at', 'is', null)
       .is('google_conversion_uploaded_at', null)

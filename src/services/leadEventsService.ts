@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 
 // ─── Types ───────────────────────────────────────────────────────
 
-export type EventType = 'meeting' | 'follow_up' | 'other';
+export type EventType = 'meeting' | 'follow_up' | 'call' | 'other';
 export type EventStatus = 'scheduled' | 'done' | 'cancelled';
 
 export interface LeadEvent {
@@ -69,6 +69,52 @@ export async function createEvent(params: CreateLeadEventParams): Promise<LeadEv
     .single();
   if (error) throw error;
   return data as LeadEvent;
+}
+
+/**
+ * Log a completed phone call for a lead — the "Registrar llamada" quick action.
+ * Inserted as an already-done event so it lands in the timeline + call counts
+ * without cluttering the "upcoming events" list.
+ */
+export async function logCall(leadId: string): Promise<LeadEvent> {
+  const { data, error } = await supabase
+    .from('lead_events')
+    .insert({
+      lead_id: leadId,
+      event_type: 'call',
+      title: 'Llamada',
+      starts_at: new Date().toISOString(),
+      status: 'done',
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data as LeadEvent;
+}
+
+/**
+ * Aggregate raw call-event rows into a { lead_id → count } map.
+ * Pure + exported so the aggregation is unit-testable without a DB.
+ */
+export function aggregateCallCounts(rows: { lead_id: string | null }[]): Record<string, number> {
+  const map: Record<string, number> = {};
+  for (const row of rows) {
+    if (row.lead_id) map[row.lead_id] = (map[row.lead_id] || 0) + 1;
+  }
+  return map;
+}
+
+/**
+ * Map of lead_id → number of logged calls, in ONE query for the whole list
+ * (loaded alongside getUpcomingFollowUps in the CRM's fetchLeads).
+ */
+export async function getCallCounts(): Promise<Record<string, number>> {
+  const { data, error } = await supabase
+    .from('lead_events')
+    .select('lead_id')
+    .eq('event_type', 'call');
+  if (error) throw error;
+  return aggregateCallCounts((data as { lead_id: string | null }[]) ?? []);
 }
 
 /** Update the status of an event (e.g. mark done or cancelled). */

@@ -25,12 +25,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-// Canonical funnel (migrations 061/063) — legacy cold/warm/hot are gone.
+// Canonical 6-stage funnel (migration 064). L1/L2 = a live conversation,
+// L3 = quote/proposal sent, L4 = contract signed.
 const L_TO_STATUS: Record<number, string> = {
   1: 'contacted',
-  2: 'qualified',
-  3: 'qualified',
-  4: 'won',
+  2: 'contacted',
+  3: 'proposal_sent',
+  4: 'signed',
 };
 
 interface ParsedRow {

@@ -22,8 +22,8 @@ export interface TimelineItem {
   meta?: string | null;
 }
 
-// Journey stages in display order
-export const JOURNEY_STAGES = ['new', 'contacted', 'qualified', 'proposal_sent', 'won'] as const;
+// Journey stages in display order — the canonical 6-stage funnel (migration 064).
+export const JOURNEY_STAGES = ['new', 'contacted', 'visit_scheduled', 'proposal_sent', 'signed', 'paid'] as const;
 export type JourneyStage = (typeof JOURNEY_STAGES)[number];
 
 export interface StageInfo {
@@ -129,7 +129,10 @@ export function buildTimeline(
 
   // Lead events
   for (const ev of events) {
-    const typeLabel = ev.event_type === 'meeting' ? 'Cita' : ev.event_type === 'follow_up' ? 'Seguimiento' : 'Evento';
+    const typeLabel =
+      ev.event_type === 'meeting' ? 'Cita' :
+      ev.event_type === 'follow_up' ? 'Seguimiento' :
+      ev.event_type === 'call' ? 'Llamada' : 'Evento';
     const statusSuffix = ev.status === 'done' ? ' ✓' : ev.status === 'cancelled' ? ' ✗' : '';
     items.push({
       id: `event-${ev.id}`,
@@ -181,9 +184,10 @@ export function computeFunnel(
 
 function statusLabel(status: string): string {
   const map: Record<string, string> = {
-    new: 'Nuevo', contacted: 'Contactado', qualified: 'Calificado',
-    proposal_sent: 'Propuesta', won: 'Ganado', lost: 'Perdido',
-    cold: 'Frío', warm: 'Tibio', hot: 'Caliente',
+    new: 'Nuevo', contacted: 'Contactado', visit_scheduled: 'Visita agendada',
+    proposal_sent: 'Propuesta', signed: 'Firmado', paid: 'Pagado', lost: 'Perdido',
+    // Legacy statuses — only reached when rendering pre-migration history rows.
+    qualified: 'Calificado', won: 'Ganado', cold: 'Frío', warm: 'Tibio', hot: 'Caliente',
     vendor: 'Proveedor', partner: 'Socio', not_a_lead: 'No es Lead',
   };
   return map[status] ?? status;

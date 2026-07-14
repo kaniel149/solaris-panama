@@ -377,7 +377,7 @@ export function useLeadManager() {
 
   const stats = useMemo((): LeadStats => {
     const byStatus: Record<LeadStatus, number> = {
-      new: 0, contacted: 0, qualified: 0, proposal_sent: 0, won: 0, lost: 0, vendor: 0, partner: 0,
+      new: 0, contacted: 0, visit_scheduled: 0, proposal_sent: 0, signed: 0, paid: 0, lost: 0, vendor: 0, partner: 0,
     };
     let totalScore = 0;
     let totalKwp = 0;

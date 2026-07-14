@@ -7,7 +7,7 @@
  *
  * Events we send:
  *   - Lead          — when a form submission lands in our DB
- *   - Purchase      — when CRM marks a lead status='won' (with deal_value)
+ *   - Purchase      — when a CRM lead closes (status signed/paid, with deal_value)
  *
  * Dedup with browser pixel: pass the SAME event_id to both fbq() and CAPI.
  * Meta dedups on (event_name, event_id) within a 7-day window.

@@ -4,8 +4,8 @@
  * Sends Kaniel a summary of the day's activity:
  *   - New leads count by source (Meta / Google / LP / WA / Web)
  *   - Active conversations (any inbound or outbound msg today)
- *   - Hot leads (status=hot OR score >70)
- *   - Won today + total $ value
+ *   - Active high-intent leads (visita agendada / propuesta enviada)
+ *   - Closed today (firmado/pagado) + total $ value
  *   - Bridge health (heartbeat + outage events)
  *   - CAPI/Enhanced Conversions success rate (last 24h)
  *
@@ -60,20 +60,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       bySource[s] = (bySource[s] || 0) + 1;
     }
 
-    // 2. Won today
+    // 2. Closed today (signed contract or paid) by won_at
     const { data: wonToday } = await supabase
       .from('leads')
       .select('id, name, deal_value, deal_currency')
-      .eq('status', 'won')
+      .in('status', ['signed', 'paid'])
       .gte('won_at', startISO)
       .lt('won_at', endISO);
     const wonValue = (wonToday || []).reduce((s, l) => s + (Number(l.deal_value) || 0), 0);
 
-    // 3. Hot leads (status=hot)
+    // 3. Hot leads = active high-intent stages (visit scheduled / proposal sent).
+    //    (The legacy 'hot' temperature status was retired in the funnel remap.)
     const { data: hotLeads } = await supabase
       .from('leads')
       .select('id, name, location, source')
-      .eq('status', 'hot')
+      .in('status', ['visit_scheduled', 'proposal_sent'])
       .limit(5);
 
     // 4. Active WA conversations today (any inbound message today)

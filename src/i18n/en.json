@@ -172,6 +172,7 @@
     "noLead": "No linked lead",
     "eventTypeMeeting": "Meeting",
     "eventTypeFollowUp": "Follow-up",
+    "eventTypeCall": "Call",
     "eventTypeOther": "Other",
     "statusScheduled": "Scheduled",
     "statusDone": "Done",

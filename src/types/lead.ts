@@ -1,7 +1,20 @@
 import type { RoofScanResult } from '@/services/roofScannerService';
 import type { CadastreInfo, BusinessLicense, CorporateInfo, EnrichmentSourceSummary, NearbyBusinessResult } from '@/types/enrichment';
 
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost' | 'vendor' | 'partner';
+// Canonical 6-stage sales funnel (migration 064) + off-funnel buckets.
+// Legacy 'qualified'/'won'/'cold'/'warm'/'hot' were remapped in the DB and no
+// longer exist as live statuses — they survive only as history-render labels
+// (see STATUS_CONFIG / statusLabel), never in this union or in any select.
+export type LeadStatus =
+  | 'new'
+  | 'contacted'
+  | 'visit_scheduled'
+  | 'proposal_sent'
+  | 'signed'
+  | 'paid'
+  | 'lost'
+  | 'vendor'
+  | 'partner';
 
 export interface ProposalSummary {
   id: string;
@@ -104,9 +117,10 @@ export interface LeadStats {
 export const LEAD_STATUS_CONFIG: Record<LeadStatus, { label: string; labelEs: string; color: string; bgColor: string }> = {
   new: { label: 'New', labelEs: 'Nuevo', color: '#0ea5e9', bgColor: 'rgba(14,165,233,0.1)' },
   contacted: { label: 'Contacted', labelEs: 'Contactado', color: '#f59e0b', bgColor: 'rgba(245,158,11,0.1)' },
-  qualified: { label: 'Qualified', labelEs: 'Calificado', color: '#8b5cf6', bgColor: 'rgba(139,92,246,0.1)' },
+  visit_scheduled: { label: 'Visit scheduled', labelEs: 'Visita agendada', color: '#06b6d4', bgColor: 'rgba(6,182,212,0.1)' },
   proposal_sent: { label: 'Proposal Sent', labelEs: 'Propuesta Enviada', color: '#00ffcc', bgColor: 'rgba(0,255,204,0.1)' },
-  won: { label: 'Won', labelEs: 'Ganado', color: '#22c55e', bgColor: 'rgba(34,197,94,0.1)' },
+  signed: { label: 'Signed', labelEs: 'Firmado', color: '#eab308', bgColor: 'rgba(234,179,8,0.1)' },
+  paid: { label: 'Paid', labelEs: 'Pagado', color: '#22c55e', bgColor: 'rgba(34,197,94,0.1)' },
   lost: { label: 'Lost', labelEs: 'Perdido', color: '#ef4444', bgColor: 'rgba(239,68,68,0.1)' },
   // Non-funnel statuses — rendered as badges but excluded from the sales pipeline / Kanban.
   vendor: { label: 'Vendor', labelEs: 'Proveedor', color: '#64748b', bgColor: 'rgba(100,116,139,0.1)' },
@@ -114,4 +128,4 @@ export const LEAD_STATUS_CONFIG: Record<LeadStatus, { label: string; labelEs: st
 };
 
 // Kanban / funnel deliberately excludes vendor + partner — they are not sales-pipeline stages.
-export const LEAD_KANBAN_COLUMNS: LeadStatus[] = ['new', 'contacted', 'qualified', 'proposal_sent', 'won', 'lost'];
+export const LEAD_KANBAN_COLUMNS: LeadStatus[] = ['new', 'contacted', 'visit_scheduled', 'proposal_sent', 'signed', 'paid', 'lost'];

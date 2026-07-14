@@ -172,6 +172,7 @@
     "noLead": "Sin lead asociado",
     "eventTypeMeeting": "Cita",
     "eventTypeFollowUp": "Seguimiento",
+    "eventTypeCall": "Llamada",
     "eventTypeOther": "Otro",
     "statusScheduled": "Programado",
     "statusDone": "Completado",
