@@ -87,7 +87,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      // Land inside the CRM after Google auth — origin alone drops the user on
+      // the public landing page (redirect allow-list covers /**, so this is valid).
+      options: { redirectTo: `${window.location.origin}/dashboard` },
     });
   };
 
