@@ -570,8 +570,10 @@ export default function CrmLeadsPage() {
       )}
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <div className="relative flex-1">
+      {/* flex-wrap + min-w: with 6 filter controls in the row, the search input
+          used to collapse to icon-width on laptop screens — "can't type" bug. */}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-4">
+        <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555570]" />
           <input
             value={search}
