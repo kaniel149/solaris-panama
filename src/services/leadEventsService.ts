@@ -95,13 +95,14 @@ export async function deleteEvent(id: string): Promise<void> {
  * on the leads page instead of loading events per row.
  */
 export async function getUpcomingFollowUps(): Promise<Record<string, string>> {
-  const nowIso = new Date().toISOString();
+  // Includes OVERDUE follow-ups on purpose: a scheduled follow-up whose date
+  // passed is exactly what sales needs to chase — it only leaves the map when
+  // completed/cancelled.
   const { data, error } = await supabase
     .from('lead_events')
     .select('lead_id, starts_at')
     .eq('event_type', 'follow_up')
     .eq('status', 'scheduled')
-    .gte('starts_at', nowIso)
     .order('starts_at', { ascending: true });
   if (error) throw error;
   const map: Record<string, string> = {};

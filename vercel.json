@@ -1,24 +1,101 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/landing", "destination": "/app.html" },
-    { "source": "/dashboard", "destination": "/app.html" },
-    { "source": "/login", "destination": "/app.html" },
-    { "source": "/crm-leads", "destination": "/app.html" },
-    { "source": "/projects/:path*", "destination": "/app.html" },
-    { "source": "/clients/:path*", "destination": "/app.html" },
-    { "source": "/proposals/:path*", "destination": "/app.html" },
-    { "source": "/calendar", "destination": "/app.html" },
-    { "source": "/tasks", "destination": "/app.html" },
-    { "source": "/solar-map", "destination": "/app.html" },
-    { "source": "/monitoring", "destination": "/app.html" },
-    { "source": "/leads/:path*", "destination": "/app.html" },
-    { "source": "/settings", "destination": "/app.html" },
-    { "source": "/tools/:path*", "destination": "/app.html" },
-    { "source": "/mapa-solar", "destination": "/app.html" },
-    { "source": "/mapa-comercial", "destination": "/app.html" },
-    { "source": "/lp/:path*", "destination": "/app.html" },
-    { "source": "/azuero", "destination": "/app.html" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/landing",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/crm-leads",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/projects/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/clients/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/proposals/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/calendar",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/tasks",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/solar-map",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/monitoring",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/leads/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/tools/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/mapa-solar",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/mapa-comercial",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/lp/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/azuero",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/nosotros",
+      "destination": "/nosotros.html"
+    },
+    {
+      "source": "/servicios",
+      "destination": "/servicios.html"
+    },
+    {
+      "source": "/contacto",
+      "destination": "/contacto.html"
+    },
+    {
+      "source": "/proyectos",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/app.html"
+    }
   ],
   "crons": [
     {
