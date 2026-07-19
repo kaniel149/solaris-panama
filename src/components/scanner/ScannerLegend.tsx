@@ -13,6 +13,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // ===== TYPES =====
 
@@ -71,6 +72,7 @@ function DashedSwatch({ color, label }: { color: string; label: string }) {
 // ===== COMPONENT =====
 
 export default function ScannerLegend({ open, onClose }: ScannerLegendProps) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -111,23 +113,23 @@ export default function ScannerLegend({ open, onClose }: ScannerLegendProps) {
             'p-4'
           )}
           role="dialog"
-          aria-label="Leyenda del mapa"
+          aria-label={t('tools.scanner.legend.ariaLabel')}
           aria-modal="false"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#f0f0f5]">Leyenda</span>
+            <span className="text-xs font-semibold text-[#f0f0f5]">{t('tools.scanner.legend.title')}</span>
             <button
               onClick={onClose}
               className="p-1 rounded-lg text-[#555566] hover:text-[#8888a0] hover:bg-white/[0.04] transition-colors"
-              aria-label="Cerrar leyenda"
+              aria-label={t('tools.scanner.legend.close')}
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Section 1: Roof score ramp */}
-          <LegendSection title="Puntuación de techos">
+          <LegendSection title={t('tools.scanner.legend.roofScore')}>
             {/* Gradient ramp */}
             <div className="relative mb-1.5">
               <div
@@ -139,14 +141,14 @@ export default function ScannerLegend({ open, onClose }: ScannerLegendProps) {
               />
             </div>
             <div className="flex justify-between">
-              <span className="text-[9px] text-[#555566]">0 — Bajo</span>
-              <span className="text-[9px] text-[#555566]">100 — Excelente</span>
+              <span className="text-[9px] text-[#555566]">{t('tools.scanner.legend.scoreLow')}</span>
+              <span className="text-[9px] text-[#555566]">{t('tools.scanner.legend.scoreHigh')}</span>
             </div>
             <div className="mt-2 space-y-1.5">
-              <Swatch color="#00ffcc" label="A — 80-100" />
-              <Swatch color="#22c55e" label="B — 60-79" />
-              <Swatch color="#f59e0b" label="C — 40-59" />
-              <Swatch color="#ef4444" label="D — 0-39" />
+              <Swatch color="#00ffcc" label={t('tools.scanner.legend.gradeA')} />
+              <Swatch color="#22c55e" label={t('tools.scanner.legend.gradeB')} />
+              <Swatch color="#f59e0b" label={t('tools.scanner.legend.gradeC')} />
+              <Swatch color="#ef4444" label={t('tools.scanner.legend.gradeD')} />
             </div>
           </LegendSection>
 
@@ -154,26 +156,26 @@ export default function ScannerLegend({ open, onClose }: ScannerLegendProps) {
           <div className="border-t border-white/[0.05] mb-3" />
 
           {/* Section 2: Land tiers */}
-          <LegendSection title="Terrenos — Tier">
+          <LegendSection title={t('tools.scanner.legend.landTier')}>
             <div className="space-y-1.5">
               <Swatch
                 color="rgba(139,92,246,0.45)"
                 border="rgba(139,92,246,0.6)"
-                label="Utility — >9 MWp"
+                label={t('tools.scanner.legend.tierUtility')}
               />
               <Swatch
                 color="rgba(212,168,67,0.35)"
                 border="rgba(212,168,67,0.5)"
-                label="Agro — 1–9 MWp"
+                label={t('tools.scanner.legend.tierAgro')}
               />
               <Swatch
                 color="rgba(59,130,246,0.35)"
                 border="rgba(59,130,246,0.5)"
-                label="Comercial — <1 MWp"
+                label={t('tools.scanner.legend.tierCommercial')}
               />
             </div>
             <p className="text-[9px] text-[#3a3a4f] mt-1.5">
-              Contorno punteado · relleno morado/magenta
+              {t('tools.scanner.legend.landTierNote')}
             </p>
           </LegendSection>
 
@@ -181,18 +183,18 @@ export default function ScannerLegend({ open, onClose }: ScannerLegendProps) {
           <div className="border-t border-white/[0.05] mb-3" />
 
           {/* Section 3: Map features */}
-          <LegendSection title="Infraestructura">
+          <LegendSection title={t('tools.scanner.legend.infrastructure')}>
             <div className="space-y-1.5">
-              <DashedSwatch color="#facc15" label="Línea de red eléctrica" />
+              <DashedSwatch color="#facc15" label={t('tools.scanner.legend.gridLine')} />
               <Swatch
                 color="rgba(250,204,21,0.2)"
                 border="rgba(250,204,21,0.5)"
-                label="Subestación eléctrica"
+                label={t('tools.scanner.legend.substation')}
               />
               <Swatch
                 color="rgba(168,85,247,0.25)"
                 border="rgba(168,85,247,0.5)"
-                label="Centro de datos"
+                label={t('tools.scanner.legend.dataCenter')}
               />
             </div>
           </LegendSection>

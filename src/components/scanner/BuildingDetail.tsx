@@ -1,6 +1,8 @@
 // framer-motion removed — parent handles animation
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Building2, Sun, Zap, DollarSign, ExternalLink,
@@ -77,16 +79,17 @@ const SOURCE_LABELS: Record<string, string> = {
 };
 
 // Data-source badge for the roof-scan result (Phase 1 fallback chain).
-const SCAN_SOURCE_LABELS: Record<string, { es: string; bg: string; fg: string; border: string }> = {
-  google_solar: { es: 'Google Solar (alta precisión)', bg: 'rgba(16,185,129,0.12)', fg: '#10b981', border: 'rgba(16,185,129,0.3)' },
-  ai_vision: { es: 'Análisis IA (satélite)', bg: 'rgba(14,165,233,0.12)', fg: '#0ea5e9', border: 'rgba(14,165,233,0.3)' },
-  nasa_estimate: { es: 'Estimación NASA POWER', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
-  pvwatts_estimate: { es: 'Estimación PVWatts', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
-  local_panama: { es: 'Estimación local Panamá', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
-  manual: { es: 'Entrada manual', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+const SCAN_SOURCE_LABELS: Record<string, { labelKey: string; bg: string; fg: string; border: string }> = {
+  google_solar: { labelKey: 'tools.scanner.buildingDetail.sourceGoogleSolar', bg: 'rgba(16,185,129,0.12)', fg: '#10b981', border: 'rgba(16,185,129,0.3)' },
+  ai_vision: { labelKey: 'tools.scanner.buildingDetail.sourceAiVision', bg: 'rgba(14,165,233,0.12)', fg: '#0ea5e9', border: 'rgba(14,165,233,0.3)' },
+  nasa_estimate: { labelKey: 'tools.scanner.buildingDetail.sourceNasaEstimate', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  pvwatts_estimate: { labelKey: 'tools.scanner.buildingDetail.sourcePvwattsEstimate', bg: 'rgba(245,158,11,0.12)', fg: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
+  local_panama: { labelKey: 'tools.scanner.buildingDetail.sourceLocalPanama', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
+  manual: { labelKey: 'tools.scanner.buildingDetail.sourceManual', bg: 'rgba(113,113,122,0.15)', fg: '#a1a1aa', border: 'rgba(113,113,122,0.3)' },
 };
 
 function ScanSourceBadge({ result }: { result: RoofScanResult }) {
+  const { t } = useTranslation();
   const meta = SCAN_SOURCE_LABELS[result.source] ?? SCAN_SOURCE_LABELS.local_panama;
   const confidence = result.visionMeta?.confidence
     ? ` · ${Math.round(result.visionMeta.confidence * 100)}%`
@@ -97,7 +100,7 @@ function ScanSourceBadge({ result }: { result: RoofScanResult }) {
       style={{ backgroundColor: meta.bg, color: meta.fg, border: `1px solid ${meta.border}` }}
     >
       <Sparkles className="w-3 h-3" />
-      <span>{meta.es}{confidence}</span>
+      <span>{t(meta.labelKey)}{confidence}</span>
     </div>
   );
 }
@@ -111,12 +114,12 @@ function getScoreColor(score: number): string {
   return '#ef4444';
 }
 
-function getGradeLabel(grade: string): string {
+function getGradeLabel(grade: string, t: TFunction): string {
   switch (grade) {
-    case 'A': return 'Excellent';
-    case 'B': return 'Good';
-    case 'C': return 'Fair';
-    case 'D': return 'Poor';
+    case 'A': return t('tools.scanner.buildingDetail.gradeExcellent');
+    case 'B': return t('tools.scanner.buildingDetail.gradeGood');
+    case 'C': return t('tools.scanner.buildingDetail.gradeFair');
+    case 'D': return t('tools.scanner.buildingDetail.gradePoor');
     default: return grade;
   }
 }
@@ -149,6 +152,7 @@ export default function BuildingDetail({
   monthlyKwhOverride,
 }: BuildingDetailProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [enrichedData, setEnrichedData] = useState<EnrichedOwnerResult | null>(null);
   const [isResearching, setIsResearching] = useState(false);
   const [researchAttempted, setResearchAttempted] = useState(false);
@@ -178,7 +182,7 @@ export default function BuildingDetail({
     // Initialize steps
     const initialSteps: ResearchStep[] = [
       { source: 'OpenStreetMap', label: 'OpenStreetMap', status: 'pending' },
-      { source: 'Nominatim', label: 'Reverse Geocode', status: 'pending' },
+      { source: 'Nominatim', label: t('tools.scanner.buildingDetail.stepReverseGeocode'), status: 'pending' },
       { source: 'ANATI Cadastre', label: 'ANATI Cadastre', status: 'pending' },
       { source: 'Google Places', label: 'Google Maps', status: 'pending' },
       { source: 'Panama Emprende', label: 'Panama Emprende', status: 'pending' },
@@ -196,7 +200,7 @@ export default function BuildingDetail({
         lat: building.center.lat,
         lng: building.center.lng,
         osmId: building.osmId,
-        buildingName: building.name || `Building ${building.id}`,
+        buildingName: building.name || t('tools.scanner.buildingDetail.buildingHash', { id: building.id }),
         onProgress: (step: string, status: ProgressStatus) => {
           setResearchSteps((prev) => {
             const existing = prev.find((s) => s.source === step);
@@ -447,7 +451,7 @@ export default function BuildingDetail({
         <div className="px-5 pt-5 pb-4 flex items-start gap-3">
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-[#f0f0f5] truncate">
-              {building.name || `Building #${building.id}`}
+              {building.name || t('tools.scanner.buildingDetail.buildingHash', { id: building.id })}
             </h2>
             <div className="flex items-center gap-2 mt-1.5">
               <span
@@ -457,7 +461,7 @@ export default function BuildingDetail({
                   color: scoreColor,
                 }}
               >
-                {building.suitability.score} - {getGradeLabel(building.suitability.grade)}
+                {building.suitability.score} - {getGradeLabel(building.suitability.grade, t)}
               </span>
             </div>
           </div>
@@ -474,13 +478,13 @@ export default function BuildingDetail({
           {/* Score Breakdown */}
           <GlassCard padding="md">
             <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
-              Suitability Breakdown
+              {t('tools.scanner.buildingDetail.suitabilityBreakdown')}
             </h3>
             <div className="space-y-3">
               {[
-                { label: 'Roof Area', score: building.suitability.factors.area ?? 0, max: 50 },
-                { label: 'Building Type', score: building.suitability.factors.type ?? 0, max: 30 },
-                { label: 'Name Match', score: building.suitability.factors.name ?? 0, max: 20 },
+                { label: t('tools.scanner.buildingDetail.factorRoofArea'), score: building.suitability.factors.area ?? 0, max: 50 },
+                { label: t('tools.scanner.buildingDetail.factorBuildingType'), score: building.suitability.factors.type ?? 0, max: 30 },
+                { label: t('tools.scanner.buildingDetail.factorNameMatch'), score: building.suitability.factors.name ?? 0, max: 20 },
               ].map((factor) => (
                 <div key={factor.label}>
                   <div className="flex items-center justify-between mb-1">
@@ -506,7 +510,7 @@ export default function BuildingDetail({
           {/* Building Info */}
           <GlassCard padding="md">
             <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3">
-              Building Info
+              {t('tools.scanner.buildingDetail.buildingInfo')}
             </h3>
             <div className="space-y-2.5">
               <div className="flex items-center gap-3">
@@ -514,7 +518,7 @@ export default function BuildingDetail({
                   <Ruler className="w-3.5 h-3.5 text-[#8b5cf6]" />
                 </div>
                 <div>
-                  <div className="text-[11px] text-[#555566]">Area</div>
+                  <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldArea')}</div>
                   <div className="text-sm text-[#f0f0f5] font-medium">
                     {fmt(building.area)} m²
                   </div>
@@ -525,7 +529,7 @@ export default function BuildingDetail({
                   <Building2 className="w-3.5 h-3.5 text-[#0ea5e9]" />
                 </div>
                 <div>
-                  <div className="text-[11px] text-[#555566]">Type</div>
+                  <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldType')}</div>
                   <div className="text-sm text-[#f0f0f5] font-medium capitalize">
                     {building.buildingType}
                   </div>
@@ -536,7 +540,7 @@ export default function BuildingDetail({
                   <MapPin className="w-3.5 h-3.5 text-[#22c55e]" />
                 </div>
                 <div>
-                  <div className="text-[11px] text-[#555566]">Location</div>
+                  <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldLocation')}</div>
                   <div className="text-sm text-[#f0f0f5] font-medium">
                     {building.center.lat.toFixed(5)}, {building.center.lng.toFixed(5)}
                   </div>
@@ -549,7 +553,7 @@ export default function BuildingDetail({
           <GlassCard padding="md">
             <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Search className="w-3.5 h-3.5 text-[#8b5cf6]" />
-              Deep Research
+              {t('tools.scanner.buildingDetail.deepResearch')}
             </h3>
 
             {/* Initial state: research button */}
@@ -560,7 +564,7 @@ export default function BuildingDetail({
                 icon={<Search className="w-4 h-4" />}
                 onClick={handleResearch}
               >
-                Start Deep Research
+                {t('tools.scanner.buildingDetail.startDeepResearch')}
               </Button>
             )}
 
@@ -568,7 +572,7 @@ export default function BuildingDetail({
             {!enrichedData && !isResearching && researchAttempted && (
               <div className="text-center py-3 space-y-2">
                 <p className="text-sm text-[#555566]">
-                  No contact info found in public directories
+                  {t('tools.scanner.buildingDetail.noContactInfoFound')}
                 </p>
                 <Button
                   variant="secondary"
@@ -577,7 +581,7 @@ export default function BuildingDetail({
                   icon={<Search className="w-3.5 h-3.5" />}
                   onClick={handleResearch}
                 >
-                  Try Again
+                  {t('tools.scanner.buildingDetail.tryAgain')}
                 </Button>
               </div>
             )}
@@ -590,7 +594,7 @@ export default function BuildingDetail({
             {isResearching && researchSteps.length === 0 && (
               <div className="flex items-center gap-2 py-3 justify-center">
                 <Loader2 className="w-4 h-4 text-[#8b5cf6] animate-spin" />
-                <span className="text-sm text-[#8888a0]">Initializing research...</span>
+                <span className="text-sm text-[#8888a0]">{t('tools.scanner.buildingDetail.initializingResearch')}</span>
               </div>
             )}
 
@@ -612,7 +616,7 @@ export default function BuildingDetail({
                       <Navigation className="w-3.5 h-3.5 text-[#22c55e]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[11px] text-[#555566]">Address</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldAddress')}</div>
                       <div className="text-sm text-[#f0f0f5] font-medium leading-tight">{enrichedData.address}</div>
                     </div>
                   </div>
@@ -625,7 +629,7 @@ export default function BuildingDetail({
                       <Building2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] text-[#555566]">Building Occupant</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldBuildingOccupant')}</div>
                       <div className="text-sm text-[#f0f0f5] font-medium truncate">{enrichedData.ownerName}</div>
                     </div>
                   </div>
@@ -638,7 +642,7 @@ export default function BuildingDetail({
                       <Phone className="w-3.5 h-3.5 text-[#22c55e]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] text-[#555566]">Phone</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldPhone')}</div>
                       <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.phone}</div>
                     </div>
                     <div className="flex gap-1.5 shrink-0">
@@ -657,7 +661,7 @@ export default function BuildingDetail({
                         <a
                           href={enrichedData.callUrl}
                           className="p-1.5 rounded-lg bg-[#0ea5e9]/10 hover:bg-[#0ea5e9]/20 transition-colors"
-                          title="Call"
+                          title={t('tools.scanner.buildingDetail.callTooltip')}
                         >
                           <Phone className="w-3.5 h-3.5 text-[#0ea5e9]" />
                         </a>
@@ -672,7 +676,7 @@ export default function BuildingDetail({
                       <Mail className="w-3.5 h-3.5 text-[#f59e0b]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] text-[#555566]">Email</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldEmail')}</div>
                       <a href={`mailto:${enrichedData.email}`} className="text-sm text-[#0ea5e9] hover:underline truncate block">
                         {enrichedData.email}
                       </a>
@@ -686,7 +690,7 @@ export default function BuildingDetail({
                       <Globe className="w-3.5 h-3.5 text-[#0ea5e9]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] text-[#555566]">Website</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldWebsite')}</div>
                       <a
                         href={enrichedData.website.startsWith('http') ? enrichedData.website : `https://${enrichedData.website}`}
                         target="_blank"
@@ -739,21 +743,21 @@ export default function BuildingDetail({
                 <GlassCard padding="md">
                   <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-[#f59e0b]" />
-                    Cadastre / Property Record
+                    {t('tools.scanner.buildingDetail.cadastreTitle')}
                   </h3>
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-[11px] text-[#555566]">Finca Number</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fincaNumber')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.cadastre.fincaNumber}</div>
                       </div>
                       <button
                         onClick={() => handleCopyFinca(enrichedData.cadastre!.fincaNumber)}
                         className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] transition-colors"
-                        title="Copy finca number"
+                        title={t('tools.scanner.buildingDetail.copyFincaNumber')}
                       >
                         {copiedFinca ? (
-                          <span className="text-[10px] text-[#10b981] px-1">Copied</span>
+                          <span className="text-[10px] text-[#10b981] px-1">{t('tools.scanner.buildingDetail.copied')}</span>
                         ) : (
                           <Copy className="w-3.5 h-3.5 text-[#8888a0]" />
                         )}
@@ -762,7 +766,7 @@ export default function BuildingDetail({
                     {enrichedData.cadastre.owners && enrichedData.cadastre.owners.length > 0 && (
                       <div>
                         <div className="text-[11px] text-[#555566]">
-                          Registered Owner{enrichedData.cadastre.owners.length > 1 ? 's' : ''} (ANATI)
+                          {t('tools.scanner.buildingDetail.registeredOwnerAnati', { count: enrichedData.cadastre.owners.length })}
                         </div>
                         {enrichedData.cadastre.owners.map((owner, i) => (
                           <div key={i} className="text-sm text-[#f0f0f5] font-medium">
@@ -778,7 +782,7 @@ export default function BuildingDetail({
                     )}
                     {(enrichedData.cadastre.district || enrichedData.cadastre.province) && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Location</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldLocation')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium capitalize">
                           {[enrichedData.cadastre.corregimiento, enrichedData.cadastre.district, enrichedData.cadastre.province]
                             .filter(Boolean)
@@ -789,19 +793,19 @@ export default function BuildingDetail({
                     )}
                     {enrichedData.cadastre.parcelArea > 0 && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Parcel Area</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.parcelArea')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{fmt(enrichedData.cadastre.parcelArea)} m²</div>
                       </div>
                     )}
                     {enrichedData.cadastre.landUse && enrichedData.cadastre.landUse !== 'unknown' && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Land Use</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.landUse')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium capitalize">{enrichedData.cadastre.landUse}</div>
                       </div>
                     )}
                     {enrichedData.cadastre.assessedValue != null && enrichedData.cadastre.assessedValue > 0 && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Assessed Value</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.assessedValue')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{fmtCurrency(enrichedData.cadastre.assessedValue)}</div>
                       </div>
                     )}
@@ -813,7 +817,7 @@ export default function BuildingDetail({
                         className="flex items-center justify-center gap-1.5 w-full py-2 mt-1 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors text-xs text-[#0ea5e9] hover:text-[#00ffcc]"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
-                        View in Registro Publico
+                        {t('tools.scanner.buildingDetail.viewInRegistroPublico')}
                       </a>
                     )}
                   </div>
@@ -833,29 +837,29 @@ export default function BuildingDetail({
                 <GlassCard padding="md">
                   <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                     <Briefcase className="w-3.5 h-3.5 text-[#0ea5e9]" />
-                    Business License
+                    {t('tools.scanner.buildingDetail.businessLicenseTitle')}
                   </h3>
                   <div className="space-y-2.5">
                     {enrichedData.businessLicense.commercialName && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Commercial Name</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.commercialName')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.businessLicense.commercialName}</div>
                       </div>
                     )}
                     {enrichedData.businessLicense.legalName && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Legal Name</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.legalName')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.businessLicense.legalName}</div>
                       </div>
                     )}
                     {enrichedData.businessLicense.avisoNumber && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Aviso de Operacion</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.avisoOperacion')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.businessLicense.avisoNumber}</div>
                       </div>
                     )}
                     <div className="flex items-center gap-2">
-                      <div className="text-[11px] text-[#555566]">Status</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldStatus')}</div>
                       <span
                         className={`text-[11px] font-semibold px-2 py-0.5 rounded-full capitalize ${getBusinessStatusColor(enrichedData.businessLicense.status).bg} ${getBusinessStatusColor(enrichedData.businessLicense.status).text}`}
                       >
@@ -864,13 +868,13 @@ export default function BuildingDetail({
                     </div>
                     {enrichedData.businessLicense.activityDescription && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Activity</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldActivity')}</div>
                         <div className="text-sm text-[#c0c0d0]">{enrichedData.businessLicense.activityDescription}</div>
                       </div>
                     )}
                     {enrichedData.businessLicense.entryDate && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Since</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldSince')}</div>
                         <div className="text-sm text-[#c0c0d0]">{enrichedData.businessLicense.entryDate}</div>
                       </div>
                     )}
@@ -891,28 +895,28 @@ export default function BuildingDetail({
                 <GlassCard padding="md">
                   <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#00ffcc]" />
-                    Corporate Registry
+                    {t('tools.scanner.buildingDetail.corporateRegistryTitle')}
                   </h3>
                   <div className="space-y-2.5">
                     <div>
-                      <div className="text-[11px] text-[#555566]">Company</div>
+                      <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldCompany')}</div>
                       <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.corporateInfo.companyName}</div>
                     </div>
                     {enrichedData.corporateInfo.companyNumber && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Registration #</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.registrationNumber')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium">{enrichedData.corporateInfo.companyNumber}</div>
                       </div>
                     )}
                     {enrichedData.corporateInfo.status && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Status</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.fieldStatus')}</div>
                         <div className="text-sm text-[#f0f0f5] font-medium capitalize">{enrichedData.corporateInfo.status}</div>
                       </div>
                     )}
                     {enrichedData.corporateInfo.incorporationDate && (
                       <div>
-                        <div className="text-[11px] text-[#555566]">Incorporated</div>
+                        <div className="text-[11px] text-[#555566]">{t('tools.scanner.buildingDetail.incorporated')}</div>
                         <div className="text-sm text-[#c0c0d0]">{enrichedData.corporateInfo.incorporationDate}</div>
                       </div>
                     )}
@@ -925,7 +929,7 @@ export default function BuildingDetail({
                           className="flex items-center gap-1.5 text-xs text-[#8888a0] hover:text-[#f0f0f5] transition-colors w-full"
                         >
                           <Users className="w-3 h-3" />
-                          <span>Officers ({enrichedData.corporateInfo.officers.length})</span>
+                          <span>{t('tools.scanner.buildingDetail.officersCount', { count: enrichedData.corporateInfo.officers.length })}</span>
                           {showOfficers ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
                         </button>
                         <AnimatePresence>
@@ -994,7 +998,7 @@ export default function BuildingDetail({
                     className="flex items-center gap-1.5 text-[11px] text-[#555566] uppercase tracking-wider hover:text-[#8888a0] transition-colors w-full mb-2"
                   >
                     <Store className="w-3 h-3" />
-                    Businesses Nearby ({enrichedData.nearbyBusinesses.length})
+                    {t('tools.scanner.buildingDetail.businessesNearby', { count: enrichedData.nearbyBusinesses.length })}
                     {showNearby ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
                   </button>
                   <AnimatePresence>
@@ -1031,7 +1035,7 @@ export default function BuildingDetail({
                                   <a
                                     href={buildCallUrl(biz.phone)}
                                     className="p-1 rounded bg-[#0ea5e9]/10 hover:bg-[#0ea5e9]/20 transition-colors"
-                                    title="Call"
+                                    title={t('tools.scanner.buildingDetail.callTooltip')}
                                   >
                                     <Phone className="w-3 h-3 text-[#0ea5e9]" />
                                   </a>
@@ -1084,7 +1088,7 @@ export default function BuildingDetail({
                   className="text-[10px] text-[#8888a0] hover:text-[#00ffcc] transition-colors flex items-center gap-1"
                 >
                   <Search className="w-3 h-3" />
-                  Refresh
+                  {t('tools.scanner.buildingDetail.refresh')}
                 </button>
               </div>
             </GlassCard>
@@ -1100,7 +1104,7 @@ export default function BuildingDetail({
                 icon={<Sparkles className="w-5 h-5" />}
                 onClick={onAnalyze}
               >
-                Analyze Solar Potential
+                {t('tools.scanner.buildingDetail.analyzeSolarPotential')}
               </Button>
             </div>
           )}
@@ -1111,7 +1115,7 @@ export default function BuildingDetail({
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-4 h-4 text-[#00ffcc]" />
                   <span className="text-sm font-medium text-[#f0f0f5]">
-                    Analyzing...
+                    {t('tools.scanner.buildingDetail.analyzingEllipsis')}
                   </span>
                 </div>
                 {[1, 2, 3, 4].map((i) => (
@@ -1136,10 +1140,10 @@ export default function BuildingDetail({
               {/* Hero Metrics */}
               <div className="grid grid-cols-2 gap-2.5">
                 {[
-                  { label: 'System Size', value: `${fmt(kwp, 1)} kWp`, icon: Zap, color: '#00ffcc' },
-                  { label: 'Annual Energy', value: `${fmt(yearlyKwh)} kWh`, icon: Sun, color: '#f59e0b' },
-                  { label: 'Panels', value: `${fmt(panelCount)}`, icon: Layers, color: '#8b5cf6' },
-                  { label: 'Investment', value: fmtCurrency(investment), icon: DollarSign, color: '#0ea5e9' },
+                  { label: t('tools.scanner.buildingDetail.metricSystemSize'), value: `${fmt(kwp, 1)} kWp`, icon: Zap, color: '#00ffcc' },
+                  { label: t('tools.scanner.buildingDetail.metricAnnualEnergy'), value: `${fmt(yearlyKwh)} kWh`, icon: Sun, color: '#f59e0b' },
+                  { label: t('tools.scanner.buildingDetail.metricPanels'), value: `${fmt(panelCount)}`, icon: Layers, color: '#8b5cf6' },
+                  { label: t('tools.scanner.buildingDetail.metricInvestment'), value: fmtCurrency(investment), icon: DollarSign, color: '#0ea5e9' },
                 ].map((metric) => (
                   <div
                     key={metric.label}
@@ -1160,7 +1164,7 @@ export default function BuildingDetail({
               <GlassCard padding="md">
                 <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <BarChart3 className="w-3.5 h-3.5 text-[#0ea5e9]" />
-                  Monthly Production
+                  {t('tools.scanner.monthlyChart')}
                 </h3>
                 <div className="h-32">
                   <ResponsiveContainer width="100%" height="100%">
@@ -1187,7 +1191,7 @@ export default function BuildingDetail({
                           color: '#f0f0f5',
                           fontSize: 12,
                         }}
-                        formatter={(value: number) => [fmt(value) + ' kWh', 'Production']}
+                        formatter={(value: number) => [fmt(value) + ' kWh', t('tools.scanner.buildingDetail.production')]}
                       />
                       <Bar dataKey="production" fill="url(#detailBarGrad)" radius={[3, 3, 0, 0]} />
                     </BarChart>
@@ -1198,15 +1202,15 @@ export default function BuildingDetail({
               {/* Financial Row */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="text-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <div className="text-[10px] text-[#555566] mb-1">Savings/yr</div>
+                  <div className="text-[10px] text-[#555566] mb-1">{t('tools.scanner.buildingDetail.financialSavingsYr')}</div>
                   <div className="text-sm font-bold text-[#22c55e]">{fmtCurrency(savings)}</div>
                 </div>
                 <div className="text-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <div className="text-[10px] text-[#555566] mb-1">Payback</div>
-                  <div className="text-sm font-bold text-[#0ea5e9]">{payback.toFixed(1)} yrs</div>
+                  <div className="text-[10px] text-[#555566] mb-1">{t('tools.scanner.buildingDetail.financialPayback')}</div>
+                  <div className="text-sm font-bold text-[#0ea5e9]">{t('tools.scanner.buildingDetail.yearsAbbrev', { value: payback.toFixed(1) })}</div>
                 </div>
                 <div className="text-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <div className="text-[10px] text-[#555566] mb-1">CO2/yr</div>
+                  <div className="text-[10px] text-[#555566] mb-1">{t('tools.scanner.buildingDetail.financialCo2Yr')}</div>
                   <div className="text-sm font-bold text-[#00ffcc]">{fmt(co2, 1)} t</div>
                 </div>
               </div>
@@ -1231,7 +1235,7 @@ export default function BuildingDetail({
               onClick={() => onSaveAsLead(enrichedData ?? undefined)}
               disabled={isLeadSaved}
             >
-              {isLeadSaved ? 'Saved as Lead' : 'Save as Lead'}
+              {isLeadSaved ? t('tools.scanner.buildingDetail.savedAsLead') : t('leads.saveAsLead')}
             </Button>
           )}
           {building.analyzed && analysis && (
@@ -1245,7 +1249,7 @@ export default function BuildingDetail({
                   onClick={handleGenerateProposal}
                   disabled={isGeneratingProposal}
                 >
-                  {isGeneratingProposal ? 'Generando…' : 'Generar Propuesta'}
+                  {isGeneratingProposal ? t('tools.scanner.buildingDetail.generatingEllipsis') : t('leads.generateProposal')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -1253,7 +1257,7 @@ export default function BuildingDetail({
                   icon={<Download className="w-4 h-4" />}
                   onClick={handleDownloadPdf}
                 >
-                  Descargar PDF
+                  {t('tools.proposalGenerator.downloadPDF')}
                 </Button>
               </div>
               <Button
@@ -1262,7 +1266,7 @@ export default function BuildingDetail({
                 icon={<ArrowRight className="w-4 h-4" />}
                 onClick={handleOpenProposalEditor}
               >
-                Abrir editor de propuesta
+                {t('tools.scanner.buildingDetail.openProposalEditor')}
               </Button>
               <Button
                 variant="secondary"
@@ -1270,7 +1274,7 @@ export default function BuildingDetail({
                 icon={<ExternalLink className="w-4 h-4" />}
                 onClick={() => navigate('/projects')}
               >
-                Guardar en proyecto
+                {t('tools.scanner.saveToProject')}
               </Button>
             </>
           )}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Building2,
   MapPin,
@@ -47,6 +48,7 @@ export function LeadCard({
   onStatusChange,
   onEnrich,
 }: LeadCardProps) {
+  const { t } = useTranslation();
   const [statusOpen, setStatusOpen] = useState(false);
   const statusConfig = LEAD_STATUS_CONFIG[lead.status];
   const displayName = lead.enrichment?.businessName || lead.buildingName;
@@ -205,7 +207,7 @@ export function LeadCard({
             <button
               onClick={() => onCall?.(lead)}
               className="w-7 h-7 rounded-md flex items-center justify-center bg-[#22c55e]/10 hover:bg-[#22c55e]/20 transition-colors"
-              title="Call"
+              title={t('leads.card.call')}
             >
               <Phone className="w-3 h-3 text-[#22c55e]" />
             </button>
@@ -214,7 +216,7 @@ export function LeadCard({
             <button
               onClick={() => onWhatsApp?.(lead)}
               className="w-7 h-7 rounded-md flex items-center justify-center bg-[#25d366]/10 hover:bg-[#25d366]/20 transition-colors"
-              title="WhatsApp"
+              title={t('leads.card.whatsapp')}
             >
               <MessageCircle className="w-3 h-3 text-[#25d366]" />
             </button>
@@ -223,7 +225,7 @@ export function LeadCard({
             <button
               onClick={() => onEnrich?.(lead)}
               className="w-7 h-7 rounded-md flex items-center justify-center bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition-colors"
-              title="Enrich"
+              title={t('leads.card.enrich')}
             >
               <Sparkles className="w-3 h-3 text-[#8b5cf6]" />
             </button>

@@ -59,18 +59,18 @@ const GRADE_COLOR: Record<ScanCandidate['grade'], string> = {
 };
 
 /** Tier badge for land candidates */
-const TIER_LABEL: Record<NonNullable<ScanCandidate['tier']>, { label: string; bg: string; text: string }> = {
-  comercial: { label: 'Comercial', bg: 'bg-blue-500/20', text: 'text-blue-300' },
-  agro: { label: 'Agro', bg: 'bg-[#D4A843]/20', text: 'text-[#D4A843]' },
-  utility: { label: 'Utility', bg: 'bg-purple-500/20', text: 'text-purple-300' },
+const TIER_LABEL: Record<NonNullable<ScanCandidate['tier']>, { labelKey: string; bg: string; text: string }> = {
+  comercial: { labelKey: 'tools.scanner.review.tierCommercial', bg: 'bg-blue-500/20', text: 'text-blue-300' },
+  agro: { labelKey: 'tools.scanner.review.tierAgro', bg: 'bg-[#D4A843]/20', text: 'text-[#D4A843]' },
+  utility: { labelKey: 'tools.scanner.review.tierUtility', bg: 'bg-purple-500/20', text: 'text-purple-300' },
 };
 
 /** Reason options shown in the inline reject menu */
-const REJECT_REASONS: { value: CandidateRejectionReason; label: string }[] = [
-  { value: 'has_pv', label: 'Tiene PV' },
-  { value: 'not_a_roof', label: 'No es techo' },
-  { value: 'too_small', label: 'Muy pequeño' },
-  { value: 'other', label: 'Otro' },
+const REJECT_REASONS: { value: CandidateRejectionReason; labelKey: string }[] = [
+  { value: 'has_pv', labelKey: 'tools.scanner.review.reasonHasPv' },
+  { value: 'not_a_roof', labelKey: 'tools.scanner.review.reasonNotARoof' },
+  { value: 'too_small', labelKey: 'tools.scanner.review.reasonTooSmall' },
+  { value: 'other', labelKey: 'tools.scanner.review.reasonOther' },
 ];
 
 // ===== INLINE REJECT MENU =====
@@ -81,6 +81,7 @@ interface RejectMenuProps {
 }
 
 function RejectMenu({ onPick, onCancel }: RejectMenuProps) {
+  const { t } = useTranslation();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.92, y: -4 }}
@@ -95,7 +96,7 @@ function RejectMenu({ onPick, onCancel }: RejectMenuProps) {
           onClick={(e) => { e.stopPropagation(); onPick(r.value); }}
           className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-red-500/15 border border-red-500/25 text-red-400 hover:bg-red-500/25 transition-colors whitespace-nowrap"
         >
-          {r.label}
+          {t(r.labelKey)}
         </button>
       ))}
       <button
@@ -137,6 +138,8 @@ function CandidateRow({
   onRejectPick,
   onRejectCancel,
 }: RowProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
   const isLand = c.kind === 'land';
   const isRejectingThis = rejectingId === c.id;
   const gradeColor = GRADE_COLOR[c.grade];
@@ -146,13 +149,13 @@ function CandidateRow({
 
   const areaLabel = isLand
     ? `${c.area_ha.toFixed(2)} ha`
-    : `${Math.round(c.area_m2).toLocaleString('es')} m²`;
+    : `${Math.round(c.area_m2).toLocaleString(locale)} m²`;
 
   const capacityLabel = isLand
     ? c.estimated_mwp > 0 ? `${c.estimated_mwp.toFixed(1)} MWp` : '—'
     : c.estimated_kwp > 0 ? `${Math.round(c.estimated_kwp)} kWp` : '—';
 
-  const title = c.address ?? (isLand ? 'Terreno' : 'Techo');
+  const title = c.address ?? (isLand ? t('tools.scanner.review.landLabel') : t('tools.scanner.review.roofLabel'));
 
   return (
     <div
@@ -173,7 +176,7 @@ function CandidateRow({
             ? 'bg-[#D4A843] border-[#D4A843]'
             : 'border-white/20 hover:border-white/40'
         )}
-        aria-label={selected ? 'Deseleccionar' : 'Seleccionar'}
+        aria-label={selected ? t('tools.scanner.review.deselect') : t('tools.scanner.review.select')}
       >
         {selected && <Check size={9} className="text-black" />}
       </button>
@@ -183,7 +186,7 @@ function CandidateRow({
         onClick={() => onFocus(c)}
         className="flex-1 min-w-0 text-left"
         disabled={working}
-        aria-label={`Enfocar ${title} en mapa`}
+        aria-label={t('tools.scanner.review.focusOnMap', { title })}
       >
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
           <span className="text-xs shrink-0">{isLand ? '🌾' : '🏠'}</span>
@@ -192,7 +195,7 @@ function CandidateRow({
           {/* Tier badge (land only) */}
           {tier && (
             <span className={cn('shrink-0 px-1 py-0.5 rounded text-[8px] font-bold', tier.bg, tier.text)}>
-              {tier.label}
+              {t(tier.labelKey)}
             </span>
           )}
 
@@ -207,11 +210,11 @@ function CandidateRow({
           {/* PV badges */}
           {hasPv && (
             <span className="shrink-0 px-1 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-              ☀️ Tiene PV
+              ☀️ {t('tools.scanner.review.hasPvBadge')}
             </span>
           )}
           {!hasPv && pvPending && (
-            <span className="shrink-0 text-[8px] text-white/25 italic">⏳ Verificación PV pendiente</span>
+            <span className="shrink-0 text-[8px] text-white/25 italic">⏳ {t('tools.scanner.review.pvPendingBadge')}</span>
           )}
         </div>
 
@@ -245,16 +248,16 @@ function CandidateRow({
             <button
               onClick={() => onApprove(c.id)}
               className="w-7 h-7 rounded-lg bg-[#00ffcc]/10 border border-[#00ffcc]/25 text-[#00ffcc] flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors"
-              aria-label="Aprobar — agregar como lead"
-              title="Aprobar"
+              aria-label={t('tools.scanner.review.approveAria')}
+              title={t('tools.scanner.review.approve')}
             >
               <Check size={12} />
             </button>
             <button
               onClick={() => onRejectStart(c.id)}
               className="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition-colors"
-              aria-label="Rechazar candidato"
-              title="Rechazar"
+              aria-label={t('tools.scanner.review.rejectAria')}
+              title={t('tools.scanner.review.reject')}
             >
               <X size={12} />
             </button>
@@ -296,7 +299,7 @@ export default function CandidateReviewPanel({
   );
 
   const pendingCount = sorted.length;
-  const kindLabel = kind === 'land' ? 'terrenos' : 'techos';
+  const kindLabel = kind === 'land' ? t('tools.scanner.review.kindLand') : t('tools.scanner.review.kindRoof');
 
   const toggleSelect = useCallback((id: string) => {
     setSelected((prev) => {
@@ -360,14 +363,14 @@ export default function CandidateReviewPanel({
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A843] shrink-0" />
           <span className="text-xs font-semibold text-[#f0f0f5]">
-            Revisión de candidatos
+            {t('tools.scanner.review.headerTitle')}
           </span>
           <span className="text-[10px] font-bold text-[#D4A843] bg-[#D4A843]/10 rounded-full px-1.5 py-0.5">
-            {pendingCount} pendientes
+            {t('tools.scanner.review.pendingCount', { count: pendingCount })}
           </span>
           {approvedToday > 0 && (
             <span className="text-[10px] text-[#00ffcc]">
-              · {approvedToday} aprobados hoy
+              · {t('tools.scanner.review.approvedTodayCount', { count: approvedToday })}
             </span>
           )}
         </div>
@@ -380,13 +383,13 @@ export default function CandidateReviewPanel({
             'border-[#D4A843]/40 text-[#D4A843]/80 hover:border-[#D4A843]/70 hover:text-[#D4A843]',
             'disabled:opacity-40'
           )}
-          title={`Re-escanear ${kindLabel} con filtros aprendidos`}
+          title={t('tools.scanner.review.rescanTooltip', { kind: kindLabel })}
         >
           {reScanWorking
             ? <Loader2 size={9} className="animate-spin" />
             : <RefreshCw size={9} />
           }
-          Re-escanear
+          {t('tools.scanner.review.rescan')}
         </button>
       </div>
 
@@ -405,10 +408,10 @@ export default function CandidateReviewPanel({
                 onClick={selectAll}
                 className="text-[10px] text-[#555566] hover:text-[#8888a0] transition-colors"
               >
-                Todos
+                {t('tools.scanner.review.selectAllShort')}
               </button>
               <span className="text-[10px] text-[#555566] flex-1">
-                {selected.size} seleccionados
+                {t('tools.scanner.review.selectedCount', { count: selected.size })}
               </span>
               {bulkWorking ? (
                 <Loader2 size={12} className="animate-spin text-[#555566]" />
@@ -418,19 +421,19 @@ export default function CandidateReviewPanel({
                     onClick={handleBulkApprove}
                     className="px-2 py-1 rounded-lg bg-[#00ffcc]/10 border border-[#00ffcc]/25 text-[#00ffcc] text-[10px] font-semibold hover:bg-[#00ffcc]/20 transition-colors flex items-center gap-1"
                   >
-                    <Check size={10} /> Aprobar
+                    <Check size={10} /> {t('tools.scanner.review.approve')}
                   </button>
                   <button
                     onClick={handleBulkReject}
                     className="px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-semibold hover:bg-red-500/20 transition-colors flex items-center gap-1"
                   >
-                    <X size={10} /> Rechazar
+                    <X size={10} /> {t('tools.scanner.review.reject')}
                   </button>
                   <button
                     onClick={clearSelected}
                     className="text-[10px] text-[#555566] hover:text-[#8888a0] transition-colors"
                   >
-                    Limpiar
+                    {t('tools.scanner.review.clear')}
                   </button>
                 </>
               )}
@@ -446,7 +449,7 @@ export default function CandidateReviewPanel({
             onClick={selectAll}
             className="text-[10px] text-[#555566] hover:text-[#8888a0] transition-colors"
           >
-            Seleccionar todos
+            {t('tools.scanner.review.selectAllFull')}
           </button>
         </div>
       )}
@@ -456,7 +459,7 @@ export default function CandidateReviewPanel({
         {loading && sorted.length === 0 && (
           <div className="flex items-center justify-center py-10 gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-[#D4A843]" />
-            <span className="text-xs text-[#555566]">Cargando candidatos…</span>
+            <span className="text-xs text-[#555566]">{t('tools.scanner.review.loadingCandidates')}</span>
           </div>
         )}
 

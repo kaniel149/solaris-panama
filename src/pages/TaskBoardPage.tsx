@@ -47,13 +47,14 @@ const PRIORITY_COLORS: Record<TaskPriority, { text: string; bg: string }> = {
   high: { text: 'text-[#ef4444]', bg: 'bg-[#ef4444]/10' },
 };
 
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('es-PA', { day: '2-digit', month: 'short' });
+function fmtDate(iso: string, locale: string) {
+  return new Date(iso).toLocaleDateString(locale, { day: '2-digit', month: 'short' });
 }
 
 export default function TaskBoardPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [overdueEvents, setOverdueEvents] = useState<LeadEvent[]>([]);
@@ -208,7 +209,7 @@ export default function TaskBoardPage() {
                     </>
                   )}
                   <span className="text-[10px] text-[#ef4444] ml-1">
-                    {fmtDate(ev.starts_at)}
+                    {fmtDate(ev.starts_at, locale)}
                   </span>
                 </div>
               ))}
@@ -300,7 +301,7 @@ export default function TaskBoardPage() {
                                 : 'bg-white/[0.04] text-[#8888a0]'
                             )}>
                               <Clock className="w-3 h-3" />
-                              {fmtDate(task.due_date)}
+                              {fmtDate(task.due_date, locale)}
                               {overdue && ` · ${t('tasks.overdue')}`}
                             </span>
                           )}
@@ -389,7 +390,7 @@ export default function TaskBoardPage() {
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                  placeholder="Descripción (opcional)"
+                  placeholder={t('tasks.optionalDescription')}
                   rows={2}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 resize-none"
                 />
@@ -436,7 +437,7 @@ export default function TaskBoardPage() {
                         onClick={() => setForm((p) => ({ ...p, lead_id: '', leadSearch: '' }))}
                         className="w-full px-4 py-2 text-left text-xs text-[#555570] hover:bg-white/[0.04] transition-colors"
                       >
-                        Sin lead
+                        {t('calendar.noLead')}
                       </button>
                       {filteredLeads.map((l) => (
                         <button

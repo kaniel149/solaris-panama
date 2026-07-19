@@ -9,6 +9,7 @@
 
 import { useState } from 'react';
 import { Search, ExternalLink, UserPlus, Save, Phone, Mail, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import { buildWhatsAppUrl, buildCallUrl } from '@/services/ownerResearchService';
@@ -39,6 +40,7 @@ export function OwnerOsintTools({
   fincaNumber,
   onManualOwner,
 }: OwnerOsintToolsProps) {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -51,14 +53,14 @@ export function OwnerOsintTools({
 
   // Pre-filled OSINT searches — each opens in a new tab. No API keys, no scraping.
   const links: Array<{ label: string; hint: string; url: string }> = [
-    { label: 'Registro Público', hint: fincaNumber ? `Finca ${fincaNumber}` : 'Propietario', url: 'https://www.rpautoconsulta.gob.pa/' },
-    { label: 'Google', hint: 'dueño · contacto', url: `https://www.google.com/search?q=${enc(`${query} propietario OR dueño OR contacto Panamá`)}` },
-    { label: 'OpenCorporates', hint: 'empresas PA', url: `https://opencorporates.com/companies/pa?q=${enc(entity)}` },
-    { label: 'Panamá Emprende', hint: 'Aviso Operación', url: 'https://www.panamaemprende.gob.pa/' },
-    { label: 'Google Maps', hint: 'ubicación', url: `https://www.google.com/maps/search/?api=1&query=${enc(latlng)}` },
-    { label: 'Street View', hint: 'fachada', url: `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${enc(latlng)}` },
-    { label: 'LinkedIn', hint: 'empresa', url: `https://www.linkedin.com/search/results/companies/?keywords=${enc(entity)}` },
-    { label: 'Facebook', hint: 'página', url: `https://www.facebook.com/search/top?q=${enc(entity)}` },
+    { label: 'Registro Público', hint: fincaNumber ? t('tools.scanner.osint.hintLot', { number: fincaNumber }) : t('tools.scanner.osint.hintOwner'), url: 'https://www.rpautoconsulta.gob.pa/' },
+    { label: 'Google', hint: t('tools.scanner.osint.hintOwnerContact'), url: `https://www.google.com/search?q=${enc(`${query} propietario OR dueño OR contacto Panamá`)}` },
+    { label: 'OpenCorporates', hint: t('tools.scanner.osint.hintCompaniesPa'), url: `https://opencorporates.com/companies/pa?q=${enc(entity)}` },
+    { label: 'Panamá Emprende', hint: t('tools.scanner.osint.hintBusinessNotice'), url: 'https://www.panamaemprende.gob.pa/' },
+    { label: 'Google Maps', hint: t('tools.scanner.osint.hintLocation'), url: `https://www.google.com/maps/search/?api=1&query=${enc(latlng)}` },
+    { label: 'Street View', hint: t('tools.scanner.osint.hintFacade'), url: `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${enc(latlng)}` },
+    { label: 'LinkedIn', hint: t('tools.scanner.osint.hintCompany'), url: `https://www.linkedin.com/search/results/companies/?keywords=${enc(entity)}` },
+    { label: 'Facebook', hint: t('tools.scanner.osint.hintPage'), url: `https://www.facebook.com/search/top?q=${enc(entity)}` },
   ];
 
   const cleanPhone = phone.replace(/\D/g, '');
@@ -85,7 +87,7 @@ export function OwnerOsintTools({
     <GlassCard padding="md">
       <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
         <Search className="w-3.5 h-3.5 text-[#00ffcc]" />
-        OSINT — Encontrar al propietario
+        {t('tools.scanner.osint.title')}
       </h3>
 
       <div className="grid grid-cols-2 gap-2">
@@ -115,7 +117,7 @@ export function OwnerOsintTools({
             icon={<UserPlus className="w-3.5 h-3.5" />}
             onClick={() => setShowForm(true)}
           >
-            Ingresar propietario manualmente
+            {t('tools.scanner.osint.enterManually')}
           </Button>
         ) : (
           <div className="space-y-2">
@@ -123,7 +125,7 @@ export function OwnerOsintTools({
               <User className="w-4 h-4 text-[#8b5cf6] shrink-0" />
               <input
                 className={inputCls}
-                placeholder="Nombre del propietario / empresa"
+                placeholder={t('tools.scanner.osint.placeholderName')}
                 value={name}
                 onChange={(e) => { setName(e.target.value); setSaved(false); }}
               />
@@ -132,7 +134,7 @@ export function OwnerOsintTools({
               <Phone className="w-4 h-4 text-[#22c55e] shrink-0" />
               <input
                 className={inputCls}
-                placeholder="Teléfono (ej. 6XXXXXXX)"
+                placeholder={t('tools.scanner.osint.placeholderPhone')}
                 inputMode="tel"
                 value={phone}
                 onChange={(e) => { setPhone(e.target.value); setSaved(false); }}
@@ -142,7 +144,7 @@ export function OwnerOsintTools({
               <Mail className="w-4 h-4 text-[#f59e0b] shrink-0" />
               <input
                 className={inputCls}
-                placeholder="Email (opcional)"
+                placeholder={t('tools.scanner.osint.placeholderEmail')}
                 inputMode="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setSaved(false); }}
@@ -156,10 +158,10 @@ export function OwnerOsintTools({
               onClick={handleSave}
               disabled={!canSave}
             >
-              {saved ? 'Guardado ✓ — listo para lead y propuesta' : 'Guardar contacto'}
+              {saved ? t('tools.scanner.osint.savedConfirmation') : t('tools.scanner.osint.saveContact')}
             </Button>
             {!canSave && (
-              <p className="text-[10px] text-[#555566] text-center">Ingresa al menos un nombre o un teléfono.</p>
+              <p className="text-[10px] text-[#555566] text-center">{t('tools.scanner.osint.needNameOrPhone')}</p>
             )}
           </div>
         )}

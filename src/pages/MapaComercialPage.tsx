@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2,
@@ -58,11 +59,11 @@ function ConfidenceBadge({ value }: { value: DekelLead['confidence'] }) {
 
 type SortKey = 'rank' | 'kwp' | 'epc_gp' | 'ppa_npv';
 
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'rank',    label: 'Ranking' },
-  { value: 'kwp',     label: 'Mayor capacidad' },
-  { value: 'epc_gp',  label: 'Mayor EPC GP' },
-  { value: 'ppa_npv', label: 'Mayor PPA NPV' },
+const SORT_OPTIONS: { value: SortKey; labelKey: string }[] = [
+  { value: 'rank',    labelKey: 'solarMap.sortRank' },
+  { value: 'kwp',     labelKey: 'solarMap.sortCapacity' },
+  { value: 'epc_gp',  labelKey: 'solarMap.sortEpcGp' },
+  { value: 'ppa_npv', labelKey: 'solarMap.sortPpaNpv' },
 ];
 
 // ─── unique segments ─────────────────────────────────────────────────────────
@@ -83,6 +84,7 @@ const item = {
 // ─── lead card (grid) ────────────────────────────────────────────────────────
 
 function LeadGridCard({ lead }: { lead: DekelLead }) {
+  const { t } = useTranslation();
   return (
     <motion.article variants={item}>
       <GlassCard
@@ -120,25 +122,25 @@ function LeadGridCard({ lead }: { lead: DekelLead }) {
           <div className="grid grid-cols-2 gap-2 mb-3">
             <div className="bg-[#D4A843]/5 border border-[#D4A843]/15 rounded-lg p-2">
               <span className="block text-[9px] font-bold uppercase tracking-wider text-[#555570] mb-0.5">
-                Fase 1
+                {t('solarMap.colPhase1')}
               </span>
               <span className="text-sm font-bold text-[#D4A843]">{fmtKwp(lead.kwp)}</span>
             </div>
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2">
               <span className="block text-[9px] font-bold uppercase tracking-wider text-[#555570] mb-0.5">
-                EPC GP
+                {t('solarMap.epcGpLabel')}
               </span>
               <span className="text-sm font-bold text-[#00ffcc]">{fmtUSD(lead.epc_gp)}</span>
             </div>
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2">
               <span className="block text-[9px] font-bold uppercase tracking-wider text-[#555570] mb-0.5">
-                PPA Anual
+                {t('solarMap.ppaAnnualLabel')}
               </span>
               <span className="text-sm font-bold text-[#8b5cf6]">{fmtUSD(lead.ppa_margin)}</span>
             </div>
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2">
               <span className="block text-[9px] font-bold uppercase tracking-wider text-[#555570] mb-0.5">
-                PPA NPV
+                {t('solarMap.ppaNpvLabel')}
               </span>
               <span className="text-sm font-bold text-[#0ea5e9]">{fmtUSD(lead.ppa_npv)}</span>
             </div>
@@ -164,14 +166,14 @@ function LeadGridCard({ lead }: { lead: DekelLead }) {
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-[#D4A843]/10 border border-[#D4A843]/20 text-[#D4A843] hover:bg-[#D4A843]/20 hover:border-[#D4A843]/40 transition-all"
             >
               <MapPin className="w-3 h-3" />
-              Ver en mapa
+              {t('solarMap.viewOnMap')}
             </a>
             <Link
               to="/tools/scanner"
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white/[0.03] border border-white/[0.08] text-[#8888a0] hover:bg-[#00ffcc]/5 hover:border-[#00ffcc]/20 hover:text-[#00ffcc] transition-all"
             >
               <ScanLine className="w-3 h-3" />
-              Escanear
+              {t('solarMap.scanAction')}
             </Link>
           </div>
         </div>
@@ -185,6 +187,7 @@ function LeadGridCard({ lead }: { lead: DekelLead }) {
 type ViewMode = 'grid' | 'table';
 
 export default function MapaComercialPage() {
+  const { t } = useTranslation();
   const [search, setSearch]           = useState('');
   const [segment, setSegment]         = useState('');
   const [confidence, setConfidence]   = useState<DekelLead['confidence'] | ''>('');
@@ -291,7 +294,7 @@ export default function MapaComercialPage() {
                 icon={<Download className="w-4 h-4" />}
                 onClick={exportCsv}
               >
-                Exportar CSV
+                {t('solarMap.exportCsv')}
               </Button>
               <a
                 href="https://solaris-panama-share.vercel.app/"
@@ -310,11 +313,11 @@ export default function MapaComercialPage() {
       {/* ── stats row ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {[
-          { label: 'Clientes',        value: stats.count.toString(),          icon: <Building2 className="w-4 h-4" />,    color: '#f0f0f5' },
-          { label: 'Capacidad Fase 1', value: fmtKwp(stats.totalKwp),        icon: <Zap className="w-4 h-4" />,         color: '#D4A843' },
-          { label: 'EPC GP total',    value: fmtUSD(stats.totalEpc),          icon: <DollarSign className="w-4 h-4" />,  color: '#00ffcc' },
-          { label: 'PPA margen/año',  value: fmtUSD(stats.totalPpa),          icon: <TrendingUp className="w-4 h-4" />,  color: '#8b5cf6' },
-          { label: 'PPA NPV 20 años', value: fmtUSD(stats.totalNpv),          icon: <TrendingUp className="w-4 h-4" />,  color: '#0ea5e9' },
+          { label: t('solarMap.statClients'),        value: stats.count.toString(),          icon: <Building2 className="w-4 h-4" />,    color: '#f0f0f5' },
+          { label: t('solarMap.statCapacityPhase1'), value: fmtKwp(stats.totalKwp),        icon: <Zap className="w-4 h-4" />,         color: '#D4A843' },
+          { label: t('solarMap.statEpcGpTotal'),    value: fmtUSD(stats.totalEpc),          icon: <DollarSign className="w-4 h-4" />,  color: '#00ffcc' },
+          { label: t('solarMap.statPpaMarginYear'),  value: fmtUSD(stats.totalPpa),          icon: <TrendingUp className="w-4 h-4" />,  color: '#8b5cf6' },
+          { label: t('solarMap.statPpaNpv20Years'), value: fmtUSD(stats.totalNpv),          icon: <TrendingUp className="w-4 h-4" />,  color: '#0ea5e9' },
         ].map((s) => (
           <GlassCard key={s.label} padding="sm" className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5" style={{ color: s.color }}>
@@ -340,7 +343,7 @@ export default function MapaComercialPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar: Super 99, Tocumen, logística..."
+            placeholder={t('solarMap.searchPlaceholder')}
             className="w-full pl-9 pr-8 py-2 rounded-lg text-sm bg-[#12121a] border border-white/[0.06] text-[#c0c0d0] placeholder:text-[#555570] outline-none focus:border-[#D4A843]/40"
           />
           {search && (
@@ -365,7 +368,7 @@ export default function MapaComercialPage() {
             )}
           >
             <Filter className="w-3.5 h-3.5" />
-            Filtros
+            {t('solarMap.filters')}
             {(segment || confidence) && (
               <span className="w-4 h-4 rounded-full bg-[#D4A843] text-[#0d0d1a] text-[9px] font-bold flex items-center justify-center">
                 {[segment, confidence].filter(Boolean).length}
@@ -386,14 +389,14 @@ export default function MapaComercialPage() {
                 >
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-[#555570] mb-1.5">
-                      Sector
+                      {t('solarMap.sectorLabel')}
                     </label>
                     <select
                       value={segment}
                       onChange={(e) => setSegment(e.target.value)}
                       className="w-full px-2 py-1.5 rounded-lg text-sm bg-[#1a1a2e] border border-white/[0.06] text-[#c0c0d0] outline-none"
                     >
-                      <option value="">Todos los sectores</option>
+                      <option value="">{t('solarMap.allSectors')}</option>
                       {ALL_SEGMENTS.filter(Boolean).map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
@@ -401,14 +404,14 @@ export default function MapaComercialPage() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-[#555570] mb-1.5">
-                      Confianza
+                      {t('solarMap.confidenceLabel')}
                     </label>
                     <select
                       value={confidence}
                       onChange={(e) => setConfidence(e.target.value as DekelLead['confidence'] | '')}
                       className="w-full px-2 py-1.5 rounded-lg text-sm bg-[#1a1a2e] border border-white/[0.06] text-[#c0c0d0] outline-none"
                     >
-                      <option value="">Todos los niveles</option>
+                      <option value="">{t('solarMap.allLevels')}</option>
                       <option value="High">High</option>
                       <option value="Medium">Medium</option>
                       <option value="Low-Medium">Low-Medium</option>
@@ -417,14 +420,14 @@ export default function MapaComercialPage() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-[#555570] mb-1.5">
-                      Capacidad mínima
+                      {t('solarMap.minCapacity')}
                     </label>
                     <select
                       value={minKwp}
                       onChange={(e) => setMinKwp(Number(e.target.value))}
                       className="w-full px-2 py-1.5 rounded-lg text-sm bg-[#1a1a2e] border border-white/[0.06] text-[#c0c0d0] outline-none"
                     >
-                      <option value={0}>Sin mínimo</option>
+                      <option value={0}>{t('solarMap.noMinimum')}</option>
                       <option value={250}>250 kW+</option>
                       <option value={500}>500 kW+</option>
                       <option value={1000}>1 MW+</option>
@@ -436,7 +439,7 @@ export default function MapaComercialPage() {
                       onClick={() => { resetFilters(); setFilterOpen(false); }}
                       className="w-full py-1.5 rounded-lg text-xs font-semibold text-[#ef4444] bg-[#ef4444]/5 border border-[#ef4444]/15 hover:bg-[#ef4444]/10 transition-colors"
                     >
-                      Limpiar filtros
+                      {t('solarMap.clearFilters')}
                     </button>
                   )}
                 </motion.div>
@@ -452,7 +455,7 @@ export default function MapaComercialPage() {
           className="px-3 py-2 rounded-lg text-sm bg-[#12121a] border border-white/[0.06] text-[#8888a0] outline-none cursor-pointer hover:border-white/[0.12]"
         >
           {SORT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>Ordenar: {o.label}</option>
+            <option key={o.value} value={o.value}>{t('solarMap.sortPrefix', { label: t(o.labelKey) })}</option>
           ))}
         </select>
 
@@ -466,7 +469,7 @@ export default function MapaComercialPage() {
                 ? 'bg-[#D4A843]/10 text-[#D4A843]'
                 : 'text-[#555570] hover:text-[#8888a0]'
             )}
-            title="Vista en cuadrícula"
+            title={t('solarMap.gridViewTooltip')}
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
@@ -478,7 +481,7 @@ export default function MapaComercialPage() {
                 ? 'bg-[#D4A843]/10 text-[#D4A843]'
                 : 'text-[#555570] hover:text-[#8888a0]'
             )}
-            title="Vista en tabla"
+            title={t('solarMap.tableViewTooltip')}
           >
             <List className="w-4 h-4" />
           </button>
@@ -489,12 +492,12 @@ export default function MapaComercialPage() {
       {filtered.length === 0 && (
         <div className="rounded-xl border border-dashed border-white/[0.08] p-12 text-center">
           <Building2 className="w-10 h-10 text-[#555570] mx-auto mb-3" />
-          <p className="text-sm text-[#555570]">No se encontraron resultados.</p>
+          <p className="text-sm text-[#555570]">{t('solarMap.noResultsFound')}</p>
           <button
             onClick={resetFilters}
             className="mt-3 text-xs text-[#D4A843] hover:underline"
           >
-            Limpiar filtros
+            {t('solarMap.clearFilters')}
           </button>
         </div>
       )}
@@ -521,7 +524,17 @@ export default function MapaComercialPage() {
             <table className="w-full min-w-[900px]">
               <thead>
                 <tr className="border-b border-white/[0.06]">
-                  {['#', 'Cliente', 'Sector', 'Confianza', 'Fase 1', 'EPC GP', 'PPA Anual', 'PPA NPV', 'Acciones'].map((h) => (
+                  {[
+                    '#',
+                    t('solarMap.colClient'),
+                    t('solarMap.sectorLabel'),
+                    t('solarMap.confidenceLabel'),
+                    t('solarMap.colPhase1'),
+                    t('solarMap.epcGpLabel'),
+                    t('solarMap.ppaAnnualLabel'),
+                    t('solarMap.ppaNpvLabel'),
+                    t('solarMap.colActions'),
+                  ].map((h) => (
                     <th
                       key={h}
                       className="px-4 py-3 text-left text-[10px] font-semibold text-[#555570] uppercase tracking-wider whitespace-nowrap"
@@ -574,14 +587,14 @@ export default function MapaComercialPage() {
                           className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#D4A843]/10 border border-[#D4A843]/20 text-[#D4A843] hover:bg-[#D4A843]/20 transition-all whitespace-nowrap"
                         >
                           <MapPin className="w-3 h-3" />
-                          Mapa
+                          {t('solarMap.mapLinkShort')}
                         </a>
                         <Link
                           to="/tools/scanner"
                           className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white/[0.03] border border-white/[0.08] text-[#8888a0] hover:text-[#00ffcc] hover:border-[#00ffcc]/20 transition-all whitespace-nowrap"
                         >
                           <ScanLine className="w-3 h-3" />
-                          Escanear
+                          {t('solarMap.scanAction')}
                         </Link>
                       </div>
                     </td>
@@ -596,9 +609,8 @@ export default function MapaComercialPage() {
       {/* ── footer disclaimer ───────────────────────────────────────────────── */}
       <GlassCard padding="sm">
         <p className="text-[11px] text-[#555570] leading-relaxed">
-          <span className="font-semibold text-[#8888a0]">Supuestos:</span>{' '}
-          producción 1,450 kWh/kWp/año · EPC GP $250/kWp · PPA $0.13/kWh · O&M $18/kWp/año · NPV a 20 años al 10%.{' '}
-          Verificación requerida: factura eléctrica 12 meses, techo, propiedad, distribuidora y aprobación autoconsumo.
+          <span className="font-semibold text-[#8888a0]">{t('solarMap.assumptionsLabel')}</span>{' '}
+          {t('solarMap.assumptionsText')}
         </p>
       </GlassCard>
 

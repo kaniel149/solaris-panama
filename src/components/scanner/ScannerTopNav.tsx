@@ -67,6 +67,17 @@ export const PANAMA_ZONES: PanamaZone[] = [
   { id: 'tonosi',      label: 'Tonosí',            center: [-80.44, 7.40], zoom: 13 },
 ];
 
+/** Translation key for each zone label — used so the display name follows the active language */
+const ZONE_LABEL_KEYS: Record<string, string> = {
+  'panama-city': 'tools.scanner.zones.panamaCity',
+  'chitre': 'tools.scanner.zones.chitre',
+  'pedasi': 'tools.scanner.zones.pedasi',
+  'venao': 'tools.scanner.zones.venao',
+  'las-tablas': 'tools.scanner.zones.lasTablas',
+  'guarare': 'tools.scanner.zones.guarare',
+  'tonosi': 'tools.scanner.zones.tonosi',
+};
+
 // ===== CONSTANTS =====
 
 const cn = (...classes: (string | boolean | undefined | null)[]) =>
@@ -248,7 +259,7 @@ export default function ScannerTopNav({
                         ? 'bg-[#D4A843]/20 text-[#D4A843]'
                         : 'bg-[#D4A843]/15 text-[#D4A843] animate-pulse'
                     )}
-                    aria-label={`${counts!.pending} candidatos pendientes`}
+                    aria-label={t('tools.scanner.topnav.pendingCandidatesAria', { count: counts!.pending })}
                   >
                     {counts!.pending > 99 ? '99+' : counts!.pending}
                   </span>
@@ -264,7 +275,7 @@ export default function ScannerTopNav({
           <button
             onClick={() => scrollZones(-1)}
             className="shrink-0 w-7 h-[44px] flex items-center justify-center text-[#555566] hover:text-[#8888a0] transition-colors md:hidden"
-            aria-label="Desplazar zonas a la izquierda"
+            aria-label={t('tools.scanner.topnav.scrollZonesLeft')}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -274,7 +285,7 @@ export default function ScannerTopNav({
             className="bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl overflow-x-auto flex items-center"
             style={{ scrollbarWidth: 'none' }}
             role="listbox"
-            aria-label="Zonas de Panamá"
+            aria-label={t('tools.scanner.topnav.zonesListLabel')}
           >
             {PANAMA_ZONES.map((z) => (
               <button
@@ -290,7 +301,7 @@ export default function ScannerTopNav({
                 role="option"
                 aria-selected={zone === z.id}
               >
-                {z.label}
+                {t(ZONE_LABEL_KEYS[z.id])}
               </button>
             ))}
           </div>
@@ -299,7 +310,7 @@ export default function ScannerTopNav({
           <button
             onClick={() => scrollZones(1)}
             className="shrink-0 w-7 h-[44px] flex items-center justify-center text-[#555566] hover:text-[#8888a0] transition-colors md:hidden"
-            aria-label="Desplazar zonas a la derecha"
+            aria-label={t('tools.scanner.topnav.scrollZonesRight')}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -321,7 +332,7 @@ export default function ScannerTopNav({
                 )}
                 style={isActive ? { color, backgroundColor: `${color}18` } : undefined}
                 aria-pressed={isActive}
-                aria-label={`Filtrar grado ${g === 'all' ? t('tools.scanner.topnav.all') : g}`}
+                aria-label={t('tools.scanner.topnav.filterGradeAria', { grade: g === 'all' ? t('tools.scanner.topnav.all') : g })}
               >
                 {g === 'all' ? t('tools.scanner.topnav.all') : g}
               </button>
@@ -352,8 +363,8 @@ export default function ScannerTopNav({
             'bg-[#12121a]/85 backdrop-blur-xl border border-white/[0.06] rounded-xl',
             'text-[#8888a0] hover:text-white hover:border-[#00ffcc]/35 hover:bg-white/[0.03] transition-colors'
           )}
-          aria-label={`Idioma: ${currentLang.label} — clic para cambiar`}
-          title={`Idioma: ${currentLang.label} (clic para cambiar)`}
+          aria-label={t('tools.scanner.topnav.languageAria', { lang: currentLang.label })}
+          title={t('tools.scanner.topnav.languageTitle', { lang: currentLang.label })}
         >
           <Globe className="w-3.5 h-3.5 shrink-0" />
           <span className="tracking-wider">{currentLang.label}</span>
@@ -364,7 +375,7 @@ export default function ScannerTopNav({
           <div className="shrink-0 ml-auto bg-[#D4A843]/10 backdrop-blur-xl border border-[#D4A843]/25 rounded-xl px-3 py-2.5 flex items-center gap-1.5 min-h-[44px]">
             <div className="w-2 h-2 rounded-full bg-[#D4A843] animate-pulse shrink-0" />
             <span className="text-[11px] font-semibold text-[#D4A843] whitespace-nowrap">
-              {counts.pending} pendiente{counts.pending !== 1 ? 's' : ''}
+              {t('tools.scanner.topnav.pendingBadge', { count: counts.pending })}
             </span>
           </div>
         )}

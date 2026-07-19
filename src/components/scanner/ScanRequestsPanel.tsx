@@ -1,36 +1,38 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Radar, ChevronDown, Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { ScanRequest } from '@/services/scannerRpcService';
 
 interface ScanRequestsPanelProps {
   requests: ScanRequest[];
 }
 
-// status -> color + icon + Spanish label
+// status -> color + icon + i18n label key
 const STATUS_META: Record<
   ScanRequest['status'],
-  { color: string; label: string; icon: React.ReactNode; spin?: boolean }
+  { color: string; labelKey: string; icon: React.ReactNode; spin?: boolean }
 > = {
   queued: {
     color: '#f59e0b',
-    label: 'En cola',
+    labelKey: 'tools.scanner.requests.statusQueued',
     icon: <Clock className="w-3 h-3" />,
   },
   running: {
     color: '#0ea5e9',
-    label: 'Procesando',
+    labelKey: 'tools.scanner.requests.statusRunning',
     icon: <Loader2 className="w-3 h-3 animate-spin" />,
     spin: true,
   },
   done: {
     color: '#22c55e',
-    label: 'Listo',
+    labelKey: 'tools.scanner.requests.statusDone',
     icon: <CheckCircle2 className="w-3 h-3" />,
   },
   failed: {
     color: '#ef4444',
-    label: 'Falló',
+    labelKey: 'tools.scanner.requests.statusFailed',
     icon: <XCircle className="w-3 h-3" />,
   },
 };
@@ -39,15 +41,16 @@ function shortId(id: string): string {
   return id.slice(0, 8);
 }
 
-function leadsLabel(req: ScanRequest): string | null {
+function leadsLabel(req: ScanRequest, t: TFunction): string | null {
   if (req.status !== 'done') return null;
   const counts = req.counts || {};
   const inserted = Number(counts.inserted ?? counts.kept ?? counts.found ?? 0);
   if (!Number.isFinite(inserted)) return null;
-  return `${inserted} lead${inserted === 1 ? '' : 's'}`;
+  return t('tools.scanner.requests.leadsCount', { count: inserted });
 }
 
 export default function ScanRequestsPanel({ requests }: ScanRequestsPanelProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(true);
 
   if (requests.length === 0) return null;
@@ -66,11 +69,11 @@ export default function ScanRequestsPanel({ requests }: ScanRequestsPanelProps) 
         >
           <Radar className="w-4 h-4 text-[#00ffcc] shrink-0" />
           <span className="text-xs font-semibold text-[#f0f0f5] flex-1 text-left">
-            Escaneos de fondo
+            {t('tools.scanner.requests.title')}
           </span>
           {activeCount > 0 && (
             <span className="text-[10px] font-bold text-[#0ea5e9] bg-[#0ea5e9]/10 rounded-full px-1.5 py-0.5">
-              {activeCount} activo{activeCount === 1 ? '' : 's'}
+              {t('tools.scanner.requests.activeCount', { count: activeCount })}
             </span>
           )}
           <ChevronDown
@@ -91,7 +94,7 @@ export default function ScanRequestsPanel({ requests }: ScanRequestsPanelProps) 
               <div className="px-1.5 pb-1.5 max-h-[240px] overflow-y-auto space-y-1">
                 {requests.map((req) => {
                   const meta = STATUS_META[req.status];
-                  const leads = leadsLabel(req);
+                  const leads = leadsLabel(req, t);
                   return (
                     <div
                       key={req.id}
@@ -105,10 +108,10 @@ export default function ScanRequestsPanel({ requests }: ScanRequestsPanelProps) 
                         style={{ color: meta.color, backgroundColor: `${meta.color}1a` }}
                       >
                         {meta.icon}
-                        {meta.label}
+                        {t(meta.labelKey)}
                       </span>
                       <span className="flex-1 text-right text-[10px] text-[#8888a0] truncate">
-                        {leads ?? (req.status === 'failed' && req.error ? 'error' : '')}
+                        {leads ?? (req.status === 'failed' && req.error ? t('tools.scanner.requests.errorLabel') : '')}
                       </span>
                     </div>
                   );

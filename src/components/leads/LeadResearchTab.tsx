@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Phone, User, ExternalLink, Shield, Briefcase,
   Building2, Users, Search, MessageCircle,
@@ -36,6 +37,7 @@ export function LeadResearchTab({
   onResearchOwner,
   onEnrich,
 }: LeadResearchTabProps) {
+  const { t } = useTranslation();
   const e = lead.enrichment;
   const hasResearch = e && (e.confidenceScore != null && e.confidenceScore > 0);
 
@@ -47,9 +49,9 @@ export function LeadResearchTab({
           <Search className="w-8 h-8 text-[#8b5cf6]" />
         </div>
         <div className="text-center space-y-1.5">
-          <h3 className="text-lg font-semibold text-[#f0f0f5]">No Research Data</h3>
+          <h3 className="text-lg font-semibold text-[#f0f0f5]">{t('leads.research.noDataTitle')}</h3>
           <p className="text-sm text-[#555570] max-w-md">
-            Run Google Places enrichment first, then deep research to find owner information, business licenses, and corporate records.
+            {t('leads.research.noDataDesc')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -59,7 +61,7 @@ export function LeadResearchTab({
             loading={isEnriching}
             onClick={onEnrich}
           >
-            Enrich with Google Places
+            {t('leads.research.enrichGooglePlaces')}
           </Button>
           <Button
             variant="secondary"
@@ -67,7 +69,7 @@ export function LeadResearchTab({
             loading={isResearching}
             onClick={onResearchOwner}
           >
-            Deep Research
+            {t('leads.research.deepResearch')}
           </Button>
         </div>
       </div>
@@ -113,7 +115,7 @@ export function LeadResearchTab({
             loading={isResearching}
             onClick={onResearchOwner}
           >
-            Re-run Deep Research
+            {t('leads.research.rerunDeepResearch')}
           </Button>
           {!e.businessName && (
             <Button
@@ -123,7 +125,7 @@ export function LeadResearchTab({
               loading={isEnriching}
               onClick={onEnrich}
             >
-              Re-enrich Google Places
+              {t('leads.research.reenrichGooglePlaces')}
             </Button>
           )}
         </div>
@@ -135,25 +137,25 @@ export function LeadResearchTab({
         <GlassCard padding="md">
           <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
             <User className="w-3.5 h-3.5 text-[#00ffcc]" />
-            Contact Info
+            {t('leads.research.contactInfo')}
           </h3>
           <div className="space-y-3">
             {e.ownerName && (
               <div>
-                <div className="text-[11px] text-[#555570]">Owner / Occupant</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.ownerOccupant')}</div>
                 <div className="text-sm text-[#f0f0f5] font-medium">{e.ownerName}</div>
               </div>
             )}
             {e.businessName && (
               <div>
-                <div className="text-[11px] text-[#555570]">Business Name</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.businessName')}</div>
                 <div className="text-sm text-[#f0f0f5] font-medium">{e.businessName}</div>
               </div>
             )}
             {e.phone && (
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] text-[#555570]">Phone</div>
+                  <div className="text-[11px] text-[#555570]">{t('common.phone')}</div>
                   <div className="text-sm text-[#f0f0f5]">{formatPanamaPhone(e.phone)}</div>
                 </div>
                 <div className="flex gap-1.5">
@@ -162,14 +164,14 @@ export function LeadResearchTab({
                     target="_blank"
                     rel="noopener"
                     className="p-1.5 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors"
-                    title="WhatsApp"
+                    title={t('leads.card.whatsapp')}
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
                   </a>
                   <a
                     href={buildCallUrl(e.phone)}
                     className="p-1.5 rounded-lg bg-[#0ea5e9]/10 hover:bg-[#0ea5e9]/20 transition-colors"
-                    title="Call"
+                    title={t('leads.card.call')}
                   >
                     <Phone className="w-3.5 h-3.5 text-[#0ea5e9]" />
                   </a>
@@ -178,7 +180,7 @@ export function LeadResearchTab({
             )}
             {e.email && (
               <div>
-                <div className="text-[11px] text-[#555570]">Email</div>
+                <div className="text-[11px] text-[#555570]">{t('common.email')}</div>
                 <a href={`mailto:${e.email}`} className="text-sm text-[#0ea5e9] hover:underline">
                   {e.email}
                 </a>
@@ -186,7 +188,7 @@ export function LeadResearchTab({
             )}
             {e.website && (
               <div>
-                <div className="text-[11px] text-[#555570]">Website</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.website')}</div>
                 <a
                   href={e.website.startsWith('http') ? e.website : `https://${e.website}`}
                   target="_blank"
@@ -199,7 +201,7 @@ export function LeadResearchTab({
             )}
             {e.address && (
               <div>
-                <div className="text-[11px] text-[#555570]">Address</div>
+                <div className="text-[11px] text-[#555570]">{t('common.address')}</div>
                 <div className="text-sm text-[#c0c0d0]">{e.address}</div>
               </div>
             )}
@@ -224,12 +226,12 @@ export function LeadResearchTab({
             )}
             {e.rating != null && e.rating > 0 && (
               <div>
-                <div className="text-[11px] text-[#555570]">Google Rating</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.googleRating')}</div>
                 <div className="text-sm text-[#f59e0b] font-medium">{e.rating.toFixed(1)} / 5</div>
               </div>
             )}
             {!e.ownerName && !e.businessName && !e.phone && !e.email && (
-              <p className="text-xs text-[#555570]">No contact info found</p>
+              <p className="text-xs text-[#555570]">{t('leads.research.noContactInfo')}</p>
             )}
           </div>
         </GlassCard>
@@ -238,29 +240,29 @@ export function LeadResearchTab({
         <GlassCard padding="md">
           <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-[#f59e0b]" />
-            Cadastre / Property
+            {t('leads.research.cadastreProperty')}
           </h3>
           {e.cadastre ? (
             <div className="space-y-3">
               <div>
-                <div className="text-[11px] text-[#555570]">Finca Number</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.fincaNumber')}</div>
                 <div className="text-sm text-[#f0f0f5] font-medium font-mono">{e.cadastre.fincaNumber}</div>
               </div>
               {e.cadastre.parcelArea > 0 && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Parcel Area</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.parcelArea')}</div>
                   <div className="text-sm text-[#c0c0d0]">{new Intl.NumberFormat('en-US').format(e.cadastre.parcelArea)} m²</div>
                 </div>
               )}
               {e.cadastre.landUse && e.cadastre.landUse !== 'unknown' && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Land Use</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.landUse')}</div>
                   <div className="text-sm text-[#c0c0d0] capitalize">{e.cadastre.landUse}</div>
                 </div>
               )}
               {e.cadastre.assessedValue != null && e.cadastre.assessedValue > 0 && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Assessed Value</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.assessedValue')}</div>
                   <div className="text-sm text-[#c0c0d0]">
                     ${new Intl.NumberFormat('en-US').format(e.cadastre.assessedValue)}
                   </div>
@@ -274,12 +276,12 @@ export function LeadResearchTab({
                   className="flex items-center gap-1.5 text-xs text-[#0ea5e9] hover:underline mt-2"
                 >
                   <ExternalLink className="w-3 h-3" />
-                  View in Registro Publico
+                  {t('leads.research.viewRegistroPublico')}
                 </a>
               )}
             </div>
           ) : (
-            <p className="text-xs text-[#555570]">No cadastre data found</p>
+            <p className="text-xs text-[#555570]">{t('leads.research.noCadastreData')}</p>
           )}
         </GlassCard>
 
@@ -287,49 +289,49 @@ export function LeadResearchTab({
         <GlassCard padding="md">
           <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
             <Briefcase className="w-3.5 h-3.5 text-[#0ea5e9]" />
-            Business License
+            {t('leads.research.businessLicense')}
           </h3>
           {e.businessLicense ? (
             <div className="space-y-3">
               {e.businessLicense.commercialName && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Commercial Name</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.commercialName')}</div>
                   <div className="text-sm text-[#f0f0f5] font-medium">{e.businessLicense.commercialName}</div>
                 </div>
               )}
               {e.businessLicense.legalName && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Legal Name</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.legalName')}</div>
                   <div className="text-sm text-[#c0c0d0]">{e.businessLicense.legalName}</div>
                 </div>
               )}
               {e.businessLicense.avisoNumber && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Aviso de Operacion</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.avisoOperacion')}</div>
                   <div className="text-sm text-[#c0c0d0] font-mono">{e.businessLicense.avisoNumber}</div>
                 </div>
               )}
               <div>
-                <div className="text-[11px] text-[#555570]">Status</div>
+                <div className="text-[11px] text-[#555570]">{t('common.status')}</div>
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full capitalize ${getBusinessStatusColor(e.businessLicense.status)}`}>
                   {e.businessLicense.status}
                 </span>
               </div>
               {e.businessLicense.activityDescription && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Activity</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.activity')}</div>
                   <div className="text-sm text-[#c0c0d0]">{e.businessLicense.activityDescription}</div>
                 </div>
               )}
               {e.businessLicense.entryDate && (
                 <div>
-                  <div className="text-[11px] text-[#555570]">Since</div>
+                  <div className="text-[11px] text-[#555570]">{t('leads.research.since')}</div>
                   <div className="text-sm text-[#c0c0d0]">{e.businessLicense.entryDate}</div>
                 </div>
               )}
             </div>
           ) : (
-            <p className="text-xs text-[#555570]">No business license found</p>
+            <p className="text-xs text-[#555570]">{t('leads.research.noBusinessLicense')}</p>
           )}
         </GlassCard>
       </div>
@@ -339,34 +341,34 @@ export function LeadResearchTab({
         <GlassCard padding="md">
           <h3 className="text-xs font-semibold text-[#8888a0] uppercase tracking-wider mb-3 flex items-center gap-1.5">
             <Building2 className="w-3.5 h-3.5 text-[#00ffcc]" />
-            Corporate Registry
+            {t('leads.research.corporateRegistry')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <div className="text-[11px] text-[#555570]">Company Name</div>
+              <div className="text-[11px] text-[#555570]">{t('leads.research.companyName')}</div>
               <div className="text-sm text-[#f0f0f5] font-medium">{e.corporateInfo.companyName}</div>
             </div>
             {e.corporateInfo.companyNumber && (
               <div>
-                <div className="text-[11px] text-[#555570]">Registration #</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.registrationNumber')}</div>
                 <div className="text-sm text-[#c0c0d0] font-mono">{e.corporateInfo.companyNumber}</div>
               </div>
             )}
             {e.corporateInfo.status && (
               <div>
-                <div className="text-[11px] text-[#555570]">Status</div>
+                <div className="text-[11px] text-[#555570]">{t('common.status')}</div>
                 <div className="text-sm text-[#c0c0d0] capitalize">{e.corporateInfo.status}</div>
               </div>
             )}
             {e.corporateInfo.incorporationDate && (
               <div>
-                <div className="text-[11px] text-[#555570]">Incorporated</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.incorporated')}</div>
                 <div className="text-sm text-[#c0c0d0]">{e.corporateInfo.incorporationDate}</div>
               </div>
             )}
             {e.corporateInfo.registeredAddress && (
               <div className="md:col-span-2">
-                <div className="text-[11px] text-[#555570]">Registered Address</div>
+                <div className="text-[11px] text-[#555570]">{t('leads.research.registeredAddress')}</div>
                 <div className="text-sm text-[#c0c0d0]">{e.corporateInfo.registeredAddress}</div>
               </div>
             )}
@@ -376,15 +378,15 @@ export function LeadResearchTab({
             <div>
               <h4 className="text-[11px] text-[#555570] uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Users className="w-3 h-3" />
-                Officers ({e.corporateInfo.officers.length})
+                {t('leads.research.officers', { n: e.corporateInfo.officers.length })}
               </h4>
               <div className="rounded-lg border border-white/[0.06] overflow-hidden">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-white/[0.02]">
-                      <th className="text-left py-2 px-3 text-[#555570] font-medium">Name</th>
-                      <th className="text-left py-2 px-3 text-[#555570] font-medium">Role</th>
-                      <th className="text-left py-2 px-3 text-[#555570] font-medium">Since</th>
+                      <th className="text-left py-2 px-3 text-[#555570] font-medium">{t('common.name')}</th>
+                      <th className="text-left py-2 px-3 text-[#555570] font-medium">{t('leads.research.role')}</th>
+                      <th className="text-left py-2 px-3 text-[#555570] font-medium">{t('leads.research.since')}</th>
                     </tr>
                   </thead>
                   <tbody>

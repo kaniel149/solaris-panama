@@ -97,6 +97,7 @@ interface BottomSheetProps {
 }
 
 function BottomSheet({ snap, onSnapChange, children, peekContent }: BottomSheetProps) {
+  const { t } = useTranslation();
   const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
   const height = snapToHeight(snap, vh);
 
@@ -142,14 +143,14 @@ function BottomSheet({ snap, onSnapChange, children, peekContent }: BottomSheetP
         <button
           onClick={() => onSnapChange(snap === 'peek' ? 'half' : snap === 'half' ? 'full' : 'peek')}
           className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] text-[#8888a0] hover:text-[#f0f0f5] transition-colors"
-          aria-label={snap === 'full' ? 'Minimizar panel' : 'Expandir panel'}
+          aria-label={snap === 'full' ? t('tools.scanner.page.sheetMinimizePanelAria') : t('tools.scanner.page.sheetExpandPanelAria')}
         >
           {snap === 'full'
             ? <ChevronDown className="w-3.5 h-3.5" />
             : <ChevronUp className="w-3.5 h-3.5" />
           }
           <span className="hidden sm:inline">
-            {snap === 'peek' ? 'Expandir' : snap === 'half' ? 'Completo' : 'Minimizar'}
+            {snap === 'peek' ? t('tools.scanner.page.sheetExpand') : snap === 'half' ? t('tools.scanner.page.sheetFull') : t('tools.scanner.page.sheetMinimize')}
           </span>
         </button>
       </div>
@@ -190,10 +191,11 @@ interface ModeSegmentProps {
 }
 
 function ModeSegment({ mode, onChange, hasBuildingSelected }: ModeSegmentProps) {
+  const { t } = useTranslation();
   const options: { key: InternalScannerMode; label: string; icon: React.ReactNode }[] = [
-    { key: 'scan', label: 'Escanear', icon: <ScanLine className="w-3.5 h-3.5" /> },
-    { key: 'draw', label: 'Dibujar', icon: <PencilRuler className="w-3.5 h-3.5" /> },
-    { key: 'browse', label: 'Explorar', icon: <Building2 className="w-3.5 h-3.5" /> },
+    { key: 'scan', label: t('tools.scanner.page.modeScan'), icon: <ScanLine className="w-3.5 h-3.5" /> },
+    { key: 'draw', label: t('tools.scanner.page.modeDraw'), icon: <PencilRuler className="w-3.5 h-3.5" /> },
+    { key: 'browse', label: t('tools.scanner.page.modeBrowse'), icon: <Building2 className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -213,7 +215,7 @@ function ModeSegment({ mode, onChange, hasBuildingSelected }: ModeSegmentProps) 
                 ? 'text-[#333340] cursor-not-allowed'
                 : 'text-[#8888a0] hover:text-[#f0f0f5]'
             }`}
-            title={disabled ? 'Selecciona un edificio primero' : undefined}
+            title={disabled ? t('tools.scanner.page.selectBuildingFirst') : undefined}
           >
             {opt.icon}
             <span className="hidden xs:inline sm:inline">{opt.label}</span>
@@ -246,6 +248,7 @@ function MobileFABStack({
   onScanViewport,
   onOpenSearch,
 }: MobileFABStackProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-2">
       {/* Search */}
@@ -254,7 +257,7 @@ function MobileFABStack({
         onClick={onOpenSearch}
         style={{ minWidth: 44, minHeight: 44 }}
         className="w-11 h-11 rounded-full flex items-center justify-center bg-[#12121a]/90 border border-white/[0.08] shadow-lg backdrop-blur-xl"
-        aria-label="Buscar lugar"
+        aria-label={t('tools.scanner.page.searchPlaceAria')}
       >
         <Search className="w-5 h-5 text-[#8888a0]" />
       </motion.button>
@@ -270,7 +273,7 @@ function MobileFABStack({
             ? 'bg-[#00ffcc]/15 border-[#00ffcc]/30 shadow-[0_0_14px_rgba(0,255,204,0.2)]'
             : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#00ffcc]/25'
         }`}
-        aria-label="Escanear área"
+        aria-label={t('tools.scanner.page.scanAreaAria')}
       >
         <ScanLine className={`w-5 h-5 ${isScanning ? 'text-[#00ffcc] animate-spin' : 'text-[#8888a0]'}`} />
       </motion.button>
@@ -321,7 +324,8 @@ export default function RoofScannerPage() {
   const scanner = useRoofScanner();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
 
   const {
     buildings,
@@ -572,10 +576,10 @@ export default function RoofScannerPage() {
     }
     toast({
       type: 'success',
-      title: 'Factura procesada',
-      description: `Consumo mensual: ${data.monthly_kwh.toLocaleString('es-PA')} kWh/mes`,
+      title: t('tools.scanner.page.billProcessedTitle'),
+      description: t('tools.scanner.page.billProcessedDesc', { value: data.monthly_kwh.toLocaleString(locale) }),
     });
-  }, [toast]);
+  }, [toast, t, locale]);
 
   const handleSearchPlace = useCallback((result: GeocodingResult) => {
     setMapCenter([result.lng, result.lat]);
@@ -597,8 +601,8 @@ export default function RoofScannerPage() {
     if (Math.abs(maxLng - minLng) > MAX_BBOX_SIDE_DEG || Math.abs(maxLat - minLat) > MAX_BBOX_SIDE_DEG) {
       toast({
         type: 'warning',
-        title: 'Área demasiado grande',
-        description: `Acerca el mapa: cada lado debe ser menor a ${MAX_BBOX_SIDE_DEG}°.`,
+        title: t('tools.scanner.page.areaTooLargeTitle'),
+        description: t('tools.scanner.page.areaTooLargeDesc', { deg: MAX_BBOX_SIDE_DEG }),
       });
       return;
     }
@@ -617,17 +621,17 @@ export default function RoofScannerPage() {
 
     const result = await queueScan(areaGeojson, bbox, filters);
     if ('error' in result) {
-      toast({ type: 'error', title: 'No se pudo encolar el escaneo', description: result.error });
+      toast({ type: 'error', title: t('tools.scanner.page.queueFailedTitle'), description: result.error });
       return;
     }
     toast({
       type: 'success',
-      title: 'Escaneo encolado',
+      title: t('tools.scanner.page.queuedTitle'),
       description: tipo === 'land'
-        ? 'El cron buscará terrenos en el área seleccionada.'
-        : 'Los leads aparecerán a medida que el worker procese el área.',
+        ? t('tools.scanner.page.queuedDescLand')
+        : t('tools.scanner.page.queuedDescRoof'),
     });
-  }, [getActiveBounds, mapBounds, queueScan, toast, tipo]);
+  }, [getActiveBounds, mapBounds, queueScan, toast, tipo, t]);
 
   const handleBuildingSelect = useCallback(
     (id: number) => {
@@ -772,7 +776,7 @@ export default function RoofScannerPage() {
   const handleRoofDrawn = useCallback(
     async (payload: { polygon: GeoJSONPolygon; areaSqm: number; kwp: number }) => {
       if (!selectedBuilding) {
-        toast({ type: 'warning', title: 'Selecciona un edificio primero' });
+        toast({ type: 'warning', title: t('tools.scanner.page.selectBuildingFirst') });
         return;
       }
       const { polygon, areaSqm, kwp } = payload;
@@ -801,18 +805,18 @@ export default function RoofScannerPage() {
         await saveRoofGeom(scanId, polygon, areaSqm, kwp);
         toast({
           type: 'success',
-          title: 'Techo guardado',
-          description: `${areaSqm.toLocaleString()} m² · ~${kwp} kWp`,
+          title: t('tools.scanner.page.roofSavedTitle'),
+          description: t('tools.scanner.page.roofSavedDesc', { area: areaSqm.toLocaleString(locale), kwp }),
         });
       } catch (err) {
         toast({
           type: 'error',
-          title: 'Error al guardar el techo',
+          title: t('tools.scanner.page.roofSaveErrorTitle'),
           description: err instanceof Error ? err.message : undefined,
         });
       }
     },
-    [selectedBuilding, toast]
+    [selectedBuilding, toast, t, locale]
   );
 
   // ===== P3: Candidate confirm / reject (legacy DetectedRoofCandidate flow) =====
@@ -823,16 +827,16 @@ export default function RoofScannerPage() {
       try {
         await insertDetectedRoof(candidate);
         setDetectedCandidates((prev) => prev.filter((_, i) => i !== index));
-        toast({ type: 'success', title: 'Lead creado' });
+        toast({ type: 'success', title: t('tools.scanner.page.leadCreatedTitle') });
       } catch (err) {
         toast({
           type: 'error',
-          title: 'Error al crear el lead',
+          title: t('tools.scanner.page.leadCreateErrorTitle'),
           description: err instanceof Error ? err.message : undefined,
         });
       }
     },
-    [detectedCandidates, toast]
+    [detectedCandidates, toast, t]
   );
 
   const handleRejectCandidate = useCallback((index: number) => {
@@ -844,16 +848,16 @@ export default function RoofScannerPage() {
   const handleApproveCandidate = useCallback(async (id: string) => {
     try {
       await approveCandidate(id);
-      toast({ type: 'success', title: 'Lead creado' });
+      toast({ type: 'success', title: t('tools.scanner.page.leadCreatedTitle') });
       void loadCandidates();
     } catch (err) {
       toast({
         type: 'error',
-        title: 'Error al aprobar candidato',
+        title: t('tools.scanner.page.approveErrorTitle'),
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [loadCandidates, toast]);
+  }, [loadCandidates, toast, t]);
 
   const handleRejectCandidateFromPanel = useCallback(async (id: string, reason: CandidateRejectionReason) => {
     try {
@@ -862,17 +866,17 @@ export default function RoofScannerPage() {
     } catch (err) {
       toast({
         type: 'error',
-        title: 'Error al rechazar candidato',
+        title: t('tools.scanner.page.rejectErrorTitle'),
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [loadCandidates, toast]);
+  }, [loadCandidates, toast, t]);
 
   const handleBulkApprove = useCallback(async (ids: string[]) => {
     await Promise.allSettled(ids.map((id) => approveCandidate(id)));
-    toast({ type: 'success', title: `${ids.length} leads creados` });
+    toast({ type: 'success', title: t('tools.scanner.page.bulkLeadsCreated', { count: ids.length }) });
     void loadCandidates();
-  }, [loadCandidates, toast]);
+  }, [loadCandidates, toast, t]);
 
   const handleBulkReject = useCallback(async (ids: string[]) => {
     await Promise.allSettled(ids.map((id) => rejectCandidate(id, 'other')));
@@ -882,16 +886,16 @@ export default function RoofScannerPage() {
   const handleReScan = useCallback(async () => {
     try {
       await applyLearnedFilters();
-      toast({ type: 'success', title: 'Filtros aplicados', description: 'Lista actualizada con filtros aprendidos.' });
+      toast({ type: 'success', title: t('tools.scanner.page.filtersAppliedTitle'), description: t('tools.scanner.page.filtersAppliedDesc') });
       void loadCandidates();
     } catch (err) {
       toast({
         type: 'error',
-        title: 'Error al re-escanear',
+        title: t('tools.scanner.page.rescanErrorTitle'),
         description: err instanceof Error ? err.message : undefined,
       });
     }
-  }, [loadCandidates, toast]);
+  }, [loadCandidates, toast, t]);
 
   const handleFocusCandidate = useCallback((candidate: ScanCandidate) => {
     setSelectedCandidateId(candidate.id);
@@ -975,7 +979,7 @@ export default function RoofScannerPage() {
               ? 'bg-[#00ffcc]/15 border-[#00ffcc]/30'
               : 'bg-white/[0.04] border-white/[0.07] hover:border-[#00ffcc]/25'
           }`}
-          aria-label="Escanear"
+          aria-label={t('tools.scanner.page.scanAria')}
         >
           <ScanLine className={`w-5 h-5 ${isScanning ? 'text-[#00ffcc] animate-spin' : 'text-[#8888a0]'}`} />
         </motion.button>
@@ -985,7 +989,7 @@ export default function RoofScannerPage() {
             onClick={clearBuildings}
             style={{ minWidth: 44, minHeight: 44 }}
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.04] border border-white/[0.07] text-[#8888a0] hover:text-[#f0f0f5] transition-colors"
-            aria-label="Limpiar edificios"
+            aria-label={t('tools.scanner.page.clearBuildingsAria')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -997,7 +1001,7 @@ export default function RoofScannerPage() {
           disabled={isQueuing}
           style={{ minWidth: 44, minHeight: 44 }}
           className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.04] border border-white/[0.07] text-[#8888a0] hover:text-[#0ea5e9] transition-colors"
-          aria-label="Escaneo en segundo plano"
+          aria-label={t('tools.scanner.page.backgroundScanAria')}
         >
           {isQueuing ? <Loader2 className="w-5 h-5 animate-spin text-[#0ea5e9]" /> : <Radar className="w-5 h-5" />}
         </motion.button>
@@ -1167,7 +1171,7 @@ export default function RoofScannerPage() {
                 {billPrefillKwh !== null && (
                   <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
                     <span className="text-[11px] text-[#00ffcc]">
-                      Consumo de factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
+                      {t('tools.scanner.page.billConsumption')} <strong>{t('tools.scanner.financials.kwhPerMonth', { value: billPrefillKwh.toLocaleString(locale) })}</strong>
                     </span>
                   </div>
                 )}
@@ -1178,8 +1182,8 @@ export default function RoofScannerPage() {
               <button
                 onClick={() => setLeftOpen((o) => !o)}
                 className="absolute top-20 right-0 translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-r-xl bg-[#12121a]/90 backdrop-blur-xl border border-l-0 border-white/[0.06] cursor-pointer hover:bg-[#1a1a24]/90 transition-colors"
-                aria-label={leftOpen ? 'Cerrar panel de escaneo' : 'Abrir panel de escaneo'}
-                title={leftOpen ? 'Cerrar panel' : 'Abrir panel'}
+                aria-label={leftOpen ? t('tools.scanner.page.closeScanPanel') : t('tools.scanner.page.openScanPanel')}
+                title={leftOpen ? t('tools.scanner.page.closePanel') : t('tools.scanner.page.openPanel')}
               >
                 <ScanLine className="w-4 h-4 text-[#00ffcc]" />
                 {buildings.length > 0 && (
@@ -1242,7 +1246,7 @@ export default function RoofScannerPage() {
                       animate={{ opacity: rightOpen ? 0 : 1, pointerEvents: rightOpen ? 'none' : 'auto' }}
                       transition={{ duration: 0.15 }}
                       className="absolute top-3 left-0 -translate-x-full flex flex-col items-center gap-2 py-3 px-2 rounded-l-xl bg-[#12121a]/90 backdrop-blur-xl border border-r-0 border-white/[0.06] cursor-pointer"
-                      aria-label="Abrir detalle del edificio"
+                      aria-label={t('tools.scanner.page.openBuildingDetail')}
                     >
                       <Building2 className="w-4 h-4" style={{ color: scoreColor }} />
                       <span
@@ -1274,11 +1278,11 @@ export default function RoofScannerPage() {
                           rel="noreferrer"
                           className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
                         >
-                          Ver finca {cadastre.fincaNumber} en Registro Público
+                          {t('tools.scanner.page.viewFincaInRegistro', { finca: cadastre.fincaNumber })}
                         </a>
                       ) : (
                         <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
-                          Sin finca registrada — posible Derecho Posesorio.
+                          {t('tools.scanner.page.noFincaRegistered')}
                         </p>
                       )}
                     </div>
@@ -1299,7 +1303,7 @@ export default function RoofScannerPage() {
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
                 isScanning ? 'bg-[#00ffcc]/10 text-[#00ffcc]' : 'text-[#8888a0] hover:bg-white/[0.06] hover:text-white/80'
               }`}
-              title="Escanear edificios en vista"
+              title={t('tools.scanner.draw.scanTooltip')}
             >
               <ScanLine className={`w-5 h-5 ${isScanning ? 'animate-spin' : ''}`} />
             </motion.button>
@@ -1313,7 +1317,7 @@ export default function RoofScannerPage() {
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
                 isQueuing ? 'bg-[#0ea5e9]/10 text-[#0ea5e9]' : 'text-[#8888a0] hover:bg-[#0ea5e9]/10 hover:text-[#0ea5e9]'
               }`}
-              title="Encolar escaneo de fondo"
+              title={t('tools.scanner.draw.queueTooltip')}
             >
               {isQueuing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Radar className="w-5 h-5" />}
             </motion.button>
@@ -1324,7 +1328,7 @@ export default function RoofScannerPage() {
               onClick={clearBuildings}
               style={{ minWidth: 44, minHeight: 44 }}
               className="w-11 h-11 rounded-xl flex items-center justify-center text-[#8888a0] hover:bg-white/[0.06] hover:text-white/80 transition-all"
-              title="Limpiar edificios"
+              title={t('tools.scanner.draw.clearTooltip')}
             >
               <X className="w-5 h-5" />
             </motion.button>
@@ -1407,11 +1411,11 @@ export default function RoofScannerPage() {
                       rel="noreferrer"
                       className="block w-full rounded-lg bg-amber-500/15 border border-amber-500/40 px-3 py-2 text-center text-xs font-semibold text-amber-300 hover:bg-amber-500/25 transition-colors"
                     >
-                      Ver finca {cadastre.fincaNumber} en Registro Público
+                      {t('tools.scanner.page.viewFincaInRegistro', { finca: cadastre.fincaNumber })}
                     </a>
                   ) : (
                     <p className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-400">
-                      Sin finca registrada — posible Derecho Posesorio.
+                      {t('tools.scanner.page.noFincaRegistered')}
                     </p>
                   )}
                 </div>
@@ -1451,7 +1455,7 @@ export default function RoofScannerPage() {
                   {billPrefillKwh !== null && (
                     <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#00ffcc]/[0.07] border border-[#00ffcc]/15 px-3 py-2">
                       <span className="text-[11px] text-[#00ffcc]">
-                        Factura: <strong>{billPrefillKwh.toLocaleString('es-PA')} kWh/mes</strong>
+                        {t('tools.scanner.page.billLabel')} <strong>{t('tools.scanner.financials.kwhPerMonth', { value: billPrefillKwh.toLocaleString(locale) })}</strong>
                       </span>
                     </div>
                   )}

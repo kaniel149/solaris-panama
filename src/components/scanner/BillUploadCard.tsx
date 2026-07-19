@@ -10,6 +10,8 @@ import {
   ChevronDown, ChevronUp, AlertCircle, Zap, MapPin,
   RotateCcw, ArrowRight,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   scanBill,
   getUtilityLabel,
@@ -40,9 +42,9 @@ const MAX_FILE_MB = 5;
 
 // ===== HELPERS =====
 
-function formatKwh(n: number | null): string {
+function formatKwh(n: number | null, locale: string): string {
   if (n === null) return '—';
-  return `${Math.round(n).toLocaleString('es-PA')} kWh`;
+  return `${Math.round(n).toLocaleString(locale)} kWh`;
 }
 
 function formatUsd(n: number | null): string {
@@ -56,15 +58,17 @@ function confidenceColor(c: number): string {
   return '#ef4444';
 }
 
-function confidenceLabel(c: number): string {
-  if (c >= 0.8) return 'Alta confianza';
-  if (c >= 0.6) return 'Confianza media';
-  return 'Baja confianza';
+function confidenceLabel(c: number, t: TFunction): string {
+  if (c >= 0.8) return t('tools.scanner.billUpload.confidenceHigh');
+  if (c >= 0.6) return t('tools.scanner.billUpload.confidenceMedium');
+  return t('tools.scanner.billUpload.confidenceLow');
 }
 
 // ===== COMPONENT =====
 
 export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,7 +89,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
     // Size guard (client-side mirror of server guard)
     if (file.size > MAX_FILE_MB * 1024 * 1024) {
       setErrorMsg(
-        `La imagen es demasiado grande (máx. ${MAX_FILE_MB} MB). Recorte la factura e intente de nuevo.`
+        t('tools.scanner.billUpload.errorFileTooLarge', { size: MAX_FILE_MB })
       );
       return;
     }
@@ -135,7 +139,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
     const monthly_kwh = getAverageMonthlyKwh(result);
     if (!monthly_kwh || monthly_kwh <= 0) {
       setErrorMsg(
-        'No se pudo detectar el consumo en kWh. Ingrese el valor manualmente.'
+        t('tools.scanner.billUpload.errorNoKwhDetected')
       );
       return;
     }
@@ -162,9 +166,9 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
             <FileText className="w-3.5 h-3.5 text-[#f59e0b]" />
           </div>
           <div className="text-left">
-            <p className="text-sm font-semibold text-[#f0f0f5]">Sube tu factura</p>
+            <p className="text-sm font-semibold text-[#f0f0f5]">{t('tools.scanner.billUpload.title')}</p>
             <p className="text-[11px] text-[#555566] leading-tight">
-              Extrae tu consumo en kWh automáticamente
+              {t('tools.scanner.billUpload.subtitle')}
             </p>
           </div>
         </div>
@@ -197,16 +201,16 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-8 gap-2">
                       <Loader2 className="w-6 h-6 text-[#f59e0b] animate-spin" />
-                      <p className="text-xs text-[#8888a0]">Analizando factura…</p>
+                      <p className="text-xs text-[#8888a0]">{t('tools.scanner.billUpload.analyzingBill')}</p>
                     </div>
                   ) : previewUrl ? (
                     <div className="flex flex-col items-center justify-center py-4 gap-2">
                       <img
                         src={previewUrl}
-                        alt="Vista previa de factura"
+                        alt={t('tools.scanner.billUpload.previewAlt')}
                         className="max-h-24 rounded object-contain opacity-60"
                       />
-                      <p className="text-[11px] text-[#555566]">Procesando…</p>
+                      <p className="text-[11px] text-[#555566]">{t('tools.scanner.billUpload.processing')}</p>
                     </div>
                   ) : (
                     <label
@@ -218,11 +222,11 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                         <Camera className="w-5 h-5 text-[#8888a0]" />
                       </div>
                       <p className="text-xs text-[#8888a0] text-center leading-snug">
-                        Arrastra tu factura aquí o{' '}
-                        <span className="text-[#f59e0b]">haz clic para seleccionar</span>
+                        {t('tools.scanner.billUpload.dropzoneDragText')}{' '}
+                        <span className="text-[#f59e0b]">{t('tools.scanner.billUpload.dropzoneClickText')}</span>
                         <br />
                         <span className="text-[#444455]">
-                          JPG / PNG / WEBP · máx. {MAX_FILE_MB} MB
+                          {t('tools.scanner.billUpload.fileSizeHint', { size: MAX_FILE_MB })}
                         </span>
                       </p>
                     </label>
@@ -276,7 +280,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                           className="text-[11px] font-medium"
                           style={{ color: confidenceColor(result.confidence) }}
                         >
-                          {confidenceLabel(result.confidence)}
+                          {confidenceLabel(result.confidence, t)}
                         </span>
                       </div>
                       <button
@@ -285,7 +289,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                         className="flex items-center gap-1 text-[11px] text-[#555566] hover:text-[#8888a0] transition-colors"
                       >
                         <RotateCcw className="w-3 h-3" />
-                        Nueva
+                        {t('tools.scanner.billUpload.newButton')}
                       </button>
                     </div>
 
@@ -293,7 +297,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                     <div className="space-y-1.5">
                       {/* Utility */}
                       <ResultRow
-                        label="Distribuidora"
+                        label={t('tools.scanner.billUpload.fieldUtility')}
                         value={getUtilityLabel(result.utility)}
                       />
 
@@ -303,19 +307,19 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                           <Zap className="w-3.5 h-3.5 text-[#00ffcc]" />
                           <span className="text-xs text-[#8888a0]">
                             {result.kwh_history.length >= 3
-                              ? 'Promedio mensual'
-                              : 'Consumo mensual'}
+                              ? t('tools.scanner.billUpload.monthlyAverage')
+                              : t('tools.scanner.billUpload.monthlyConsumption')}
                           </span>
                         </div>
                         <span className="text-sm font-bold text-[#00ffcc]">
-                          {formatKwh(averageKwh)}
+                          {formatKwh(averageKwh, locale)}
                         </span>
                       </div>
 
                       {/* Total bill */}
                       {result.total_usd !== null && (
                         <ResultRow
-                          label="Total factura"
+                          label={t('tools.scanner.billUpload.fieldTotalBill')}
                           value={formatUsd(result.total_usd)}
                         />
                       )}
@@ -323,7 +327,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                       {/* Tariff */}
                       {result.tariff_code && (
                         <ResultRow
-                          label="Categoría tarifaria"
+                          label={t('tools.scanner.billUpload.fieldTariffCategory')}
                           value={result.tariff_code}
                         />
                       )}
@@ -334,7 +338,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                           <MapPin className="w-3 h-3 text-[#555566] mt-0.5 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <p className="text-[11px] text-[#555566] mb-0.5">
-                              Dirección del servicio
+                              {t('tools.scanner.billUpload.fieldServiceAddress')}
                             </p>
                             <p className="text-xs text-[#c0c0d0] break-words leading-snug">
                               {result.service_address}
@@ -345,7 +349,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
 
                       {/* Meter / NIS */}
                       {result.meter_or_nis && (
-                        <ResultRow label="NIS / Medidor" value={result.meter_or_nis} />
+                        <ResultRow label={t('tools.scanner.billUpload.fieldMeterNis')} value={result.meter_or_nis} />
                       )}
                     </div>
 
@@ -356,26 +360,26 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                         onClick={handleUseData}
                         className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#00ffcc]/10 border border-[#00ffcc]/20 text-sm font-semibold text-[#00ffcc] hover:bg-[#00ffcc]/[0.18] hover:border-[#00ffcc]/40 transition-all duration-200"
                       >
-                        Usar estos datos
+                        {t('tools.scanner.billUpload.useDataCta')}
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     ) : (
                       <p className="text-[11px] text-[#f59e0b] text-center leading-snug">
-                        No se detectó consumo en kWh.{' '}
+                        {t('tools.scanner.billUpload.noKwhDetectedMsg')}{' '}
                         <button
                           type="button"
                           onClick={reset}
                           className="underline hover:no-underline"
                         >
-                          Intente con otra imagen
+                          {t('tools.scanner.billUpload.tryAnotherImage')}
                         </button>{' '}
-                        o{' '}
+                        {t('tools.scanner.billUpload.or')}{' '}
                         <a
                           href="#kwh-manual"
                           className="underline hover:no-underline"
                           onClick={() => setIsExpanded(false)}
                         >
-                          ingréselo manualmente
+                          {t('tools.scanner.billUpload.enterManually')}
                         </a>
                         .
                       </p>
@@ -387,14 +391,14 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
               {/* Fallback hint (no result yet) */}
               {!result && !isLoading && !errorMsg && (
                 <p className="text-[11px] text-[#444455] text-center">
-                  Compatible con facturas de Naturgy, EDEMET y EDECHI.
+                  {t('tools.scanner.billUpload.supportedUtilitiesHint')}
                 </p>
               )}
 
               {/* Fallback after error */}
               {errorMsg && (
                 <p className="text-[11px] text-[#444455] text-center">
-                  ¿Prefiere ingresar el consumo directamente?{' '}
+                  {t('tools.scanner.billUpload.preferManualEntry')}{' '}
                   <button
                     type="button"
                     className="text-[#8888a0] underline hover:no-underline"
@@ -403,7 +407,7 @@ export default function BillUploadCard({ onUseBillData }: BillUploadCardProps) {
                       reset();
                     }}
                   >
-                    Entrada manual
+                    {t('tools.scanner.billUpload.manualEntryButton')}
                   </button>
                 </p>
               )}

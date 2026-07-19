@@ -122,12 +122,12 @@ function loadStoredStyle(): StyleMode {
   return 'dark';
 }
 
-// Spanish labels for each style
-const STYLE_LABELS_ES: Record<StyleMode, string> = {
-  dark: 'Oscuro',
-  street: 'Calles',
-  satellite: 'Satélite',
-  sentinel: 'Sentinel-2',
+// Translation key for each base map style label
+const STYLE_LABEL_KEYS: Record<StyleMode, string> = {
+  dark: 'tools.scanner.mapLayers.styleDark',
+  street: 'tools.scanner.mapLayers.styleStreet',
+  satellite: 'tools.scanner.mapLayers.styleSatellite',
+  sentinel: 'tools.scanner.mapLayers.styleSentinel',
 };
 
 // ===== SOLAR SCORE COLOR RAMP =====
@@ -314,9 +314,9 @@ const EMPTY_FC: GeoJSON.FeatureCollection = { type: 'FeatureCollection', feature
 
 type OverlayKey = 'grid' | 'datacenters';
 
-const OVERLAY_LABELS: Record<OverlayKey, string> = {
-  grid: 'Red eléctrica',
-  datacenters: 'Data centers',
+const OVERLAY_LABEL_KEYS: Record<OverlayKey, string> = {
+  grid: 'tools.scanner.mapLayers.overlayGrid',
+  datacenters: 'tools.scanner.mapLayers.overlayDatacenters',
 };
 
 const OVERLAY_URLS: Record<OverlayKey, string> = {
@@ -409,7 +409,7 @@ function CapasFAB({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setOpen((v) => !v)}
-          aria-label="Capas del mapa"
+          aria-label={t('tools.scanner.mapLayers.mapLayersAria')}
           style={{ minWidth: 44, minHeight: 44 }}
           className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shadow-lg ${
             open || anyOverlay
@@ -434,7 +434,7 @@ function CapasFAB({
               {/* Base styles */}
               <div className="px-3 pt-3 pb-1">
                 <p className="text-[9px] text-[#555566] uppercase tracking-widest font-semibold mb-2">
-                  Estilo base
+                  {t('tools.scanner.mapLayers.baseStyle')}
                 </p>
                 <div className="grid grid-cols-2 gap-1">
                   {STYLE_ORDER.map((mode) => {
@@ -454,7 +454,7 @@ function CapasFAB({
                             : 'text-[#8888a0] hover:text-[#f0f0f5] border border-transparent hover:bg-white/[0.04]'
                         }`}
                       >
-                        {STYLE_LABELS_ES[mode]}
+                        {t(STYLE_LABEL_KEYS[mode])}
                       </button>
                     );
                   })}
@@ -466,7 +466,7 @@ function CapasFAB({
               {/* Overlay toggles */}
               <div className="px-3 pb-3">
                 <p className="text-[9px] text-[#555566] uppercase tracking-widest font-semibold mb-2">
-                  Capas
+                  {t('tools.scanner.mapLayers.layers')}
                 </p>
                 <div className="space-y-1">
                   {/* Saved roofs toggle */}
@@ -500,7 +500,7 @@ function CapasFAB({
                     </span>
                   </button>
 
-                  {(Object.keys(OVERLAY_LABELS) as OverlayKey[]).map((key) => {
+                  {(Object.keys(OVERLAY_LABEL_KEYS) as OverlayKey[]).map((key) => {
                     const active = overlayEnabled[key];
                     const color = key === 'grid' ? '#f59e0b' : '#a855f7';
                     return (
@@ -519,7 +519,7 @@ function CapasFAB({
                           className="w-2 h-2 rounded-full flex-shrink-0 transition-opacity"
                           style={{ background: color, opacity: active ? 1 : 0.35 }}
                         />
-                        {OVERLAY_LABELS[key]}
+                        {t(OVERLAY_LABEL_KEYS[key])}
                         <span
                           className={`ml-auto w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-all ${
                             active ? 'border-transparent' : 'border-white/20'
@@ -972,7 +972,7 @@ export default function ScannerMap({
       if (overlayFeat && e.lngLat) {
         const p = (overlayFeat.properties ?? {}) as Record<string, unknown>;
         const layerId = overlayFeat.layer?.id;
-        let title: string = (p.name as string) || (layerId === 'dc-circles' ? 'Data center' : 'Línea de transmisión');
+        let title: string = (p.name as string) || (layerId === 'dc-circles' ? t('tools.scanner.map.dataCenter') : t('tools.scanner.map.transmissionLine'));
         let subtitle: string | undefined;
         if (layerId === 'grid-lines') {
           const parts: string[] = [];
@@ -980,7 +980,7 @@ export default function ScannerMap({
           if (p.operator) parts.push(p.operator as string);
           subtitle = parts.join(' · ') || undefined;
         } else if (layerId === 'grid-substations') {
-          const parts: string[] = ['Subestación'];
+          const parts: string[] = [t('tools.scanner.map.substation')];
           if (p.voltage) parts.push(`${parseInt(p.voltage as string, 10) / 1000} kV`);
           if (p.operator) parts.push(p.operator as string);
           subtitle = parts.join(' · ');
@@ -1045,7 +1045,7 @@ export default function ScannerMap({
         setHoverInfo({
           lng: e.lngLat?.lng ?? 0,
           lat: e.lngLat?.lat ?? 0,
-          name: (feature.properties.name as string) || `Building`,
+          name: (feature.properties.name as string) || t('tools.scanner.map.buildingFallback'),
           score: (feature.properties.score as number) || 0,
           area: (feature.properties.area as number) || 0,
           type: (feature.properties.type as string) || 'building',
@@ -1519,13 +1519,13 @@ export default function ScannerMap({
                         style={{ background: g.color }}
                       />
                       <span style={{ color: g.color }}>
-                        Grade {g.grade} ({hoverInfo.score})
+                        {t('tools.scanner.map.gradeScore', { grade: g.grade, score: hoverInfo.score })}
                       </span>
                     </span>
                   );
                 })()}
               </div>
-              <div className="text-[10px] text-[#555566] pt-0.5">Click to select</div>
+              <div className="text-[10px] text-[#555566] pt-0.5">{t('tools.scanner.map.clickToSelect')}</div>
             </div>
           </Marker>
         )}
@@ -1548,7 +1548,7 @@ export default function ScannerMap({
               }}
             >
               <div className="font-semibold text-[#f0f0f5] truncate mb-1.5">
-                {activeCand.address || 'Techo detectado'}
+                {activeCand.address || t('tools.scanner.map.detectedRoofFallback')}
               </div>
               <div className="flex items-center justify-between text-[10px] text-[#8888a0] mb-2">
                 <span>{Math.round(activeCand.totalRoofM2).toLocaleString()} m²</span>
@@ -1562,7 +1562,7 @@ export default function ScannerMap({
                   }}
                   className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#22c55e]/15 text-[#22c55e] hover:bg-[#22c55e]/25 transition-colors text-[11px] font-medium"
                 >
-                  <Check className="w-3 h-3" /> Confirmar
+                  <Check className="w-3 h-3" /> {t('tools.scanner.map.confirm')}
                 </button>
                 <button
                   onClick={() => {
@@ -1571,7 +1571,7 @@ export default function ScannerMap({
                   }}
                   className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#ef4444]/15 text-[#ef4444] hover:bg-[#ef4444]/25 transition-colors text-[11px] font-medium"
                 >
-                  <X className="w-3 h-3" /> Rechazar
+                  <X className="w-3 h-3" /> {t('tools.scanner.review.reject')}
                 </button>
               </div>
             </div>
@@ -1728,7 +1728,7 @@ export default function ScannerMap({
               ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 shadow-[0_0_12px_rgba(139,92,246,0.15)]'
               : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#8b5cf6]/25'
           }`}
-          title={measureMode ? 'Desactivar medidas' : 'Activar medidas'}
+          title={measureMode ? t('tools.scanner.map.measureOff') : t('tools.scanner.map.measureOn')}
         >
           <Ruler className={`w-5 h-5 ${measureMode ? 'text-[#8b5cf6]' : 'text-[#8888a0]'}`} />
         </motion.button>
@@ -1745,7 +1745,7 @@ export default function ScannerMap({
                 ? 'bg-[#00ffcc]/20 border-[#00ffcc]/40 shadow-[0_0_12px_rgba(0,255,204,0.15)]'
                 : 'bg-[#12121a]/90 border-white/[0.08] hover:border-[#00ffcc]/25'
             }`}
-            title={drawMode ? 'Cancelar dibujo (Esc)' : 'Dibujar techo'}
+            title={drawMode ? t('tools.scanner.map.cancelDrawing') : t('tools.scanner.map.drawRoof')}
           >
             <PencilRuler className={`w-5 h-5 ${drawMode ? 'text-[#00ffcc]' : 'text-[#8888a0]'}`} />
           </motion.button>
@@ -1764,15 +1764,15 @@ export default function ScannerMap({
             <PencilRuler className="w-4 h-4 text-[#00ffcc] shrink-0" />
             <span className="text-xs text-[#f0f0f5]">
               {drawVertices.length < 3
-                ? `Haz clic para agregar puntos (${drawVertices.length})`
-                : 'Doble clic o Enter para finalizar'}
+                ? t('tools.scanner.map.clickToAddPoints', { count: drawVertices.length })
+                : t('tools.scanner.map.doubleClickToFinish')}
             </span>
             {drawVertices.length >= 3 && (
               <button
                 onClick={finishDrawing}
                 className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#00ffcc]/15 text-[#00ffcc] hover:bg-[#00ffcc]/25 transition-colors text-[11px] font-medium shrink-0"
               >
-                <Check className="w-3 h-3" /> Listo
+                <Check className="w-3 h-3" /> {t('tools.scanner.map.done')}
               </button>
             )}
           </motion.div>
@@ -1790,7 +1790,7 @@ export default function ScannerMap({
           >
             <Building2 className="w-3.5 h-3.5 text-[#8888a0]" />
             <span className="text-xs font-medium text-[#f0f0f5]">
-              {buildingCount} edificio{buildingCount !== 1 ? 's' : ''} encontrado{buildingCount !== 1 ? 's' : ''}
+              {t('tools.scanner.map.buildingsFound', { count: buildingCount })}
             </span>
           </motion.div>
         )}
@@ -1806,7 +1806,7 @@ export default function ScannerMap({
             className="absolute bottom-16 right-3 z-10 px-3 py-2.5 rounded-xl bg-[#12121a]/80 backdrop-blur-xl border border-white/[0.06]"
           >
             <div className="text-[10px] text-[#555566] uppercase tracking-wider mb-2 font-semibold">
-              Solar score
+              {t('tools.scanner.map.solarScoreLabel')}
             </div>
             <div className="space-y-1.5">
               {SCORE_LEGEND.map((item) => (
@@ -1840,19 +1840,19 @@ export default function ScannerMap({
             {candidates.length > 0 && (
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/[0.06]">
                 <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" />
-                <span className="text-[10px] text-[#8888a0] font-medium">Detectado</span>
+                <span className="text-[10px] text-[#8888a0] font-medium">{t('tools.scanner.map.detected')}</span>
               </div>
             )}
             {scanCandidates.some((c) => c.kind === 'roof') && (
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/[0.06]">
                 <div className="w-3 h-3 rounded-sm border-2 border-dashed border-[#a855f7]" style={{ background: 'rgba(168,85,247,0.25)' }} />
-                <span className="text-[10px] text-[#8888a0] font-medium">Techo (revisión)</span>
+                <span className="text-[10px] text-[#8888a0] font-medium">{t('tools.scanner.map.roofUnderReview')}</span>
               </div>
             )}
             {scanCandidates.some((c) => c.kind === 'land') && (
               <>
                 <div className="text-[9px] text-[#555566] uppercase tracking-wider mt-2 pt-2 border-t border-white/[0.06] font-semibold">
-                  Terrenos
+                  {t('tools.scanner.topnav.lands')}
                 </div>
                 {(['comercial', 'agro', 'utility'] as const).map((tier) =>
                   scanCandidates.some((c) => c.tier === tier) ? (
@@ -1864,7 +1864,7 @@ export default function ScannerMap({
                           borderColor: LAND_TIER_OUTLINE[tier],
                         }}
                       />
-                      <span className="text-[10px] text-[#8888a0] font-medium capitalize">{tier}</span>
+                      <span className="text-[10px] text-[#8888a0] font-medium capitalize">{t(`tools.scanner.review.tier${tier.charAt(0).toUpperCase()}${tier.slice(1)}`)}</span>
                     </div>
                   ) : null
                 )}
@@ -1874,7 +1874,7 @@ export default function ScannerMap({
                       className="w-3 h-3 rounded-sm border-2 border-dashed"
                       style={{ background: `${LAND_DEFAULT_FILL}44`, borderColor: LAND_DEFAULT_OUTLINE }}
                     />
-                    <span className="text-[10px] text-[#8888a0] font-medium">Terreno</span>
+                    <span className="text-[10px] text-[#8888a0] font-medium">{t('tools.scanner.review.landLabel')}</span>
                   </div>
                 )}
               </>
@@ -1886,7 +1886,7 @@ export default function ScannerMap({
       {/* No-scan-id guard hint */}
       {drawMode && selectedScanId == null && (
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 px-3 py-1.5 rounded-lg bg-[#f59e0b]/15 border border-[#f59e0b]/30 text-[10px] text-[#f59e0b]">
-          El techo se guardará al finalizar el dibujo
+          {t('tools.scanner.map.roofSavedOnFinish')}
         </div>
       )}
 

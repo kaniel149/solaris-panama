@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { ChevronRight, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Sidebar from './Sidebar';
@@ -18,6 +19,7 @@ const pageVariants = {
 const IMMERSIVE_ROUTES = ['/tools/scanner'];
 
 const Layout: React.FC = () => {
+  const { t } = useTranslation();
   const { user, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ const Layout: React.FC = () => {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             className="w-10 h-10 rounded-full border-2 border-[#D4A843]/20 border-t-[#D4A843]"
           />
-          <span className="text-white/40 text-sm">Loading...</span>
+          <span className="text-white/40 text-sm">{t('common.loading')}</span>
         </div>
       </div>
     );
@@ -128,13 +130,13 @@ const Layout: React.FC = () => {
             transition={{ delay: 0.3, duration: 0.2 }}
             onClick={() => setDrawerOpen(true)}
             className="fixed top-4 left-4 z-[60] flex items-center gap-2 pl-2 pr-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.1] shadow-lg shadow-black/40 text-white/70 hover:text-white hover:border-[#D4A843]/40 hover:bg-[#1a1a24]/90 transition-all duration-150 group"
-            aria-label="Menú de navegación"
+            aria-label={t('nav.openMenu')}
             style={{ display: isMobile || !sidebarHover ? undefined : 'none' }}
           >
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D4A843] to-[#0B3D2E] flex items-center justify-center shrink-0">
               <img src="/solaris-icon.png" alt="Solaris" className="w-5 h-5" />
             </div>
-            <span className="text-xs font-semibold tracking-wide">Menú</span>
+            <span className="text-xs font-semibold tracking-wide">{t('tools.scanner.topnav.menu')}</span>
           </motion.button>
         )}
 
@@ -146,10 +148,10 @@ const Layout: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.2 }}
             onClick={() => navigate('/dashboard')}
             className="fixed top-4 right-4 z-[60] flex items-center gap-2 px-3 h-11 rounded-xl bg-[#12121a]/90 backdrop-blur-xl border border-white/[0.08] shadow-lg shadow-black/40 text-white/50 hover:text-white hover:border-[#D4A843]/30 hover:bg-[#1a1a24]/90 transition-all duration-150"
-            aria-label="Ir al panel"
+            aria-label={t('nav.goToDashboard')}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span className="text-xs font-medium">Panel</span>
+            <span className="text-xs font-medium">{t('nav.dashboard')}</span>
           </motion.button>
         )}
       </div>

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Sun, FileText, Download, Send, RotateCcw, Eye,
   CheckCircle2, XCircle, Clock, MessageCircle,
@@ -83,13 +85,15 @@ function formatCurrency(n: number): string {
 
 // ===== Status badge config =====
 
-const STATUS_CONFIG: Record<StoredProposal['status'], { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  draft: { label: 'Draft', color: 'text-white/50', bg: 'bg-white/10', icon: Clock },
-  sent: { label: 'Sent', color: 'text-blue-400', bg: 'bg-blue-500/20', icon: Send },
-  viewed: { label: 'Viewed', color: 'text-amber-400', bg: 'bg-amber-500/20', icon: Eye },
-  accepted: { label: 'Accepted', color: 'text-emerald-400', bg: 'bg-emerald-500/20', icon: CheckCircle2 },
-  rejected: { label: 'Rejected', color: 'text-red-400', bg: 'bg-red-500/20', icon: XCircle },
-};
+function getStatusConfig(t: TFunction): Record<StoredProposal['status'], { label: string; color: string; bg: string; icon: typeof Clock }> {
+  return {
+    draft: { label: t('proposals.draft'), color: 'text-white/50', bg: 'bg-white/10', icon: Clock },
+    sent: { label: t('leads.proposalPreview.status.sent'), color: 'text-blue-400', bg: 'bg-blue-500/20', icon: Send },
+    viewed: { label: t('leads.proposalPreview.status.viewed'), color: 'text-amber-400', bg: 'bg-amber-500/20', icon: Eye },
+    accepted: { label: t('proposals.accepted'), color: 'text-emerald-400', bg: 'bg-emerald-500/20', icon: CheckCircle2 },
+    rejected: { label: t('proposals.rejected'), color: 'text-red-400', bg: 'bg-red-500/20', icon: XCircle },
+  };
+}
 
 // ===== Component =====
 
@@ -108,6 +112,8 @@ export default function ProposalPreview({
   onStatusChange,
   isGenerating,
 }: ProposalPreviewProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -137,7 +143,7 @@ export default function ProposalPreview({
     }
   };
 
-  const sc = STATUS_CONFIG[proposal.status];
+  const sc = getStatusConfig(t)[proposal.status];
   const StatusIcon = sc.icon;
 
   return (
@@ -145,10 +151,10 @@ export default function ProposalPreview({
       {/* Key metrics banner */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'System Size', value: `${proposal.systemKwp} kWp`, color: '#00ffcc' },
-          { label: 'Investment', value: formatCurrency(proposal.totalInvestment), color: '#8b5cf6' },
-          { label: 'Annual Savings', value: formatCurrency(proposal.annualSavings), color: '#22c55e' },
-          { label: 'Payback', value: `${proposal.paybackYears.toFixed(1)} yrs`, color: '#0ea5e9' },
+          { label: t('tools.calculator.systemSize'), value: `${proposal.systemKwp} kWp`, color: '#00ffcc' },
+          { label: t('leads.proposalPreview.investment'), value: formatCurrency(proposal.totalInvestment), color: '#8b5cf6' },
+          { label: t('tools.calculator.annualSavings'), value: formatCurrency(proposal.annualSavings), color: '#22c55e' },
+          { label: t('leads.proposalPreview.payback'), value: `${proposal.paybackYears.toFixed(1)} yrs`, color: '#0ea5e9' },
         ].map((m) => (
           <div key={m.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06]">
             <p className="text-[10px] text-[#555566] uppercase tracking-wider mb-1">{m.label}</p>
@@ -165,7 +171,7 @@ export default function ProposalPreview({
         </span>
         <span className="text-xs text-[#555566]">
           v{proposal.version} &middot; {proposal.language.toUpperCase()} &middot;{' '}
-          {new Date(proposal.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          {new Date(proposal.generatedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })}
         </span>
       </div>
 
@@ -173,7 +179,7 @@ export default function ProposalPreview({
         {/* Section navigation (desktop) */}
         <div className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-24 space-y-1">
-            <p className="text-[10px] font-semibold text-[#555566] uppercase tracking-wider mb-2">Contents</p>
+            <p className="text-[10px] font-semibold text-[#555566] uppercase tracking-wider mb-2">{t('leads.proposalPreview.contents')}</p>
             {proposal.sections.map((section, i) => (
               <button
                 key={section.id}
@@ -252,7 +258,7 @@ export default function ProposalPreview({
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#8888a0] bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:text-[#f0f0f5] transition-all disabled:opacity-40"
             >
               <RotateCcw className={cn('w-3.5 h-3.5', isGenerating && 'animate-spin')} />
-              {isGenerating ? 'Generating...' : 'Regenerate'}
+              {isGenerating ? t('leads.proposalPreview.generating') : t('leads.proposalPreview.regenerate')}
             </button>
           )}
           {onStatusChange && proposal.status === 'draft' && (
@@ -261,7 +267,7 @@ export default function ProposalPreview({
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#0ea5e9] bg-[#0ea5e9]/10 border border-[#0ea5e9]/20 hover:bg-[#0ea5e9]/20 transition-all"
             >
               <Send className="w-3.5 h-3.5" />
-              Mark as Sent
+              {t('leads.proposalPreview.markAsSent')}
             </button>
           )}
           {onStatusChange && (proposal.status === 'sent' || proposal.status === 'viewed') && (
@@ -271,14 +277,14 @@ export default function ProposalPreview({
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#22c55e] bg-[#22c55e]/10 border border-[#22c55e]/20 hover:bg-[#22c55e]/20 transition-all"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Accepted
+                {t('proposals.accepted')}
               </button>
               <button
                 onClick={() => onStatusChange('rejected')}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#ef4444] bg-[#ef4444]/10 border border-[#ef4444]/20 hover:bg-[#ef4444]/20 transition-all"
               >
                 <XCircle className="w-3.5 h-3.5" />
-                Rejected
+                {t('proposals.rejected')}
               </button>
             </>
           )}
@@ -289,8 +295,8 @@ export default function ProposalPreview({
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#555566] bg-white/[0.02] border border-white/[0.04] cursor-not-allowed"
           >
             <Download className="w-3.5 h-3.5" />
-            PDF
-            <span className="text-[9px] opacity-60">(Soon)</span>
+            {t('leads.proposalPreview.pdf')}
+            <span className="text-[9px] opacity-60">{t('leads.proposalPreview.soonBadge')}</span>
           </button>
           {onWhatsApp && (
             <button
@@ -298,7 +304,7 @@ export default function ProposalPreview({
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#25d366] bg-[#25d366]/10 border border-[#25d366]/20 hover:bg-[#25d366]/20 transition-all"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              WhatsApp
+              {t('leads.card.whatsapp')}
             </button>
           )}
           <button
@@ -306,8 +312,8 @@ export default function ProposalPreview({
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#555566] bg-white/[0.02] border border-white/[0.04] cursor-not-allowed"
           >
             <FileText className="w-3.5 h-3.5" />
-            Email
-            <span className="text-[9px] opacity-60">(Soon)</span>
+            {t('common.email')}
+            <span className="text-[9px] opacity-60">{t('leads.proposalPreview.soonBadge')}</span>
           </button>
         </div>
       </div>

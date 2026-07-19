@@ -41,11 +41,11 @@ const EVENT_COLORS: Record<EventType, { bg: string; text: string; dot: string }>
   other: { bg: 'bg-[#8b5cf6]/10', text: 'text-[#8b5cf6]', dot: '#8b5cf6' },
 };
 
-const DAYS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-
 export default function CalendarPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
+  const DAYS = t('calendar.days', { returnObjects: true }) as string[];
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -81,7 +81,7 @@ export default function CalendarPage() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-  const monthName = currentDate.toLocaleDateString('es-PA', { month: 'long', year: 'numeric' });
+  const monthName = currentDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 
   const calendarDays = useMemo(() => {
     const days: (number | null)[] = [];
@@ -365,7 +365,7 @@ export default function CalendarPage() {
                     )}
                     <div className="flex items-center gap-1 text-xs text-[#555570] mt-0.5">
                       <Clock className="w-3 h-3" />
-                      {new Date(ev.starts_at).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                      {new Date(ev.starts_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}
                     </div>
                   </button>
                 );
@@ -415,7 +415,7 @@ export default function CalendarPage() {
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm text-[#8888a0]">
                 <Clock className="w-4 h-4 shrink-0" />
-                {new Date(selectedEvent.starts_at).toLocaleString('es-PA', { dateStyle: 'medium', timeStyle: 'short' })}
+                {new Date(selectedEvent.starts_at).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' })}
               </div>
               {selectedEvent.lead_id && leadNames[selectedEvent.lead_id] && (
                 <div className="flex items-center gap-2 text-sm text-[#8888a0]">

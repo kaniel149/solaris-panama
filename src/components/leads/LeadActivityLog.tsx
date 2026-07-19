@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Plus,
   Sparkles,
@@ -38,26 +40,26 @@ const ICON_COMPONENTS: Record<LeadActivityType, React.ComponentType<{ className?
 };
 
 // Relative time formatter
-function getRelativeTime(timestamp: string): string {
+function getRelativeTime(timestamp: string, t: TFunction, locale: string): string {
   const now = Date.now();
   const then = new Date(timestamp).getTime();
   const diffMs = now - then;
 
   const seconds = Math.floor(diffMs / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return t('leads.activityLog.justNow');
 
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return t('leads.activityLog.minutesAgo', { n: minutes });
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('leads.activityLog.hoursAgo', { n: hours });
 
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return t('leads.activityLog.daysAgo', { n: days });
 
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  if (days < 30) return t('leads.activityLog.weeksAgo', { n: Math.floor(days / 7) });
 
-  return new Date(timestamp).toLocaleDateString('en-US', {
+  return new Date(timestamp).toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
   });
@@ -83,6 +85,8 @@ export function LeadActivityLog({
   maxVisible = 8,
   className,
 }: LeadActivityLogProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
   const [expanded, setExpanded] = useState(false);
   const [displayActivities, setDisplayActivities] = useState<LeadActivity[]>([]);
 
@@ -96,7 +100,7 @@ export function LeadActivityLog({
     return (
       <div className={cn('text-center py-6', className)}>
         <Clock className="w-5 h-5 text-[#555570] mx-auto mb-2" />
-        <p className="text-xs text-[#555570]">No activity yet</p>
+        <p className="text-xs text-[#555570]">{t('leads.activityLog.noActivity')}</p>
       </div>
     );
   }
@@ -141,7 +145,7 @@ export function LeadActivityLog({
                     {activity.description}
                   </p>
                   <span className="text-[10px] text-[#555570]">
-                    {getRelativeTime(activity.timestamp)}
+                    {getRelativeTime(activity.timestamp, t, locale)}
                   </span>
                 </div>
               </motion.div>
@@ -162,7 +166,9 @@ export function LeadActivityLog({
               expanded && 'rotate-180'
             )}
           />
-          {expanded ? 'Show less' : `Show ${activities.length - maxVisible} more`}
+          {expanded
+            ? t('leads.activityLog.showLess')
+            : t('leads.activityLog.showMore', { n: activities.length - maxVisible })}
         </button>
       )}
     </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FileText, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import ProposalPreview from '@/components/leads/ProposalPreview';
@@ -26,6 +27,8 @@ interface LeadProposalTabProps {
 }
 
 export function LeadProposalTab({ lead }: LeadProposalTabProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
   const {
     proposals,
     isGenerating,
@@ -66,10 +69,9 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
           <FileText className="w-8 h-8 text-[#8b5cf6]" />
         </div>
         <div className="text-center space-y-1.5">
-          <h3 className="text-lg font-semibold text-[#f0f0f5]">No Proposals Yet</h3>
+          <h3 className="text-lg font-semibold text-[#f0f0f5]">{t('leads.proposalTab.noProposalsTitle')}</h3>
           <p className="text-sm text-[#555570] max-w-md">
-            Generate an AI-powered solar proposal for this lead with financial analysis,
-            system specifications, and Panama regulatory context.
+            {t('leads.proposalTab.noProposalsDesc')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -79,7 +81,7 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
             loading={isGenerating}
             onClick={() => handleGenerate('en')}
           >
-            Generate (English)
+            {t('leads.proposalTab.generateEnglish')}
           </Button>
           <Button
             variant="secondary"
@@ -87,7 +89,7 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
             loading={isGenerating}
             onClick={() => handleGenerate('es')}
           >
-            Generar (Español)
+            {t('leads.proposalTab.generateSpanish')}
           </Button>
         </div>
         {error && <p className="text-xs text-red-400">{error}</p>}
@@ -115,7 +117,7 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
                 <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[p.status]}`} />
                 v{p.version}
                 <span className="text-[10px] text-[#555570]">
-                  {new Date(p.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {new Date(p.generatedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
                 </span>
               </button>
             );
@@ -130,7 +132,7 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
             loading={isGenerating}
             onClick={() => setLangMenu(!langMenu)}
           >
-            New Proposal
+            {t('proposals.newProposal')}
           </Button>
           <AnimatePresence>
             {langMenu && (
@@ -144,13 +146,13 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
                   onClick={() => handleGenerate('en')}
                   className="block w-full text-left px-4 py-2.5 text-xs text-[#f0f0f5] hover:bg-white/[0.05] transition-colors"
                 >
-                  English
+                  {t('leads.proposalTab.langEnglish')}
                 </button>
                 <button
                   onClick={() => handleGenerate('es')}
                   className="block w-full text-left px-4 py-2.5 text-xs text-[#f0f0f5] hover:bg-white/[0.05] transition-colors"
                 >
-                  Español
+                  {t('leads.proposalTab.langSpanish')}
                 </button>
               </motion.div>
             )}
@@ -172,7 +174,7 @@ export function LeadProposalTab({ lead }: LeadProposalTabProps) {
       ) : (
         <GlassCard padding="lg">
           <p className="text-sm text-[#555570] text-center py-6">
-            Select a proposal version above to preview
+            {t('leads.proposalTab.selectToPreview')}
           </p>
         </GlassCard>
       )}

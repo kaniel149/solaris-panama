@@ -82,28 +82,11 @@ const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date
 // Sentinel used by the "Asignado" dropdown to filter for leads with no owner.
 const UNASSIGNED = '__unassigned__';
 
-// Labels + colors for the shared pipeline statuses derive from LEAD_STATUS_CONFIG
-// (src/types/lead.ts) — the single source of truth — mapped into the CRM's
-// { label, color, bg } shape using the Spanish (labelEs) labels. CRM-only statuses
-// that are not part of the shared LeadStatus type are appended afterwards.
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  ...Object.fromEntries(
-    Object.entries(LEAD_STATUS_CONFIG).map(([k, v]) => [
-      k,
-      { label: v.labelEs, color: v.color, bg: v.bgColor },
-    ])
-  ),
-  // CRM-only "No es Lead" bucket — a real status the CRM can set, but not part
-  // of the shared LeadStatus funnel type.
-  not_a_lead: { label: 'No es Lead', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
-  // Legacy statuses (remapped in migrations 061/064) — kept ONLY so old
-  // lead_status_history / status rows still render a label. Never offered in selects.
-  qualified: { label: 'Calificado', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
-  won: { label: 'Ganado', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
-  cold: { label: 'Frío', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
-  warm: { label: 'Tibio', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-  hot: { label: 'Caliente', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-};
+// STATUS_CONFIG (label/color/bg per status) is built inside the component via
+// useMemo, since labels are locale-dependent (see near the top of
+// CrmLeadsPage). It derives from LEAD_STATUS_CONFIG (src/types/lead.ts) for
+// the shared funnel statuses, plus CRM-only / legacy statuses translated
+// through i18n keys under crm.status.*.
 
 // Statuses excluded from default pipeline view (vendors, partners, junk)
 const NON_CUSTOMER_STATUSES = ['vendor', 'partner', 'not_a_lead'];
@@ -131,11 +114,9 @@ const STATUSES = ['new', 'contacted', 'visit_scheduled', 'proposal_sent', 'signe
 
 // Virtual filters — computed client-side, not real DB statuses. They must never
 // appear in the row/detail status pickers (those change the real lead.status).
-const VIRTUAL_STATUSES = [
-  { value: 'vencidos', label: 'Vencidos' },
-  { value: 'seguimiento', label: 'En seguimiento' },
-];
-const VIRTUAL_STATUS_VALUES = VIRTUAL_STATUSES.map((v) => v.value);
+// Labels are localized inside the component (see `virtualStatuses` in
+// CrmLeadsPage) since they depend on the active UI language.
+const VIRTUAL_STATUS_VALUES = ['vencidos', 'seguimiento'];
 
 const PANAMA_PROVINCES = [
   'Panamá', 'Panamá Oeste', 'Colón', 'Coclé', 'Chiriquí',
@@ -147,7 +128,7 @@ const PANAMA_PROVINCES = [
 const EXTRA_ZONES = ['Azuero', 'Las Tablas', 'Chitré', 'Pedasí'];
 
 export default function CrmLeadsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const { members } = useTeam();
@@ -161,6 +142,44 @@ export default function CrmLeadsPage() {
     for (const m of members) map[m.email] = m;
     return map;
   }, [members]);
+
+  // Date formatting locale — Spanish UI uses es-PA (Panama), English falls back to en-US.
+  const locale = i18n.language?.startsWith('es') ? 'es-PA' : 'en-US';
+
+  // Labels + colors for the shared pipeline statuses derive from LEAD_STATUS_CONFIG
+  // (src/types/lead.ts) — the single source of truth — mapped into the CRM's
+  // { label, color, bg } shape, picking the label for the active UI language.
+  // CRM-only statuses that are not part of the shared LeadStatus type are
+  // appended afterwards, translated through crm.status.* i18n keys.
+  const STATUS_CONFIG = useMemo<Record<string, { label: string; color: string; bg: string }>>(() => {
+    const isEs = i18n.language?.startsWith('es');
+    return {
+      ...Object.fromEntries(
+        Object.entries(LEAD_STATUS_CONFIG).map(([k, v]) => [
+          k,
+          { label: isEs ? v.labelEs : v.label, color: v.color, bg: v.bgColor },
+        ])
+      ),
+      // CRM-only "Not a Lead" bucket — a real status the CRM can set, but not
+      // part of the shared LeadStatus funnel type.
+      not_a_lead: { label: t('crm.status.notALead'), color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
+      // Legacy statuses (remapped in migrations 061/064) — kept ONLY so old
+      // lead_status_history / status rows still render a label. Never offered in selects.
+      qualified: { label: t('leads.qualified'), color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
+      won: { label: t('leads.won'), color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
+      cold: { label: t('crm.status.cold'), color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
+      warm: { label: t('crm.status.warm'), color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+      hot: { label: t('crm.status.hot'), color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+    };
+  }, [i18n.language, t]);
+
+  // Virtual filters — computed client-side, not real DB statuses (see
+  // VIRTUAL_STATUS_VALUES above). Labels are localized here since they're
+  // rendered in the status filter dropdown.
+  const virtualStatuses = [
+    { value: 'vencidos', label: t('crm.virtualStatus.overdue') },
+    { value: 'seguimiento', label: t('crm.virtualStatus.followUp') },
+  ];
 
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -358,8 +377,8 @@ export default function CrmLeadsPage() {
     const lead = selectedLead;
     const eventType = showEventModal;
     const defaultTitle = eventType === 'meeting'
-      ? `Cita — ${lead.name}`
-      : `Seguimiento — ${lead.name}`;
+      ? t('crm.meetingTitleDefault', { name: lead.name })
+      : t('crm.followUpTitleDefault', { name: lead.name });
     try {
       await createEvent({
         lead_id: lead.id,
@@ -370,7 +389,7 @@ export default function CrmLeadsPage() {
       });
     } catch (err) {
       console.error('Failed to create event:', err);
-      toast({ type: 'error', title: 'No se pudo crear el evento', description: 'Inténtalo de nuevo.' });
+      toast({ type: 'error', title: t('crm.toast.createEventError'), description: t('crm.retryDescription') });
       return;
     }
     setShowEventModal(null);
@@ -395,7 +414,7 @@ export default function CrmLeadsPage() {
       await logCall(lead.id);
     } catch (err) {
       console.error('Failed to log call:', err);
-      toast({ type: 'error', title: 'No se pudo registrar la llamada', description: 'Inténtalo de nuevo.' });
+      toast({ type: 'error', title: t('crm.toast.logCallError'), description: t('crm.retryDescription') });
       return;
     }
     setCallCounts((prev) => ({ ...prev, [lead.id]: (prev[lead.id] || 0) + 1 }));
@@ -407,7 +426,7 @@ export default function CrmLeadsPage() {
     } else {
       fetchLeads();
     }
-    toast({ type: 'success', title: 'Llamada registrada' });
+    toast({ type: 'success', title: t('crm.toast.callLogged') });
   };
 
   const handleEventStatusChange = async (eventId: string, status: 'done' | 'cancelled') => {
@@ -452,8 +471,8 @@ export default function CrmLeadsPage() {
       }
     } catch (err) {
       console.error('Failed to add note:', err);
-      setNoteError('No se pudo guardar la nota. Revisa tu conexión o permisos.');
-      toast({ type: 'error', title: 'Error al guardar la nota', description: 'Inténtalo de nuevo.' });
+      setNoteError(t('crm.noteSaveError'));
+      toast({ type: 'error', title: t('crm.toast.noteSaveErrorTitle'), description: t('crm.retryDescription') });
     }
   };
 
@@ -465,11 +484,13 @@ export default function CrmLeadsPage() {
       await handleStatusChange(lead, 'not_a_lead');
     } catch (err) {
       console.error('Failed to discard lead:', err);
-      toast({ type: 'error', title: 'No se pudo actualizar el estado', description: 'Inténtalo de nuevo.' });
+      toast({ type: 'error', title: t('crm.toast.statusUpdateError'), description: t('crm.retryDescription') });
       setConfirmDiscard(false);
       return;
     }
     // 2) Polite WhatsApp is best-effort — a failure must not undo the status change.
+    // NOTE: this outbound message is customer-facing and must stay in Spanish
+    // regardless of the CRM's UI language — do not wrap in t().
     if (lead.phone) {
       const firstName = (lead.name || '').normalize('NFC').split(' ')[0] || 'amigo';
       try {
@@ -479,13 +500,13 @@ export default function CrmLeadsPage() {
           message: `Hola ${firstName}, gracias por tu interés en Solaris Panamá. Según los datos de tu consulta, por el momento tu consumo no justifica una instalación solar rentable. ¡Con gusto te atenderemos si tu situación cambia!`,
           automationType: 'manual',
         });
-        toast({ type: 'success', title: 'Lead descartado', description: 'Mensaje de cortesía enviado por WhatsApp.' });
+        toast({ type: 'success', title: t('crm.toast.leadDiscarded'), description: t('crm.toast.courtesyWaSent') });
       } catch (err) {
         console.error('WhatsApp enqueue failed:', err);
-        toast({ type: 'warning', title: 'Lead descartado', description: 'El estado se actualizó, pero no se pudo encolar el WhatsApp.' });
+        toast({ type: 'warning', title: t('crm.toast.leadDiscarded'), description: t('crm.toast.waEnqueueFailed') });
       }
     } else {
-      toast({ type: 'success', title: 'Lead descartado' });
+      toast({ type: 'success', title: t('crm.toast.leadDiscarded') });
     }
     setConfirmDiscard(false);
   };
@@ -521,15 +542,15 @@ export default function CrmLeadsPage() {
             <Users className="w-5 h-5 text-[#D4A843]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#f0f0f5]">Leads</h1>
-            <p className="text-xs text-[#555570]">{stats.total} leads · {stats.new} nuevos</p>
+            <h1 className="text-xl font-bold text-[#f0f0f5]">{t('crm.title')}</h1>
+            <p className="text-xs text-[#555570]">{t('crm.subtitle', { total: stats.total, new: stats.new })}</p>
           </div>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => fetchLeads()}
             className="p-2 rounded-lg bg-[#12121a] border border-white/[0.06] text-[#8888a0] hover:text-white transition-colors"
-            title="Refresh"
+            title={t('common.refresh')}
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -538,7 +559,7 @@ export default function CrmLeadsPage() {
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#D4A843] text-[#0a0a0f] text-sm font-semibold hover:bg-[#c49835] transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Agregar
+            {t('crm.addLead')}
           </button>
         </div>
       </div>
@@ -548,21 +569,21 @@ export default function CrmLeadsPage() {
           laptop widths (same wrap-safe approach as the search-input fix). */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
         {[
-          { label: 'Total', value: stats.total, color: '#D4A843', filter: '' },
-          { label: 'Nuevos', value: stats.new, color: '#0ea5e9', filter: 'new' },
-          { label: 'Contactados', value: stats.contacted, color: '#f59e0b', filter: 'contacted' },
-          { label: 'Visitas', value: stats.visit_scheduled, color: '#06b6d4', filter: 'visit_scheduled' },
-          { label: 'Propuestas', value: stats.proposal_sent, color: '#00ffcc', filter: 'proposal_sent' },
-          { label: 'Firmados', value: stats.signed, color: '#eab308', filter: 'signed' },
-          { label: 'Pagados', value: stats.paid, color: '#22c55e', filter: 'paid' },
-          { label: 'Vencidos', value: stats.stale, color: '#ef4444', filter: 'vencidos' },
+          { label: t('crm.stats.total'), value: stats.total, color: '#D4A843', filter: '' },
+          { label: t('crm.stats.new'), value: stats.new, color: '#0ea5e9', filter: 'new' },
+          { label: t('crm.stats.contacted'), value: stats.contacted, color: '#f59e0b', filter: 'contacted' },
+          { label: t('crm.stats.visits'), value: stats.visit_scheduled, color: '#06b6d4', filter: 'visit_scheduled' },
+          { label: t('crm.stats.proposals'), value: stats.proposal_sent, color: '#00ffcc', filter: 'proposal_sent' },
+          { label: t('crm.stats.signed'), value: stats.signed, color: '#eab308', filter: 'signed' },
+          { label: t('crm.stats.paid'), value: stats.paid, color: '#22c55e', filter: 'paid' },
+          { label: t('crm.virtualStatus.overdue'), value: stats.stale, color: '#ef4444', filter: 'vencidos' },
         ].map((s) => {
           const active = statusFilter === s.filter;
           return (
             <button
               key={s.label}
               onClick={() => setStatusFilter(s.filter)}
-              title={s.filter ? `Filtrar: ${s.label}` : 'Ver todos'}
+              title={s.filter ? t('crm.filterByLabel', { label: s.label }) : t('common.viewAll')}
               className="text-left px-4 py-3 rounded-xl bg-[#12121a] border border-white/[0.06] cursor-pointer transition-colors hover:bg-white/[0.03] focus:outline-none"
               style={active ? { boxShadow: `inset 0 0 0 1.5px ${s.color}` } : undefined}
             >
@@ -582,7 +603,7 @@ export default function CrmLeadsPage() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre, teléfono..."
+            placeholder={t('crm.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#12121a] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] focus:outline-none focus:border-[#D4A843]/30"
           />
         </div>
@@ -591,12 +612,12 @@ export default function CrmLeadsPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
         >
-          <option value="">Todos los estados</option>
+          <option value="">{t('crm.allStatuses')}</option>
           {STATUSES.map((s) => (
             <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
           ))}
           <option disabled>──────────</option>
-          {VIRTUAL_STATUSES.map((v) => (
+          {virtualStatuses.map((v) => (
             <option key={v.value} value={v.value}>{v.label}</option>
           ))}
         </select>
@@ -605,7 +626,7 @@ export default function CrmLeadsPage() {
           onChange={(e) => setSourceFilter(e.target.value)}
           className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
         >
-          <option value="">Todas las fuentes</option>
+          <option value="">{t('crm.allSources')}</option>
           {Object.entries(SOURCE_CONFIG).map(([k, v]) => (
             <option key={k} value={k}>{v.label}</option>
           ))}
@@ -623,36 +644,36 @@ export default function CrmLeadsPage() {
         <select
           value={entryTimeFilter}
           onChange={(e) => setEntryTimeFilter(e.target.value as EntryTimeRange)}
-          title="Filtrar por fecha de entrada"
+          title={t('crm.filterByEntryDate')}
           className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
         >
-          <option value="">Todo el tiempo</option>
-          <option value="day">Último día</option>
-          <option value="week">Última semana</option>
-          <option value="old">Más de 2 semanas</option>
+          <option value="">{t('crm.entryTime.all')}</option>
+          <option value="day">{t('crm.entryTime.day')}</option>
+          <option value="week">{t('crm.entryTime.week')}</option>
+          <option value="old">{t('crm.entryTime.old')}</option>
         </select>
         <select
           value={billFilter}
           onChange={(e) => setBillFilter(e.target.value as BillBucket)}
-          title="Filtrar por factura eléctrica"
+          title={t('crm.filterByBill')}
           className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none"
         >
-          <option value="">Cualquier factura</option>
-          <option value="50">$50/mes</option>
-          <option value="150">$150/mes</option>
-          <option value="250-300">$250–300/mes</option>
-          <option value="500+">$500+/mes</option>
-          <option value="none">Sin dato</option>
+          <option value="">{t('crm.bill.any')}</option>
+          <option value="50">{t('crm.bill.b50')}</option>
+          <option value="150">{t('crm.bill.b150')}</option>
+          <option value="250-300">{t('crm.bill.b250')}</option>
+          <option value="500+">{t('crm.bill.b500')}</option>
+          <option value="none">{t('crm.bill.none')}</option>
         </select>
         <select
           value={assignedFilter}
           onChange={(e) => setAssignedFilter(e.target.value)}
           disabled={myLeadsOnly}
-          title="Filtrar por asignación"
+          title={t('crm.filterByAssignment')}
           className="px-3 py-2 rounded-xl bg-[#12121a] border border-white/[0.06] text-[#8888a0] text-sm outline-none disabled:opacity-40"
         >
-          <option value="">Todos (asignación)</option>
-          <option value={UNASSIGNED}>Sin asignar</option>
+          <option value="">{t('crm.allAssigned')}</option>
+          <option value={UNASSIGNED}>{t('crm.unassigned')}</option>
           {members.map((m) => (
             <option key={m.id} value={m.email}>{m.full_name}</option>
           ))}
@@ -660,7 +681,7 @@ export default function CrmLeadsPage() {
         <button
           onClick={() => setMyLeadsOnly((v) => !v)}
           disabled={!myEmail}
-          title="Mostrar solo los leads asignados a mí"
+          title={t('crm.myLeadsTooltip')}
           className={cn(
             'flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm whitespace-nowrap transition-colors disabled:opacity-40',
             myLeadsOnly
@@ -669,11 +690,11 @@ export default function CrmLeadsPage() {
           )}
         >
           <UserCheck className="w-3.5 h-3.5" />
-          Mis Leads
+          {t('crm.myLeads')}
         </button>
         <button
           onClick={() => setShowNonCustomers((v) => !v)}
-          title="Mostrar/ocultar proveedores, socios y no-leads"
+          title={t('crm.toggleNonCustomersTooltip')}
           className={cn(
             'px-3 py-2 rounded-xl border text-sm whitespace-nowrap transition-colors',
             showNonCustomers
@@ -681,7 +702,7 @@ export default function CrmLeadsPage() {
               : 'bg-[#12121a] border-white/[0.06] text-[#8888a0] hover:text-white'
           )}
         >
-          {showNonCustomers ? 'Mostrando todos' : 'Ocultar proveedores'}
+          {showNonCustomers ? t('crm.showingAll') : t('crm.hideVendors')}
         </button>
       </div>
 
@@ -696,13 +717,13 @@ export default function CrmLeadsPage() {
           ) : leads.length === 0 ? (
             <div className="text-center py-20">
               <Users className="w-12 h-12 text-[#555570] mx-auto mb-3" />
-              <p className="text-sm text-[#555570]">No hay leads</p>
+              <p className="text-sm text-[#555570]">{t('leads.noLeads')}</p>
             </div>
           ) : (
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/[0.06]">
-                  {['Nombre', 'Teléfono', 'Fuente', 'Estado', 'Fecha'].map((h) => (
+                  {[t('common.name'), t('common.phone'), t('crm.source'), t('common.status'), t('common.date')].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-[#555570] uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
@@ -729,7 +750,7 @@ export default function CrmLeadsPage() {
                           <div className="text-sm font-medium text-white">{lead.name}</div>
                           {assigneeLabel && (
                             <span
-                              title={`Asignado a ${assigneeLabel}`}
+                              title={t('crm.assignedToName', { name: assigneeLabel })}
                               className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#D4A843]/15 text-[#D4A843] text-[9px] font-bold shrink-0"
                             >
                               {initialsOf(assigneeLabel)}
@@ -737,18 +758,18 @@ export default function CrmLeadsPage() {
                           )}
                         </div>
                         {lead.monthly_bill && (
-                          <div className="text-[11px] text-[#555570]">${lead.monthly_bill}/mes</div>
+                          <div className="text-[11px] text-[#555570]">{t('crm.monthlyBillShort', { amount: lead.monthly_bill })}</div>
                         )}
                         {stale && (
                           <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#ef4444]">
                             <Clock className="w-3 h-3" />
-                            Requiere seguimiento
+                            {t('crm.needsFollowUp')}
                           </div>
                         )}
                         {followUpMap[lead.id] && (
                           <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-[#3b82f6]">
                             <CalendarDays className="w-3 h-3" />
-                            Seguimiento {new Date(followUpMap[lead.id]).toLocaleDateString('es-PA', { day: 'numeric', month: 'short' })}
+                            {t('crm.followUpOn', { date: new Date(followUpMap[lead.id]).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) })}
                           </div>
                         )}
                         {callCounts[lead.id] > 0 && (
@@ -814,8 +835,8 @@ export default function CrmLeadsPage() {
                         </select>
                       </td>
                       <td className="px-4 py-3 text-xs text-[#555570]">
-                        <div>{new Date(lead.created_at).toLocaleDateString('es-PA')}</div>
-                        <div className="text-[10px] text-[#444455]">hace {daysSince(lead.created_at)}d</div>
+                        <div>{new Date(lead.created_at).toLocaleDateString(locale)}</div>
+                        <div className="text-[10px] text-[#444455]">{t('crm.daysAgoShort', { days: daysSince(lead.created_at) })}</div>
                       </td>
                     </tr>
                   );
@@ -868,11 +889,11 @@ export default function CrmLeadsPage() {
                     <div className="text-sm text-[#8888a0]">{selectedLead.email}</div>
                   )}
                   {selectedLead.monthly_bill && (
-                    <div className="text-sm text-[#D4A843]">Factura: ${selectedLead.monthly_bill}/mes</div>
+                    <div className="text-sm text-[#D4A843]">{t('crm.billAmount', { amount: selectedLead.monthly_bill })}</div>
                   )}
                   {selectedLead.message && (
                     <div className="pt-1">
-                      <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1">Mensaje</div>
+                      <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1">{t('crm.message')}</div>
                       <p className="text-sm text-[#c0c0d0] bg-white/[0.02] rounded-lg p-3">{selectedLead.message}</p>
                     </div>
                   )}
@@ -881,7 +902,7 @@ export default function CrmLeadsPage() {
                 {/* 2 · Entrada + zona + alerta de seguimiento */}
                 <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-xs">
                   <span className="text-[#8888a0]">
-                    Entró: {new Date(selectedLead.created_at).toLocaleDateString('es-PA')} · hace {daysSince(selectedLead.created_at)} días
+                    {t('crm.enteredOn', { date: new Date(selectedLead.created_at).toLocaleDateString(locale), days: daysSince(selectedLead.created_at) })}
                   </span>
                   {selectedLead.zone && (
                     <span className="inline-flex items-center gap-1 text-[#8888a0]">
@@ -905,7 +926,7 @@ export default function CrmLeadsPage() {
 
                 {/* 3 · Estado — the 6-stage funnel + off-funnel buckets + Descartar */}
                 <div>
-                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Estado</div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('common.status')}</div>
                   <div className="flex flex-wrap gap-1.5">
                     {STATUSES.map((s) => {
                       const config = STATUS_CONFIG[s];
@@ -938,26 +959,26 @@ export default function CrmLeadsPage() {
                           className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#ef4444]/5 border border-[#ef4444]/20 text-[#ef4444] text-xs font-medium hover:bg-[#ef4444]/10 transition-colors"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          Descartar (no calificado)
+                          {t('crm.discardButton')}
                         </button>
                       ) : (
                         <div className="rounded-lg bg-[#ef4444]/5 border border-[#ef4444]/20 p-3">
                           <p className="text-xs text-[#c0c0d0] mb-2.5">
-                            ¿Descartar este lead? Se marcará como <b className="text-[#ef4444]">No es Lead</b>
-                            {selectedLead.phone ? ' y se enviará un mensaje de cortesía por WhatsApp.' : '.'}
+                            {t('crm.discardConfirmPrefix')} <b className="text-[#ef4444]">{STATUS_CONFIG.not_a_lead.label}</b>
+                            {selectedLead.phone ? ` ${t('crm.discardConfirmWithPhone')}` : '.'}
                           </p>
                           <div className="flex gap-2">
                             <button
                               onClick={() => setConfirmDiscard(false)}
                               className="flex-1 py-1.5 rounded-md border border-white/[0.06] text-[#8888a0] text-xs hover:bg-white/[0.04] transition-colors"
                             >
-                              Cancelar
+                              {t('common.cancel')}
                             </button>
                             <button
                               onClick={handleDiscardLead}
                               className="flex-1 py-1.5 rounded-md bg-[#ef4444] text-white text-xs font-semibold hover:bg-[#dc2626] transition-colors"
                             >
-                              Confirmar
+                              {t('common.confirm')}
                             </button>
                           </div>
                         </div>
@@ -969,7 +990,7 @@ export default function CrmLeadsPage() {
                 {/* Deal value (closed leads — signed contract or paid) */}
                 {(selectedLead.status === 'signed' || selectedLead.status === 'paid') && (
                   <div>
-                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1.5">Valor de la venta</div>
+                    <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-1.5">{t('crm.dealValue')}</div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-[#555570]">$</span>
                       <input
@@ -993,7 +1014,7 @@ export default function CrmLeadsPage() {
                       />
                       <span className="text-[10px] text-[#555570]">USD</span>
                       {selectedLead.gclid && (
-                        <span className="text-[10px] text-[#4285f4]" title="Will upload to Google Ads as offline conversion">
+                        <span className="text-[10px] text-[#4285f4]" title={t('crm.googleUploadTooltip')}>
                           → Google
                         </span>
                       )}
@@ -1003,7 +1024,7 @@ export default function CrmLeadsPage() {
 
                 {/* 4 · Asignado a */}
                 <div>
-                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Asignado a</div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('crm.assignedTo')}</div>
                   <div className="flex items-center gap-2">
                     {selectedLead.assigned_to && (
                       <span
@@ -1018,7 +1039,7 @@ export default function CrmLeadsPage() {
                       onChange={(e) => handleAssignChange(selectedLead, e.target.value)}
                       className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-sm outline-none focus:border-[#D4A843]/30"
                     >
-                      <option value="">Sin asignar</option>
+                      <option value="">{t('crm.unassigned')}</option>
                       {members.map((m) => (
                         <option key={m.id} value={m.email}>{m.full_name}</option>
                       ))}
@@ -1098,7 +1119,7 @@ export default function CrmLeadsPage() {
                       <div className="flex items-center gap-3 mt-1.5 text-[10px]">
                         <span className="inline-flex items-center gap-1 text-[#8888a0]">
                           <Phone className="w-3 h-3" />
-                          {callCounts[selectedLead.id] || 0} llamadas
+                          {t('crm.callsCount', { count: callCounts[selectedLead.id] || 0 })}
                         </span>
                       </div>
                     </div>
@@ -1107,14 +1128,14 @@ export default function CrmLeadsPage() {
 
                 {/* 6 · Agenda — schedule buttons + events */}
                 <div>
-                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Agenda</div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('crm.agenda')}</div>
                   <div className="flex flex-wrap gap-2 mb-3">
                     <button
                       onClick={handleRegisterCall}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25d366]/10 text-[#25d366] text-xs font-medium hover:bg-[#25d366]/20 transition-colors border border-[#25d366]/20"
                     >
                       <PhoneCall className="w-3.5 h-3.5" />
-                      Registrar llamada
+                      {t('crm.registerCall')}
                     </button>
                     <button
                       onClick={() => {
@@ -1169,7 +1190,7 @@ export default function CrmLeadsPage() {
                                   </div>
                                   <p className="text-xs text-[#c0c0d0] mt-1 font-medium truncate">{ev.title}</p>
                                   <p className="text-[10px] text-[#555570] mt-0.5">
-                                    {new Date(ev.starts_at).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                                    {new Date(ev.starts_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}
                                   </p>
                                   {ev.notes && <p className="text-[10px] text-[#8888a0] mt-0.5 italic">{ev.notes}</p>}
                                 </div>
@@ -1209,18 +1230,18 @@ export default function CrmLeadsPage() {
 
                 {/* 7 · Notas */}
                 <div>
-                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Notas</div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('common.notes')}</div>
                   <div className="space-y-2 mb-3">
                     {notes.map((n) => (
                       <div key={n.id} className="bg-white/[0.02] rounded-lg p-3">
                         <p className="text-sm text-[#c0c0d0]">{n.content}</p>
                         <div className="text-[10px] text-[#555570] mt-1">
-                          {n.author_name} · {new Date(n.created_at).toLocaleDateString('es-PA')}
+                          {n.author_name} · {new Date(n.created_at).toLocaleDateString(locale)}
                         </div>
                       </div>
                     ))}
                     {notes.length === 0 && (
-                      <p className="text-xs text-[#555570]">Sin notas</p>
+                      <p className="text-xs text-[#555570]">{t('crm.noNotes')}</p>
                     )}
                   </div>
                   <div className="flex gap-2 items-end">
@@ -1242,7 +1263,7 @@ export default function CrmLeadsPage() {
                         }
                       }}
                       rows={2}
-                      placeholder="Agregar nota... (⌘/Ctrl+Enter para enviar)"
+                      placeholder={t('crm.addNotePlaceholder')}
                       className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30 resize-none leading-snug"
                     />
                     <button
@@ -1275,7 +1296,7 @@ export default function CrmLeadsPage() {
                           <p className="text-xs text-[#c0c0d0] leading-tight">{item.label}</p>
                           {item.meta && <p className="text-[10px] text-[#555570] mt-0.5 italic">{item.meta}</p>}
                           <p className="text-[10px] text-[#333355] mt-0.5">
-                            {new Date(item.timestamp).toLocaleString('es-PA', { dateStyle: 'short', timeStyle: 'short' })}
+                            {new Date(item.timestamp).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}
                           </p>
                         </div>
                       ))}
@@ -1286,7 +1307,7 @@ export default function CrmLeadsPage() {
                 {/* 9 · Datos internos — marketing metadata (source, automations,
                     attribution) sales users rarely need, parked at the bottom. */}
                 <div className="pt-3 border-t border-white/[0.06] opacity-70">
-                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">Datos internos</div>
+                  <div className="text-[10px] text-[#555570] uppercase tracking-wider mb-2">{t('crm.internalData')}</div>
                   <div className="space-y-2">
                     {/* Fuente + campaña */}
                     <div className="flex items-center gap-2 flex-wrap">
@@ -1308,17 +1329,17 @@ export default function CrmLeadsPage() {
                       <div className="flex flex-wrap gap-1.5">
                         {selectedLead.auto_wa_sent_at && (
                           <span className="px-2 py-0.5 rounded text-[10px] bg-[#25d366]/10 text-[#25d366] border border-[#25d366]/20">
-                            WA auto: {new Date(selectedLead.auto_wa_sent_at).toLocaleDateString('es-PA')}
+                            {t('crm.waAutoSent', { date: new Date(selectedLead.auto_wa_sent_at).toLocaleDateString(locale) })}
                           </span>
                         )}
                         {selectedLead.meta_capi_lead_sent_at && (
                           <span className="px-2 py-0.5 rounded text-[10px] bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/20">
-                            Meta CAPI enviado
+                            {t('crm.metaCapiSent')}
                           </span>
                         )}
                         {selectedLead.google_conversion_uploaded_at && (
                           <span className="px-2 py-0.5 rounded text-[10px] bg-[#4285f4]/10 text-[#4285f4] border border-[#4285f4]/20">
-                            Google offline enviado
+                            {t('crm.googleOfflineSent')}
                           </span>
                         )}
                       </div>
@@ -1422,8 +1443,8 @@ export default function CrmLeadsPage() {
                     onChange={(e) => setEventForm((p) => ({ ...p, title: e.target.value }))}
                     placeholder={
                       showEventModal === 'meeting'
-                        ? `Cita — ${selectedLead.name}`
-                        : `Seguimiento — ${selectedLead.name}`
+                        ? t('crm.meetingTitleDefault', { name: selectedLead.name })
+                        : t('crm.followUpTitleDefault', { name: selectedLead.name })
                     }
                     className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
                   />
@@ -1484,18 +1505,18 @@ export default function CrmLeadsPage() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-md mx-4 rounded-2xl bg-[#12121a] border border-white/[0.08] p-6"
             >
-              <h3 className="text-lg font-semibold text-white mb-4">Agregar Lead</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">{t('crm.addLead')}</h3>
               <div className="space-y-3">
                 <input
                   value={newLeadForm.name}
                   onChange={(e) => setNewLeadForm((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="Nombre"
+                  placeholder={t('common.name')}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
                 />
                 <input
                   value={newLeadForm.phone}
                   onChange={(e) => setNewLeadForm((p) => ({ ...p, phone: e.target.value }))}
-                  placeholder="Teléfono (ej: 50765831822)"
+                  placeholder={t('crm.phonePlaceholder')}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white text-sm placeholder:text-[#555570] outline-none focus:border-[#D4A843]/30"
                 />
                 <select
@@ -1513,14 +1534,14 @@ export default function CrmLeadsPage() {
                   onClick={() => setAddingLead(false)}
                   className="flex-1 py-3 rounded-xl border border-white/[0.06] text-[#8888a0] text-sm hover:bg-white/[0.04] transition-colors"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleCreateLead}
                   disabled={!newLeadForm.name || !newLeadForm.phone}
                   className="flex-1 py-3 rounded-xl bg-[#D4A843] text-[#0a0a0f] text-sm font-semibold hover:bg-[#c49835] disabled:opacity-30 transition-colors"
                 >
-                  Guardar
+                  {t('common.save')}
                 </button>
               </div>
             </motion.div>
